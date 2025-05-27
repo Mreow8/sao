@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.homepage, name='homepage'),
     path('alumniIdRequests/', views.alumni_main, name='alumni_main'),    
     path('calendarOfAct/', views.calendar, name='calendar'),
+    path('login/', views.login, name='login'),
 
 ]
 
