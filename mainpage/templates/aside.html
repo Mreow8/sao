@@ -4,7 +4,11 @@
   <head>
     <title>STUDENT LIFE INFORMATION SYSTEM</title>
     <link rel="stylesheet" href="{% static 'styles/aside.css' %}" />
-    <script src="{% static 'scripts/jquery.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
   <body>
     <div class="left-side">
@@ -18,21 +22,25 @@
       <nav class="side-nav">
         <ul>
           <li>
-            <a href="#" class="studentlife-btn"
-              >OFFICE OF STUDENT LIFE
+            <a href="#" class="studentlife-btn">
+              OFFICE OF STUDENT LIFE
               <span class="fas fa-caret-down first"></span>
             </a>
             <ul class="studentlife">
               <li><a href="#">Equipment</a></li>
               <li><a href="#">Good Moral Certificate Issuance</a></li>
               <li><a href="#">PPMP Tracker</a></li>
-              <li><a href="#">Monthly Calendar of Activities</a></li>
+              <li>
+                <a href="{% url 'calendar' %}"
+                  >Monthly Calendar of Activities</a
+                >
+              </li>
             </ul>
           </li>
 
           <li>
-            <a href="#" class="scholar-btn"
-              >SCHOLARSHIP
+            <a href="#" class="scholar-btn">
+              SCHOLARSHIP
               <span class="fas fa-caret-down second"></span>
             </a>
             <ul class="scholar-show">
@@ -47,8 +55,8 @@
           </li>
 
           <li>
-            <a href="#" class="jobplace-btn"
-              >JOB PLACEMENT
+            <a href="#" class="jobplace-btn">
+              JOB PLACEMENT
               <span class="fas fa-caret-down third"></span>
             </a>
             <ul class="jobplace-show">
@@ -57,14 +65,12 @@
               <li><a href="#">OJT Requirements Tracker</a></li>
               <li><a href="#">Non-Academic Award Issuance</a></li>
               <li><a href="#">Transaction Reports</a></li>
-              <li><a href="#">Student Login</a></li>
-              <li><a href="#">Admin Login</a></li>
             </ul>
           </li>
 
           <li>
-            <a href="#" class="student_disc-btn"
-              >STUDENT DISCIPLINE
+            <a href="#" class="student_disc-btn">
+              STUDENT DISCIPLINE
               <span class="fas fa-caret-down fourth"></span>
             </a>
             <ul class="student_disc-show">
@@ -78,8 +84,8 @@
           </li>
 
           <li>
-            <a href="#" class="guide-btn"
-              >GUIDANCE
+            <a href="#" class="guide-btn">
+              GUIDANCE
               <span class="fas fa-caret-down fifth"></span>
             </a>
             <ul class="guide-show">
@@ -93,12 +99,12 @@
           </li>
 
           <li>
-            <a href="#" class="alumni-btn"
-              >ALUMNI
+            <a href="#" class="alumni-btn">
+              ALUMNI
               <span class="fas fa-caret-down sixth"></span>
             </a>
             <ul class="alumni-show">
-              <li><a href="#">Alumni ID Requests</a></li>
+              <li><a href="{% url 'alumni_main' %}">Alumni ID Requests</a></li>
               <li><a href="#">Graduate Tracer</a></li>
               <li><a href="#">Alumni Reunion and Events</a></li>
               <li><a href="#">Job Fairs</a></li>
@@ -108,8 +114,8 @@
           </li>
 
           <li>
-            <a href="#" class="community-btn"
-              >COMMUNITY INVOLVEMENT
+            <a href="#" class="community-btn">
+              COMMUNITY INVOLVEMENT
               <span class="fas fa-caret-down seventh"></span>
             </a>
             <ul class="community-show">
@@ -121,8 +127,8 @@
           </li>
 
           <li>
-            <a href="#" class="student_org-btn"
-              >STUDENT ORGANIZATION
+            <a href="#" class="student_org-btn">
+              STUDENT ORGANIZATION
               <span class="fas fa-caret-down eight"></span>
             </a>
             <ul class="student_org-show">
@@ -135,8 +141,8 @@
           </li>
 
           <li>
-            <a href="#" class="medical-btn"
-              >MEDICAL
+            <a href="#" class="medical-btn">
+              MEDICAL
               <span class="fas fa-caret-down ninth"></span>
             </a>
             <ul class="medical-show">
@@ -153,5 +159,46 @@
         </ul>
       </nav>
     </div>
+
+    <script>
+      $(document).ready(function () {
+        $(".studentlife-btn").click(function () {
+          $(".studentlife").toggleClass("show");
+          $(".first").toggleClass("rotate");
+        });
+        $(".scholar-btn").click(function () {
+          $(".scholar-show").toggleClass("show2");
+          $(".second").toggleClass("rotate");
+        });
+        $(".jobplace-btn").click(function () {
+          $(".jobplace-show").toggleClass("show3");
+          $(".third").toggleClass("rotate");
+        });
+        $(".student_disc-btn").click(function () {
+          $(".student_disc-show").toggleClass("show4");
+          $(".fourth").toggleClass("rotate");
+        });
+        $(".guide-btn").click(function () {
+          $(".guide-show").toggleClass("show5");
+          $(".fifth").toggleClass("rotate");
+        });
+        $(".alumni-btn").click(function () {
+          $(".alumni-show").toggleClass("show6");
+          $(".sixth").toggleClass("rotate");
+        });
+        $(".community-btn").click(function () {
+          $(".community-show").toggleClass("show7");
+          $(".seventh").toggleClass("rotate");
+        });
+        $(".student_org-btn").click(function () {
+          $(".student_org-show").toggleClass("show8");
+          $(".eight").toggleClass("rotate");
+        });
+        $(".medical-btn").click(function () {
+          $(".medical-show").toggleClass("show9");
+          $(".ninth").toggleClass("rotate");
+        });
+      });
+    </script>
   </body>
 </html>

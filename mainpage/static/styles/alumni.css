@@ -1,0 +1,19 @@
+/* alumni.css */
+
+.bg-grayyy {
+  background-color: #f9f9f9;
+}
+
+.text-blo {
+  color: #b91c1c; /* example blood-red */
+}
+
+.bg-blo {
+  background-color: #b91c1c;
+}
+
+.text-textgray {
+  color: #6b7280; /* gray-500 */
+}
+
+/* Don't use position: absolute/fixed here unless really needed */
