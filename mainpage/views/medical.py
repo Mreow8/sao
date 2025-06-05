@@ -7,7 +7,9 @@ from datetime import datetime
 from datetime import date
 from django.utils import timezone
 from datetime import timedelta  
-from . models import(
+from ..models import *
+
+(
     Patient,
     MedicalClearance,
     PhysicalExamination,
@@ -31,7 +33,7 @@ import json
 import calendar
 import csv
 import os
-from .decorators import sao_admin_required, medical_admin_required
+from ..decorators import sao_admin_required, medical_admin_required
 from django.core.exceptions import PermissionDenied
 # Patient's basic information
 
