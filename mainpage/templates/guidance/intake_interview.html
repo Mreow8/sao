@@ -1,0 +1,304 @@
+{% extends "guidance/main.html" %} {% load static %} {% block title %}Counseling
+App With Scheduler{% endblock %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/intake.css'%}"
+/>
+{% endblock %} {% block bodycontent %}
+
+<div class="container">
+  {{form.errors}}
+  <h3>GUIDANCE</h3>
+  <span
+    ><label id="dir-gray">Home</label
+    ><label id="dir-orange"> > Intake Interview</label></span
+  >
+  <div class="form-container">
+    <form>
+      {% csrf_token %}
+      <h2>Intake Interview</h2>
+      <label>Enter ID number:</label>
+      <span id="search_id">
+        <input
+          type="text"
+          name="studentID"
+          placeholder="search"
+          required=""
+          id="studentIDBox"
+        />
+        <button class="OrangeButton" id="searchButton">Search</button>
+        <ul class="messages">
+          {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </span>
+      <table id="info_table" class="hidden">
+        <tr id="info_table_head">
+          <th>PROFILE NO</th>
+          <th>STUDENT ID</th>
+          <th>NAME</th>
+          <th>DATE FILLED</th>
+          <th></th>
+        </tr>
+      </table>
+    </form>
+    <form method="post" action="" id="intakeForm" class="hidden">
+      {% csrf_token %}
+      <input type="hidden" name="individualId" id="individualId" />
+      <label>I. Individual Inventory Service</label>
+      <table id="individual_inventory">
+        <tr>
+          <th>Acitivity/Form</th>
+          <th>Date Accomplished</th>
+          <th>Remarks</th>
+        </tr>
+        <tr class="individualrowTemplate">
+          <td>
+            <div class="field_container">
+              <input type="text" name="individualActivity[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="date" name="individualAccomplished[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="text" name="individualRemarks[]" />
+            </div>
+          </td>
+          <td>
+            <div class="deleteBox">
+              <button class="deleteRow OrangeButton">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="center_object">
+        <button class="OrangeButton" id="individual_button">
+          Add Individual Inventory Service
+        </button>
+      </div>
+      <label>II. Appraisal Service</label>
+      <table id="appraisal">
+        <tr>
+          <th>Test</th>
+          <th>Date Taken</th>
+          <th>Date Interpreted</th>
+          <th>Remarks</th>
+        </tr>
+        <tr class="appraisalrowTemplate">
+          <td>
+            <div class="field_container">
+              <input type="text" name="appraisalTest[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="date" name="appraisalDateTaken[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="date" name="appraisalDateInterpreted[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="text" name="appraisalRemarks[]" />
+            </div>
+          </td>
+          <td>
+            <div class="deleteBox">
+              <button class="deleteRow OrangeButton">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="center_object">
+        <button class="OrangeButton" id="appraisal_button">
+          Add Appraisal Service
+        </button>
+      </div>
+      <label>III. Counseling Service</label>
+      <table id="counseling">
+        <tr>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Concern</th>
+          <th>Remarks</th>
+        </tr>
+        <tr class="counselingrowTemplate">
+          <td>
+            <div class="inoutschool field_container side-way">
+              <div id="counseling_type" class="side-way">
+                <label for="id_couseling_type_0"
+                  ><input
+                    type="radio"
+                    name="couseling_type[]"
+                    value="False"
+                    class="side-way"
+                    required=""
+                    id="couseling_type_0"
+                  />
+                  Walk-in
+                </label>
+              </div>
+              <div id="counseling_type" class="side-way">
+                <label for="id_couseling_type_1"
+                  ><input
+                    type="radio"
+                    name="couseling_type[]"
+                    value="False"
+                    class="side-way"
+                    required=""
+                    id="couseling_type_1"
+                  />
+                  Referral
+                </label>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="date" name="counselingDate[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="text" name="counselingConcern[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="text" name="counselingRemarks[]" />
+            </div>
+          </td>
+          <td>
+            <div class="deleteBox">
+              <button class="deleteRow OrangeButton">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="center_object">
+        <button class="OrangeButton" id="counseling_button">
+          Add Counseling Service
+        </button>
+      </div>
+      <label>IV. Follow-up Service</label>
+      <table id="follow">
+        <tr>
+          <th>Activity/Form</th>
+          <th>Date</th>
+          <th>Remarks</th>
+        </tr>
+        <tr class="followrowTemplate">
+          <td>
+            <div class="field_container">
+              <input type="text" name="followActivity[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="date" name="followDate[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="text" name="followRemarks[]" />
+            </div>
+          </td>
+          <td>
+            <div class="deleteBox">
+              <button class="deleteRow OrangeButton">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="center_object">
+        <button class="OrangeButton" id="follow_up_button">
+          Add Follow-up Service
+        </button>
+      </div>
+      <label>V. Information Service</label>
+      <table id="information">
+        <tr>
+          <th>Activity/Form</th>
+          <th>Date</th>
+          <th>Remarks</th>
+        </tr>
+        <tr class="sibllingsrowTemplate">
+          <td>
+            <div class="field_container">
+              <input type="text" name="informationActivity[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="date" name="informationDate[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="text" name="informationRemarks[]" />
+            </div>
+          </td>
+          <td>
+            <div class="deleteBox">
+              <button class="deleteRow OrangeButton">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="center_object">
+        <button class="OrangeButton" id="information_button">
+          Add Information Service
+        </button>
+      </div>
+      <label>VI. Consultation Service</label>
+      <table id="consultation">
+        <tr>
+          <th>Activity/Form</th>
+          <th>Date</th>
+          <th>Remarks</th>
+        </tr>
+        <tr class="consultationrowTemplate">
+          <td>
+            <div class="field_container">
+              <input type="text" name="counseltationActivity[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="date" name="counseltationDate[]" />
+            </div>
+          </td>
+          <td>
+            <div class="field_container">
+              <input type="text" name="counseltationRemarks[]" />
+            </div>
+          </td>
+          <td>
+            <div class="deleteBox">
+              <button class="deleteRow OrangeButton">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="center_object">
+        <button class="OrangeButton" id="consultation_button">
+          Add Consultation Service
+        </button>
+      </div>
+      <div class="center_object">
+        <button type="submit" class="OrangeButton">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="{% static 'scripts/guidance/intake.js'%}"></script>
+{% endblock %}

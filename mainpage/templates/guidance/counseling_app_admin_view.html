@@ -1,0 +1,97 @@
+{% extends "guidance/main.html" %} {% load static %} {% block title %}Counseling
+App With Scheduler{% endblock %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/counseling_app_admin.css'%}"
+/>
+{% endblock %} {% block bodycontent %}
+
+<div class="container">
+  {{form.errors}}
+  <h3>GUIDANCE(Admin)</h3>
+  <span
+    ><label id="dir-gray">Home</label
+    ><label id="dir-orange"> > Counseling App with Scheduler</label></span
+  >
+  <div class="form-container">
+    {% csrf_token %}
+    <h2>Counseling Schedule Request List</h2>
+    <label>Enter ID number:</label>
+    <span id="search_id">
+      <input
+        type="text"
+        name="studentID"
+        placeholder="search"
+        required=""
+        id="studentIDBox"
+      />
+      <button class="OrangeButton" id="searchButton">Search</button>
+      <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </span>
+    <table id="info_table">
+      <tr id="info_table_head">
+        <th>DATE RECEIVED</th>
+        <th>NAME</th>
+        <th>PROGRAM/YEAR AND SECTION</th>
+        <th>CONTACT NO</th>
+        <th>DATE AND TIME OF MEETING</th>
+        <th>REASON FOR CALL</th>
+        <th colspan="2">STATUS</th>
+      </tr>
+      {% for schedule_request in meeting_requests %}
+      <tr>
+        <input
+          type="hidden"
+          name="counselingID"
+          class="counselingID"
+          value="{{ schedule_request.counselingID }}"
+        />
+        <td>{{ schedule_request.dateRecieved }}</td>
+        <td>
+          {{ schedule_request.studentID.lastname }}, {{
+          schedule_request.studentID.firstname }}
+        </td>
+        <td>
+          {{ schedule_request.studentID.degree }} {{
+          schedule_request.studentID.yearlvl }}
+        </td>
+        <td>0{{ schedule_request.studentID.contact }}</td>
+        <td>
+          {{ schedule_request.scheduled_date }} {{
+          time|get_formatted_time:schedule_request.scheduled_time }}
+        </td>
+        <td>{{ schedule_request.reason }}</td>
+        <td>
+          {% if schedule_request.status == 'Accepted' %}
+          <span class="accepted">{{ schedule_request.status }}</span>
+          {% elif schedule_request.status == 'Declined' %}
+          <span class="declined">{{ schedule_request.status }}</span>
+          {% elif schedule_request.status == 'Pending' %}
+          <span class="pending">{{ schedule_request.status }}</span>
+          {% elif schedule_request.status == 'Expired' %}
+          <span class="expired">{{ schedule_request.status }}</span>
+          {% else %} {{ schedule_request.status }} {% endif %}
+        </td>
+        <td>
+          <div class="horizontal">
+            {% if schedule_request.status != 'Expired' and
+            schedule_request.status != 'Accepted' and schedule_request.status !=
+            'Declined' %}
+            <button class="accept">ACCEPT</button>
+            <button class="decline">DECLINE</button>
+            {% endif %}
+            <button class="delete">DELETE</button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<script src="{% static 'scripts/guidance/counseling_app_admin.js'%}"></script>
+{% endblock %}

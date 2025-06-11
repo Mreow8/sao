@@ -1,0 +1,463 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Organization (SI++)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static '/css/main.css' %}">
+    <link rel="stylesheet" href="{% static '/css/org.css' %}">
+    <link rel="stylesheet" href="{% static '/css/general.css' %}">
+    <link rel="stylesheet" href="{% static '/css/tables.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+
+    <div class="nav-container">
+        <div class="orange-bar">
+            <img src="{% static '/css/CTU_logo.png' %}" class="logo">
+            <img src="{% static '/css/barSort.png' %}" class="bars">
+        </div>
+
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">
+                        OFFICE OF STUDENT LIFE
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activites</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">
+                        SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="#">Submission of Requirements Tracker</a></li>
+                        <li><a href="#">Scholars Profile and Validation</a></li>
+                        <li><a href="#">Grade Submission with GPA Computation</a></li>
+                        <li><a href="#">Mentorship Program</a></li>
+                        <li><a href="#">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="#">CHED Reports Submission</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">
+                        JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">
+                        STUDENT DISCIPLINE
+                        <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">
+                        GUIDANCE
+                        <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">
+                        ALUMNI
+                        <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">
+                        COMMUNITY INVOLVEMENT
+                        <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">
+                        STUDENT ORGANIZATION
+                        <span class="fas fa-caret-down eight"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#" class="active">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">
+                        MEDICAL
+                        <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="search-container">
+        <div class="search-icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <input type="text" placeholder="Search...">
+
+    </div>
+
+
+
+    <div class="pcontainer">
+        <div class="headert">
+            <h1>Parsers-SI++</h1>
+        </div>
+        <p class="pages"><a href="{% url 'home' %}">Orgs</a> > <a href="{% url 'SI_profile' %}">Profiles</a> > <a
+                href="{% url 'SI_officerdata' %}">Register Officer</a></p>
+
+        <div class="tabs">
+            <a href="/SI_profile" class="tab">Profiles</a>
+            <a href="/SI_projects" class="tab">Projects</a>
+            <a href="/SI_financial" class="tab">Financial Statements</a>
+            <a href="/SI_accreditation" class="tab">Accreditation Application</a>
+         </div>
+
+         <form method="post" enctype="multipart/form-data">
+            <form>
+            <div class="maincontain">
+                <div class="subcontain">
+                    <div class="form-column">
+                        <h1 class="hd">Officer form</h1>
+                        {% csrf_token %}
+                        <label for="Officer_profile_picture">Profile Picture:</label>
+                        <input type="file" id="Officer_profile_picture" name="Officer_profile_picture" accept="image/*">
+                        {% if uploaded_files.Officer_profile_picture %}
+                            <a href="{{ uploaded_files.Officer_profile_picture.url }}" target="_blank">View Uploaded Profile Picture</a>
+                        {% endif %}
+
+                        <label for="surname">Surname:</label>
+                        <input type="text" id="surname" name="surname" required>
+
+                        <label for="firstname">First Name:</label>
+                        <input type="text" id="firstname" name="firstname" required>
+
+                        <label for="middlename">Middle Initial:</label>
+                        <input type="text" id="middlename" name="middlename" required>
+
+                        <label for="course">Course:</label>
+                        <select id="course" name="course" required>
+                            <option value="BSIT">BSIT</option>
+                        </select>
+
+                        <label for="year">Year:</label>
+                        <select id="year" name="year" required>
+                            <option value=""></option>
+                            <option value="1st">1st</option>
+                            <option value="2nd">2nd</option>
+                            <option value="3rd">3rd</option>
+                            <option value="4th">4th</option>
+                            <option value="Irregular">Irregular</option>
+                        </select>
+
+                        <label for="mobile_number">Mobile Number:</label>
+                        <input type="number" id="mobile_number" name="mobile_number" required>
+
+                        <label for="position">Position:</label>
+                        <input type="text" id="position" name="position" required>
+
+                        <label for="organization">Organization:</label>
+                        <select id="organization" name="organization" required>
+
+                            <option value="SI++">SI++</option>
+
+                        </select>
+
+                        <label for="town_address">Town Address:</label>
+                        <input type="text" id="town_address" name="town_address" required>
+
+                        <label for="home_address">Home Address:</label>
+                        <input type="text" id="home_address" name="home_address" required>
+
+                        <label for="age">Age:</label>
+                        <input type="number" id="age" name="age" required>
+
+                        <label for="place_of_birth">Place of Birth:</label>
+                        <input type="text" id="place_of_birth" name="place_of_birth" required>
+
+                        <label for="date_of_birth">Date of Birth:</label>
+                        <input type="date" id="date_of_birth" name="date_of_birth" required>
+
+                        <label for="nationality">Nationality:</label>
+                        <input type="text" id="nationality" name="nationality" required>
+
+                        <label for="civil_status">Civil Status:</label>
+                        <select id="civil_status" name="civil_status" required>
+                            <option value=""></option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Widowed">Widowed</option>
+                            <option value="Separated">Separated</option>
+                            <option value="Divorced">Divorced</option>
+                        </select>
+
+                        <label for="sex">Sex:</label>
+                        <select id="sex" name="sex" required>
+                            <option value=""></option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+
+                        <label for="height">Height:</label>
+                        <input type="number" id="height" name="height" required>
+
+                        <label for="distinguishing_mark">Distinguishing Mark:</label>
+                        <input type="text" id="distinguishing_mark" name="distinguishing_mark">
+
+                        <label for="weight">Weight:</label>
+                        <input type="number" id="weight" name="weight" required>
+
+                        <label for="hobbies">Hobbies:</label>
+                        <input type="text" id="hobbies" name="hobbies">
+
+                        <label for="special_talent">Special Talent:</label>
+                        <input type="text" id="special_talent" name="special_talent">
+
+
+                        <h1 class="hd stop">Parents:</h3>
+                            <!--Father-->
+                            <h2 class="stop">Father</h2>
+                            <label for="father_name">Father Name:</label>
+                            <input type="text" id="father_name" name="father_name">
+
+                            <label for="father_occupation">Father Occupation:</label>
+                            <input type="text" id="father_occupation" name="father_occupation">
+
+                            <label for="father_address">Father Address:</label>
+                            <input type="text" id="father_address" name="father_address">
+
+                            <label for="father_mobile_number">Father Mobile Number:</label>
+                            <input type="number" id="father_mobile_number" name="father_mobile_number">
+
+                            <!--Mother-->
+                            <h2>Mother</h2>
+                            <label for="mother_name">Mother Name:</label>
+                            <input type="text" id="mother_name" name="mother_name">
+
+                            <label for="mother_occupation">Mother Occupation:</label>
+                            <input type="text" id="mother_occupation" name="mother_occupation">
+
+                            <label for="mother_address">Mother Address:</label>
+                            <input type="text" id="mother_address" name="mother_address">
+
+                            <label for="mother_number">Mother Mobile Number:</label>
+                            <input type="number" id="mother_number" name="mother_number">
+
+                            <!--Guardian-->
+                            <h2>Guardian</h2>
+                            <label for="guardian_name">Guardian Name:</label>
+                            <input type="text" id="guardian_name" name="guardian_name">
+
+                            <label for="guardian_occupation">Guardian Occupation:</label>
+                            <input type="text" id="guardian_occupation" name="guardian_occupation">
+
+                            <label for="guardian_address">Guardian Address:</label>
+                            <input type="text" id="guardian_address" name="guardian_address">
+
+                            <label for="guardian_number">Guardian Mobile Number:</label>
+                            <input type="number" id="guardian_number" name="guardian_number">
+
+                            <!--Tertiary-->
+                            <h1 class="hd stop">Education:</h1>
+                            <h2 class="stop">Tertiary</h2>
+                            <label for="tertiary_institution">Institution:</label>
+                            <input type="text" id="tertiary_institution" name="tertiary_institution">
+
+                            <label for="tertiary_address">Address:</label>
+                            <input type="text" id="tertiary_address" name="tertiary_address">
+
+                            <label for="tertiary_degree_level">Degree Level:</label>
+                            <input type="text" id="tertiary_degree_level" name="tertiary_degree_level">
+
+                            <label for="tertiary_date">Date:</label>
+                            <input type="date" id="tertiary_date" name="tertiary_date">
+                    </div>
+                    <div class="form-column">
+                        <!--Secondary-->
+                        <h2>Secondary</h2>
+                        <label for="secondary_institution">Institution:</label>
+                        <input type="text" id="secondary_institution" name="secondary_institution">
+
+                        <label for="secondary_address">Address:</label>
+                        <input type="text" id="secondary_address" name="secondary_address">
+
+                        <label for="secondary_degree_level">Degree Level:</label>
+                        <input type="text" id="secondary_degree_level" name="secondary_degree_level">
+
+                        <label for="secondary_date">Date:</label>
+                        <input type="date" id="secondary_date" name="secondary_date">
+
+                        <!--Elementary-->
+                        <h2>Elementary</h2>
+                        <label for="elementary_institution">Institution:</label>
+                        <input type="text" id="elementary_institution" name="elementary_institution">
+
+                        <label for="elementary_address">Address:</label>
+                        <input type="text" id="elementary_address" name="elementary_address">
+
+                        <label for="elementary_degree_level">Degree Level:</label>
+                        <input type="text" id="elementary_degree_level" name="elementary_degree_level">
+
+                        <label for="elementary_date">Date:</label>
+                        <input type="date" id="elementary_date" name="elementary_date">
+
+                        <!--Membership in other organizations-->
+                        <h1 class="hd stop">Membership in other organizations:</h1>
+                        <h2>First Organization</h2>
+                        <label for="membership_position1">Position:</label>
+                        <input type="text" id="membership_position1" name="membership_position1">
+
+                        <label for="membership_organization1">Organization:</label>
+                        <input type="text" id="membership_organization1" name="membership_organization1">
+
+                        <label for="membership_date1">Date:</label>
+                        <input type="date" id="membership_date1" name="membership_date1">
+
+                        <h2>Second Organization</h2>
+                        <label for="membership_position2">Position:</label>
+                        <input type="text" id="membership_position2" name="membership_position2">
+
+                        <label for="membership_organization2">Organization:</label>
+                        <input type="text" id="membership_organization2" name="membership_organization2">
+
+                        <label for="membership_date2">Date:</label>
+                        <input type="date" id="membership_date2" name="membership_date2">
+
+                        <h2>Third Organization</h2>
+                        <label for="membership_position3">Position:</label>
+                        <input type="text" id="membership_position3" name="membership_position3">
+
+                        <label for="membership_organization3">Organization:</label>
+                        <input type="text" id="membership_organization3" name="membership_organization3">
+
+                        <label for="membership_date3">Date:</label>
+                        <input type="date" id="membership_date3" name="membership_date3">
+
+                        <h2>Fourth Organization</h2>
+                        <label for="membership_position4">Position:</label>
+                        <input type="text" id="membership_position4" name="membership_position4">
+
+                        <label for="membership_organization4">Organization:</label>
+                        <input type="text" id="membership_organization4" name="membership_organization4">
+
+                        <label for="membership_date4">Date:</label>
+                        <input type="date" id="membership_date4" name="membership_date4">
+
+                        <h2>Fifth Organization</h2>
+                        <label for="membership_position5">Position:</label>
+                        <input type="text" id="membership_position5" name="membership_position5">
+
+                        <label for="membership_organization5">Organization:</label>
+                        <input type="text" id="membership_organization5" name="membership_organization5">
+
+                        <label for="membership_date5">Date:</label>
+                        <input type="date" id="membership_date5" name="membership_date5">
+
+                        <h1 class="hd stop">Seminars:</h1>
+                        <h2 class="stop">Seminar 1</h2>
+                        <label for="seminar_title1">Title:</label>
+                        <input type="text" id="seminar_title1" name="seminar_title1">
+
+                        <label for="seminar_date1">Date:</label>
+                        <input type="date" id="seminar_date1" name="seminar_date1">
+
+                        <h2>Seminar 2</h2>
+                        <label for="seminar_title2">Title:</label>
+                        <input type="text" id="seminar_title2" name="seminar_title2">
+
+                        <label for="seminar_date2">Date:</label>
+                        <input type="date" id="seminar_date2" name="seminar_date2">
+
+                        <h2>Seminar 3</h2>
+                        <label for="seminar_title3">Title:</label>
+                        <input type="text" id="seminar_title3" name="seminar_title3">
+
+                        <label for="seminar_date3">Date:</label>
+                        <input type="date" id="seminar_date3" name="seminar_date3">
+
+                        <h2>Seminar 4</h2>
+                        <label for="seminar_title4">Title:</label>
+                        <input type="text" id="seminar_title4" name="seminar_title4">
+
+                        <label for="seminar_date4">Date:</label>
+                        <input type="date" id="seminar_date4" name="seminar_date4">
+
+                        <h2>Seminar 5</h2>
+                        <label for="seminar_title5">Title:</label>
+                        <input type="text" id="seminar_title5" name="seminar_title5">
+
+                        <label for="seminar_date5">Date:</label>
+                        <input type="date" id="seminar_date5" name="seminar_date5">
+
+                        <button type="submit" style="margin-top:10px;" class="button">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </form>
+    </div>
+</body>
+</html>

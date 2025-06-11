@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .certificate-container {
+            margin: 20px auto;
+            width: 80%;
+            border: 2px solid #000;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-content img {
+            width: 100px;
+            height: auto;
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+        .header-text {
+            flex-grow: 1;
+            margin-left: 20px;
+            margin-right: 20px;
+            text-align: center;
+        }
+        .header-text .content1,
+        .header-text .content2,
+        .header-text .content3,
+        .header-text .content4 {
+            margin: 5px 0;
+        }
+        .line {
+            width: 100%;
+            border-top: 3px solid #000;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .summary {
+            margin-top: 20px;
+            text-align: left;
+        }
+        button {
+            margin-left: 1px;
+            margin-top: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            background-color: green;
+            height: 50px;
+        }
+        .footerImg {
+            margin-top: 25px;
+            width: 650px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .bottomline {
+            width: 700px;
+            border-top: 1px solid #000;
+            color: black;
+            margin-top: 30px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="certificate-container">
+        <div class="header-content">
+            <img src="{% static 'css/CTU_logo.png' %}" alt="CTU Logo" class="logo1">
+            <div class="header-text">
+                <div class="content1">REPUBLIC OF THE PHILIPPINES</div>
+                <div class="content2">CEBU TECHNOLOGICAL UNIVERSITY</div>
+                <div class="content3">ARGAO CAMPUS</div>
+                <div class="content4">Ed Kintanar Street, Lamacan, Argao, Cebu</div>
+                <div class="content4">Website: <a href="https://www.argao.ctu.edu.ph">https://www.argao.ctu.edu.ph</a> <br>E-mail:<a href="mailto:cdargao@ctu.edu.ph">cdargao@ctu.edu.ph</a></div>
+                <div class="content4">Phone No.: (032) 401-0737 local 1700</div>
+            </div>
+            <img src="{% static 'css/BagongPilipinaslogo.png' %}" alt="Bagong Pilipinas Logo" class="logo2">
+        </div>
+        <div class="line"></div>
+        <h1>Transaction Report</h1>
+
+        <h2>Projects</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Objective</th>
+                    <th>Target</th>
+                    <th>Budget</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                    <tr>
+                        <td>{{ project.objective }}</td>
+                        <td>{{ project.target }}</td>
+                        <td>{{ project.p_budget }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2"><strong>Total</strong></td>
+                    <td>{{ total_budget }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Financial Statements</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Purpose</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for statement in financial_statements %}
+                    <tr>
+                        <td>{{ statement.date }}</td>
+                        <td>{{ statement.purpose }}</td>
+                        <td>{{ statement.amount }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2"><strong>Total</strong></td>
+                    <td>{{ total_amount_financial_statements }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Accreditations</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Organization</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for accreditation in accreditations %}
+                    <tr>
+                        <td>{{ accreditation.organization }}</td>
+                        <td>{{ accreditation.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+   
+        <div class="summary">
+            <h2>Summary</h2>
+            <p>Total Financial Transactions: {{ total_financial_transactions }}</p>
+            <p>Total Projects: {{ total_projects }}</p>
+            <p>Total Accreditations: {{ total_accreditations }}</p>
+            <p>Total: {{ total_budget }}</p>
+        </div>
+
+        <button onclick="printTransactionReport()">Print Report</button>
+    </header>
+
+    <div class="bottomline"></div>
+    <img class="footerImg" src="{% static 'css/footer.png' %}" alt="Footer Image">
+
+    <script>
+        function printTransactionReport() {
+            // Hide the print button before printing
+            document.querySelector('button').style.display = 'none';
+            // Print the page
+            window.print();
+            // Show the print button after printing
+            document.querySelector('button').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends "guidance/main.html" %} {% load static %} {% block title %}OJT
+Assessments/Psychological Issuance{% endblock %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/ojt_assessment.css'%}"
+/>
+{% endblock %} {% block bodycontent %}
+
+<div class="container">
+  {{form.errors}}
+  <h3>GUIDANCE</h3>
+  <span
+    ><label id="dir-gray">Home</label
+    ><label id="dir-orange">
+      > OJT Assessments/Psychological Issuance</label
+    ></span
+  >
+  <div class="form-container">
+    <form>
+      {% csrf_token %}
+      <h2>Request OJT Assessments/Psychological Issuance</h2>
+      <label>Enter ID number:</label>
+      <span id="search_id">
+        <input
+          type="text"
+          name="studentID"
+          placeholder="search"
+          required=""
+          id="studentIDBox"
+        />
+        <button class="OrangeButton" id="searchButton">Search</button>
+        <ul class="messages">
+          {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </span>
+      <table id="info_table" class="hidden">
+        <tr id="info_table_head">
+          <th>NAME</th>
+          <th>COURSE</th>
+        </tr>
+      </table>
+    </form>
+    <form method="post" action="" id="requestForm" class="hidden">
+      {% csrf_token %}
+      <input type="hidden" id="student_id_val" name="student_id_val" />
+      <label>School Year:</label>
+      {{ form.schoolYear }}
+      <label>Email Address:</label>
+      {{form.emailadd}}
+      <button type="submit" class="OrangeButton">Request</button>
+    </form>
+  </div>
+</div>
+<script src="{% static 'scripts/guidance/ojt_assessment.js'%}"></script>
+<script src="{% static 'scripts/guidance/intake.js'%}"></script>
+
+{% endblock %}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Officer Login Form</title>
+
+<style>
+    body{
+        background-color: blanchedalmond;
+    }
+</style>
+</head>
+<body>
+    <h2>Officer Login Form</h2>
+    <form method="post" action="{% url 'register_officer' %}">
+        {% csrf_token %}
+        <label for="student_id">Student ID:</label><br>
+        <input type="number" id="student_id" name="student_id" required><br><br>
+        
+        <label for="student_lname">Last Name:</label><br>
+        <input type="text" id="student_lname" name="student_lname" maxlength="100" required><br><br>
+        
+        <label for="student_fname">First Name:</label><br>
+        <input type="text" id="student_fname" name="student_fname" maxlength="100" required><br><br>
+        
+        <label for="student_mname">Middle Name:</label><br>
+        <input type="text" id="student_mname" name="student_mname" maxlength="100" required><br><br>
+        
+        <label for="course">Course:</label>
+        <select id="course" name="course" required>
+            <option value=""></option>
+            <option value="BSIT">BSIT</option>
+            <option value="BSIE">BSIE</option>
+            <option value="BIT-CT">BIT-COMPTECH</option>
+            <option value="BIT-GARMENTS">BIT-GARMENTS</option>
+            <option value="BIT-AUTOMOTIVE">BIT-AUTOMOTIVE</option>
+            <option value="BIT-DRAFTING">BIT-DRAFTING</option>
+            <option value="BIT-ELECTRONICS">BIT-ELECTRONICS</option>
+            <option value="BEED">BEED</option>
+            <option value="BSED-MATH">BSED-MATH</option>
+            <option value="BTLED">BTLED</option>
+            <option value="BSF">BSF</option>
+            <option value="BSA">BSA</option>
+            <option value="BAL">BAL</option>
+            <option value="BAEL">BAEL</option>
+            <option value="BS-PSYCHOLOGY">BS-PSYCHOLOGY</option>
+            <option value="BSHM">BSHM</option>
+            <option value="BSTM">BSTM</option>
+        </select>
+
+        <label for="officer_position">Position:</label><br>
+        <input type="text" id="officer_position" name="officer_position" maxlength="200" required><br><br>
+        
+        <label for="year_lvl">Year Level:</label><br>
+        <select id="year_lvl" name="year_lvl" required>
+            <option value="1st">1st</option>
+            <option value="2nd">2nd</option>
+            <option value="3rd">3rd</option>
+            <option value="4th">4th</option>
+            <option value="Irregular">Irregular</option>
+        </select><br><br>
+        <select id="organization" name="organization" required>
+            <option value="FSTLP">FSTLP</option>
+            <option value="SI++">SI++</option>
+            <option value="SSG">SSG</option>
+            <option value="THE EQUATIONERS">THE EQUATIONERS</option>
+            <option value="TECHNOCRATS">TECHNOCRATS</option>
+        </select>
+        
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" maxlength="100" required><br><br>
+        
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" maxlength="128" required><br><br>
+        
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

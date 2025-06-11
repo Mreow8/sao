@@ -1,0 +1,80 @@
+{% extends "guidance/main.html" %} {% load static %} {% block title %}Student
+Organization{% endblock %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+  integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+  .pages a,
+  .pages {
+    color: black;
+    transition: color 0.3s, transform 0.3s;
+    text-decoration: none;
+  }
+  .pages a:hover {
+    color: #ff8000;
+    transform: scale(1.1);
+  }
+  .pf2 {
+    list-style-type: none;
+    border-bottom: 2px solid #ff8000;
+    padding-bottom: 10px;
+  }
+</style>
+{% endblock %} {% block bodycontent %}
+
+<div class="container">
+  <div
+    class="headert"
+    style="
+      margin-left: 100px;
+      margin-top: 100px;
+      text-align: center;
+      justify-content: center;
+    "
+  >
+    <h1 class="pf2" style="color: black">CTU-AC STUDENT ORGS</h1>
+    <p class="pages" style="font-size: 20px; color: black; padding-top: 10px">
+      Quick Actions
+    </p>
+    <p class="pages pf2">
+      <a href="/Gen_FSTLP_profile">FSTLP</a> -
+      <a href="/Gen_SI_profile">SI++</a> -
+      <a href="/Gen_THEEQUATIONERS_profile">Equationers</a> -
+      <a href="/Gen_SSG_profile">SSG</a> -
+      <a href="/Gen_TECHNOCRATS_profile">Technocrats</a>
+    </p>
+  </div>
+  <div class="row">
+    <a href="/Gen_FSTLP_profile" class="image"
+      ><img src="{% static 'css/org1.png' %}"
+    /></a>
+    <a href="/Gen_SI_profile" class="image"
+      ><img src="{% static 'studentorg/css/org2.png' %}"
+    /></a>
+    <a href="/Gen_THEEQUATIONERS_profile" class="image"
+      ><img src="{% static 'css/org3.png' %}"
+    /></a>
+  </div>
+  <div class="row">
+    <a href="/Gen_SSG_profile" class="image"
+      ><img src="{% static 'css/org4.png' %}"
+    /></a>
+    <a href="/Gen_TECHNOCRATS_profile" class="image"
+      ><img src="{% static 'css/org5.png' %}"
+    /></a>
+  </div>
+</div>
+
+<script src="{% static 'guidance/scripts/main.js' %}"></script>
+{% endblock %}

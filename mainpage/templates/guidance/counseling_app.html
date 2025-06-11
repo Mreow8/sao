@@ -1,0 +1,63 @@
+{% extends "guidance/main.html" %} {% load static %} {% block title %}Counseling
+App With Scheduler{% endblock %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/counseling_app.css'%}"
+/>
+{% endblock %} {% block bodycontent %}
+
+<div class="container">
+  {{form.errors}}
+  <h3>GUIDANCE</h3>
+  <span
+    ><label id="dir-gray">Home</label
+    ><label id="dir-orange"> > Counseling App with Scheduler</label></span
+  >
+  <div class="form-container">
+    <form>
+      {% csrf_token %}
+      <h2>Request Counseling Schedule</h2>
+      <label>Enter ID number:</label>
+      <span id="search_id">
+        <input
+          type="text"
+          name="studentID"
+          placeholder="search"
+          required=""
+          id="studentIDBox"
+        />
+        <button class="OrangeButton" id="searchButton">Search</button>
+        <ul class="messages">
+          {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </span>
+      <table id="info_table" class="hidden">
+        <tr id="info_table_head">
+          <th>NAME</th>
+          <th>PROGRAM/YEAR AND SECTION</th>
+          <th>CONTACT NO.</th>
+        </tr>
+      </table>
+    </form>
+    <form method="post" action="" id="requestForm" class="hidden">
+      {% csrf_token %}
+      <input type="hidden" id="student_id_val" name="student_id_val" />
+      <div id="requestScheduleContainer">
+        <label>Reason of counseling</label>
+        {{ form.reason }}
+        <div id="datetimepicker">
+          <label>Schedule Date and Time</label>
+          {{ form.scheduled_date }} {{ form.scheduled_time }}
+        </div>
+        <label>Email Address:</label>
+        {{form.email}}
+        <button type="submit" class="OrangeButton">Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="{% static 'scripts/guidance/counseling_app.js'%}"></script>
+{% endblock %}

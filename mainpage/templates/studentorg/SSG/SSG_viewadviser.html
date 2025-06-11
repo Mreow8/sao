@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSG View Advisers(Officer)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        button.decline {
+            background-color: #f44336;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Advisers</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Profile Picture</th>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>Middle Name</th>
+                    <th>Department</th>
+                    <th>Position</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for adviser in advisers %}
+                <tr>
+                    <td>{% if adviser.Adviser_profile_picture %}<a href="{{ adviser.Adviser_profile_picture.url }}" target="_blank" style="color: blue;">View Profile</a>{% endif %}</td>
+
+                    <td>{{ adviser.surname }}</td>
+                    <td>{{ adviser.firstname }}</td>
+                    <td>{{ adviser.middlename }}</td>
+                    <td>{{adviser.department}}</td>
+                    <td>{{ adviser.position }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

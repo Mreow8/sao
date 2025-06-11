@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accreditation Review</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    h1 {
+        text-align: center;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .buttons {
+        margin-top: 20px;
+        text-align: center;
+    }
+    button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .approve {
+        background-color: #4CAF50;
+        color: #fff;
+    }
+    .decline {
+        background-color: #f44336;
+        color: #fff;
+    }
+</style>
+</head>
+<body>
+{% for accreditation in accreditations %}
+<div class="container">
+    <h1>Accreditation Review</h1>
+    <div class="">
+        <strong>Organization: {{ accreditation.organization }}</strong>
+    </div>
+
+    <table>
+        <tr>
+            <th>Document</th>
+            <th>Files</th>
+        </tr>
+        <tr>
+            <td>Letter of Intent</td>
+            <td>{% if accreditation.letter_of_intent %}<a href="{{ accreditation.letter_of_intent.url }}" target="_blank">View Letter</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>List of Officers</td>
+            <td>{% if accreditation.list_of_officers %}<a href="{{ accreditation.list_of_officers.url }}" target="_blank">View List</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Certificate of Registration</td>
+            <td>{% if accreditation.certificate_of_registration %}<a href="{{ accreditation.certificate_of_registration.url }}" target="_blank">View Certificate</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>List of Members</td>
+            <td>{% if accreditation.list_of_members %}<a href="{{ accreditation.list_of_members.url }}" target="_blank">View Members</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Accomplishment Report</td>
+            <td>{% if accreditation.accomplishment_report %}<a href="{{ accreditation.accomplishment_report.url }}" target="_blank">View Report</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Calendar of Activities</td>
+            <td>{% if accreditation.calendar_of_activities %}<a href="{{ accreditation.calendar_of_activities.url }}" target="_blank">View Activities</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Financial Statement</td>
+            <td>{% if accreditation.financial_statement %}<a href="{{ accreditation.financial_statement.url }}" target="_blank">View Statement</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Bank Passbook</td>
+            <td>{% if accreditation.bank_passbook %}<a href="{{ accreditation.bank_passbook.url }}" target="_blank">View Passbook</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Inventory of Properties</td>
+            <td>{% if accreditation.inventory_of_properties %}<a href="{{ accreditation.inventory_of_properties.url }}" target="_blank">View Inventory</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Organization Bylaws</td>
+            <td>{% if accreditation.organization_bylaws %}<a href="{{ accreditation.organization_bylaws.url }}" target="_blank">View ByLaws</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Faculty Adviser Appointment</td>
+            <td>{% if accreditation.faculty_adviser_appointment %}<a href="{{ accreditation.faculty_adviser_appointment.url }}" target="_blank">View Appointment</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Other Documents</td>
+            <td>{% if accreditation.other_documents %}<a href="{{ accreditation.other_documents.url }}" target="_blank">View Other Documents</a>{% endif %}</td>
+        </tr>
+    </table>
+</div>
+{% endfor %}
+</body>
+</html>

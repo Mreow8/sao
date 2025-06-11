@@ -1,0 +1,302 @@
+{% extends "guidance/main.html" %} {% load static %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/guidance/exit_interview.css'%}"
+/>
+<link rel="stylesheet" href="{% static 'styles/guidance/consent_form.css'%}" />
+
+{% endblock %} {% block bodycontent %}
+<div class="showform_container" id="consent_container">
+  <div class="form_container">
+    <h2>Informed Consent Form</h2>
+    <p class="with-indent">
+      By checking the box below, I agree to fill out the Exit Interview Sheet
+      for the Guidance Office. I commit to providing honest and complete
+      information. I trust that the Guidance Staff will handle my personal data
+      with the utmost confidentiality.
+    </p>
+    <div>
+      <label>
+        <input type="checkbox" id="agreeCheck" />
+        I agree.
+      </label>
+    </div>
+    <button class="actionButton disabled" disabled id="proceedBtn">
+      Proceed
+    </button>
+  </div>
+</div>
+<div class="container">
+  {{form.errors}}
+  <h3>GUIDANCE</h3>
+  <span
+    ><label id="dir-gray">Home</label
+    ><label id="dir-orange"> > Exit Interview</label></span
+  >
+  <div class="form-container">
+    {% csrf_token %}
+    <h2>Request Exit Interview</h2>
+    <label>Enter ID number:</label>
+    <span id="search_id">
+      <input
+        type="text"
+        name="studentID"
+        placeholder="search"
+        required=""
+        id="studentIDBox"
+      />
+      <button class="OrangeButton" id="searchButton">Search</button>
+      <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </span>
+    <table id="info_table" class="hidden">
+      <tr id="info_table_head">
+        <th>NAME</th>
+        <th>CONTACT NO.</th>
+      </tr>
+    </table>
+    <form method="post" action="" id="questionForm" class="hidden">
+      {% csrf_token %}
+      <div id="requestScheduleContainer">
+        <div id="datetimepicker">
+          <label>Schedule Date and Time</label>
+          {{ form.scheduled_date }} {{ form.scheduled_time }}
+        </div>
+        <label>Email Address:</label>
+        {{form.emailadd}}
+      </div>
+      <input type="hidden" name="studentID" id="studentID" />
+      <div class="questions">
+        <h2>Please Answer Each Question</h2>
+        <br />
+        <p>
+          We value your opinion and are interested in knowing more about your
+          decision to leave Cebu Technological University – Argao Campus. Please
+          take some time to complete this questionnaire.
+        </p>
+        <label>Enter the date you enrolled in CTU-AC</label>
+        {{form.dateEnrolled}}
+        <div class="twocolumn">
+          <label
+            >1. Please describe your primary reason of leaving CTU-Argao
+            Campus.</label
+          >
+          {{form.reasonForLeaving}}
+        </div>
+        <div class="twocolumn">
+          <label
+            >2 Where you satisfied with your academic experience at CTU-Argao
+            Campus?</label
+          >
+          {{form.satisfiedWithAcadamic}}
+          <label>-Please give use feedback on your academic experience:</label>
+          {{form.feedbackWithAcademic}}
+        </div>
+        <div class="twocolumn">
+          <label
+            >3. Were you satisfied with your social experience at CTU-Argao
+            Campus?</label
+          >
+          {{form.satisfiedWithSocial}}
+          <label
+            >-Please give us feedback on your social experiences (this includes
+            your experiences with other students, teachers, employees, clubs,
+            organizations, etc.):</label
+          >
+          {{form.feedbackWithSocial}}
+        </div>
+        <div class="twocolumn">
+          <label
+            >4. Were you satisfied with the support services offered at
+            CTU-Argao?</label
+          >
+          {{form.satisfiedWithServices}}
+          <label
+            >-Please give us feedback on your social experiences (this includes
+            your experiences with other students, teachers, employees, clubs,
+            organizations, etc.):</label
+          >
+          {{form.feedbackWithServices}}
+        </div>
+        <div id="info_table2">
+          <label
+            >Please review the list below and check everything that contributed
+            to your decision to leave CTU-Argao Campus. Then please rank
+            everything in order of significance, with 1 being the most
+            significant reason for your withdrawal.</label
+          >
+          <table class="table">
+            <tr id="info_table_head">
+              <th class="smallarea">Areas</th>
+              <th></th>
+            </tr>
+            <tr>
+              <td class="smallarea">Academically too challenging</td>
+              <td>
+                <input type="number" name="academically_too_challenging" />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">Not academically challenging enough</td>
+              <td>
+                <input
+                  type="number"
+                  name="not_academically_challenging_enough"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">Does not offer my academic major</td>
+              <td>
+                <input type="number" name="does_not_offer_my_academic_major" />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">
+                What is your intended major? {{form.intendedMajor}}
+              </td>
+              <td>
+                <input
+                  type="number"
+                  name="what_is_your_intended_major"
+                  id="what_is_your_intended_major"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">Size of the School</td>
+              <td><input type="number" name="size_of_the_school" /></td>
+            </tr>
+            <tr>
+              <td class="smallarea">Location of the School</td>
+              <td><input type="number" name="location_of_the_school" /></td>
+            </tr>
+            <tr>
+              <td class="smallarea">Negative social campus climate</td>
+              <td>
+                <input type="number" name="negative_social_campus_climate" />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">Residence Hall environment not positive</td>
+              <td>
+                <input
+                  type="number"
+                  name="residence_hall_environment_not_positive"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">Social environment not diverse enough</td>
+              <td>
+                <input
+                  type="number"
+                  name="social_environment_not_diverse_enough"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">Not enough campus activities</td>
+              <td>
+                <input type="number" name="not_enough_campus_activities" />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">Needed more academic support</td>
+              <td>
+                <input type="number" name="needed_more_academic_support" />
+              </td>
+            </tr>
+            <tr>
+              <td class="smallarea">Financial</td>
+              <td><input type="number" name="financial" /></td>
+            </tr>
+            <tr>
+              <td class="smallarea">Medical: Injury</td>
+              <td><input type="number" name="medical_injury" /></td>
+            </tr>
+            <tr>
+              <td class="smallarea">Medical: Psychological or Emotional</td>
+              <td><input type="number" name="medical_pyscho" /></td>
+            </tr>
+            <tr>
+              <td class="smallarea">Family obligation</td>
+              <td><input type="number" name="family-obligations" /></td>
+            </tr>
+            <tr>
+              <td class="smallarea">
+                Major life event(example: marraige, birth of a child, divorce,
+                etc.). {{form.majorEvent}}
+              </td>
+              <td><input type="number" name="major_event" /></td>
+            </tr>
+          </table>
+        </div>
+        <label
+          >Please continue to tell us in your own words about your experience at
+          CTU-Argao Campus.</label
+        >
+        <div class="twocolumn">
+          <label
+            >5. When did you first consider leaving CTU-Argao Campus?</label
+          >
+          {{form.firstConsider}}
+        </div>
+        <div class="twocolumn">
+          <label
+            >6. Under what conditions, if any, would you have stayed at
+            CTU-Argao Campus?</label
+          >
+          {{form.whatCondition}}
+        </div>
+        <div class="twocolumn">
+          <label
+            >7. Would you recommend attending CTU-Argao Campus to prospective
+            new stuedents?</label
+          >
+          {{form.recommend}}
+        </div>
+        <div class="twocolumn">
+          <label
+            >8. Overall, how satisfied are you with CTU-Argao Campus?</label
+          >
+          {{form.howSatisfied}}
+        </div>
+        <div class="twocolumn">
+          <label
+            >9. Do you plan to return at CTU-Argao Campus in the future? If yes,
+            please indicate when.</label
+          >
+          {{form.planTOReturn}}
+        </div>
+        <div class="twocolumn">
+          <label>10. Were you satisfied experience at CTU-Argao Campus?</label>
+          {{form.accademicExperienceSatisfied}}
+        </div>
+        <div class="twocolumn">
+          <label
+            >11. Is there anything else you would like us to know about your
+            time at CTU-Argao Campus?</label
+          >
+          {{form.knowAboutYourTime}}
+        </div>
+        <div class="twocolumn">
+          <label>12. Are you currently employed?</label>
+          {{form.currentlyEmployed}}
+          <div class="twocolumn hidden" id="explainationEmployed">
+            <label id="employedYesNo"></label>
+            {{form.explainationEmployed}}
+          </div>
+        </div>
+        <div>
+          <button type="submit" class="OrangeButton">Request</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="{% static 'scripts/guidance/exit_interview.js'%}"></script>
+{% endblock %}

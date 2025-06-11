@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Organization (FSTLP)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static '/css/main.css' %}">
+    <link rel="stylesheet" href="{% static '/css/org.css' %}">
+    <link rel="stylesheet" href="{% static '/css/general.css' %}">
+    <link rel="stylesheet" href="{% static '/css/tables.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+
+    <div class="nav-container">
+        <div class="orange-bar">
+            <img src="{% static '/css/CTU_logo.png' %}" class="logo">
+            <img src="{% static '/css/barSort.png' %}" class="bars">
+        </div>
+
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">
+                        OFFICE OF STUDENT LIFE
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activites</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">
+                        SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="#">Submission of Requirements Tracker</a></li>
+                        <li><a href="#">Scholars Profile and Validation</a></li>
+                        <li><a href="#">Grade Submission with GPA Computation</a></li>
+                        <li><a href="#">Mentorship Program</a></li>
+                        <li><a href="#">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="#">CHED Reports Submission</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">
+                        JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">
+                        STUDENT DISCIPLINE
+                        <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">
+                        GUIDANCE
+                        <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">
+                        ALUMNI
+                        <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">
+                        COMMUNITY INVOLVEMENT
+                        <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="/home" class="student_org-btn">
+                        STUDENT ORGANIZATION
+                        <span class="fas fa-caret-down eight"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#" class="active">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">
+                        MEDICAL
+                        <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="search-container">
+        <div class="search-icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <input type="text" placeholder="Search...">
+
+    </div>
+
+    <div class="pcontainer">
+        <div class="headert">
+            <h1>Student Organization(Admin)</h1>
+        </div>
+
+        <div class="tabs">
+            <div class="tabs">
+                <a href="/admin_manageofficer" class="tab">Manage Officer</a>
+                <a href="/admin_manageadviser" class="tab">Manage Adviser</a>
+                <a href="/admin_manageproject" class="tab">Manage Projects</a>
+                <a href="/admin_managefinancial" class="tab active">Manage Financial</a>           
+                <a href="/admin_manage_accreditations" class="tab active">Manage Applications</a>
+                <a href="/admin_transactionreport" class="tab active">Manage Transactions </a>
+            </div>
+        </div>
+        <div class="maincontain">
+            <div class="subcontain">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Officer ID</th>
+                            <th>Profile Picture</th>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Course</th>
+                            <th>Position</th>
+                            <th>Organization</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for officer in officers %}
+                        <tr>
+                            <td>{{ officer.id }}</td>
+                            <td>{% if officer.Officer_profile_picture %}<a href="{{ officer.Officer_profile_picture.url }}" target="_blank">View Profile</a>{% endif %}</td>
+                            <td>{{ officer.surname }}</td>
+                            <td>{{ officer.firstname }}</td>
+                            <td>{{ officer.middlename }}</td>
+                            <td>{{ officer.course }}</td>
+                            <td>{{ officer.position }}</td>
+                            <td>{{ officer.organization }}</td>
+                            <td>{{ officer.get_status_display }}</td>
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="officer_id" value="{{ officer.id }}">
+                                    {% if officer.status == 'pending' %}
+                                        <button type="submit" style='background-color: #66bb6a;' class='button' name="action" value="approve">Approve</button>
+                                        <button type="submit" style='background-color: #ef5350;' class='button' name="action" value="decline">Decline</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</body>
+
+</html>

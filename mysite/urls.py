@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('mainpage.urls')),  # delegate root URL patterns to mainpage app
+    
 ]
 
 # Serve static and media files in development

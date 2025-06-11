@@ -1,0 +1,80 @@
+{% extends "guidance/main.html" %} {% load static %} {% block title %}Student
+Organization (FSTLP){% endblock %} {% block headcontent %}
+<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/general.css' %}" />
+
+{% endblock %} {% block bodycontent %}
+<div class="pcontainer">
+  <div class="headert">
+    <h1>Future Science and Technology Leaders of the Philippines</h1>
+  </div>
+  <p class="pages">
+    <a href="{% url 'FSTLP_financial' %}">Financial Statements</a>
+  </p>
+
+  <div class="tabs">
+    <a href="{% url 'FSTLP_profile' %}" class="tab">Profiles</a>
+    <a href="{% url 'FSTLP_projects' %}" class="tab">Projects</a>
+    <a href="{% url 'FSTLP_financial' %}" class="tab active"
+      >Financial Statements</a
+    >
+    <a href="{% url 'FSTLP_accreditation' %}" class="tab"
+      >Accreditation Application</a
+    >
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="maincontain">
+      <div class="form-column">
+        <h1 class="hd">Financial Form</h1>
+        <div class="form-group top">
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required />
+        </div>
+        <div class="form-group">
+          <label for="purpose">Purpose</label>
+          <input type="text" id="purpose" name="purpose" required />
+        </div>
+        <div class="form-group">
+          <label for="source_of_funds">Source of Funds</label>
+          <input type="text" id="source_of_funds" name="source_of_funds" />
+        </div>
+      </div>
+      <div class="form-column">
+        <div class="form-group">
+          <label for="remarks">Remarks</label>
+          <input type="text" id="remarks" name="remarks" />
+        </div>
+        <div class="form-group con">
+          <label for="amount">Amount</label>
+          <input
+            type="number"
+            style="width: 100px"
+            id="amount"
+            name="amount"
+            required
+          />
+          <label for="org">Organizations</label>
+          <select id="org" style="width: 60px" name="org" required>
+            <option value="FSTLP">FSTLP</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="remarks">Remarks:</label>
+          <textarea id="remarks" name="remarks" required></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="buttons">
+      <button type="submit" class="btn-primary">Submit</button>
+      <a href="{% url 'FSTLP_viewfinancial' %}" class="btn-primary"
+        >View Financial Statements</a
+      >
+    </div>
+  </form>
+</div>
+
+<script src="{% static 'guidance/scripts/main.js' %}"></script/>
+{% endblock %}

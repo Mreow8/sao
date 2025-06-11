@@ -1,0 +1,534 @@
+{% csrf_token %}
+    {{form.errors}}
+    <div id="gridView">
+        <div class="field_container fullLenght">
+            <label>Upload a 2x2 photo:</label>
+            {{form.studentPhoto}}
+        </div>
+        <div class="field_container">
+            <label>Family Name:</label>
+            {{form.familyName}}
+        </div>
+        <div class="field_container">
+            <label>First Name:</label>
+            {{form.firstname}}
+        </div>
+        <div class="field_container">
+            <label>Middle Name:</label>
+            {{form.middleName}}
+        </div>
+        <div class="field_container">
+            <label>Nickname:</label>
+            {{form.nickName}}
+        </div>
+        <div class="field_container">
+            <label>Course, Year & Section:</label>
+            {{form.courseyearsection}}
+        </div>
+        <div class="field_container">
+            <label>Major:</label>
+            {{form.major}}
+        </div>
+        <div class="field_container">
+            <label>Student I.D No:</label>
+            {{form.studentId}}
+        </div>
+        <div class="field_container">
+            <label>Date Filled:</label>
+            {{form.dateFilled}}
+        </div>
+        <div class="field_container">
+            <label>What type of student are you:</label>
+            {{form.studentType}}
+        </div>
+        <div class="field_container2 hidden " id="studentbox">
+            <div class="field_container">
+                <label>If New Student:</label>
+                {{form.curriculumtype}}     
+            </div>
+            <div class="field_container hidden" id="trackbox">
+                <label>Track:</label>
+                {{form.track}}
+            </div>
+        </div>
+        <h2 class="fullLenght">A. PERSONAL DATA:</h2>
+        <div class="field_container">
+            <label>Age:</label>
+            {{form.age}}
+        </div>
+        <div class="field_container">
+            <label>Religion:</label>
+            {{form.religion}}
+        </div>
+        <div class="field_container">
+            <label>Height:</label>
+            {{form.height}}
+        </div>
+        <div class="field_container">
+            <label>Weight:</label>
+            {{form.weight}}
+        </div>
+        <div class="field_container">
+            <label>Birth Order Among Siblings:</label>
+            {{form.birthOrderAmongSiblings}}
+        </div>
+        <div class="field_container">
+            <label>Sex:</label>
+            {{form.sex}}
+        </div>
+        <div class="field_container ">
+            <label>Sexual Orientation:</label>
+            {{form.sexualOrientation}}
+        </div>
+        <div class="field_container">
+            <label>Civil Status:</label>
+            {{form.civilStatus}}
+        </div>
+        <div class="field_container">
+            <label>Citizenship:</label>
+            {{form.citizenship}}
+        </div>
+        <div class="field_container">
+            <label>Date of Birth:</label>
+            {{form.dateOfBirth}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>Place of Birth:</label>
+            {{form.placeOfBirth}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>Curent Address:</label>
+            {{form.currentAddress}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>Permanent Address:</label>
+            {{form.permanentAddress}}
+        </div>
+        <div class="field_container">
+            <label>Landline No.:</label>
+            {{form.landlineNo}}
+        </div>
+        <div class="field_container">
+            <label>Mobile No:</label>
+            {{form.mobileNo}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>Email:</label>
+            {{form.email}}
+        </div>
+        <div class="field_container">
+            <label>Langauges/Dialects Spoken at Home:</label>
+            {{form.languagesDialectsSpokenAtHome}}
+        </div>
+        <div class="field_container">
+            <label>Langauges/Dialects Most Fluent In:</label>
+            {{form.languagesDialectsMostFluentIn}}
+        </div>
+        <div class="field_container fullLenght" id="livingBox">
+            <label>With whome are you living?</label>
+            {{form.livingWith}}
+        </div>
+        <div class="field_container  hidden" id="relativeBox">
+            <label>Please specify:</label>
+            {{form.livingWithRelative}}
+        </div>
+        <div class="field_container  hidden" id="livingOthers">
+            <label>Please specify</label>
+            {{form.livingWithOthers}}
+        </div>
+        <div class="field_container ">
+            <label>While studying in CTU, where are you living?</label>
+            {{form.placeOfLiving}}
+        </div>
+        <div class="field_container  hidden" id="specifyPlace">
+            <label>Please specify:</label>
+            {{form.placeOfLivingOthers}}
+        </div>
+        <h2 class="fullLenght">B. FAMILY DATA:</h2>
+        
+        <table class="fullLenght">
+            <tr>
+                <th class="smallitem"></th>
+                <th>Father(Mart with + if deceased)</th>
+                <th>Mother(Mart with + if decreased)</th>
+            </tr>
+            <tr>
+                <td class="smallitem">Name:</td>
+                <td><div class="field_container">{{form.fatherName}}</div></td>
+                <td><div class="field_container">{{form.motherName}}</div></td>
+            </tr>
+            <tr>
+                <td class="smallitem">Date of Birth:</td>
+                <td><div class="field_container">{{form.fatherDateOfBirth}}</div></td>
+                <td><div class="field_container">{{form.motherDateOfBirth}}</div></td>
+            </tr>
+            <tr>
+                <td class="smallitem">Address:</td>
+                <td><div class="field_container">{{form.fatherAddress}}</div></td>
+                <td><div class="field_container">{{form.motherAddress}}</div></td>
+            </tr>
+            <tr>
+                <td class="smallitem">Landline:</td>
+                <td><div class="field_container">{{form.fatherLandline}} </div></td>
+                <td><div class="field_container">{{form.motherLandLine}} </div></td>
+            </tr>
+            <tr>
+                <td class="smallitem">Mobile Number (Cellphone No.):</td>
+                <td><div class="field_container">{{form.fatherMobilePhone}}</div></td>
+                <td><div class="field_container">{{form.motherMobilePhone}}</div></td>
+            </tr>
+        </table>
+        
+        <div class="field_container2 ">
+            <label>What is you father's highest education attainment?</label>
+            {{form.fatherEducationLevel}}
+        </div>
+        <div class="field_container2 ">
+            <label>What is you mother's highest education attainment?</label>
+            {{form.motherEducationLevel}}
+        </div>
+        <div class="field_container ">
+            <label>Is your father a graduate CTU?</label>
+            {{form.fatherCTU}}
+        </div>
+        <div class="field_container ">
+            <label>Is your mother a graduate CTU?</label>
+            {{form.motherCTU}}
+        </div>
+        <div class="field_container fullLenght" id="sourceIncome">
+            <label>What is the family's main source of income?</label>
+            {{form.sourceOfIncome}}
+        </div>
+        <div class="field_container hidden " id="optionalBox">
+            <label>please specify</label>
+            {{form.sourceOfIncomeFamilyBusiness}}
+            {{form.sourceOfIncomeRelative}}
+        </div>
+        <div class="field_container fullLenght" id="fatherOcupation">
+            <label>What is your father's occupation? <strong>(If father is deceased, please do not answer)</strong></label>
+            {{form.fatherOccupation}}
+        </div>
+        <div class="field_container halfLength hidden" id="fatherOcupationOther">
+            <label>Please specify:</label>
+            {{form.fatherOtherOccupation}}
+        </div>
+        <div class="field_container fullLenght" id="motherOcupation">
+            <label>What is your mother's occupation? <strong>(If mother is deceased, please do not answer)</strong></label>
+            {{form.motherOccupation}}
+        </div>
+        <div class="field_container halfLength hidden" id="motherOcupationOther">
+            <label>Others:</label>
+            {{form.motherOtherOccupation}}
+        </div>
+        <div class="field_container">
+            <label>How much is your family earning in a month?</label>
+            {{form.familyEarningInaMonth}}
+        </div>
+        <div class="field_container">
+            <label>Parents are:</label>
+            {{form.parentStatus}}
+        </div>
+        <table id="siblings" class="fullLenght">
+            <tr>
+                <th colspan="3">
+                    <label>Please name below siblings from eldest to youngest. Include yourself.</label>
+                </th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>School/Place of Work</th>
+            </tr>
+            <tr class="sibllingsrowTemplate">
+                <td>
+                    <div class="field_container">
+                        <input type="text" name="name[]">
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container">
+                        <input type="number" name="age[]">
+                    </div>      
+                </td>
+                <td>
+                    <div class="field_container">
+                        <input type="text" name="placework[]">
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <button id="addanother" class="fullLenght">Add another</button>
+        <h2 class="fullLenght">C. CONTACT PESSONS:</h2>
+        <div class="field_container">
+            <label>Pesrson to be Notified in Case of Emergency:</label>
+            {{form.personInCaseofEmergency}}
+        </div>
+        <div class="field_container">
+            <label>Relationship:</label>
+            {{form.personInCaseofEmergencyRelationship}}
+        </div>
+        <div class="field_container">
+            <label>Address:</label>
+            {{form.personInCaseofEmergencyAddress}}
+        </div>
+        <div class="field_container">
+            <label>Landline:</label>
+            {{form.personInCaseofEmergencyLandline}}
+        </div>
+        <div class="field_container">
+            <label>Mobile Number (Cellphone No.):</label>
+            {{form.personInCaseofEmergencyMobileNo}}
+        </div>
+        <h2 class="fullLenght">D. HEALTH DATA:</h2>
+        <div class="field_container">
+            <label>Disabilities:</label>
+            {{form.disabilies}}
+        </div>
+        <div class="field_container">
+            <label>Allergies:</label>
+            {{form.allergies}}
+        </div>
+        <div class="field_container">
+            <label>Blood Type:</label>
+            {{form.bloodType}}
+        </div>
+        <h2 class="fullLenght">E. EDUCATION BACKGROUND:</h2>
+        <table class="fullLenght">
+            <tr>
+                <th class="firstitem"></th>
+                <th>Name of School/Address</th>
+                <th>Awards/Honors Received</th>
+                <th>Year Graduated</th>
+            </tr>
+            <tr>
+                <td class="firstitem">
+                    <div class="field_container2">
+                        Elementary
+                        {{form.elementaryType}}
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container2">
+                        {{form.elementaryName}}
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container2">
+                        {{form.elementaryAwardsRecieved}}
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container2">
+                        {{form.elementaryYearGraduated}}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="firstitem">
+                    <div class="field_container2">
+                        Senior High School:
+                        {{form.seniorHighSchoolType}}
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container2">
+                        {{form.seniorHighSchoolName}}
+                    </div>
+                </td>
+                    
+                <td>
+                    <div class="field_container2">
+                        {{form.seniorHighSchoolAwardsRecieved}}
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container2">
+                        {{form.seniorHighSchoolYearGraduated}}
+                    </div>  
+                </td>
+            </tr>
+            <tr>
+                <td class="firstitem">
+                    College (If Transferee)
+                </td>
+                <td>
+                    <div class="field_container2">
+                        {{form.collegeName}}
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container2">
+                        {{form.collegeAwardsRecieved}}
+                    </div>    
+                </td>
+                <td>
+                    <div class="field_container2">
+                        {{form.collegeYearGraduated}}</td>
+                    </div>
+            </tr>
+            <tr>
+                <td class="firstitem">
+                    <div class="field_container2">
+                        Where you a school leaver?
+                        {{form.schoolLeaver}}
+                    </div>
+                </td>
+                <td colspan="3">
+                    <div class="field_container2 hidden" id="reasonOfLeaving">
+                        <label>If yes why?</label> 
+                        {{form.schoolLeaverWhy}}
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="field_container fullLenght">
+            <label>What was your last education attainment when you stopped studying?</label>
+            {{form.lastEducationAttainment}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>Who is financially supporting your studies:</label>
+            {{form.finaciallySupporting}}
+        <div class="field_container halfLength hidden" id="scholarshiptype">
+            <label>What kind of scholarship?</label>
+            {{form.typeOfScholarship}}
+        </div>
+        <div class="field_container halfLength hidden" id="specifyScholarShip">
+            <label>Please specify:</label>
+            {{form.specifyScholarship}}
+        </div>
+        </div>
+        <h2 class="fullLenght">F. MEMBERSHIP IN ORGANIZATION/S:</h2>
+        <table id="organizationTable" class="fullLenght">
+            <tr>
+                <th>Name of Organization</th>
+                <th>In School/Outside School</th>
+                <th>Position / Title</th>
+                <th>Inclusive Years</th>
+            </tr>
+            <tr class="orgRowTemplate">
+                <td>
+                    <div class="field_container">
+                        <input type="text" name="name_of_organization[]" required>
+                    </div>
+                </td>
+                <td>
+                    <div class="inoutschool field_container2">    
+                        <div id="inoutSchool" class="side-way"><div>
+                            <label for="id_elementaryType_0"><input type="radio" name="inoutSchool[]" value="True" class="side-way" required="" id="inoutSchool_0">
+                                Yes
+                            </label>
+                        
+                        </div>
+                        <div id="inoutSchool" class="side-way">
+                            <label for="id_elementaryType_1"><input type="radio" name="inoutSchool[]" value="False" class="side-way" required="" id="inoutSchool_1">
+                                No
+                            </label>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container">
+                        <input type="text" name="position[]">
+                    </div>
+                </td>
+                <td>
+                    <div class="field_container">
+                        <input type="text" name="inclusiveyears[]">
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+        <button id="addOrganization" class="fullLenght">Add Organization</button>
+        <h2 class="fullLenght">G. UNIQUE FEATURES</h2>
+        <div class="field_container fullLenght">
+            <label>Special Skills/Talents:</label>
+            {{form.specialSkill}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>Goals:</label>
+            {{form.goals}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>Present Concerns/Problems:</label>
+            {{form.presentConcerns}}
+        </div>
+        <h2 class="fullLenght">H. STUDENT'S GENERAL PERSONALITY MAKE-UP</h2>
+        <label>Check [✓] any of the following items that describe you best.</label>
+        <table class="fullLenght">
+            <tr>
+                <td><input type="checkbox" name="describeYouBest[]" value="Friendly">Friendly</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Self-Confident">Self-Confident</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Calm">Calm</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Quick-Tempered">Quick-Tempered</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Feels Inferior">Feels Inferior</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="describeYouBest[]" value="Unhappy">Unhappy</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Easily Bored">Easily Bored</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Talented">Talented</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Withdrawn">Withdrawn</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Conscientious">Conscientious</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="describeYouBest[]" value="Talkative">Talkative</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Cheerful">Cheerful</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Moody">Moody</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Easily Exhausted">Easily Exhausted</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Lazy">Lazy</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="describeYouBest[]" value="Sensitive">Sensitive</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Poor health">Poor health</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Received">Reserved</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Quiet">Quiet</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Independent">Independent</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="describeYouBest[]" value="Depressed">Depressed</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Suspicious">Suspicious</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Irritable">Irritable</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Stubborn">Stubborn</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Thoughtful">Thoughtful</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="describeYouBest[]" value="Lovable">Lovable</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Jealous">Jealous</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Shy">Shy</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Sarcastic">Sarcastic</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Tactful">Tactful</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="describeYouBest[]" value="Pessimistic">Pessimistic</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Submissive">Submissive</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Optimistic">Optimistic</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Happy-go-lucky">Happy-go-lucky</td>
+                <td><input type="checkbox" name="describeYouBest[]" value="Goal-oriented">Goal-oriented</td>
+            </tr>
+            <tr>
+                <td colspan="5" class="field_container">Others (please specify) {{form.describeYouBestOther}}</td>
+            </tr>
+        </table>
+        <div class="field_container fullLenght">
+            <label>Whose decision was it to take this college course?</label>
+            {{form.decisionForTheCourse}}
+            <label >If you did not choose your current course, which course do you prefer?</label>
+            {{form.specifyTheDecision}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>Do you plan to work on your specialization after graduation?</label>
+            {{form.doYouPlanToWork}}
+        </div>
+        <div class="field_container fullLenght hidden" id="spificyWhyDontPlantToWork">
+            <label>Specify why:</label>
+            {{form.specifyIfNo}}
+        </div>
+        <div class="field_container fullLenght">
+            <label>What possible factors will hinder you to continue your college education?</label>
+            {{form.possibleFactors}}
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="{% static 'scripts/individual_profile.js'%}"></script>
+        <button type="submit" class="fullLenght">Submit</button>
+    </div>  
+</form>

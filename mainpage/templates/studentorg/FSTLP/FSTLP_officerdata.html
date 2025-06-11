@@ -1,0 +1,422 @@
+{% extends "guidance/main.html" %} {% load static %} {% block title %}Student
+Organization (FSTLP){% endblock %} {% block headcontent %}
+<link rel="stylesheet" href="{% static '/studentorg/css/main.css' %}" />
+<link rel="stylesheet" href="{% static '/studentorg/css/org.css' %}" />
+<link rel="stylesheet" href="{% static '/studentorg/css/general.css' %}" />
+<link rel="stylesheet" href="{% static '/studentorg/css/tables.css' %}" />
+{% endblock %} {% block bodycontent %}
+<div class="pcontainer">
+  <div class="headert">
+    <h1>Future Science and Technology Leaders of the Philippines</h1>
+  </div>
+  <p class="pages">
+    <a href="{% url 'FSTLP_profile' %}">Profiles</a> >
+    <a href="{% url 'FSTLP_officerdata' %}">Register Officer</a>
+  </p>
+
+  <div class="tabs">
+    <a href="{% url 'FSTLP_profile' %}" class="tab">Profiles</a>
+    <a href="{% url 'FSTLP_projects' %}" class="tab">Projects</a>
+    <a href="{% url 'FSTLP_financial' %}" class="tab">Financial Statements</a>
+    <a href="{% url 'FSTLP_accreditation' %}" class="tab"
+      >Accreditation Application</a
+    >
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    <div class="maincontain">
+      <div class="subcontain">
+        <div class="form-column">
+          <h1 class="hd">Officer form</h1>
+          {% csrf_token %}
+          <label for="Officer_profile_picture">Profile Picture:</label>
+          <input
+            type="file"
+            id="Officer_profile_picture"
+            name="Officer_profile_picture"
+            accept="image/*"
+          />
+          {% if uploaded_files.Officer_profile_picture %}
+          <a
+            href="{{ uploaded_files.Officer_profile_picture.url }}"
+            target="_blank"
+            >View Uploaded Profile Picture</a
+          >
+          {% endif %}
+
+          <label for="surname">Surname:</label>
+          <input type="text" id="surname" name="surname" required />
+
+          <label for="firstname">First Name:</label>
+          <input type="text" id="firstname" name="firstname" required />
+
+          <label for="middlename">Middle Initial:</label>
+          <input type="text" id="middlename" name="middlename" required />
+
+          <label for="course">Course:</label>
+          <select id="course" name="course" required>
+            <option value=""></option>
+            <option value="BSIT">BSIT</option>
+            <option value="BSIE">BSIE</option>
+            <option value="BIT-CT">BIT-COMPTECH</option>
+            <option value="BIT-GARMENTS">BIT-GARMENTS</option>
+            <option value="BIT-AUTOMOTIVE">BIT-AUTOMOTIVE</option>
+            <option value="BIT-DRAFTING">BIT-DRAFTING</option>
+            <option value="BIT-ELECTRONICS">BIT-ELECTRONICS</option>
+            <option value="BEED">BEED</option>
+            <option value="BSED-MATH">BSED-MATH</option>
+            <option value="BTLED">BTLED</option>
+            <option value="BSF">BSF</option>
+            <option value="BSA">BSA</option>
+            <option value="BAL">BAL</option>
+            <option value="BAEL">BAEL</option>
+            <option value="BS-PSYCHOLOGY">BS-PSYCHOLOGY</option>
+            <option value="BSHM">BSHM</option>
+            <option value="BSTM">BSTM</option>
+          </select>
+
+          <label for="year">Year:</label>
+          <select id="year" name="year" required>
+            <option value=""></option>
+            <option value="1st">1st</option>
+            <option value="2nd">2nd</option>
+            <option value="3rd">3rd</option>
+            <option value="4th">4th</option>
+            <option value="Irregular">Irregular</option>
+          </select>
+
+          <label for="mobile_number">Mobile Number:</label>
+          <input
+            type="number"
+            id="mobile_number"
+            name="mobile_number"
+            required
+          />
+
+          <label for="position">Position:</label>
+          <input type="text" id="position" name="position" required />
+
+          <label for="organization">Organization:</label>
+          <select id="organization" name="organization" required>
+            <option value="FSTLP">FSTLP</option>
+          </select>
+
+          <label for="town_address">Town Address:</label>
+          <input type="text" id="town_address" name="town_address" required />
+
+          <label for="home_address">Home Address:</label>
+          <input type="text" id="home_address" name="home_address" required />
+
+          <label for="age">Age:</label>
+          <input type="number" id="age" name="age" required />
+
+          <label for="place_of_birth">Place of Birth:</label>
+          <input
+            type="text"
+            id="place_of_birth"
+            name="place_of_birth"
+            required
+          />
+
+          <label for="date_of_birth">Date of Birth:</label>
+          <input type="date" id="date_of_birth" name="date_of_birth" required />
+
+          <label for="nationality">Nationality:</label>
+          <input type="text" id="nationality" name="nationality" required />
+
+          <label for="civil_status">Civil Status:</label>
+          <select id="civil_status" name="civil_status" required>
+            <option value=""></option>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Widowed">Widowed</option>
+            <option value="Separated">Separated</option>
+            <option value="Divorced">Divorced</option>
+          </select>
+
+          <label for="sex">Sex:</label>
+          <select id="sex" name="sex" required>
+            <option value=""></option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+
+          <label for="height">Height:</label>
+          <input type="number" id="height" name="height" required />
+
+          <label for="distinguishing_mark">Distinguishing Mark:</label>
+          <input
+            type="text"
+            id="distinguishing_mark"
+            name="distinguishing_mark"
+          />
+
+          <label for="weight">Weight:</label>
+          <input type="number" id="weight" name="weight" required />
+
+          <label for="hobbies">Hobbies:</label>
+          <input type="text" id="hobbies" name="hobbies" />
+
+          <label for="special_talent">Special Talent:</label>
+          <input type="text" id="special_talent" name="special_talent" />
+
+          <h1 class="hd stop">Parents:</h1>
+          <!--Father-->
+          <h2 class="stop">Father</h2>
+          <label for="father_name">Father Name:</label>
+          <input type="text" id="father_name" name="father_name" />
+
+          <label for="father_occupation">Father Occupation:</label>
+          <input type="text" id="father_occupation" name="father_occupation" />
+
+          <label for="father_address">Father Address:</label>
+          <input type="text" id="father_address" name="father_address" />
+
+          <label for="father_mobile_number">Father Mobile Number:</label>
+          <input
+            type="number"
+            id="father_mobile_number"
+            name="father_mobile_number"
+          />
+
+          <!--Mother-->
+          <h2>Mother</h2>
+          <label for="mother_name">Mother Name:</label>
+          <input type="text" id="mother_name" name="mother_name" />
+
+          <label for="mother_occupation">Mother Occupation:</label>
+          <input type="text" id="mother_occupation" name="mother_occupation" />
+
+          <label for="mother_address">Mother Address:</label>
+          <input type="text" id="mother_address" name="mother_address" />
+
+          <label for="mother_number">Mother Mobile Number:</label>
+          <input type="number" id="mother_number" name="mother_number" />
+
+          <!--Guardian-->
+          <h2>Guardian</h2>
+          <label for="guardian_name">Guardian Name:</label>
+          <input type="text" id="guardian_name" name="guardian_name" />
+
+          <label for="guardian_occupation">Guardian Occupation:</label>
+          <input
+            type="text"
+            id="guardian_occupation"
+            name="guardian_occupation"
+          />
+
+          <label for="guardian_address">Guardian Address:</label>
+          <input type="text" id="guardian_address" name="guardian_address" />
+
+          <label for="guardian_number">Guardian Mobile Number:</label>
+          <input type="number" id="guardian_number" name="guardian_number" />
+
+          <!--Tertiary-->
+          <h1 class="hd stop">Education:</h1>
+          <h2 class="stop">Tertiary</h2>
+          <label for="tertiary_institution">Institution:</label>
+          <input
+            type="text"
+            id="tertiary_institution"
+            name="tertiary_institution"
+          />
+
+          <label for="tertiary_address">Address:</label>
+          <input type="text" id="tertiary_address" name="tertiary_address" />
+
+          <label for="tertiary_degree_level">Degree Level:</label>
+          <input
+            type="text"
+            id="tertiary_degree_level"
+            name="tertiary_degree_level"
+          />
+
+          <label for="tertiary_date">Date:</label>
+          <input type="date" id="tertiary_date" name="tertiary_date" />
+        </div>
+        <div class="form-column">
+          <!--Secondary-->
+          <h2>Secondary</h2>
+          <label for="secondary_institution">Institution:</label>
+          <input
+            type="text"
+            id="secondary_institution"
+            name="secondary_institution"
+          />
+
+          <label for="secondary_address">Address:</label>
+          <input type="text" id="secondary_address" name="secondary_address" />
+
+          <label for="secondary_degree_level">Degree Level:</label>
+          <input
+            type="text"
+            id="secondary_degree_level"
+            name="secondary_degree_level"
+          />
+
+          <label for="secondary_date">Date:</label>
+          <input type="date" id="secondary_date" name="secondary_date" />
+
+          <!--Elementary-->
+          <h2>Elementary</h2>
+          <label for="elementary_institution">Institution:</label>
+          <input
+            type="text"
+            id="elementary_institution"
+            name="elementary_institution"
+          />
+
+          <label for="elementary_address">Address:</label>
+          <input
+            type="text"
+            id="elementary_address"
+            name="elementary_address"
+          />
+
+          <label for="elementary_degree_level">Degree Level:</label>
+          <input
+            type="text"
+            id="elementary_degree_level"
+            name="elementary_degree_level"
+          />
+
+          <label for="elementary_date">Date:</label>
+          <input type="date" id="elementary_date" name="elementary_date" />
+
+          <!--Membership in other organizations-->
+          <h1 class="hd stop">Membership in other organizations:</h1>
+          <h2>First Organization</h2>
+          <label for="membership_position1">Position:</label>
+          <input
+            type="text"
+            id="membership_position1"
+            name="membership_position1"
+          />
+
+          <label for="membership_organization1">Organization:</label>
+          <input
+            type="text"
+            id="membership_organization1"
+            name="membership_organization1"
+          />
+
+          <label for="membership_date1">Date:</label>
+          <input type="date" id="membership_date1" name="membership_date1" />
+
+          <h2>Second Organization</h2>
+          <label for="membership_position2">Position:</label>
+          <input
+            type="text"
+            id="membership_position2"
+            name="membership_position2"
+          />
+
+          <label for="membership_organization2">Organization:</label>
+          <input
+            type="text"
+            id="membership_organization2"
+            name="membership_organization2"
+          />
+
+          <label for="membership_date2">Date:</label>
+          <input type="date" id="membership_date2" name="membership_date2" />
+
+          <h2>Third Organization</h2>
+          <label for="membership_position3">Position:</label>
+          <input
+            type="text"
+            id="membership_position3"
+            name="membership_position3"
+          />
+
+          <label for="membership_organization3">Organization:</label>
+          <input
+            type="text"
+            id="membership_organization3"
+            name="membership_organization3"
+          />
+
+          <label for="membership_date3">Date:</label>
+          <input type="date" id="membership_date3" name="membership_date3" />
+
+          <h2>Fourth Organization</h2>
+          <label for="membership_position4">Position:</label>
+          <input
+            type="text"
+            id="membership_position4"
+            name="membership_position4"
+          />
+
+          <label for="membership_organization4">Organization:</label>
+          <input
+            type="text"
+            id="membership_organization4"
+            name="membership_organization4"
+          />
+
+          <label for="membership_date4">Date:</label>
+          <input type="date" id="membership_date4" name="membership_date4" />
+
+          <h2>Fifth Organization</h2>
+          <label for="membership_position5">Position:</label>
+          <input
+            type="text"
+            id="membership_position5"
+            name="membership_position5"
+          />
+
+          <label for="membership_organization5">Organization:</label>
+          <input
+            type="text"
+            id="membership_organization5"
+            name="membership_organization5"
+          />
+
+          <label for="membership_date5">Date:</label>
+          <input type="date" id="membership_date5" name="membership_date5" />
+
+          <h1 class="hd stop">Seminars:</h1>
+          <h2 class="stop">Seminar 1</h2>
+          <label for="seminar_title1">Title:</label>
+          <input type="text" id="seminar_title1" name="seminar_title1" />
+
+          <label for="seminar_date1">Date:</label>
+          <input type="date" id="seminar_date1" name="seminar_date1" />
+
+          <h2>Seminar 2</h2>
+          <label for="seminar_title2">Title:</label>
+          <input type="text" id="seminar_title2" name="seminar_title2" />
+
+          <label for="seminar_date2">Date:</label>
+          <input type="date" id="seminar_date2" name="seminar_date2" />
+
+          <h2>Seminar 3</h2>
+          <label for="seminar_title3">Title:</label>
+          <input type="text" id="seminar_title3" name="seminar_title3" />
+
+          <label for="seminar_date3">Date:</label>
+          <input type="date" id="seminar_date3" name="seminar_date3" />
+
+          <h2>Seminar 4</h2>
+          <label for="seminar_title4">Title:</label>
+          <input type="text" id="seminar_title4" name="seminar_title4" />
+
+          <label for="seminar_date4">Date:</label>
+          <input type="date" id="seminar_date4" name="seminar_date4" />
+
+          <h2>Seminar 5</h2>
+          <label for="seminar_title5">Title:</label>
+          <input type="text" id="seminar_title5" name="seminar_title5" />
+
+          <label for="seminar_date5">Date:</label>
+          <input type="date" id="seminar_date5" name="seminar_date5" />
+
+          <button type="submit" style="margin-top: 10px" class="button">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

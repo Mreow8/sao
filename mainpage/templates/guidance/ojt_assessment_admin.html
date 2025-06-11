@@ -1,0 +1,188 @@
+<script src="{% static 'scripts/guidance/intake.js'%}"></script>
+{% extends "main.html" %} {% load static %} {% block title %}OJT
+Assessments/Psychological Issuance Admin{% endblock %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/counseling_app_admin.css'%}"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/ojt_gmc.css'%}"
+/>
+<script src="{% static 'scripts/guidance/html2pdf.js'%}"></script>
+
+{% endblock %} {% block bodycontent %}
+<div class="showform_container">
+  <div class="form_container">
+    <button class="closeform">×</button>
+    <div class="scollable">
+      <div class="certificate" id="paper">
+        <div class="logo_content">
+          <img
+            class="logo1"
+            src="{% static 'imgs/CTU_logo.png' %}"
+            alt="CTU Logo"
+          />
+          <div class="header">
+            <p class="Republique">REPUBLIC OF THE PHILIPPINES</p>
+            <p class="cebu">CEBU TECHNOLOGICAL UNIVERSITY ARGAO CAMPUS</p>
+            <p>ARGAO CAMPUS</p>
+            <p>Ed Kintanar Street Lamacan, Argao Cebu Philippines</p>
+            <p>
+              Website:<a href="">http//www.argao.ctu.edu.ph</a> E-mail:
+              cdargao@ctud.edu.ph
+            </p>
+            <p>
+              Phone No: (032) 485-8290/485-5109 loc 1700Fax NO (032)4858-290
+            </p>
+          </div>
+          <img
+            class="logo2"
+            src="{% static 'assets/asean.png' %}"
+            alt="ASEAN Logo"
+          />
+        </div>
+        <hr />
+        <div class="title">
+          <h2>
+            OFFICE OF STUDENT LIFE<br />
+            GUIDANCE SERVICES CENTER<br />
+            CERTICATION OF GOOD MORAL CHARACTER
+          </h2>
+        </div>
+        <div class="content">
+          <br />
+          <p class="beggining-statement">To Whom It May Concern:</p>
+          <br />
+          <p>
+            This is to certify that <strong id="student-name"></strong> is a
+            bonafide student of Cebu Technological University-Argao Campus
+            during the school year <strong id="school-year"></strong> (4th Year
+            , 2nd Semenster) taking
+            <strong id="student-course"></strong>
+          </p>
+          <br />
+          <p>
+            During his stay in this institution, we have not found any record to
+            show that he committed any act contrary to the rules and regulations
+            of the school.
+          </p>
+          <br />
+          <p>
+            This is also to certify that upon assessment, the person whose name
+            mentioned above is emotionally fit to undergo intership.
+          </p>
+          <br />
+          <p>
+            This certification is issued on
+            <strong id="issue-date"></strong> for the purpose of his
+            <strong>OJT Requirement.</strong>
+          </p>
+        </div>
+        <br />
+        <div class="signature">
+          <div class="guidance">
+            <p class="names"><strong>RHEA JANE L. CAYNILA, RPm, RGC</strong></p>
+            <p>Guidance Service Coordinator</p>
+          </div>
+          <br />
+          <div class="guidance">
+            <p class="names"><strong>MELANIE R. ALBARRACIN</strong></p>
+            <p>Dean, Student Life</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="saveButton">Save</button>
+  </div>
+</div>
+<div class="container">
+  {{form.errors}}
+  <h3>GUIDANCE(Admin)</h3>
+  <span
+    ><label id="dir-gray">Home</label
+    ><label id="dir-orange">
+      > OJT Assessments/Psychological Issuance</label
+    ></span
+  >
+  <div class="form-container">
+    {% csrf_token %}
+    <h2>OJT Assessments/Psychological Issuance Request List</h2>
+    <label>Enter ID number:</label>
+    <span id="search_id">
+      <input
+        type="text"
+        name="studentID"
+        placeholder="search"
+        required=""
+        id="studentIDBox"
+      />
+      <button class="OrangeButton" id="searchButton">Search</button>
+      <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </span>
+    <table id="info_table">
+      <tr id="info_table_head">
+        <th>DATE RECEIVED</th>
+        <th>STUDENT ID</th>
+        <th>NAME</th>
+        <th>School Year</th>
+        <th colspan="3">STATUS</th>
+      </tr>
+      {% for ojt_request in ojt_assessment_request reversed %}
+      <tr>
+        <input
+          type="hidden"
+          name="OjtRequestID"
+          class="OjtRequestID"
+          value="{{ ojt_request.OjtRequestID }}"
+        />
+        <td>{{ ojt_request.dateRecieved }}</td>
+        <td>{{ ojt_request.studentID.studID }}</td>
+        <td>
+          {{ ojt_request.studentID.lastname }}, {{
+          ojt_request.studentID.firstname }}
+        </td>
+        <td>{{ ojt_request.schoolYear }}</td>
+
+        <td>
+          {% if ojt_request.status == 'Accepted' %}
+          <span class="accepted">{{ ojt_request.status }}</span>
+          {% elif ojt_request.status == 'Declined' %}
+          <span class="declined">{{ ojt_request.status }}</span>
+          {% elif ojt_request.status == 'Pending' %}
+          <span class="pending">{{ ojt_request.status }}</span>
+          {% elif ojt_request.status == 'Expired' %}
+          <span class="expired">{{ ojt_request.status }}</span>
+          {% endif %}
+        </td>
+        <td>
+          <div class="horizontal">
+            {% if ojt_request.status != 'Expired' and ojt_request.status !=
+            'Accepted' and ojt_request.status != 'Declined' %}
+            <button class="accept">ACCEPT</button>
+            <button class="decline">DECLINE</button>
+            {% endif %}
+            <button class="delete">DELETE</button>
+          </div>
+        </td>
+        <td>
+          {% csrf_token %} {% if ojt_request.status == 'Accepted' %}
+          <button class="showformButton">SHOW FORM</button>
+          {% else %}
+          <button class="showformButton hidden">SHOW FORM</button>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static 'scripts/guidance/ojt_assessment_admin.js'%}"></script>
+{% endblock %}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accreditation Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 15px;
+            height: 60px;
+            width: 90px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Accreditation Form</h1>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h3>Accreditation Information</h3>
+
+            <label for="organization">Organization:</label>
+            <select id="organization" name="organization" required>
+                <option value="SSG">SSG</option>
+            </select>  
+
+            <label for="letter_of_intent">Letter of Intent:</label>
+            {{ form.letter_of_intent }}
+            {% if uploaded_files.letter_of_intent %}
+                <a href="{{ uploaded_files.letter_of_intent.url }}" target="_blank">View Uploaded Letter of Intent</a>
+            {% endif %}
+
+            <label for="list_of_officers">List of Officers:</label>
+            {{ form.list_of_officers }}
+            {% if uploaded_files.list_of_officers %}
+                <a href="{{ uploaded_files.list_of_officers.url }}" target="_blank">View Uploaded List of Officers</a>
+            {% endif %}
+
+            <label for="certificate_of_registration">Certificate of Registration:</label>
+            {{ form.certificate_of_registration }}
+            {% if uploaded_files.certificate_of_registration %}
+                <a href="{{ uploaded_files.certificate_of_registration.url }}" target="_blank">View Uploaded Certificate of Registration</a>
+            {% endif %}
+
+            <label for="list_of_members">List of Members:</label>
+            {{ form.list_of_members }}
+            {% if uploaded_files.list_of_members %}
+                <a href="{{ uploaded_files.list_of_members.url }}" target="_blank">View Uploaded List of Members</a>
+            {% endif %}
+
+            <label for="accomplishment_report">Accomplishment Report:</label>
+            {{ form.accomplishment_report }}
+            {% if uploaded_files.accomplishment_report %}
+                <a href="{{ uploaded_files.accomplishment_report.url }}" target="_blank">View Uploaded Accomplishment Report</a>
+            {% endif %}
+
+            <label for="calendar_of_activities">Calendar of Activities:</label>
+            {{ form.calendar_of_activities }}
+            {% if uploaded_files.calendar_of_activities %}
+                <a href="{{ uploaded_files.calendar_of_activities.url }}" target="_blank">View Uploaded Calendar of Activities</a>
+            {% endif %}
+
+            <label for="financial_statement">Financial Statement:</label>
+            {{ form.financial_statement }}
+            {% if uploaded_files.financial_statement %}
+                <a href="{{ uploaded_files.financial_statement.url }}" target="_blank">View Uploaded Financial Statement</a>
+            {% endif %}
+            
+            <label for="bank_passbook">Bank Passbook:</label>
+            {{ form.bank_passbook }}
+            {% if uploaded_files.bank_passbook %}
+                <a href="{{ uploaded_files.bank_passbook.url }}" target="_blank">View Uploaded Bank Passbook</a>
+            {% endif %}
+            
+            <label for="inventory_of_properties">Inventory of Properties:</label>
+            {{ form.inventory_of_properties }}
+            {% if uploaded_files.inventory_of_properties %}
+                <a href="{{ uploaded_files.inventory_of_properties.url }}" target="_blank">View Uploaded Inventory of Properties</a>
+            {% endif %}
+            
+            <label for="organization_bylaws">Organization Bylaws:</label>
+            {{ form.organization_bylaws }}
+            {% if uploaded_files.organization_bylaws %}
+                <a href="{{ uploaded_files.organization_bylaws.url }}" target="_blank">View Uploaded Organization Bylaws</a>
+            {% endif %}
+
+            <label for="faculty_adviser_appointment">Faculty Adviser Appointment:</label>
+            {{ form.faculty_adviser_appointment }}
+            {% if uploaded_files.faculty_adviser_appointment %}
+                <a href="{{ uploaded_files.faculty_adviser_appointment.url }}" target="_blank">View Uploaded Faculty Adviser Appointment</a>
+            {% endif %}
+
+            <label for="other_documents">Other Documents:</label>
+            {{ form.other_documents }}
+            {% if uploaded_files.other_documents %}
+                <a href="{{ uploaded_files.other_documents.url }}" target="_blank">View Uploaded Other Documents</a>
+            {% endif %}
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

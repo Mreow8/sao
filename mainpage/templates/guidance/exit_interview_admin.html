@@ -1,0 +1,1117 @@
+{% extends "guidance/main.html" %} {% load static %} {% block title %}Exit
+Interview{% endblock %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/counseling_app_admin.css'%}"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/exit_form.css'%}"
+/>
+<script src="{% static 'scripts/guidance/html2pdf.js'%}"></script>
+{% endblock %} {% block bodycontent %}
+<div class="showform_container">
+  <div class="form_container">
+    <button class="closeform">×</button>
+    <div class="scollable">
+      <div class="certificate" id="paper">
+        <div class="page-container">
+          <div class="logo_content">
+            <img
+              class="logo1"
+              src="{% static 'assets/CTU_logo.png' %}"
+              alt="CTU Logo"
+            />
+            <div class="header">
+              <p class="Republique">REPUBLIC OF THE PHILIPPINES</p>
+              <p class="cebu">CEBU TECHNOLOGICAL UNIVERSITY ARGAO CAMPUS</p>
+              <p>ARGAO CAMPUS</p>
+              <p>Ed Kintanar Street Lamacan, Argao Cebu Philippines</p>
+              <p>
+                Website:<a href="">http//www.argao.ctu.edu.ph</a> E-mail:
+                cdargao@ctud.edu.ph
+              </p>
+              <p>
+                Phone No: (032) 485-8290/485-5109 loc 1700Fax NO (032)4858-290
+              </p>
+            </div>
+            <img
+              class="logo2"
+              src="{% static 'assets/asean.png' %}"
+              alt="ASEAN Logo"
+            />
+          </div>
+          <hr />
+          <div class="title">
+            <h4>EXIT INTERVIEW<br /></h4>
+            <p>
+              We value your opinion and are interested in knowing more about
+              your decision to leave
+              <strong>Cebu Technological University –Argao Campus.</strong>
+              Please take some time to complete this questionnaire.
+            </p>
+            <table class="title_table">
+              <tr>
+                <td>Name: <label id="name"></label></td>
+                <td>Date: <label id="date"></label></td>
+              </tr>
+              <tr>
+                <td>
+                  Date Enrolled at CTU-AC: <label id="date-enrolled"></label>
+                </td>
+                <td>Contact #: 0<label id="contact"></label></td>
+              </tr>
+            </table>
+          </div>
+          <div class="content">
+            <strong
+              >1. Please describe your primary reason of leaving CTU- Argao
+              Campus.</strong
+            >
+            <span class="answer-long-text" id="question1"></span>
+            <strong
+              >2. Were you satisfied with your academic experience at CTU-Argao
+              Campus?<label id="question2_yes">__</label>YES<label
+                id="question2_no"
+                >__</label
+              >NO</strong
+            >
+            <p>Please give us feedback on your academic experience:</p>
+            <span class="answer-long-text" id="question2"></span>
+            <strong
+              >3. Were you satisfied with your social experience at CTU –Argao
+              Campus?<label id="question3_yes">__</label>YES<label
+                id="question3_no"
+                >__</label
+              >NO</strong
+            >
+            <p>
+              Please give us feedback on your social experiences (this includes
+              your experiences with other students, teachers, employees, clubs,
+              organizations, etc.):
+            </p>
+            <span class="answer-long-text" id="question3"></span>
+            <strong
+              >4. Were you satisfied with the support services offered at
+              CTU-Argao?<label id="question4_yes">__</label>YES<label
+                id="question4_no"
+                >__</label
+              >NO</strong
+            >
+            <p>
+              Please give us feedback with your experience with student support
+              services (SAO, Guidance office, Departments, Clubs/Organizations)
+            </p>
+            <span class="answer-mid-text" id="question4"></span>
+            <p class="long-text-p">
+              Please review the list below and check everything that contributed
+              to your decision to leave CTU-Argao Campus. Then please rank
+              everything in order of significance, with 1 being the most
+              significant reason for your withdrawal.
+            </p>
+
+            <table
+              style="border-collapse: collapse; margin-left: 52.31pt"
+              cellspacing="0"
+            >
+              <tbody>
+                <tr style="height: 17pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                    bgcolor="#FCE9D9"
+                  >
+                    <p
+                      class="s5"
+                      style="
+                        text-indent: 0pt;
+                        line-height: 15pt;
+                        text-align: center;
+                      "
+                    >
+                      Areas
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    bgcolor="#FCE9D9"
+                  >
+                    <p style="text-indent: 0pt; text-align: left"><br /></p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Academically too challenging
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data1"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Not academically challenging enough
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data2"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Does not offer my academic major
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data3"
+                    ></p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      What is your intended major?
+                    </p>
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                      id="intendedMajor"
+                    ></p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data4"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p style="text-indent: 0pt; text-align: left"></p>
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Size of the School
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data5"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Location of the School
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data6"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Negative social campus climate
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data7"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Residence Hall environment not positive
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data8"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Social environment not diverse enough
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data9"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Not enough campus activities
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data10"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Needed more academic support
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data11"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Financial
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data12"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                    colspan="5"
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Medical: Injury
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data13"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <br />
+        </div>
+        <div class="page-container additionalpadding">
+          <div class="content">
+            <table
+              style="border-collapse: collapse; margin-left: 52.31pt"
+              cellspacing="0"
+            >
+              <tbody>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Medical: Psychological or Emotional
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 197pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data14"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 14pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        line-height: 12pt;
+                        text-align: left;
+                      "
+                    >
+                      Family obligations
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 197pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data15"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr style="height: 68pt">
+                  <td
+                    style="
+                      width: 198pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        text-align: left;
+                      "
+                    >
+                      Major life event (example:marriage, birth of a child,
+                      divorce, etc.).
+                    </p>
+                    <p style="text-indent: 0pt; text-align: left"><br /></p>
+                    <p
+                      class="s6"
+                      style="
+                        padding-left: 5pt;
+                        text-indent: 0pt;
+                        text-align: left;
+                      "
+                    >
+                      *Please explain:
+                    </p>
+                  </td>
+                  <td
+                    style="
+                      width: 197pt;
+                      border-top-style: solid;
+                      border-top-width: 1pt;
+                      border-left-style: solid;
+                      border-left-width: 1pt;
+                      border-bottom-style: solid;
+                      border-bottom-width: 1pt;
+                      border-right-style: solid;
+                      border-right-width: 1pt;
+                    "
+                  >
+                    <p
+                      style="text-indent: 0pt; text-align: left"
+                      id="table_data16"
+                    >
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="long-text-p">
+              Please continue to tell us in your own words about your experience
+              at CTU-Argao Campus.
+            </p>
+            <strong
+              >5. When did you first consider leaving CTU-Argao Campus?</strong
+            >
+            <span class="answer-mid-text" id="question5"></span>
+            <strong
+              >6. Under what conditions, if any, would you have stayed at
+              CTU-Argao Campus?</strong
+            >
+            <span class="answer-mid-text" id="question6"></span>
+            <strong
+              >7. Would you recommend attending CTU-Argao Campus to prospective
+              new students?</strong
+            >
+            <span class="answer-mid-text" id="question7"></span>
+            <strong
+              >8. Overall, how satisfied are you with CTU-Argao Campus?</strong
+            >
+            <div class="check-box-container">
+              <label id="question8_vs">[ ]Very satisfied</label>
+              <label id="question8_ss">[ ]Somewhat satisfied</label>
+              <label id="question8_s">[ ]Satisfied</label>
+              <label id="question8_sd">[ ]Somewhat Dissatisfied</label>
+              <label id="question8_vd">[ ]Very Dissatisfied</label>
+            </div>
+            <strong
+              >9. Do you plan to return at CTU-Argao Campus in the future? If
+              yes, please indicate when.</strong
+            >
+            <span class="answer-mid-text" id="question9"></span>
+            <strong
+              >10. Were you satisfied with your academic experience at CTU-Argao
+              Campus?<label id="question10_yes">__</label>YES<label
+                id="question10_no"
+                >__</label
+              >NO</strong
+            >
+            <br />
+            <br />
+            <strong
+              >11. Is there anything else you would like us to know about your
+              time at CTU-Argao Campus?</strong
+            >
+            <span class="answer-mid-text" id="question11"></span>
+            <strong
+              >12. Are you currently employed?<label id="question12_yes"
+                >__</label
+              >YES<label id="question12_no">__</label>NO</strong
+            >
+            <p>If yes, please provide the name and address of the company:</p>
+            <span class="answer-mid-text" id="question12_ifyes"></span>
+            <p>
+              If no, please provide the name and address of the company you want
+              to apply:
+            </p>
+            <span class="answer-mid-text" id="question12_ifno"></span>
+          </div>
+          <img
+            src="{%static 'assets/pdfBottom.png'%}"
+            height="60px"
+            style="position: relative; bottom: 0"
+          />
+        </div>
+      </div>
+    </div>
+    <button class="saveButton">Save</button>
+  </div>
+</div>
+<div class="container">
+  {{form.errors}}
+  <h3>GUIDANCE(Admin)</h3>
+  <span
+    ><label id="dir-gray">Home</label
+    ><label id="dir-orange"> > Exit Interview</label></span
+  >
+  <div class="form-container">
+    {% csrf_token %}
+    <h2>Exit Interview Request List</h2>
+    <label>Enter ID number:</label>
+    <span id="search_id">
+      <input
+        type="text"
+        name="studentID"
+        placeholder="search"
+        required=""
+        id="studentIDBox"
+      />
+      <button class="OrangeButton" id="searchButton">Search</button>
+      <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </span>
+    <table id="info_table">
+      <tr id="info_table_head">
+        <th>DATE RECEIVED</th>
+        <th>STUDENT ID</th>
+        <th>NAME</th>
+        <th colspan="3">STATUS</th>
+      </tr>
+      {% for interview_request in exit_interview_request %}
+      <tr>
+        <input
+          type="hidden"
+          name="exitinterviewId"
+          class="exitinterviewId"
+          value="{{ interview_request.exitinterviewId }}"
+        />
+        <td>{{ interview_request.dateRecieved }}</td>
+        <td>{{ interview_request.studentID.studID }}</td>
+        <td>
+          {{ interview_request.studentID.lastname }}, {{
+          interview_request.studentID.firstname }}
+        </td>
+        <td>
+          {% if interview_request.status == 'Accepted' %}
+          <span class="accepted">{{ interview_request.status }}</span>
+          {% elif interview_request.status == 'Declined' %}
+          <span class="declined">{{ interview_request.status }}</span>
+          {% elif interview_request.status == 'Pending' %}
+          <span class="pending">{{ interview_request.status }}</span>
+          {% elif interview_request.status == 'Expired' %}
+          <span class="expired">{{ interview_request.status }}</span>
+          {% endif %}
+        </td>
+        <td>
+          <div class="horizontal">
+            {% if interview_request.status != 'Expired' and
+            interview_request.status != 'Accepted' and interview_request.status
+            != 'Declined' %}
+            <button class="accept" id="acceptButton">ACCEPT</button>
+            <button class="decline" id="declineButton">DECLINE</button>
+            {% endif %}
+            <button class="delete" id="delete">DELETE</button>
+          </div>
+        </td>
+        <td>
+          {% csrf_token %} {% if interview_request.status == 'Accepted' %}
+          <button class="showformButton">SHOW FORM</button>
+          {% else %}
+          <button class="showformButton hidden">SHOW FORM</button>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static 'scripts/guidance/exit_interview_admin.js'%}"></script>
+{% endblock %}
