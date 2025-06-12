@@ -102,7 +102,7 @@ def signinuser(request):
             else:
                 pass
 
-    return render(request, 'scholarship/log.html')
+    return render(request, 'login.html')
 
 def studentapplicationform(request):
     studID = request.user.username

@@ -34,11 +34,11 @@ class UserAdmin(BaseUserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
-class StudentInfoAdmin(admin.ModelAdmin):
-    list_display = ('studID', 'lastname', 'firstname', 'emailadd')
-    search_fields = ('studID', 'lastname', 'firstname', 'emailadd')
+# class (admin.ModelAdmin):
+#     list_display = ('studID', 'lastname', 'firstname', 'emailadd')
+#     search_fields = ('studID', 'lastname', 'firstname', 'emailadd')
 
-admin.site.register(studentInfo, StudentInfoAdmin)
+# admin.site.register(studentInfo, )
 
 class RequirementAdmin(admin.ModelAdmin):
     list_display = ('scholar_ID', 'year', 'semester', 'gpa', 'submission_date', 'grade_file', 'cor_file', 'schoolid_file', 'status', 'record')
