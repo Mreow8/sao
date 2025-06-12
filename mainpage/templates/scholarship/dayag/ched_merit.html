@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MERIT SUBMISSION REPORT</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dayag/print_merit.css' %}">
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <style>
+        @media print{
+            #back,title{
+                visibility: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="{% url "admin_req" %}">Submission of Requirements tracker</a></li>
+                        <li><a href="{% url "adminapplication" %}">Application tracker</a></li>
+                        <li><a href="{% url "profile" %}">Scholars Profile and Validation</a></li>
+                        <li><a href="{% url "liquidation" %}">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="{% url "ched" %}">CHED Reports Submission</a></li>
+                        <li><a href="{% url "transaction" %}">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                       <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                       <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                       <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                       <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                       <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                       <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search..." style="margin-right: 300px;">
+            <button type="submit" id="printButton">Print</button>
+            <a href="{% url 'logout' %}" style="position:relative !important; left:50px;"><button id="logOut" >Log out</button></a>
+        </div>
+        <div class="content" id="contentToPrint">
+            <div class="form_div"> 
+                 <a href="{% url 'ched' %}">
+                <img src="/static/imgs/back.png" alt="" id="back" >
+            </a>
+                <form method="GET" id="semesterForm">
+                    <label for="semester"><b>Select Semester:</b></label>
+                    <select id="semester" name="semester" onchange="document.getElementById('semesterForm').submit();">
+                        <option value="all" {% if semester == 'all' %}selected{% endif %}>All Semesters</option>
+                        <option value="1st Semester" {% if semester == '1st Semester' %}selected{% endif %}>1st Semester</option>
+                        <option value="2nd Semester" {% if semester == '2nd Semester' %}selected{% endif %}>2nd Semester</option>
+                    </select>
+                    <label for="scholarship_year"><b>Academic Year:</b></label>
+                    <select id="scholarship_year" name="scholarship_year" >
+                        <option value="All" {% if scholarship_year == 'All' %}selected{% endif %}>All</option>
+                        {% for year in years %}
+                            <option value="{{ year }}" {% if scholarship_year == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                    <script>
+                        $(document).ready(function() {
+                            $('#scholarship_year').change(function() {
+                                $(this).closest('form').submit();
+                            });
+                        });
+                    </script>
+                </form>
+                
+                <div class="container">
+                    <div class="header">
+                        <p>Revised StuFAPs Form No. 4-1</p>
+                        <p>2017 version</p>
+                    </div>
+                    <div class="titles">
+                        <h2>Certified List of CHED Scholarship Programs (CSPs) Scholars</h2>
+                        <h3>{% if semester != 'all' %}{{ semester }}{% if semester == '1st Semester' %}st{% elif semester == '2nd Semester' %}nd{% endif %} Semester, {% endif %}Academic Year: {{ scholarship_year|default:"All Years" }}</h3>
+                    </div>
+                    <div class="institution-details">
+                        <p><strong>CEBU TECHNOLOGICAL UNIVERSITY - ARGAO</strong></p>
+                        <p>ED KINTANAR, LAMACAN, ARGAO, CEBU</p>
+                        <p>REGION: VII</p>
+                    </div>
+                    <table class="row-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Seq.</th>
+                                <th rowspan="2">AWARD NUMBER</th>
+                                <th rowspan="2">TYPE OF CSP</th>
+                                <th colspan="4">NAME</th>
+                                <th rowspan="2">SEX</th>
+                                <th rowspan="2">COURSE</th>
+                                <th rowspan="2">Year Level</th>
+                                <th rowspan="2">General Weighted Average (GWA)</th>
+                                <th rowspan="2">Number of Units Enrolled</th>
+                                <th rowspan="2">REMARKS</th>
+                            </tr>
+                            <tr>
+                                <th>LAST</th>
+                                <th>FIRST</th>
+                                <th>MIDDLE</th>
+                                <th>EXT.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detail in scholar_ids %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ detail.scholar_ID.scholar_ID }}</td>
+                                <td>{{ detail.scholar_ID.scholar_type }}</td>
+                                <td>{{ detail.scholar_ID.studID.lastname }}</td>
+                                <td>{{ detail.scholar_ID.studID.firstname }}</td>
+                                <td>{{ detail.scholar_ID.studID.middlename }}</td>
+                                <td>{{ detail.scholar_ID.studID.extension }}</td>
+                                <td>{{ detail.scholar_ID.studID.sex }}</td>
+                                <td>{{ detail.scholar_ID.studID.degree }}</td>
+                                <td>{{ detail.scholar_ID.studID.yearlvl }}</td>
+                                <td>{{ detail.gpa }}</td>
+                                <td>{{ detail.total_units_enrolled }}</td>
+                                <td>{{ detail.remarks }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="notes">
+                        <p>*Status of grantee may either be that the grantee is a new grantee, a replacement, graduated from the course, dropped from the course, transferred to another school.</p>
+                    </div>
+                    <br>
+                    <div class="footer">
+                        <div class="footer-section">
+                            <p>Prepared:</p>
+                            <br>
+                            <br>
+                            <p>____________________</p>
+                            <p>HEI Scholarship Coordinator</p>
+                        </div>
+                        <div class="footer-section">
+                            <p>Certified Correct:</p>
+                            <br>
+                            <br>
+                            <p>____________________</p>
+                            <p>HEI Registrar</p>
+                        </div>
+                        <div class="footer-section">
+                            <p>Approved:</p>
+                            <br>
+                            <br>
+                            <p>____________________</p>
+                            <p>HEI President/Head</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        document.getElementById('allYearsButton').addEventListener('click', function() {
+            document.getElementById('scholarship_year').value = '';
+            document.getElementById('semesterForm').submit();
+        });
+    </script>
+
+    <script>
+        document.getElementById('printButton').addEventListener('click', function() {
+            window.print();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TES - Admin Cost Liquidation</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/adminliquidation.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dayag/liquidation_tdp.css' %}">
+   
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="{% url "admin_req" %}">Submission of Requirements tracker</a></li>
+                        <li><a href="{% url "adminapplication" %}">Application tracker</a></li>
+                        <li><a href="{% url "profile" %}">Scholars Profile and Validation</a></li>
+                        <li><a href="{% url "liquidation" %}">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="{% url "ched" %}">CHED Reports Submission</a></li>
+                        <li><a href="{% url "transaction" %}">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                    <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                    <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                    <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                    <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                    <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                    <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search...">
+        </div>
+        <div class="content">
+            <div class="form_div"> 
+                <a href="{% url 'liquidation' %}" style="height:fit-content;">
+                <img src="/static/imgs/back.png" id="back" alt="" >
+            </a>
+                <div class="container">
+                   
+                    <h2 class="upper">TES Form - Annex 8</h2>
+                    <div class="header">
+                        <img src="/static/imgs/commision.png"  alt="Logo 1" class="logo1">
+                        <div class="text-center">
+                            <h2>FUND UTILIZATION</h2>
+                            <p><strong>CEBU TECHNOLOGICAL UNIVERSITY - ARGAO</strong></p>
+                            <p>Ed Kintanar, Lamacan, Argao, Cebu</p>
+                        </div>
+                        <img src="/static/imgs/unifast.png" alt="Logo 2" class="logo2">
+                    </div>
+                    <br>
+                        {% if error_message %}
+                        <div class="error-message" style="color: red !important; font-weight: bold;">
+                            <script>
+                        alert("{{ error_message }}");
+                    </script>
+                        </div>
+                    {% endif %}
+                    <br>
+                    <form method="POST">
+                        {% csrf_token %}
+                    <div class="taas">
+                        <label for="semester" style="margin-right:10px;"><b>Semester:</b></label>
+                        <select name="semester" id="semester" style="margin-right:100px;">
+                            <option value="1">1st Semester</option>
+                            <option value="2">2nd Semester</option>
+                        </select>
+                        
+                        <br>
+                        <label for="academic_year"style="margin-right:10px;"><b>Academic Year:</b></label>
+                        <input type="text" name="academic_year" id="academic_year" placeholder="YYYY-YYYY"  class="required-field" required>
+                        
+                    </div>
+                    <h3 id="report-header">Fund Utilization Report of the TES/Administrative Support Cost (ASC) <br>as of  {semester} {academic year}</h3>
+                    <br>
+                        <h3>Funds received from CHED Regional Office VII</h3>
+                        <table id="table">
+                            <thead> 
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Check Number</th>
+                                    <th>Particulars</th>
+                                    <th>Amount</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="date" required  class="required-field" name="date1" id="date1"></td>
+                                    <td><input type="text" required  class="required-field" name="checkNumber1" placeholder="Check Number" id="checkNumber1"></td>
+                                    <td><input type="text" required  class="required-field" name="particulars1" placeholder="Particulars" id="particulars1"></td>
+                                    <td><input type="number" required  class="required-field" step="0.01" placeholder="Amount" name="amount1" id="amount1" oninput="calculate()"></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td id="amount1_0_05">0.00</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td id="total1">0.00</td>
+                                    <td id="total1_0_05">0.00</td>
+                                </tr>
+                                <tr>
+                                    <div>
+                                        
+                                    </div>
+                                    <th colspan="5s" style="text-align: left;">Less: Disbursements</th>
+                                </tr>
+                                <tr>
+                                    <td><b>Date</b></td>
+                                    <td><b>DV No./Check No.</b></td>
+                                    <td><b>Particulars</b></td>
+                                    <td><b>Amount</b></td>
+                                </tr>
+                                <tr >
+                                    <td><input type="date" required  class="required-field" name="disbursementDate1" id="disbursementDate1"></td>
+                                    <td><input type="text" required  class="required-field" placeholder="Check Number"  name="disbursementNumber1"id="disbursementNumber1"></td>
+                                    <td><input type="text" required  class="required-field" placeholder="Particulars"  name="disbursementParticulars1" id="disbursementParticulars1"></td>
+                                    <td><input type="number" required  class="required-field" step="0.01" placeholder="Amount"  name="disbursementAmount1"id="disbursementAmount1" oninput="calculate()"></td>
+                                    <td><button type="button" id="remove" onclick="removeRow(this)">Remove</button></td>
+                                </tr>
+                                <tr id="add">
+                                    <td colspan="5" ><button type="button" id="add" onclick="addRow()">Add</button></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td id="totalDisbursement1">0.00</td>
+                                    <td id="totalDisbursement1_0_05">0.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" style="text-align:left;">Balance:</td>
+                                    <td></td>
+                                    <td><input type="number" required  class="required-field" step="0.01" placeholder="Balance" name="balance" id="balance" readonly></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="signature-section">
+                            <div class="signature">
+                                <p>Certified true and correct by:</p>
+                                <br>
+                                <p>_____________________________</p>
+                                <p>(Signature over printed name)</p>
+                                <p>Accountant</p>
+                            </div>
+                            <div class="signature">
+                                <p>Verified by:</p>
+                                <br>
+                                <p>__________________________</p>
+                                <p>(Signature over printed name)</p>
+                                <p>Internal Auditor</p>
+                            </div>
+                            <div class="signature">
+                                <p>Approved by:</p>
+                                <br>
+                                <p>__________________________</p>
+                                <p>(Signature over printed name)</p>
+                                <p>Head/President of HEI</p>
+                            </div>
+                        </div>
+                        <input type="hidden" name="total1_0_05" id="total1_0_05_input">
+                        <input type="hidden" name="totalDisbursement1_0_05" id="totalDisbursement1_0_05_input">
+                        
+                        <button type="submit" id="printButton">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/liquidation_TES.js' %}"></script>
+  
+</body>
+</html>

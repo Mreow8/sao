@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coscho - Admin Cost Liquidation</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dayag/liquidation_coscho.css' %}">
+    <link rel="stylesheet" href="{% static 'css/transactionreports.css' %}">
+    <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
+    <style>
+         @media print{
+        #back{
+            visibility: hidden;
+        }
+         .error-message {
+            display: none;
+        }
+    }
+    </style>
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="{% url "admin_req" %}">Submission of Requirements tracker</a></li>
+                        <li><a href="{% url "adminapplication" %}">Application tracker</a></li>
+                        <li><a href="{% url "profile" %}">Scholars Profile and Validation</a></li>
+                        <li><a href="{% url "liquidation" %}">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="{% url "ched" %}">CHED Reports Submission</a></li>
+                        <li><a href="{% url "transaction" %}">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                       <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                       <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                       <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                       <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                       <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                       <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search...">
+        </div>
+        <div class="content">
+            <div class="form_div"> 
+                 <a href="{% url 'liquidation' %}" style="height:fit-content;">
+                <img src="/static/imgs/back.png" alt="" id="back" >
+            </a>
+                <div class="container">
+           
+                    {% if error_message %}
+                    <div class="error-message" style="color: red !important; font-weight: bold;">
+                        <script>
+                    alert("{{ error_message }}");
+                </script>
+                    </div>
+                {% endif %}
+                    <form method="post" action="{% url 'liquidation_CoScho' %}">
+                        {% csrf_token %}
+                        <div class="header">
+                            <img src="/static/imgs/ched_o.png" id="ched-logo" alt="Logo">
+                            <h1>FUND UTILIZATION REPORT (FUR)</h1>
+                            <h2>CEBU TECHNOLOGICAL UNIVERSITY - ARGAO</h2>
+                            <h2>Ed Kintanar, Lamacan, Argao, Cebu</h2>
+                            <h3>CoScho Administrative Cost (AC)</h3>
+                            <!-- <h3>For the Covered Period of 1st semester, AY 2023-2024</h3> -->
+                        </div>
+                        <table>
+                            <tr>
+                                <th colspan="3">FUNDS RECEIVED</th>
+                            </tr>
+                            <tr>
+                                <td>DV No.:<input type="text" required name="dv_no" placeholder="DV No." style="width: 150px !important;"></td>
+                                <td>DV Date:<input type="date"  required name="dv_date" placeholder="DV Date" ></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Total Admin Cost</td>
+                                <td><input type="text"  required name="total_admin_cost" id="total_admin_cost" placeholder="Total Admin Cost" oninput="updateResults()"></td>
+                                <td class="total_admin_cost_result" style="width: 100px !important;">xxx</td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <th colspan="3">Less: FUND UTILIZED</th>
+                            </tr>
+                            <tr>
+                                <th>Disbursements</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>STIPEND</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Total Stipend per Semester basis</td>
+                                <td><input type="text"  required name="total_stipend" id="total_stipend" placeholder="Total Stipend" oninput="updateResults()"></td>
+                                <td class="total_stipend">xxx</td>
+                            </tr>
+                            <tr>
+                                <td>ADMINISTRATIVE COST (AC)</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Office Supplies Expenses</td>
+                                <td><input type="text"  required name="office_supplies" id="office_supplies" placeholder="Office Supplies Expenses" oninput="updateResults()"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Communication Expenses</td>
+                                <td><input type="text"  required name="communication" id="communication" placeholder="Communication Expenses" oninput="updateResults()"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Traveling Expenses - Local</td>
+                                <td><input type="text"  required name="traveling" id="traveling" placeholder="Traveling Expenses - Local" oninput="updateResults()"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Representation Expenses (Meetings, orientation, seminars, general assembly)</td>
+                                <td><input type="text"  required name="representation" id="representation" placeholder="Representation Expenses" oninput="updateResults()"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Other Professional Services (Salary of staff)</td>
+                                <td><input type="text"  required name="professional_services" id="professional_services" placeholder="Other Professional Services" oninput="updateResults()"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Legal Services (Notarization of docs)</td>
+                                <td><input type="text"  required name="legal_services" id="legal_services" placeholder="Legal Services" oninput="updateResults()"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Other Expenses (cash cards, service fee for remittance center)</td>
+                                <td><input type="text"  required name="other_expenses" id="other_expenses" placeholder="Other Expenses" oninput="updateResults()"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td class="total_disbursement_result" style="width: 100px;height: 40px; ">xxx</td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                                <th class="balance-header">Balance</th>
+                                <td colspan="2"><input type="text" name="balance" id="balance" placeholder="Balance"  readonly onfocus="this.style.border='none'; this.style.outline='none';"></td>
+                            </tr>
+                        </table>
+                        <br><br>
+                        <div class="signature-section">
+                            <div>
+                                <p>Prepared by:</p>
+                                <br>
+                                <p>_________________________________</p>
+                                <p>(Signature over printed name)</p>
+                                <p>CoScho Scholarship Coordinator</p>
+                            </div>
+                            <div>
+                                <p>Certified Correct by:</p>
+                                <br>
+                                <p>_________________________________</p>
+                                <p>(Signature over printed name)</p>
+                                <p>Chief Accountant</p>
+                            </div>
+                        </div>
+                        <div class="signature-section" style="justify-content: center;">
+                            <div class="text-center">
+                                <p>Approved by:</p>
+                                <br>
+                                <p>_________________________________</p>
+                                <p>(Signature over printed name)</p>
+                                <p>Head/President of HEI</p>
+                            </div>
+                        </div>
+                    <button class="submit-btn" type="submit" onclick="printFormDiv()" style="background-color:green !important;">Submit</button>
+                    </form>
+                    <button class="print-button">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/liquidation_coscho.js' %}"></script>
+</body>
+</html>

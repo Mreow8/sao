@@ -14,6 +14,7 @@ Organization{% endblock %} {% block headcontent %}
   referrerpolicy="no-referrer"
 />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
   .pages a,
   .pages {
@@ -29,6 +30,21 @@ Organization{% endblock %} {% block headcontent %}
     list-style-type: none;
     border-bottom: 2px solid #ff8000;
     padding-bottom: 10px;
+  }
+  .add-org-btn {
+    margin: 20px 0 10px 0;
+    background: #ff8000;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+  }
+  .add-org-btn:hover {
+    background: #e06d00;
+    transform: scale(1.05);
   }
 </style>
 {% endblock %} {% block bodycontent %}
@@ -47,7 +63,10 @@ Organization{% endblock %} {% block headcontent %}
     <p class="pages" style="font-size: 20px; color: black; padding-top: 10px">
       Quick Actions
     </p>
-    <p class="pages pf2">
+    <button class="add-org-btn" id="addOrgBtn">
+      <i class="fa fa-plus"></i> Add Organization
+    </button>
+    <p class="pages pf2" id="orgLinks">
       <a href="/Gen_FSTLP_profile">FSTLP</a> -
       <a href="/Gen_SI_profile">SI++</a> -
       <a href="/Gen_THEEQUATIONERS_profile">Equationers</a> -
@@ -55,26 +74,81 @@ Organization{% endblock %} {% block headcontent %}
       <a href="/Gen_TECHNOCRATS_profile">Technocrats</a>
     </p>
   </div>
-  <div class="row">
+  <div class="row" id="orgImagesRow1">
     <a href="/Gen_FSTLP_profile" class="image"
-      ><img src="{% static 'css/org1.png' %}"
+      ><img src="{% static 'studentorg/css/org1.png' %}"
     /></a>
     <a href="/Gen_SI_profile" class="image"
       ><img src="{% static 'studentorg/css/org2.png' %}"
     /></a>
     <a href="/Gen_THEEQUATIONERS_profile" class="image"
-      ><img src="{% static 'css/org3.png' %}"
+      ><img src="{% static 'studentorg/css/org3.png' %}"
     /></a>
   </div>
-  <div class="row">
+  <div class="row" id="orgImagesRow2">
     <a href="/Gen_SSG_profile" class="image"
-      ><img src="{% static 'css/org4.png' %}"
+      ><img src="{% static 'studentorg/css/org4.png' %}"
     /></a>
     <a href="/Gen_TECHNOCRATS_profile" class="image"
-      ><img src="{% static 'css/org5.png' %}"
+      ><img src="{% static 'studentorg/css/org5.png' %}"
     /></a>
   </div>
 </div>
+<script>
+  document.getElementById("addOrgBtn").addEventListener("click", function () {
+    Swal.fire({
+      title: "Add New Organization",
+      html:
+        '<input id="orgName" class="swal2-input" placeholder="Organization Name">' +
+        '<input id="orgImg" type="file" accept="image/*" class="swal2-file">',
+      focusConfirm: false,
+      preConfirm: () => {
+        const name = document.getElementById("orgName").value.trim();
+        const imgInput = document.getElementById("orgImg");
+        const file = imgInput.files[0];
+        if (!name || !file) {
+          Swal.showValidationMessage(
+            "Please fill out all fields and select an image"
+          );
+          return false;
+        }
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            resolve({ name, imgData: e.target.result });
+          };
+          reader.readAsDataURL(file);
+        });
+      },
+      showCancelButton: true,
+      confirmButtonText: "Add",
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        // Add new org link
+        const orgLinks = document.getElementById("orgLinks");
+        if (orgLinks.innerHTML.trim().endsWith("-")) {
+          orgLinks.innerHTML += " ";
+        } else {
+          orgLinks.innerHTML += " - ";
+        }
+        orgLinks.innerHTML += `<span>${result.value.name}</span>`;
 
+        // Add new org image (to second row for demo)
+        const orgImagesRow2 = document.getElementById("orgImagesRow2");
+        const a = document.createElement("a");
+        a.href = "#";
+        a.className = "image";
+        a.innerHTML = `<img src="${result.value.imgData}" alt="${result.value.name}"/><div style="text-align:center;">${result.value.name}</div>`;
+        orgImagesRow2.appendChild(a);
+
+        Swal.fire(
+          "Added!",
+          `${result.value.name} has been added (client-side only).`,
+          "success"
+        );
+      }
+    });
+  });
+</script>
 <script src="{% static 'guidance/scripts/main.js' %}"></script>
 {% endblock %}

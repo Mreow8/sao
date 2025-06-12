@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STUDENT LIFE INFORMATION SYSTEM</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/admingrant.css' %}">
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <!-- {% block headcontent %}
+
+    {% endblock headcontent %} -->
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="{% url "admin_req" %}">Submission of Requirements tracker</a></li>
+                        <li><a href="{% url "adminapplication" %}">Application tracker</a></li>
+                        <li><a href="{% url "profile" %}">Scholars Profile and Validation</a></li>
+                        <li><a href="{% url "liquidation" %}">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="{% url "ched" %}">CHED Reports Submission</a></li>
+                        <li><a href="{% url "transaction" %}">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                       <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                       <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                       <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                       <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                       <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                       <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search...">
+            <a href="{% url "logout" %}"><button style="padding: 10px 20px; background-color: #FF8000; border-radius: 5px; border: none; margin-left: 520px;">Log out</button></a>
+        </div>
+        <div class="content">
+            <form class="form_div" method="GET">
+                {% csrf_token %}
+                <h1>Scholars Allowance</h1>
+                <div class="search_id_container">
+                    <input type="text" id="search-box" name="search" placeholder="Search by ApplicationID">
+                    <button id="search-btn">Search</button>
+                    <select style="color: black;" id="scholar_type" name="scholar_type">
+                        <option style="color: black;" value="">SELECT TYPE OF SCHOLAR</option>
+                        <option style="color: black;" value="CHED - Full Merit">CHED FULL MERIT</option>
+                        <option style="color: black;" value="CHED - Half Merit">CHED HALF MERIT</option>
+                        <option style="color: black;" value="CHED - Tulong Dunong Program">CHED TULONG DUNONG</option>
+                        <option style="color: black;" value="CHED - Coscho">DOST UNDERGRAD</option>
+                        <option style="color: black;" value="CHED - Tertiary Education Subsidy">CHED TERTIARY EDUCATION SUBSIDY</option>
+                        <option style="color: black;" value="LGU - ATEASP">ARGAO TERTIARY EDUCATION ASSISTANCE PROGRAM</option>
+                        <option style="color: black;" value="LGU - DOST Undergrad">DOST UNDERGRAD</option>
+                        <option style="color: black;" value="LGU - With High Honor">WITH HIGH HONOR</option>
+                        <option style="color: black;" value="NGU - Nature\'s Spring Foundation Inc">NATURE'S SPRING FOUNDATION INC</option>
+                        <option style="color: black;" value="NGU - Lifebank Foundation">LIFE BANK FOUNDATION</option>
+                    </select>
+                </div>
+            </form>
+            <script>
+                $(document).ready(function() {
+                    $('#scholar_type').change(function() {
+                        $(this).closest('form').submit();
+                    });
+                });
+            </script>
+            <form method="POST">
+                {% csrf_token %}
+                {% if error %}
+                    <div class="error">{{ error }}</div>
+                {% endif %}
+                <table id="requirements-table">
+                    <thead>
+                        <tr>
+                            <th>Scholar ID</th>
+                            <th>First name</th>
+                            <th>Last name</th>
+                            <th>Scholar type</th>
+                            <th>Amount</th>
+                            <th>GPA</th>
+                            <th>Year</th>
+                            <th>Semester</th>
+                            <th>Approval</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grant in to_be_granted_data %}
+                            <tr>
+                                <td>{{ grant.scholar_ID }}</td>
+                                <td>{{ grant.studID.firstname }}</td>
+                                <td>{{ grant.studID.lastname }}</td>
+                                <td>{{ grant.scholar_type }}</td>
+                                <td>
+                                    <input id="amount_{{ forloop.counter }}" class="amount" type="text" name="amount_{{ forloop.counter }}" value="" readonly>
+                                    <input type="hidden" name="applicant_id_{{ forloop.counter }}" value="{{ grant.id }}">
+                                </td>
+                                <td>{{ grant.gpa }}</td>
+                                <td>{{ grant.year }}</td>
+                                <td>{{ grant.semester }}</td>
+                                <td id="btnsss">
+                                    <button name="action" value="GRANT_{{ forloop.counter }}">GRANT</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+            <center><a href="{% url "admin_req" %}"><button id="grant-btn">BACK</button></a></center>
+        </div>
+        
+        
+    </div>
+    {% comment %} <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div> {% endcomment %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var scholarTypes = {
+                'CHED - Full Merit': '20000',
+                'CHED - Half Merit': '10000',
+                'CHED - Tulong Dunong Program': '7500',
+                'CHED - Tertiary Education Subsidy': '20000',
+                'CHED - Coscho': '40000',
+                'LGU - ATEASP': '5000',
+                'LGU - DOST Undergrad': '45000',
+                'LGU - With High Honor': '25000',
+                'NGU - Nature\'s Spring Foundation Inc': '3000',
+                'NGU - Lifebank Foundation': '2000'
+            };
+    
+            var amountInputs = document.querySelectorAll('.amount');
+            amountInputs.forEach(function (input) {
+                var scholarType = input.parentElement.previousElementSibling.textContent.trim();
+                input.value = scholarTypes[scholarType] || '';
+            });
+        });
+    </script>
+    <script>
+        // Get the modal
+        var modal = document.getElementById("imageModal");
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        var modalImg = document.getElementById("modalImage");
+
+        document.querySelectorAll('td img').forEach(function(img) {
+            img.onclick = function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+        });
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() { 
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

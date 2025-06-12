@@ -10,9 +10,26 @@ class studentInfo(models.Model):
     middlename = models.CharField(max_length=50)
     degree = models.CharField(max_length=150)
     yearlvl = models.CharField(max_length=10)
-    sex=models.CharField(max_length=10)
-    emailadd= models.EmailField()
-    contact= models.CharField(max_length=11)
+    sex = models.CharField(max_length=10)
+    emailadd = models.EmailField(default='N/A')
+    contact = models.CharField(max_length=11, default='N/A')
+    extension = models.CharField(max_length=10, default='N/A')
+    birthday = models.DateField(blank=True, null=True)
+    zip_code = models.CharField(max_length=10, default='N/A')
+        
+    def __str__(self):
+        return f"{self.studID}"
+# class studentInfo(models.Model):
+#     studID = models.IntegerField(primary_key=True)
+#     lrn = models.CharField(max_length=12)
+#     lastname = models.CharField(max_length=100)
+#     firstname = models.CharField(max_length=100)
+#     middlename = models.CharField(max_length=50)
+#     degree = models.CharField(max_length=150)
+#     yearlvl = models.CharField(max_length=10)
+#     sex=models.CharField(max_length=10)
+#     emailadd= models.EmailField()
+#     contact= models.CharField(max_length=11)
 
 class exit_interview_db(models.Model):
     exitinterviewId = models.AutoField(primary_key=True)

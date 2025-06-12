@@ -9,6 +9,8 @@ from . import views
 
 urlpatterns = [
   path('', views.home, name="home"),
+    path('scholarship', include('mainpage.schol_url')),
+
 
    path('register_officer/', views.register_officer, name='register_officer'),
    path('officer_login/', views.officer_login, name="officer_login"),
@@ -176,7 +178,7 @@ urlpatterns = [
     path('', views.homepage, name='homepage'),
     path('alumniIdRequests/', views.alumni_main, name='alumni_main'),    
     path('calendarOfAct/', views.calendar, name='calendar'),
-    path('login/', views.login, name='login'),
+    path('login/', views.login_view, name='login'),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STUDENT LIFE INFORMATION SYSTEM</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dayag/trans_billing.css' %}">
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="{% url "admin_req" %}">Submission of Requirements tracker</a></li>
+                        <li><a href="{% url "adminapplication" %}">Application tracker</a></li>
+                        <li><a href="{% url "profile" %}">Scholars Profile and Validation</a></li>
+                        <li><a href="{% url "liquidation" %}">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="{% url "ched" %}">CHED Reports Submission</a></li>
+                        <li><a href="{% url "transaction" %}">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                       <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                       <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                       <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                       <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                       <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                       <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search...">
+            <a href="{% url 'logout' %}">
+                <button style="padding: 10px 20px; background-color: #FF8000; border-radius: 5px; border: none;position:absolute;top:10px;right:30px;cursor:pointer;">
+                    Log out
+                </button>
+            </a>
+            <button type="button" id="filter_summary">Print</button></div>
+        <div class="content">
+          
+            <div class="form_div"> 
+                 <a href="{% url 'transaction' %}" style="height:fit-content;position: relative;right:20px;">
+                <img src="/static/imgs/back.png" alt="" id="back" >
+            </a>
+                <main>
+                    <section id="trans_date">
+                        <form id="filter-form" method="GET">
+                            <div class="start_date">
+                                <label for="start-date">Start Date:</label>
+                                <input style="color:black;" type="date" id="start-date" name="start_date" value="{{ start_date }}">
+                            </div>
+                            <div class="end_date">
+                                <label for="end-date">End Date:</label>
+                                <input style="color:black;" type="date" id="end-date" name="end_date" value="{{ end_date }}">
+                            </div>
+                            <input type="hidden" id="semester-input" name="semester" value="{{ selected_semester }}">
+                            <input type="hidden" id="scholarship-type-input" name="scholarship_type" value="{{ selected_scholarship_type }}">
+                            <input type="hidden" id="scholarship-year-input" name="scholarship_year" value="{{ selected_year }}">
+                            <button type="submit" id="filter">Filter</button>
+                        </form>
+                    </section>
+
+                    <section id="summary">
+                        <h2 style="color:black;">Transaction Summary</h2>
+                        <p id="summary-period" style="color:black;">Period: <span id="summary-period-text" style="color:black;">{{ period }}</span></p>
+                        <p style="color:black;">Total Transactions: <span id="total-transactions" style="color:black;">{{ scholarships|length }}</span></p>
+                    </section>
+
+                    <div class="filterz" style="display:flex;">
+                        <div class="dropdown">
+                            <button class="dropbtn">Select Scholarship Type</button>
+                            <div class="dropdown-content">
+                                <div class="dropdown-section">
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="All">All Scholarship Type</a>
+                                    <span>CHED</span>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="CHED - Full Merit">Full Merit</a>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="CHED - Half Merit">Half Merit</a>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="CHED - Tulong Dunong Program">Tulong Dunong Program</a>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="CHED - Tertiary Education Subsidy">Tertiary Education Subsidy</a>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="CHED - Coscho">Coscho</a>
+                                    <span>LGU</span>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="LGU - ATEASP">ATESAP</a>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="LGU - DOST Undergrad">DOST Undergrad</a>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="LGU - With High Honor"> With High Honor</a>
+                                    <span>NGO</span>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="NGU - Nature\'s Spring Foundation Inc">Nature's Spring</a>
+                                    <a href="#" class="scholarship-type-option" data-scholarship-type="NGU - Lifebank Foundation">Lifebank Foundation</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown semester" style="margin-top: 20px;">
+                            <button class="dropbtn">Select Semester</button>
+                            <div class="dropdown-content">
+                                <a href="#" class="semester-option" data-semester="All">All Semester</a>
+                                <a href="#" class="semester-option" data-semester="1st Semester">1st Semester</a>
+                                <a href="#" class="semester-option" data-semester="2nd Semester">2nd Semester</a>
+                            </div>  
+                            <div style="display:flex; height:20px;width:230px;position:absolute !important;top:10px;left:190px; ">
+                                <label for="scholarship_year" style="margin-right:5px;margin-top: 2px;">Academic Year:</label>
+                                <select id="scholarship_year" name="scholarship_year" > 
+                                    <option value="All" {% if selected_year == 'All' %}selected{% endif %}>All</option>
+                                    {% for year in years %}
+                                        <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                           
+                        </div>
+                    </div>
+
+                    <form class="scholar-report">
+                        <h3 style="margin-bottom: 10px;color:green !important;">Scholarship Type: {{ selected_scholarship_type }}</h3>
+                     
+
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Award Number</th>
+                                    <th>Last Name</th>
+                                    <th>First Name</th>
+                                    <th>Bachelor's Degree Program and Major</th>
+                                    <th>Scholarshp Type</th>
+                                    <th>Semester</th>
+                                    <th>School Year</th>
+                                    <th>Financial Benefits</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-body">
+                                {% for scholarship in scholarships %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ scholarship.scholar_ID.scholar_ID }}</td>
+                                    <td>{{ scholarship.scholar_ID.studID.lastname }}</td>
+                                    <td>{{ scholarship.scholar_ID.studID.firstname }}</td>
+                                    <td>{{ scholarship.scholar_ID.studID.degree }}</td>
+                                    <td>{{ scholarship.scholar_ID.scholar_type }}</td>
+                                    <td>{{ scholarship.semester }}</td>
+                                    <td>{{ scholarship.year }}</td>
+                                    <td>₱ {{ scholarship.amount }}</td>
+                                    <td>{{ scholarship.date_added }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="10">No transactions found for the selected period.</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                </main>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/scholarship_billing.js' %}"></script>
+    <script>
+        document.getElementById("filter_summary").addEventListener("click", function() {
+            window.print();
+        });
+    </script>
+  
+</body>
+</html>

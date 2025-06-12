@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Form</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/log.css' %}">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+  <div class="wrapper">
+    <form method="POST">
+      {% csrf_token %}
+      <h1>Login</h1>
+      <div class="input-box">
+        <input type="text" placeholder="Email" name="email" required>
+        <i class='bx bxs-user'></i>
+      </div>
+      <div class="input-box">
+        <input type="password" placeholder="Password" name="set_password" required>
+        <i class='bx bxs-lock-alt'></i>
+      </div>
+      <div class="remember-forgot">
+        <label><input type="checkbox">Remember Me</label>
+        <a href="#">Forgot Password</a>
+      </div>
+      {% if error_message %}
+      <center><p style="color: red; margin-bottom: 15px;">{{ error_message }}</p></center>
+      {% endif %}
+      <button type="submit" class="btn">Login</button>
+      <div class="register-link">
+        <p>Don't have an account? <a href="{% url 'signupuser' %}">Register</a></p>
+      </div>
+      {% if messages %}
+          {% for message in messages %}
+            <p style="color: red;">{{ message }}</p>
+          {% endfor %}
+      {% endif %}
+    </form>
+  </div>
+</body>
+</html>

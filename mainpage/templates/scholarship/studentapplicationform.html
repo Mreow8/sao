@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STUDENT LIFE INFORMATION SYSTEM</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/studentapplication.css' %}">
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <!-- {% block headcontent %}
+
+    {% endblock headcontent %} -->
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        {% if is_scholar %}
+                        <li><a href="{% url "student_req" %}">Submission of Requirements</a></li>
+                        {% endif %}
+                        <li><a href="{% url "studentapplication" %}">Application form</a></li>
+                        <li><a href="{% url "profile_student" %}">Scholars Profile</a></li>
+                        <li><a href="{% url "mentor" %}">Mentorship Program</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                       <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                       <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                       <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                       <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                       <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                       <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search...">
+            <a href="{% url "logout" %}"><button style="padding: 10px 20px; background-color: #FF8000; border-radius: 5px; border: none; margin-left: 520px;">Log out</button></a>
+        </div>
+        <div class="content">
+            {% if passed and not note %}
+            <div class="form_div_2">
+                <center><h3 style="color: #C66604;">You've already submitted your scholarship application, check<br> on your profile for scholarship information and status.</h3></center>
+                <a href="{% url "profile_student" %}"><button class="checkbtn">CHECK PROFILE</button></a>
+            </div>
+            {% else %}
+            <div class="form_div">
+                <h1>Application form</h1>
+                <form id="display_search" enctype="multipart/form-data" method="POST">
+                    {% csrf_token %}
+                        <div>
+                            <label for="">Student ID:</label>
+                            <input type="text" name="studID" value="{{ student.studID }}" >
+                        </div>
+                        <div>
+                            <label for="">LRN:</label>
+                            <input type="text" name="lrn" value="{{ student.lrn }}" disabled>
+                        </div>
+                        <div>
+                            <label for="">First Name:</label>
+                            <input type="text" name="fname" value="{{ student.firstname }}" disabled>
+                        </div>
+                        <div>
+                            <label for="">Middle Name:</label>
+                            <input type="text" name="mname" value="{{ student.middlename }}" disabled>
+                        </div>
+                        <div>
+                            <label for="">Last Name:</label>
+                            <input type="text" name="lname" value="{{ student.lastname }}" disabled>
+                        </div>
+                        <div>
+                            <label for="">Suffix:</label>
+                            <input type="text" name="extension" value="{{ student.extension }}" disabled>
+                        </div>
+                        <div>
+                            <label for="">Gender:</label>
+                            <input type="text" name="sex" value="{{ student.sex }}" disabled>
+                        </div>
+                        <div>
+                            <label for="birthdate">Birthdate:</label>
+                            <input type="text" id="birthdate" name="birthdate" value="{{ student.birthday }}" disabled>
+                        </div>
+                        <div>
+                            <label for="">College Program:</label>
+                            <input type="text" name="college_prog" value="{{ student.degree }}" disabled>
+                        </div>
+                        <div>
+                            <label for="semester">Scholarship Type:</label>
+                            <select style="color: black;" id="scholar_type" name="scholar_type" required>
+                                <option style="color: black;" value="">SELECT TYPE OF SCHOLAR</option>
+                                <option style="color: black;" value="CHED - Full Merit">CHED FULL MERIT</option>
+                                <option style="color: black;" value="CHED - Half Merit">CHED HALF MERIT</option>
+                                <option style="color: black;" value="CHED - Tulong Dunong Program">CHED TULONG DUNONG</option>
+                                <option style="color: black;" value="CHED - Coscho">DOST UNDERGRAD</option>
+                                <option style="color: black;" value="CHED - Tertiary Education Subsidy">CHED TERTIARY EDUCATION SUBSIDY</option>
+                                <option style="color: black;" value="LGU - ATEASP">ARGAO TERTIARY EDUCATION ASSISTANCE PROGRAM</option>
+                                <option style="color: black;" value="LGU - DOST Undergrad">DOST UNDERGRAD</option>
+                                <option style="color: black;" value="LGU - With High Honor">WITH HIGH HONOR</option>
+                                <option style="color: black;" value="NGU - Nature\'s Spring Foundation Inc">NATURE'S SPRING FOUNDATION INC</option>
+                                <option style="color: black;" value="NGU - Lifebank Foundation">LIFE BANK FOUNDATION</option>
+                            </select>
+                        </div>
+                        <h2 style="color: #C66604;">Submit Requirements</h2>
+                        <div>
+                            <label for="gradeFile">Upload Image for Grade:</label>
+                            <input style="color: black;" type="file" id="gradeFile" name="grade_file" required>
+                        </div>
+                        <div>
+                            <label for="corFile">Upload Image of School ID:</label>
+                            <input style="color: black;" type="file" id="schoolidFile" name="schoolid_file">
+                        </div>
+                        <div>
+                            <label for="corFile">Upload Certificate of Registration (COR):</label>
+                            <input style="color: black;" type="file" id="corFile" name="cor_file">
+                        </div>
+                        <div>
+                            <label for="">GPA:</label>
+                            <input id="gpa" type="text" name="gpa">
+                        </div>
+                        {% if note %}
+                            <p style="color: black;">Last submitted requirement note: <span style="color: red;">{{ note.note }}</span></p>
+                        {% endif %}
+                        <button name="action" value="submit">SUBMIT</button>
+                </form>
+                
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        document.getElementById('gradeFile').addEventListener('change', function() {
+            var formData = new FormData();
+            formData.append('gradeFile', this.files[0]);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+            fetch("{% url 'process_grade_image' %}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('gpa').value = data.gpa;
+                    document.getElementById('gpa-result').style.display = 'block';
+                    document.getElementById('extracted-gpa').textContent = data.gpa;
+                    document.getElementById('total-units').textContent = data.total_units;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

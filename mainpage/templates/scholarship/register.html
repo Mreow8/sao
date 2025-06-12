@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Register - CTU</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+      body,
+      html {
+        height: 100%;
+        width: 100%;
+      }
+      .container {
+        display: flex;
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+      }
+      .left-section {
+        flex: 1;
+        background-color: #4884b4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 40px;
+      }
+      .register-box {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 340px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        color: #333;
+      }
+      .register-box h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #ff9f43;
+      }
+      .input-box {
+        margin-bottom: 20px;
+        position: relative;
+      }
+      .input-box input {
+        width: 100%;
+        padding: 12px 35px 12px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        box-sizing: border-box;
+      }
+      .input-box i {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+        font-size: 18px;
+      }
+      .btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff9f43;
+        color: white;
+        border: none;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-bottom: 10px;
+      }
+      .btn:hover {
+        background-color: #fb8c00;
+      }
+      .register-link {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 0.95em;
+        color: #666;
+      }
+      .register-link a {
+        color: #ff9f43;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .register-link a:hover {
+        text-decoration: underline;
+      }
+      .error {
+        color: red;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      .right-section {
+        flex: 1;
+        background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
+          center center;
+        background-size: cover;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .right-section img {
+        width: 150px;
+        margin-bottom: 20px;
+      }
+      .right-section p {
+        color: white;
+        font-size: 50px;
+        font-weight: bold;
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.2);
+      }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/reg.css' %}" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Left: Register Form -->
+      <div class="left-section">
+        <div class="register-box">
+          <h2>Student Register</h2>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="input-box">
+              <input
+                type="text"
+                placeholder="Student ID"
+                name="studID"
+                required
+              />
+              <i class="bx bxs-user"></i>
+            </div>
+            <div class="input-box">
+              <input type="email" placeholder="Email" name="email" required />
+              <i class="bx bxs-user"></i>
+            </div>
+            <div class="input-box">
+              <input
+                type="password"
+                placeholder="Password"
+                name="password"
+                required
+              />
+              <i class="bx bxs-lock-alt"></i>
+            </div>
+            <div class="input-box">
+              <input
+                type="password"
+                placeholder="Confirm password"
+                name="cpassword"
+                required
+              />
+              <i class="bx bxs-lock-alt"></i>
+            </div>
+            {% if error_message %}
+            <div class="error">{{ error_message }}</div>
+            {% endif %} {% if messages %} {% for message in messages %}
+            <div class="error">{{ message }}</div>
+            {% endfor %} {% endif %}
+            <button type="submit" class="btn">Register</button>
+            <div class="register-link">
+              Already have an account? <a href="{% url 'login' %}">Login</a>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Right: Welcome Image -->
+      <div class="right-section">
+        <img src="{% static 'imgs/ctu_logo.png' %}" alt="CTU Logo" />
+        <p>WELCOME</p>
+      </div>
+    </div>
+    <script>
+      {% if success_message %}
+        alert("{{ success_message|escapejs }}");
+      {% endif %}
+    </script>
+  </body>
+</html>

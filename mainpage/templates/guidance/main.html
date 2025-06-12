@@ -20,10 +20,10 @@
     </head>
     <body>
         <div class="left-side">
-            <div class="orange-bar">
+            <!-- <div class="orange-bar">
                 <img src="{% static 'imgs/CTU_logo.png'%}" class="logo">
                 <img src="{% static 'imgs/barSort.png'%}" class="bars">
-            </div>
+            </div> -->
             <nav class="side-nav">
                 <ul>
                     <li><a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
@@ -40,7 +40,7 @@
                         <span class="fas fa-caret-down second"></span>
                     </a>
                     <ul class="scholar-show">
-                        <li><a href="#">Submission of Requirements Tracker</a></li>
+                        <li><a href="{% url 'student_req'%}">Submission of Requirements Tracker</a></li>
                         <li><a href="#">Scholars Profile and Validation</a></li>
                         <li><a href="#">Grade Submission with GPA Computation</a></li>
                         <li><a href="#">Mentorship Program</a></li>

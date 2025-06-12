@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STUDENT LIFE INFORMATION SYSTEM</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/scholarsprofilestudent.css' %}">
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <!-- {% block headcontent %}
+
+    {% endblock headcontent %} -->
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        {% if is_scholar %}
+                        <li><a href="{% url "student_req" %}">Submission of Requirements</a></li>
+                        {% else %}
+                        <li><a href="{% url "studentapplication" %}">Application form</a></li>
+                        {% endif %}
+                        <li><a href="{% url "profile_student" %}">Scholars Profile</a></li>
+                        <li><a href="{% url "mentor" %}">Mentorship Program</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                       <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                       <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                       <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                       <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                       <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                       <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search...">
+            <a href="{% url "logout" %}"><button style="padding: 10px 20px; background-color: #FF8000; border-radius: 5px; border: none; margin-left: 520px;">Log out</button></a>
+        </div>
+        <div class="content">
+            <form class="form_div" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h1>Student Profile</h1>
+                <div class="profile-section">
+                    <h2>Personal Information</h2>
+                    <div class="info-group">
+                        <label for="studentID">Student ID:</label>
+                        <span id="studentID">{{ student_data.studID }}</span>
+                    </div>
+                    <div class="info-group">
+                        <label for="fullName">Full Name:</label>
+                        <span id="fullName">{{ student_data.firstname }} {{ student_data.lastname }}</span>
+                    </div>  
+                    <div class="info-group">
+                        <label for="gender">Gender:</label>
+                        <span id="gender">{{ student_data.sex }}</span>
+                    </div>
+                    <div class="info-group">
+                        <label for="birthdate">Contact:</label>
+                        <span id="birthdate">{{ student_data.contact }}</span>
+                    </div>
+                    <div class="info-group">
+                        <label for="address">Email Address:</label>
+                        <span id="address">{{ student_data.emailadd }}</span>
+                    </div>
+                </div>
+                <div class="profile-section">
+                    <h2>Scholarship Information</h2>
+                    <div class="info-group">
+                        <label for="scholarship">Scholarship:</label>
+                        <span id="scholarship"> {% if exist %} {{ scholars_table.scholar_type }} {% else %} None {% endif %}</span>
+                    </div>
+                    <div class="info-group">
+                        <label for="scholarshipStatus">Scholarship Status:</label>
+                        <span id="scholarshipStatus">{% if exist %} {{ scholars_table.scholar_status }} {% else %} None {% endif %}</span>
+                    </div>
+                    {% if not app_exist %}
+                        <a id="aapplybtn" href="{% url "studentapplication" %}"><section id="applybtn">APPLY SCHOLARSHIP</section></a>
+                    {% endif %}
+                </div>
+                {% if applicant_approved %}
+                    {% if is_requesting %}
+                        {% if reqs %}
+                            {% comment %} <div class="form_div_2">
+                                <h4 style="color: #C66604;">
+                                    You've already passed a requirements for this {{ active_request.semester }} year {{ active_request.year }}
+                                    
+                                </h4>
+                            </div> {% endcomment %}
+                            {% if edit_mode_2 %}
+                                <div class="profile-section_2">
+                                    <h2 style="color: #C66604;">Editing Requirements</h2>
+                                    <div class="info-box">
+                                        <label for="corFile">Edit Registration (COR): </label>
+                                        {% if cor_file_url2 %}
+                                            <p style="color: black;">Current: </p>
+                                            <img id="cor_pic" src="{{ reqs.cor_file.url }}" alt="">
+                                        {% endif %}
+                                        <p style="color: black;">Select new: </p>
+                                        <input style="color: black;" type="file" id="corFile" name="cor_file2">
+                                    </div>
+                                    <div class="info-box">
+                                        <label for="gradeFile">Edit Grade:</label>
+                                        {% if grade_file_url2 %}
+                                            <p style="color: black;">Current: </p>
+                                            <img id="cor_pic" src="{{ reqs.grade_file.url }}" alt="">
+                                        {% endif %}
+                                        <p style="color: black;">Select new: </p>
+                                        <input style="color: black;" type="file" id="gradeFile" name="grade_file2" >
+                                    </div>
+                                    <div class="info-box">
+                                        <label for="corFile">Edit School ID:</label>
+                                        {% if grade_file_url2 %}
+                                            <p style="color: black;">Current: </p>
+                                            <img id="cor_pic" src="{{ reqs.schoolid_file.url }}" alt="">
+                                        {% endif %}
+                                        <p style="color: black;">Select new: </p>
+                                        <input style="color: black;" type="file" id="schoolidFile" name="schoolid_file2" >
+                                    </div>
+                                    <div class="info-box">
+                                        <label for="">GPA:</label>
+                                        <input id="gpa" type="text" name="gpa2" value="{{ reqs.gpa }}">
+                                    </div>
+                                    <div class="button-container">
+                                        {% if edit_mode_2 %}
+                                        <button id="donebtn" name="action" value="DONE2">Done</button>
+                                        {% endif %}
+                                        <button id="cancelbtn" name="action" value="CANCEL2">Cancel</button>
+                                    </div>
+                                    <script>
+                                        document.getElementById('gradeFile').addEventListener('change', function() {
+                                            console.log('File selected:', this.files[0].name);  // Log file selection
+                                            var formData = new FormData();
+                                            formData.append('gradeFile', this.files[0]);
+                                            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                                        
+                                            fetch("{% url 'process_grade_image' %}", {
+                                                method: 'POST',
+                                                body: formData
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                console.log('Response received:', data);  // Log the response
+                                                if (data.success) {
+                                                    document.getElementById('gpa').value = data.gpa;
+                                                    document.getElementById('gpa-result').style.display = 'block';
+                                                    document.getElementById('extracted-gpa').textContent = data.gpa;
+                                                    document.getElementById('total-units').textContent = data.total_units;
+                                                } else {
+                                                    console.error('Error in response:', data.error);
+                                                }
+                                            })
+                                            .catch(error => console.error('Fetch error:', error));
+                                        });
+                                        
+                                    </script>
+                                </div>
+                            {% else %}
+                                <div class="profile-section">
+                                    <h2>Application Information</h2>
+                                    <div class="info-group">
+                                        <label for="scholarship">Cor file:</label>
+                                        <img id="cor_pic" src="{{ reqs.cor_file.url }}" alt="">
+                                    </div>
+                                    <div class="info-group">
+                                        <label for="scholarship">Grade file:</label>
+                                        <img id="grade_pic" src="{{ reqs.grade_file.url }}" alt="">
+                                    </div>
+                                    <div class="info-group">
+                                        <label for="scholarship">School ID file:</label>
+                                        <img id="schoolid_pic" src="{{ reqs.schoolid_file.url }}" alt="">
+                                    </div>
+                                    <div class="button-container">
+                                        {% if note2 %}
+                                            <p style="color: black; text-align: left;">Note: <span style="color: red;">{{ note2.note }}</span></p>
+                                        {% else %}
+                                            {% if not edit_mode_2 %}
+                                            <button id="editbtn" name="action" value="EDIT2">Edit</button>
+                                            {% endif %}
+                                            <button id="cancelbtn" name="action" value="CANCEL2">Cancel</button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% elif reqs2 %}
+                            <div class="form_div_2">
+                                <h4 style="color: #C66604;">
+                                    Your requirements is accepted by the admin.
+                                    {% comment %} You already have passed the requirements, check <br> on your profile to view your requirements status. {% endcomment %}
+                                </h4>
+                            </div>
+                        {% else %}
+                            <div class="form_div_2">
+                                <h4 style="color: #C66604;">
+                                    The admin is requesting your requirements for the {{ active_request.semester }} year {{ active_request.year }}
+                                    {% comment %} You already have passed the requirements, check <br> on your profile to view your requirements status. {% endcomment %}
+                                </h4>
+                                <a href="{% url 'student_req' %}">
+                                    <section class="checkbtn">SUBMIT REQUIREMENTS</section>
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if edit_mode %}
+                        <div class="profile-section_2" style="display: {% if edit_mode %} block; {% else %} none; {% endif %}">
+                            <h2 style="color: #C66604;">Editing Requirements</h2>
+                            <div class="info-box">
+                                <label for="corFile">Edit Registration (COR): </label>
+                                {% if cor_file_url %}
+                                    <p style="color: black;">Current: </p>
+                                    <img id="cor_pic" src="{{ application_data.cor_file.url }}" alt="">
+                                {% endif %}
+                                <p style="color: black;">Select new: </p>
+                                <input style="color: black;" type="file" id="corFile" name="cor_file">
+                            </div>
+                            <div class="info-box">
+                                <label for="gradeFile">Edit Grade:</label>
+                                {% if grade_file_url %}
+                                    <p style="color: black;">Current: </p>
+                                    <img id="cor_pic" src="{{ application_data.grade_file.url }}" alt="">
+                                {% endif %}
+                                <p style="color: black;">Select new: </p>
+                                <input style="color: black;" type="file" id="gradeFile" name="grade_file" >
+                            </div>
+                            <div class="info-box">
+                                <label for="corFile">Edit School ID:</label>
+                                {% if grade_file_url %}
+                                    <p style="color: black;">Current: </p>
+                                    <img id="cor_pic" src="{{ application_data.schoolid_file.url }}" alt="">
+                                {% endif %}
+                                <p style="color: black;">Select new: </p>
+                                <input style="color: black;" type="file" id="schoolidFile" name="schoolid_file" >
+                            </div>
+                            <div class="info-box">
+                                <label for="">GPA:</label>
+                                <input id="gpa" type="text" name="gpa" value="{{ application_data.gpa }}">
+                            </div>
+                            <div class="button-container">
+                                {% if edit_mode %}
+                                <button id="donebtn" name="action" value="DONE">Done</button>
+                                {% endif %}
+                                <button id="cancelbtn" name="action" value="CANCEL">Cancel</button>
+                            </div>
+                            <script>
+                                document.getElementById('gradeFile').addEventListener('change', function() {
+                                    console.log('File selected:', this.files[0].name);  // Log file selection
+                                    var formData = new FormData();
+                                    formData.append('gradeFile', this.files[0]);
+                                    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                                
+                                    fetch("{% url 'process_grade_image' %}", {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        console.log('Response received:', data);  // Log the response
+                                        if (data.success) {
+                                            document.getElementById('gpa').value = data.gpa;
+                                            document.getElementById('gpa-result').style.display = 'block';
+                                            document.getElementById('extracted-gpa').textContent = data.gpa;
+                                            document.getElementById('total-units').textContent = data.total_units;
+                                        } else {
+                                            console.error('Error in response:', data.error);
+                                        }
+                                    })
+                                    .catch(error => console.error('Fetch error:', error));
+                                });
+                                
+                            </script>
+                        </div>
+                    {% else %}
+                        <div class="profile-section" style="display: {% if app_exist  %} block; {% else %} none;{% endif %}">
+                            <h2>Application Information</h2>
+                            {% if application_data and application_data.cor_file %}
+                            <div class="info-group">
+                                <label for="scholarship">Cor file:</label>
+                                <img id="cor_pic" src="{{ application_data.cor_file.url }}" alt="">
+                            </div>
+                            {% endif %}
+                            <div class="info-group">
+                                <label for="scholarship">Grade file:</label>
+                                <img id="grade_pic" src="{{ application_data.grade_file.url }}" alt="">
+                            </div>
+                            <div class="info-group">
+                                <label for="scholarship">School ID file:</label>
+                                <img id="schoolid_pic" src="{{ application_data.schoolid_file.url }}" alt="">
+                            </div>
+                            <div class="button-container">
+                                {% if note %}
+                                    <p style="color: black; text-align: left;">Note: <span style="color: red;">{{ note.note }}</span></p>
+                                {% else %}
+                                    {% if not edit_mode %}
+                                    <button id="editbtn" name="action" value="EDIT">Edit</button>
+                                    {% endif %}
+                                    <button id="cancelbtn" name="action" value="CANCEL">Cancel</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                
+            </form>
+        </div>
+    </div>
+    <script src="{% static 'js/main.js' %}"></script>
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    <script>
+        // Get the modal
+        var modal = document.getElementById("imageModal");
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        var modalImg = document.getElementById("modalImage");
+
+        document.querySelectorAll('.info-group img').forEach(function(img) {
+            img.onclick = function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+        });
+        document.querySelectorAll('.info-box img').forEach(function(img) {
+            img.onclick = function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            }
+        });
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() { 
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>
+</body>
+</html>

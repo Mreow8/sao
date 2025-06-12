@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TES SUBMISSION REPORT</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dayag/print_tes.css' %}">
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+ 
+    <!-- {% block headcontent %}
+
+    {% endblock headcontent %} -->
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="{% url "admin_req" %}">Submission of Requirements tracker</a></li>
+                        <li><a href="{% url "adminapplication" %}">Application tracker</a></li>
+                        <li><a href="{% url "profile" %}">Scholars Profile and Validation</a></li>
+                        <li><a href="{% url "liquidation" %}">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="{% url "ched" %}">CHED Reports Submission</a></li>
+                        <li><a href="{% url "transaction" %}">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                       <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                       <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                       <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                       <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                       <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                       <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search..." style="margin-right: 300px;">
+            <button type="submit" id="printButton">Print</button>
+
+            <script>
+                document.getElementById('printButton').addEventListener('click', function() {
+                    window.print();
+                });
+            </script>
+            <a href="{% url 'logout' %}" style="position:relative !important; left:50px;"><button id="logOut" >Log out</button></a>
+        </div>
+        <div class="content">
+            <div class="form_div"> 
+                 <a href="{% url 'ched' %}" style="width:fit-content;">
+                <img src="/static/imgs/back.png" alt="" id="back">
+                </a>
+                <form method="GET" id="semesterForm">
+                    <label for="semester"><b>Select Semester:</b></label>
+                    <select id="semester" name="semester" onchange="document.getElementById('semesterForm').submit();">
+                        <option value="all" {% if semester == 'all' %}selected{% endif %}>All Semesters</option>
+                        <option value="1st Semester" {% if semester == '1st Semester' %}selected{% endif %}>1st Semester</option>
+                        <option value="2nd Semester" {% if semester == '2nd Semester' %}selected{% endif %}>2nd Semester</option>
+                    </select>
+                    <label for="scholarship_year"><b>Academic Year:</b></label>
+                    <select id="scholarship_year" name="scholarship_year" >
+                        <option value="All" {% if scholarship_year == 'All' %}selected{% endif %}>All</option>
+                        {% for year in years %}
+                            <option value="{{ year }}" {% if scholarship_year == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                    <script>
+                        $(document).ready(function() {
+                            $('#scholarship_year').change(function() {
+                                $(this).closest('form').submit();
+                            });
+                        });
+                    </script>
+                </form>            
+                       <div class="container">
+                        <header>
+                            <div class="header-left">
+                                <img src="/static/imgs/2logo.png" alt="Logo" class="logo">
+                            </div>
+                            <div class="header-center">
+                                <p>Republic of the Philippines</p>
+                                <p><strong><i>CEBU TECHNOLOGICAL UNIVERSITY-ARGAO CAMPUS</i></strong></p>
+                                <p><strong><i><u>Ed. Kintanar St., Lamacan, Argao, Cebu</u></i></strong></p>
+                                <h1>CONSOLIDATED TES NEW DETAILS</h1>
+                            </div>
+                            <div class="header-right">
+                            </div>
+                        </header>
+                        <div class="reference">
+                            <br><br>
+                            <p>TES Billing Details Reference Number: <strong>________________________</strong></p><br>
+                            <p>Date: <strong>________________________</strong></p>
+                        </div>
+                
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td colspan="17" class="left">
+                                        <p><strong>Instructions:</strong></p>
+                                        <p>1. In the table below, list down the names of enrolled TES qualified grantees per campus in alphabetical order, if applicable, (1) by campus; (2) by college; (3) by program; and (4) by student name (Last Name, First Name, MI).</p>
+                                        <p>2. Include and update all information required in the space provided.</p>
+                                        <p>3. Assign a 5-digit Control Number for each enrolled student. The control numbers should be assigned in chronological order to the students listed according to instruction no. 1.</p>
+                                        <p>4. Submit electronic and hard copies of the following forms to CHEDRO as supporting documents:</p>
+                                        <ul>
+                                            <li>4.1 TES New Form 1</li>
+                                            <li>4.2 TES New Form 2</li>
+                                            <li>4.3 Notarized Registrar’s Certification</li>
+                                        </ul>
+                                        <p>5. Additional Documentary Requirements (if applicable)</p>
+                                        <ul>
+                                            <li>5.1 Certificate of residency for qualified grantees under the PNSL category</li>
+                                            <li>5.2 Copy of PWD ID (for qualified grantees that is Person with disability)</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="17" class="table-title">To: <strong>CHED - Regional Office VII</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="17" class="table-title">Address: <strong>National Government Center, Sudlon, Lahug, Cebu City</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="17" class="table-title">Copy Furnished: <strong>UniFAST Secretariat</strong></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th colspan="16" class="table-subtitle">TES New Grantees Summary:</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th colspan="16" class="table-notice">TES will have to be listed and tabulated PER CAMPUS. The Total Amount of the TES for all campuses should tally with the total amount of TES in the Annex 5-TES New Form 1</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="16" class="spacer">Note: Insert additional line if needed</td>
+                                </tr>
+                                <tr>
+                                    <th rowspan="2">5-digit Control Number</th>
+                                    <th rowspan="2">Student Number</th>
+                                    <th rowspan="2">TES Application Number</th>
+                                    <th colspan="3" class="student">Student's Name</th>
+                                    <th colspan="5" class="student">Student Profile</th>
+                                    <th colspan="3" class="student">Contact Information</th>
+                                    <th class="student">TES Benefits</th>
+                                    <th class="student">TES 3A</th>
+                                    <th rowspan="2">TOTAL AMOUNT</th>
+                                </tr>
+                                <tr>
+                                    <th>Last Name</th>
+                                    <th>Given Name</th>
+                                    <th>Middle Initial</th>
+                                    <th>Sex at Birth(M/F)</th>
+                                    <th>Birthdate</th>
+                                    <th>Degree Program</th>
+                                    <th>Year Level</th>
+                                    <th>Total Academic Units Enrolled (credit and non-credit courses)</th>
+                                    <th>ZIP Code</th>
+                                    <th>E-mail Address</th>
+                                    <th>Phone Number</th>
+                                    <th>Amount</th>
+                                    <th>Person with Disability</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detail in scholar_ids %}
+                                <tr>
+                                    <td>{{ detail.sequence }}</td>
+                                    <td>{{ detail.scholar_ID.studID }}</td>
+                                    <td>{{ detail.scholar_ID }}</td>
+                                    <td>{{ detail.scholar_ID.studID.lastname }}</td>
+                                    <td>{{ detail.scholar_ID.studID.firstname }}</td>
+                                    <td>{{ detail.scholar_ID.studID.middlename }}</td>
+                                    <td>{{ detail.scholar_ID.studID.sex }}</td>
+                                    <td>{{ detail.scholar_ID.studID.birthday|date:"m/d/Y" }}</td>
+                                    <td>{{ detail.scholar_ID.studID.degree }}</td>
+                                    <td>{{ detail.scholar_ID.studID.yearlvl }}</td>
+                                    <td>{{ detail.total_units_enrolled }}</td>
+                                    <td>{{ detail.scholar_ID.studID.zip_code }}</td>
+                                    <td>{{ detail.scholar_ID.studID.emailadd }}</td>
+                                    <td>{{ detail.scholar_ID.studID.contact }}</td>
+                                    <td class="amount">{{ detail.amount }}</td>
+                                    <td>N/A</td>
+                                    <td>{{ detail.amount }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="2">Page Total</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Page Accumulated</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="14"><strong>TOTAL TERTIARY EDUCATION SUBSIDY</strong></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td id="total-amount">sum of all total amount</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="14"><strong>Add 1 percent (1%) Administrative Support for Partner Institutions</strong></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td id="admin-support">1% of the sum of the total amount</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="14"><strong>TOTAL TES BILLING PER CAMPUS</strong></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td  id="total-billing">sum of all total amount + 1% of all total amount</td>
+                                </tr>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const amounts = document.querySelectorAll('td.amount');
+                                    
+                                        let totalAmount = 0;
+                                        amounts.forEach(amount => {
+                                            totalAmount += parseFloat(amount.textContent) || 0;
+                                        });
+                                    
+                                        const adminSupport = totalAmount * 0.01;
+                                    
+                                        const totalBilling = totalAmount + adminSupport;
+                                    
+                                        document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+                                        document.getElementById('admin-support').textContent = adminSupport.toFixed(2);
+                                        document.getElementById('total-billing').textContent = totalBilling.toFixed(2);
+                                    });
+                                </script>
+                                    
+                                <tr>
+                                    <td colspan="14"><strong>TOTAL TES BILLING ALL CAMPUSES</strong></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <footer>
+                            <div class="certifications">
+                                <div>
+                                    <p>Prepared by:</p>
+                                    <br>
+                                    <br>
+                                    <p><strong> ___________________________________</strong><br>
+                                    TDP Focal Person/Scholarship Coordinator</p>
+                                </div>
+                                <div>
+                                    As to corectness of enrollment data
+                                    <p>Certified by:</p>
+                                    <br>
+                                    <p><strong>___________________________________</strong><br>
+                                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Registrar II</p>
+                                </div>
+                                <div>
+                                    As to correctness of financial data
+                                    <p>Certified by:</p>
+                                    <br>
+                                    <p><strong>___________________________________</strong><br>
+                                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Accountant II</p>
+                                </div>
+                                <div>
+                                    <p>Approved by:</p>
+                                    <br>
+                                    <br>
+                                    <p><strong>___________________________________</strong><br>
+                                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; Campus Director</p>
+                                </div>
+                            </div>
+                        </footer>
+                    </div>
+            </div>
+        </div>
+    </div>
+     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        document.getElementById('allYearsButton').addEventListener('click', function() {
+            document.getElementById('scholarship_year').value = '';
+            document.getElementById('semesterForm').submit();
+        });
+    </script>
+
+
+    
+        
+</body>
+</html>

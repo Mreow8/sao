@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TDP SUBMISSION REPORT</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dayag/print_tdp.css' %}">
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+</head>
+<body>
+    <div class="side_nav_box">
+        <div class="orange-bar">
+            <img src="/static/imgs/CTU_logo.png" class="logo" alt="CTU Logo">
+            <img src="/static/imgs/barSort.png" class="bars" alt="Bars">
+        </div>
+        <nav class="side-nav">
+            <ul>
+                <li>
+                    <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
+                        <span class="fas fa-caret-down first"></span>
+                    </a>
+                    <ul class="studentlife">
+                        <li><a href="#">Equipment</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">PPMP Tracker</a></li>
+                        <li><a href="#">Monthly Calendar of Activities</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="scholar-btn">SCHOLARSHIP
+                        <span class="fas fa-caret-down second"></span>
+                    </a>
+                    <ul class="scholar-show">
+                        <li><a href="{% url "admin_req" %}">Submission of Requirements tracker</a></li>
+                        <li><a href="{% url "adminapplication" %}">Application tracker</a></li>
+                        <li><a href="{% url "profile" %}">Scholars Profile and Validation</a></li>
+                        <li><a href="{% url "liquidation" %}">Admin Cost Liquidation Tracker</a></li>
+                        <li><a href="{% url "ched" %}">CHED Reports Submission</a></li>
+                        <li><a href="{% url "transaction" %}">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="jobplace-btn">JOB PLACEMENT
+                        <span class="fas fa-caret-down third"></span>    
+                    </a>
+                    <ul class="jobplace-show">
+                        <li><a href="#">OJT Hiring</a></li>
+                        <li><a href="#">Career Guidance Tracker</a></li>
+                        <li><a href="#">OJT Requirements Tracker</a></li>
+                        <li><a href="#">Non-Academic Award Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+                       <span class="fas fa-caret-down fourth"></span>
+                    </a>
+                    <ul class="student_disc-show">
+                        <li><a href="#">Case Profile</a></li>
+                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="guide-btn">GUIDANCE
+                       <span class="fas fa-caret-down fifth"></span>
+                    </a>
+                    <ul class="guide-show">
+                        <li><a href="#">Individual Profile with Guidance Concern</a></li>
+                        <li><a href="#">Counseling App with Scheduler</a></li>
+                        <li><a href="#">Intake Interview</a></li>
+                        <li><a href="#">Exit Interview</a></li>
+                        <li><a href="#">OJT Assessments/Psychological Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="alumni-btn">ALUMNI
+                       <span class="fas fa-caret-down sixth"></span>
+                    </a>
+                    <ul class="alumni-show">
+                        <li><a href="#">Alumni ID Requests</a></li>
+                        <li><a href="#">Graduate Tracer</a></li>
+                        <li><a href="#">Alumni Reunion and Events</a></li>
+                        <li><a href="#">Job Fairs</a></li>
+                        <li><a href="#">Digital Yearbook</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+                       <span class="fas fa-caret-down seventh"></span>
+                    </a>
+                    <ul class="community-show">
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">CrowdFunding Projects</a></li>
+                        <li><a href="#">Donatio App</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="student_org-btn">STUDENT ORGANIZATION
+                       <span class="fas fa-caret-down eighth"></span>
+                    </a>
+                    <ul class="student_org-show">
+                        <li><a href="#">Org Profile</a></li>
+                        <li><a href="#">Projects and Accomplishments</a></li>
+                        <li><a href="#">Financial Statements Reports</a></li>
+                        <li><a href="#">Accreditation Application</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="medical-btn">MEDICAL
+                       <span class="fas fa-caret-down ninth"></span>
+                    </a>
+                    <ul class="medical-show">
+                        <li><a href="#">Patient Profile</a></li>
+                        <li><a href="#">Student Medical Requirements Tracker</a></li>
+                        <li><a href="#">Emergency Health Assistance</a></li>
+                        <li><a href="#">PWD Profile</a></li>
+                        <li><a href="#">Dental Services</a></li>
+                        <li><a href="#">Medical Clearance Issuance</a></li>
+                        <li><a href="#">Prescription Issuance</a></li>
+                        <li><a href="#">Transaction Reports</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content_box">
+        <div class="search-container">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" placeholder="Search..." style="margin-right: 300px;">
+            <button type="submit" id="printButton">Print</button>
+            <script>
+                document.getElementById('printButton').addEventListener('click', function() {
+                    window.print();
+                });
+            </script>
+            <a href="{% url 'logout' %}" style="position:relative !important; left:50px;"><button id="logOut">Log out</button></a>
+        </div>
+        <div class="content"> 
+             
+            <div class="form_div" id="printableFormDiv">
+                <a href="{% url 'ched' %}" style="width:fit-content;">
+                    <img src="/static/imgs/back.png" id="back" alt="" >
+                    </a>
+                <form method="GET" id="semesterForm">
+                    <label for="scholarship_year"><b>Academic Year:</b></label>
+                    <select id="scholarship_year" name="scholarship_year" >
+                        <option value="All" {% if selected_year == 'All' %}selected{% endif %}>All</option>
+                        {% for year in years %}
+                            <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                    <script>
+                        $(document).ready(function() {
+                            $('#scholarship_year').change(function() {
+                                $(this).closest('form').submit();
+                            });
+                        });
+                    </script>
+                </form>
+                <div class="main-container">
+                    <h2 class="upper">TDP Form - Annex 10</h2>
+                    <br>
+                    <div class="container">
+                        <div class="header">
+                            <img src="/static/imgs/commission.png" alt="Logo 1" class="logo1">
+                            <div class="text-center">
+                                <h1>Republic of the Philippines</h1>
+                                <h2>CEBU TECHNOLOGICAL UNIVERSITY - ARGAO</h2>
+                                <h2>Ed Kintanar, Lamacan, Argao, Cebu</h2>
+                            </div>
+                            <img src="/static/imgs/unifast.png" alt="Logo 2" class="logo2">
+                        </div>
+                        <div class="sub-header">
+                            <p>Date: __________________</p>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sequence No.</th>
+                                    <th>TDP-TES Award Number</th>
+                                    <th>Student ID No.</th>
+                                    <th>Last Name</th>
+                                    <th>Given Name</th>
+                                    <th>Middle Initial</th>
+                                    <th>Degree Program</th>
+                                    <th>Year Level</th>
+                                    <th>1st Semester Grant</th>
+                                    <th>1st Semester Date Received</th>
+                                    <th>1st Semester Signature</th>
+                                    <th>2nd Semester Grant</th>
+                                    <th>2nd Semester Date Received</th>
+                                    <th>2nd Semester Signature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detail in first_semester %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ detail.scholar_ID }}</td>
+                                    <td>{{ detail.scholar_ID.studID }}</td>
+                                    <td>{{ detail.scholar_ID.studID.lastname }}</td>
+                                    <td>{{ detail.scholar_ID.studID.firstname }}</td>
+                                    <td>{{ detail.scholar_ID.studID.middlename }}</td>
+                                    <td>{{ detail.scholar_ID.studID.degree }}</td>
+                                    <td>{{ detail.scholar_ID.studID.yearlvl }}</td>
+                                    <td>₱{{ detail.amount }}</td>
+                                    <td>{{ detail.date_added }}</td>
+                                    <td></td>
+                                    <td>₱{{ detail.second_semester_amount }}</td>
+                                    <td>{{ detail.second_semester_date_added }}</td>
+                                    <td></td>
+                                </tr>
+                                {% endfor %}
+
+
+                                <tr>
+                                    <td colspan="8" class="total">TOTAL</td>
+                                    <td>₱{{ total_first_semester }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>₱{{ total_second_semester }}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {% comment %} <table>
+                            <thead>
+                                <tr>
+                                    <th>Sequence No.</th>
+                                    <th>TDP-TES Award Number</th>
+                                    <th>Student ID No.</th>
+                                    <th>Last Name</th>
+                                    <th>Given Name</th>
+                                    <th>Middle Initial</th>
+                                    <th>Degree Program</th>
+                                    <th>Year Level</th>
+                                    <th>1st Semester Grant</th>
+                                    <th>1st Semester Date Received</th>
+                                    <th>1st Semester Signature</th>
+                                    <th>2nd Semester Grant</th>
+                                    <th>2nd Semester Date Received</th>
+                                    <th>2nd Semester Signature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for scholar in scholars %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ scholar.scholar_ID }}</td>
+                                    <td>{{ scholar.studID.studID }}</td>
+                                    <td>{{ scholar.studID.lastname }}</td>
+                                    <td>{{ scholar.studID.firstname }}</td>
+                                    <td>{{ scholar.studID.middlename }}</td>
+                                    <td>{{ scholar.studID.degree }}</td>
+                                    <td>{{ scholar.studID.yearlvl }}</td>
+                                    <td>₱{{ scholar.total_1st_semester }}</td>
+                                    <td>{{ scholar.date_received_1st_semester }}</td>
+                                    <td></td>
+                                    <td>₱{{ scholar.total_2nd_semester }}</td>
+                                    <td>{{ scholar.date_received_2nd_semester }}</td>
+                                    <td></td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="8" class="total">TOTAL</td>
+                                    <td>₱</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>₱</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table> {% endcomment %}
+                        <div class="footer">
+                            <div class="footer-section">
+                                <p>Prepared by:</p>
+                                <br>
+                                <br>
+                                <p>______________________</p>
+                                <p class="bold">HEI Focal Person/Scholarship Coordinator</p>
+                                <p>(Print Name and Signature)</p>
+                            </div>
+                            <div class="footer-section">
+                                <p>As to correctness of enrollment data</p>
+                                <p>Verified by:</p>
+                                <br>
+                                <p>______________________</p>
+                                <p class="bold">HEI Registrar</p>
+                                <p>(Print Name and Signature)</p>
+                            </div>
+                            <div class="footer-section">
+                                <p>As to correctness of financial data</p>
+                                <p>Certified true and correct by:</p>
+                                <br>
+                                <p>______________________</p>
+                                <p class="bold">HEI Chief Accountant</p>
+                                <p>(Print Name and Signature)</p>
+                            </div>
+                            <div class="footer-section">
+                                <br>
+                                <p>Approved by:</p>
+                                <br>
+                                <p>______________________</p>
+                                <p class="bold">HEI President</p>
+                                <p>(Print Name and Signature)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+    function printFormDiv() {
+        var printDiv = document.getElementById('printableFormDiv');
+        var formElement = document.getElementById('semesterForm');
+        formElement.style.display = 'none'; 
+
+        var printContents = printDiv.innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+
+        formElement.style.display = '';  
+    }
+    </script>
+</body>
+</html>
