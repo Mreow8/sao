@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'styles/job_placement/ready_print.css' %}?215"
+    />
+  </head>
+  <body>
+    <header>
+      <!-- DIRI BUTANG ANG TEMPLATE SA HEADER-->
+      <img src="{% static 'jobplacement/imgs/logo.jpg' %}" alt="CTU_LOGO" />
+    </header>
+    <section>
+      <!-- SOME MORE DETAILS -->
+      <div id="stamp_container">
+        <p id="timestamp">{{ datetime }}</p>
+        <!-- butang ni upper right corner sa table-->
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Transactor</th>
+            <th>Receiver</th>
+            <th>Quantity</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+          <tr>
+            <td>{{ transaction.report_id }}</td>
+            <td>{{ transaction.date_created }}</td>
+            <td>{{ transaction.description }}</td>
+            <td>{{ transaction.transactor_name }}</td>
+            <td>{{ transaction.receiver }}</td>
+            <td>{{ transaction.quantity }}</td>
+            <td>{{ transaction.purpose }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </body>
+</html>

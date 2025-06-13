@@ -1,0 +1,91 @@
+/* Apply general styling to the form */
+form{
+    margin-top: 50%;
+}
+
+#signup_form{
+    margin-top: 0;
+}
+
+li{
+    display: none;
+}
+.helptext{
+    display: none;
+}
+/* Style form labels */
+form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Apply general styling to the form */
+.container {
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f2f2f2;
+    max-width: 400px;
+    width: 100rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form .container h1 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Style form labels */
+form label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* Style form inputs */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="number"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #555;
+    transition: border-color 0.3s ease;
+}
+
+/* Style form submit button */
+form input[type="submit"] {
+    width: 95%;
+    padding: 12px;
+    background-color: #FF8000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effects */
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus,
+form input[type="number"]:focus {
+    border-color: #3498db;
+}
+
+form input[type="submit"]:hover {
+    background-color: #27ae60;
+}
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+    .container {
+        width: 100%;
+    }
+}

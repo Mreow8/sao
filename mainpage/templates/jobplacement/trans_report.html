@@ -1,0 +1,82 @@
+{% extends 'main.html' %} {% block headcontent %} {% load static %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/job_placement/trans_rep.css' %}"
+/>
+{% endblock headcontent %} {% block bodycontent %}
+<section>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Apply filter" class="filter-button" />
+    <div>
+      <div class="date-container">
+        <label for="date">Please select a Date:</label>
+        <input
+          id="date_time_filter"
+          type="datetime-local"
+          name="date_time_filter"
+          value="{{ date_time }}"
+        />
+        <label class="switch">
+          <input
+            type="checkbox"
+            name="monthly_filter"
+            {%
+            if
+            prev_period
+            %}
+            value="True"
+            {%
+            else
+            %}
+            value="false"
+            {%
+            endif
+            %}
+            onclick="togglemonthlyfilter(this)"
+          />
+          <span class="slider round"></span>
+        </label>
+        <label for="yesbtn" class="padded">Monthly</label>
+      </div>
+    </div>
+  </form>
+  <h1>Transaction Report</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Action</th>
+        <th>Date/Time</th>
+        <th>User Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in transactions %}
+      <tr>
+        <td>{{ transaction.user }}</td>
+        <td>{{ transaction.action }}</td>
+        <td>{{ transaction.date_created }}</td>
+        <td>{{ transaction.user_type }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- GoTo Download -->
+  <form action="{% url 'jobplacement:rep_print' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="date_filter" value="{{ date_time }}" />
+    <input type="hidden" name="period_filter" value="{{ prev_period }}" />
+    <input
+      class="download-button"
+      id="dl_filter"
+      type="submit"
+      value="Go To Download"
+    />
+  </form>
+</section>
+
+<script src="{% static 'scripts/job_placement/trans_report.js' %}?206"></script>
+{% endblock bodycontent %}

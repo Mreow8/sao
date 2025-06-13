@@ -1,0 +1,119 @@
+section {
+    margin: .2rem;
+    display: flex;
+    flex-direction: column;
+    width: 100vh;
+}
+.intro {
+    line-height: 1.6;
+    margin-left: -34%;
+
+}
+.intro p {
+    font-size: 20px;
+    color: #FF8000;
+    margin-top: 0;
+    margin-right: 0;
+    font-weight: bold;
+}
+#desc {
+    line-height: 1.6;
+}
+#desc p {
+    font-weight: bold;
+    margin: .5rem;
+}
+#demo{
+    margin-left: -34%;
+    margin-right: -34% ;
+    margin-bottom: .5rem;
+}
+.showbox{
+    width: 100%;
+    max-width: 800px;
+    background: #f2f2f2;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 2em;
+    margin: 2rem auto;
+}
+label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+input[name="student_holder"],
+input[name="student_id"],
+input[name="position"],
+input[name="company_name"],
+input[name="company_address"],
+input[name="capstone_title"],
+input[name="date_issued"],
+input[name="acad_year"],
+input[name="research_title"],
+input[name="achievement"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #FF8000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+input[type="submit"]:hover {
+    background-color: #cc6600;
+}
+#program_select, #award_select{
+    font-size: 16px;
+    overflow-y: auto;
+    height: 40%;
+    cursor: pointer;
+    line-height: 1.6;
+}
+.hidden_fields {
+    display: none;
+}
+
+#suggestions_container{
+    position: relative;
+}
+#suggestions_container #suggestions{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    max-height: 15rem;  
+    overflow: auto;
+    top: 100%; 
+    z-index: 1000;
+    background: #ffffff;
+}
+#suggestions li{
+    background: #ffffff;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid black;
+    border-top: 0;
+    border-bottom: 0;
+}
+#suggestions li:hover{
+    background: #ccc;
+}
+#suggestions li:last-child{
+    border-bottom: 1px solid black;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}

@@ -1,0 +1,38 @@
+{% extends 'main.html' %} {% block headcontent %} {% load static %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/job_placement/ojthiring_info.css' %}?244"
+/>
+{% endblock headcontent %} {% block bodycontent %} {% load static %}
+<section>
+  <div>
+    <!-- mura ni ug header -->
+    <h1>{{ ojt.company_name }}</h1>
+    <h4>{{ ojt.owner }}</h4>
+  </div>
+  <hr />
+  <div class="admintable">
+    <table>
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Student Name</th>
+          <th>Date Started</th>
+          <th>Program</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for hired in hired_students %}
+        <tr>
+          <td>{{ hired.studID.studID }}</td>
+          <td>{{ hired.studID.firstname }} {{ hired.studID.lastname }}</td>
+          <td>{{ hired.date_started }}</td>
+          <td>{{ hired.studID.program }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+<script src="{% static 'scripts/job_placement/studentsuggestions.js' %}"></script>
+{% endblock bodycontent %}

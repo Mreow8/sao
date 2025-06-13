@@ -1,6 +1,6 @@
 from django.shortcuts import render
 def homepage(request):
-    return render(request, 'guidance/main.html')
+    return render(request, 'main.html')
 def alumni_main(request):
     return render(request, 'alumni/id_requests.html')
 def calendar(request):

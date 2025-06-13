@@ -53,11 +53,13 @@
                         <span class="fas fa-caret-down third"></span>    
                     </a>
                     <ul class="jobplace-show">
-                        <li><a href="#">OJT Hiring</a></li>
-                        <li><a href="#">Career Guidance Tracker</a></li>
-                        <li><a href="#">OJT Requirements Tracker</a></li>
-                        <li><a href="#">Non-Academic Award Issuance</a></li>
-                        <li><a href="#">Transaction Reports</a></li>
+
+                        
+                        <li><a href="{% url 'jobplacement:ojt_hiring' %}">OJT Hiring</a></li>
+                            <li><a href="{% url 'jobplacement:seminar_page' %}">Career Guidance Tracker</a></li>
+                            <li><a href="{% url 'jobplacement:ojt_requirements_tracker' %}">OJT Requirements Tracker</a></li>
+                            <li><a href="{% url 'jobplacement:non_acad' %}">Non-Academic Award Issuance</a></li>
+                            <li><a href="{% url 'jobplacement:job_trans_rep' %}">Transaction Reports</a></li>
                     </ul>
                     </li>
                     <li><a href="#" class="student_disc-btn">STUDENT DISCIPLINE

@@ -1,0 +1,195 @@
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    margin: 0%;
+    position: relative;
+}
+.container {
+    width: 100%;
+    max-width: 600px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.5);
+    margin-bottom: 2rem;
+}
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    width: 100%;
+    background-color: #f2f2f2;
+    box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.5);
+    line-height: 1.2;
+}
+.card h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1c1e21;
+}
+.card p {
+    margin: 0.5rem 0;
+    color: #606770;
+}
+.card img {
+    width: 100%;
+    height: auto;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+}
+.intro {
+    line-height: 1.6;
+    margin-left: -75%;
+}
+.intro p {
+    font-size: 20px;
+    color: #FF8000;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+#demo{
+    margin-bottom: .5rem;
+    margin-top: .2rem;
+}
+
+
+.info-group {
+    display: flex;
+    align-items: center;
+    margin: .5rem 0;
+}
+.info-group h3{
+    margin: 0 1rem 0 0;
+    padding-right: 10px;
+}
+.info-group .hiring{
+    font-weight: 400;
+}
+.info-group a {
+    text-decoration: none;
+    font-size: 20px;
+    color: #FF8000;
+    font-weight: bold;
+}
+.info-group a:hover {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+
+.button-container {
+    position: absolute;
+    top: -1%; 
+    right: .3rem;
+    z-index: 1; 
+    display: flex;
+    gap: 1rem; 
+}
+.showform{
+    padding: 0.5rem 0.8rem;
+    font-weight: 600;
+    outline: none;
+    border: none;
+    background-color: #FF8000;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+    margin-right: 0;
+}
+
+.closeform{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #FF8000;
+}
+.showform_container
+{
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+.showform_container.active
+{
+    opacity: 1;
+    pointer-events: auto;
+    overflow-y: auto;
+    z-index:1;
+}
+.showform_container .form_container
+{
+    width: 55%;
+    max-width: 90%; 
+    max-height: 90vh;
+    background: #f2f2f2;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 4%;
+    transform: scale(0);
+    transition: transform 0.4s ease;
+    overflow-y: auto; 
+    line-height: 1.9;
+}
+.showform_container.active .form_container
+{
+    transform: scale(1);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+form label {
+    margin: 10px 0 5px;
+}
+form input[type="text"],
+form input[type="image"],
+form input[type="date"],
+form input[type="submit"] {
+    padding: 10px;
+    margin: 5px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    display: inline-block;
+}
+form input[type="submit"]{
+    margin-top: 1rem;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #ffffff;
+    background-color: #FF8000;
+}
+#myForm input[type="submit"]{
+    position: absolute;
+    top: 2%;
+    right: -40%;
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #FF8000;
+}
+#myForm input[type="submit"]:hover{
+    text-decoration: underline; 
+} 

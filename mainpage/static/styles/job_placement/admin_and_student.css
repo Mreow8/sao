@@ -1,0 +1,93 @@
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+}
+body{
+	max-height: 100vh;
+	max-width: 100vw;
+	display: flex;
+}
+.background-container{
+	height: 100vh;
+	width: 52%;
+	margin: 0px;
+	overflow: hidden;
+}
+
+#libraryPicture{
+	height: 100%;
+	width: 100%;
+}
+#CtuLogo{
+	position: absolute;
+	top: 15%;
+	left: 14%;	
+	z-index: 1;
+	height: 250px;
+}
+#welcome_msg{
+	position: absolute;
+	top: 50%;
+	left: 10%;	
+	z-index: 1;
+	font-size: 90px;
+	font-family: Impact;
+	color: white;
+}
+.form-container {
+    height: 100vh;
+    width: 48%;
+    background-color: #4682B4;
+    display: flex;
+    justify-content: center;
+	flex-direction: column;
+    position: relative; /* Added for z-index to work */
+}
+.form-container::before {
+    content: "";
+    position: absolute;
+    border-style: solid;
+	left: -9.9vw;
+    border-width: 100vh 10vw 0px 0px; /* Adjust the values to change trapezoid size */
+    border-color: transparent #4682B4 transparent ; /* Adjust colors */
+}
+.login-form-container{
+	padding: 2em;
+	width: 20em;
+	display: flex;
+	justify-content: center;
+	z-index: 1;
+	border-radius: 20px;
+}
+td{
+	padding: 10px 0px 0px 0px;
+}
+input{
+	border: 1px solid grey;
+	border-radius: .5em;
+	height: 3.5em;
+	width: 20em;
+	padding: .5em;
+}
+.login_btn{
+	margin-right: 20px;
+	font-weight: bold	;
+	display: block;
+	text-align: center;
+	padding-top: 25px;
+	cursor: pointer;
+	width: 200%;
+	border-radius: .5em;
+	height: 90px;
+	font-size: 35px;
+	background-color: #FF9934;
+	text-decoration: none;
+	color: black;
+}
+h1{
+	margin-left: 25%;
+	color: aliceblue;
+}

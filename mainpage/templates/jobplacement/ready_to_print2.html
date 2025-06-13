@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'styles/job_placement/ready_print.css' %}?217"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <img src="{% static 'jobplacement/imgs/logo.jpg' %}" />
+        <h1>{{ filter_type }} TRANSACTION REPORT</h1>
+        <!-- Center the title -->
+      </header>
+    </div>
+    <section>
+      <!-- <div id="position_holder"> -->
+      <div id="tag_container">
+        <p id="timetag">{{ datetime }}</p>
+        <!-- butang ni upper right corner sa table -->
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Action</th>
+            <th>Date/Time</th>
+            <th>User Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+          <tr>
+            <td>{{ transaction.user }}</td>
+            <td>{{ transaction.action }}</td>
+            <td>{{ transaction.date_created }}</td>
+            <td>{{ transaction.user_type }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- </div> -->
+      <!-- SOME MORE DETAILS -->
+    </section>
+  </body>
+</html>

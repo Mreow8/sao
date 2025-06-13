@@ -42,7 +42,7 @@ def upload_file(request):
 
 #Page View
 def home(request):
-	return render(request, 'guidance/main.html',{})
+	return render(request, 'main.html',{})
 
 def calculate_age(birth_date):
     today = datetime.today()

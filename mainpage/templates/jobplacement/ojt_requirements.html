@@ -1,0 +1,349 @@
+{% extends 'main.html' %}
+
+{% block headcontent %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/job_placement/ojt_req.css' %}?250">    
+{% endblock headcontent %}
+
+{% block bodycontent %}
+<section>
+    {% if request.user.is_staff %}
+        <!-- ADMIN VIEW -->
+        <div id="main_container">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input id="search_bar" type="text" name="student_id" placeholder="Student ID"> <!-- closing -->
+                <!-- SEARCH SUGGESTIONS-->
+                <ul id="search_suggestions">
+                </ul>
+                <input id="attend_student_list" type="submit" value="Search">
+            </form>
+            <div class="intro">
+                <p>OJT Requirements Tracker (Admin)</p>
+            </div>
+
+            <div class="admintable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name of Company</th>
+                            <th>Name of Student</th>
+                            <th>NDA</th>
+                            <th>BIODATA</th>
+                            <th>PARENT'S CONSENT</th>
+                            <th>APPLICATION LETTER</th>
+                            <th>MEDICAL</th>
+                            <th>MOA</th>
+                            <th>ENDORSEMENT LETTER</th>
+                            <th>CERTIFICATION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in req_records %}
+                        <tr>
+                            <!-- COMPANY NAME -->
+                            <td>{{ req.company_id }}</td>
+
+                                <!-- STUDENT NAME -->
+                            <td>{{ req.student_id.fullname }}</td>
+                            
+                                <!-- Non-Disclosure Agreement -->
+                            <td>
+                                {% if req.nondis_stat == "Pending" %}
+                                    <button type="button" class="view-pdf" value="{{ req.ojt_requirement_id }}" name="nondis">Pending</button>
+                                {% else %}
+                                    {{ req.nondis_stat }}
+                                {% endif %}
+                            </td>
+                                <!-- BIODATA-->
+                            <td>
+                                {% if req.biodata_stat == "Pending" %}
+                                    <button type="button" class="view-pdf" value="{{ req.ojt_requirement_id }}" name="biodata">Pending</button>
+                                {% else %}
+                                    {{ req.biodata_stat }}
+                                {% endif %}
+                            </td>
+
+                                <!-- PARENTS_CONSENT -->
+                            <td>
+                                {% if req.consent_stat == "Pending" %}
+                                    <button type="button" class="view-pdf" value="{{ req.ojt_requirement_id }}" name="consent">Pending</button>
+                                {% else %}
+                                    {{ req.consent_stat }}
+                                {% endif %}
+                            </td>
+                                <!-- APPLICATION LETTER -->
+                            <td>
+                                {% if req.apl_letter_stat == "Pending" %}
+                                    <button type="button" class="view-pdf" value="{{ req.ojt_requirement_id }}" name="apl_letter">Pending</button>
+                                {% else %}
+                                    {{ req.apl_letter_stat }}
+                                {% endif %}
+                            </td>
+                                <!-- MEDICAL -->
+                            <td>
+                                {% if req.medical_stat == "Pending" %}
+                                    <button type="button" class="view-pdf" value="{{ req.ojt_requirement_id }}" name="medical">Pending</button>
+                                {% else %}
+                                    {{ req.medical_stat }}
+                                {% endif %}
+                            </td>
+
+                            <!-- MOA -->
+                            <td>
+                                {% if req.moa_stat == "Pending" %}
+                                    <button type="button" class="view-pdf" value="{{ req.ojt_requirement_id }}" name="moa">Pending</button>
+                                {% else %}
+                                    {{ req.moa_stat }}
+                                {% endif %}
+                            </td>
+                                
+                            <td>
+                                <!-- ENDORSEMENT LETTER -->
+                                {% if req.endorsement_stat == "Pending" %}
+                                    <button type="button" class="view-pdf" value="{{ req.ojt_requirement_id }}" name="endorsement">Pending</button>
+                                {% else %}
+                                    {{ req.endorsement_stat }}
+                                {% endif %}
+                            </td>
+                                
+                            <td>
+                                <!-- CERTIFICATION -->
+                                {% if req.cert_stat == "Pending" %}
+                                    <button type="button" class="view-pdf" value="{{ req.ojt_requirement_id }}" name="cert">Pending</button>
+                                {% else %}
+                                    {{ req.cert_stat }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+            </div>
+            
+            <div class="showcontainer">
+                <div class="showform">
+                    <button class="closeform">×</button>
+                    <iframe id="pdf-iframe" src="" width="100%" height="800"></iframe>
+                    
+                    <div class="button-container">
+                        <form action="{% url 'jobplacement:ojt_requirement_update' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="accept">
+                            <input type="hidden" name="req_id" value="">
+                            <input type="hidden" name="attr_name" value="">
+                            <input type="submit" value="Accept" class="accept-button">
+                        </form>
+                
+                        <form action="{% url 'jobplacement:ojt_requirement_update' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="declined">
+                            <input type="hidden" name="req_id" value="">
+                            <input type="hidden" name="attr_name" value="">
+                            <input type="submit" value="Decline" class="decline-button">
+                        </form>
+                    </div>
+                    <button class="button close-button">Close</button>
+                </div>
+            </div>
+
+        </div>
+    {% else %}
+        <!--    STUDENT VIEW -->
+        <!-- AKO GI GROUP INTO DIVS
+        GI TANG2 NAKO ANG P CLASS = FILE_STATUS -->
+        <div class="intro">
+            <p>OJT Requirements/Documents Submission</p>
+        </div>
+        <hr id ="demo">
+        <div id="balo">
+            <p>Please double check all documents before submission. </p>
+            <p>Submit requirements in PDF or Image format</p>
+        </div>
+        <div class="showbox">
+            <form action="{% url 'jobplacement:ojt_requirements_submit' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="">Non-Disclosure:</label>
+                    {% if form.non_disclosure.value %}
+                        <p class="file_name">{{ form.non_disclosure.value }}</p>
+                    {% else %}
+                        <input type="file" name="{{ form.non_disclosure.name }}" class="file-input">
+                    {% endif %}
+                    <!-- SHOW STATUS VALUE -->
+                    {% if existing_form %}
+                        {% if existing_form.nondis_stat == existing_form.PENDING %}  <!-- Display File Status -->
+                            <p class="pending">Pending</p>
+                        {% elif existing_form.nondis_stat == existing_form.ACCEPTED %}
+                            <p class="accepted">Accepted</p>
+                        {% elif existing_form.nondis_stat == existing_form.DECLINED %}
+                            <p class="declined">Declined</p>
+                        {% else %}
+                            <p class="nofile">No File</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="no_file">No File</p>
+                    {% endif %}
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label for="">Biodata:</label>
+                    {% if form.biodata.value %}
+                        <p class="file_name">{{ form.biodata.value }}</p>
+                    {% else %}
+                        <input type="file" name="{{ form.biodata.name }}" class="file-input">
+                    {% endif %}
+                    <!-- SHOW STATUS VALUE -->
+                    {% if existing_form %}
+                        {% if existing_form.biodata_stat == existing_form.PENDING %}  <!-- Display File Status -->
+                            <p class="pending">Pending</p>
+                        {% elif existing_form.biodata_stat == existing_form.ACCEPTED %}
+                            <p class="accepted">Accepted</p>
+                        {% elif existing_form.biodata_stat == existing_form.DECLINED %}
+                            <p class="declined">Declined</p>
+                        {% else %}
+                            <p class="nofile">No File</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="no_file">No File</p>
+                    {% endif %}
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label for="">Parents Consent:</label>
+                    {% if form.parents_consent.value %}
+                        <p class="file_name">{{ form.parents_consent.value }}</p>
+                    {% else %}
+                        <input type="file" name="{{ form.parents_consent.name }}" class="file-input">
+                    {% endif %}
+                    {% if existing_form %}
+                        {% if existing_form.consent_stat == existing_form.PENDING %}  <!-- Display File Status -->
+                            <p class="pending">Pending</p>
+                        {% elif existing_form.consent_stat == existing_form.ACCEPTED %}
+                            <p class="accepted">Accepted</p>
+                        {% elif existing_form.consent_stat == existing_form.DECLINED %}
+                            <p class="declined">Declined</p>
+                        {% else %}
+                            <p class="nofile">No File</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="no_file">No File</p>
+                    {% endif %}
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label for="">Application Letter:</label>
+                    {% if form.application_letter.value %} <!--  Display filename if naa -->
+                        <p class="file_name">{{ form.application_letter.value }}</p>
+                    {% else %}
+                        <input type="file" name="{{ form.application_letter.name }}" class="file-input">
+                    {% endif %}
+                    {% if existing_form %}
+                        {% if existing_form.apl_letter_stat == existing_form.PENDING %}  <!-- Display File Status -->
+                            <p class="pending">Pending</p>
+                        {% elif existing_form.apl_letter_stat == existing_form.ACCEPTED %}
+                            <p class="accepted">Accepted</p>
+                        {% elif existing_form.apl_letter_stat == existing_form.DECLINED %}
+                            <p class="declined">Declined</p>
+                        {% else %}
+                            <p class="nofile">No File</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="no_file">No File</p>
+                    {% endif %}
+                <hr>
+                <div class="form-group">
+                    <label for="">Medical:</label>
+                    {% if form.medical.value %} <!--  Display filename if naa -->
+                        <p class="file_name">{{ form.medical.value }}</p>
+                    {% else %}
+                        <input type="file" name="{{ form.medical.name }}" class="file-input">
+                    {% endif %}
+                    {% if existing_form %}
+                        {% if existing_form.medical_stat == existing_form.PENDING %}  <!-- Display File Status -->
+                            <p class="pending">Pending</p>
+                        {% elif existing_form.medical_stat == existing_form.ACCEPTED %}
+                            <p class="accepted">Accepted</p>
+                        {% elif existing_form.medical_stat == existing_form.DECLINED %}
+                            <p class="declined">Declined</p>
+                        {% else %}
+                            <p class="nofile">No File</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="no_file">No File</p>
+                    {% endif %}
+                <hr>
+                <div class="form-group">
+                    <label for="">MOA:</label>
+                    {% if form.moa.value %} <!--  Display filename if naa -->
+                        <p class="file_name">{{ form.moa.value }}</p>
+                    {% else %}
+                        <input type="file" name="{{ form.moa.name }}" class="file-input">
+                    {% endif %}
+                    {% if existing_form %}
+                        {% if existing_form.moa_stat == existing_form.PENDING %}  <!-- Display File Status -->
+                            <p class="pending">Pending</p>
+                        {% elif existing_form.moa_stat == existing_form.ACCEPTED %}
+                            <p class="accepted">Accepted</p>
+                        {% elif existing_form.moa_stat == existing_form.DECLINED %}
+                            <p class="declined">Declined</p>
+                        {% else %}
+                            <p class="nofile">No File</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="no_file">No File</p>
+                    {% endif %}
+                <hr>
+                <div class="form-group">
+                    <label for="">Endorsement Letter:</label>
+                    {% if form.endorsement.value %} <!--  Display filename if naa -->
+                        <p class="file_name">{{ form.endorsement.value }}</p>
+                    {% else %}
+                        <input type="file" name="{{ form.endorsement.name }}" class="file-input">
+                    {% endif %}
+                    {% if existing_form %}
+                        {% if existing_form.endorsement_stat == existing_form.PENDING %}  <!-- Display File Status -->
+                            <p class="pending">Pending</p>
+                        {% elif existing_form.endorsement_stat == existing_form.ACCEPTED %}
+                            <p class="accepted">Accepted</p>
+                        {% elif existing_form.endorsement_stat == existing_form.DECLINED %}
+                            <p class="declined">Declined</p>
+                        {% else %}
+                            <p class="nofile">No File</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="no_file">No File</p>
+                    {% endif %}
+                <hr>
+                <div class="form-group">
+                    <label for="">Certification:</label>
+                    {% if form.certification.value %} <!--  Display filename if naa -->
+                        <p class="file_name">{{ form.certification.value }}</p>
+                    {% else %}
+                        <input type="file" name="{{ form.certification.name }}" class="file-input">
+                    {% endif %}
+                    {% if existing_form %}
+                        {% if existing_form.cert_stat == existing_form.PENDING %}  <!-- Display File Status -->
+                            <p class="pending">Pending</p>
+                        {% elif existing_form.cert_stat == existing_form.ACCEPTED %}
+                            <p class="accepted">Accepted</p>
+                        {% elif existing_form.cert_stat == existing_form.DECLINED %}
+                            <p class="declined">Declined</p>
+                        {% else %}
+                            <p class="nofile">No File</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="no_file">No File</p>
+                    {% endif %}
+                <hr>
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="submit-button">
+                </div>
+            </form>
+        </div>
+        
+    {% endif %}
+
+</section>
+<script src="{% static 'scripts/job_placement/ojt_requirements.js' %}?206" ></script>
+{% endblock bodycontent %}

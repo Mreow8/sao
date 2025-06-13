@@ -1,0 +1,147 @@
+{% extends 'main.html' %} {% block bodycontent %}
+<style>
+  /* Apply general styling to the form */
+  form {
+    margin-top: 10%;
+    width: 30rem;
+    display: column;
+  }
+  li {
+    display: none;
+  }
+  .helptext {
+    display: none;
+  }
+  /* Style form labels */
+  form label {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .container {
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f2f2f2;
+    max-width: 500px;
+    width: 100rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Style form labels */
+  form label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  /* Style form inputs */
+  form input[type="text"],
+  form input[type="email"],
+  form input[type="password"],
+  form input[type="number"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #555;
+    transition: border-color 0.3s ease;
+  }
+
+  /* Style form submit button */
+  form input[type="submit"] {
+    width: 95%;
+    padding: 12px;
+    background-color: #ff8000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Hover effects */
+  form input[type="text"]:focus,
+  form input[type="email"]:focus,
+  form input[type="password"]:focus,
+  form input[type="number"]:focus {
+    border-color: #3498db;
+  }
+
+  form input[type="submit"]:hover {
+    background-color: #27ae60;
+  }
+
+  /* Responsive design */
+  @media screen and (max-width: 700px) {
+    form {
+      width: 100%;
+    }
+  }
+</style>
+<section>
+  <!-- STUDENT LOGIN PAGE -->
+  {% if page == 'student_login' %} {% if form %}
+  <form action="{% url 'jobplacement:student_login' %}" method="POST">
+    {% csrf_token %} {{ form.as_p }}
+    <!-- <label for="email">Email:</label>
+                <input type="email" name="email">
+
+                <label for="password">Password:</label>
+                <input type="password" name="password"> -->
+    <input type="submit" value="Login" />
+  </form>
+  {% endif %}
+
+  <a href="{% url 'jobplacement:student_signup' %}">Student Signup</a>
+  {% else %} {% if form %}
+  <form
+    action="{% url 'jobplacement:student_signup' %}"
+    method="POST"
+    id="admin_signup_form"
+  >
+    <div class="container">
+      {% csrf_token %} {{ form.as_p }}
+      <!-- <label for="email">Email:</label>
+                    <input type="email" name="{{ form.email.name}}">
+
+                    <label for="firstname">Firstname:</label>
+                    <input type="text" name="{{ form.firstname.name}}">
+
+                    <label for="lastname">Lastname:</label>
+                    <input type="text" name="{{ form.lastname.name}}">
+
+                    <label for="middlename">Middlename:</label>
+                    <input type="text" name="{{ form.middlename.name}}">
+
+                    <label for="studID">Student ID:</label>
+                    <input type="text" name="{{ form.studID.name}}">
+
+                    <label for="lrn">LRN:</label>
+                    <input type="text" name="{{ form.lrn.name}}">
+
+                    <label for="yearlvl">yearlvl:</label>
+                    <input type="text" name="{{ form.yearlvl.name}}">
+
+                    <label for="sex">Sex:</label>
+                    <input type="text" name="{{ form.sex.name}}">
+
+                    <label for="contact">Contact:</label>
+                    <input type="text" name="{{ form.contact.name}}">
+
+                    <label for="password1">Password:</label>
+                    <input type="text" name="{{ form.password1.name}}">
+
+                    <label for="password2">Confirm Password:</label>
+                    <input type="text" name="{{ form.password2.name}}"> -->
+
+      <input type="submit" value="Register" />
+    </div>
+  </form>
+  {% endif %} {% endif %}
+</section>
+{% endblock bodycontent %}

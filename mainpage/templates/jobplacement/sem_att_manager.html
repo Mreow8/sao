@@ -1,0 +1,98 @@
+{% extends 'main.html' %} {% block headcontent %} {% load static %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/job_placement/att_manager2.css' %}?306"
+/>
+{% endblock headcontent %} {% block bodycontent %}
+
+<section>
+  <input id="sem_id" type="hidden" value="{{ sem_id }}" />
+  <!-- current seminar id, gi gamit sa js para redirect-->
+  <form
+    action="{% url 'jobplacement:pending_attendance' %}"
+    method="POST"
+    id="search_form"
+  >
+    {% csrf_token %}
+    <input type="hidden" name="seminar_id" value="{{ sem_id }}" />
+    <input
+      id="search_bar"
+      type="text"
+      name="student_id"
+      placeholder="Student ID"
+    />
+    <!-- closing -->
+    <input id="attend_student_list" type="submit" value="Add" />
+
+    <!-- SEARCH SUGGESTIONS-->
+    <ul id="search_suggestions"></ul>
+  </form>
+
+  <div id="studentlist_container">
+    <!-- <h4>click ni nga button para ma attendance ang students</h4>  Pwede ra e delete ig abot sa design -->
+    <button id="saveAll">Attend All</button>
+    <hr />
+    <!-- <h4>diri makita ang list sa students para imong ma attendance</h4>  Pwede ra e delete ig abot sa design -->
+
+    <table class="studentTable" id="attendeeTable">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for att in attendance %}
+        <tr data-item-id="{{ att.sem_at_id }}">
+          <!-- id ra sa row -->
+          <td name="{{ att.student.studID }}">{{ att.student_id.studID }}</td>
+          <td>{{ att.student_id.firstname }}</td>
+          <td>{{ att.student_id.lastname }}</td>
+          <td class="cancelaction">
+            <form
+              action="{% url 'jobplacement:cancel_pending' att.sem_at_id %}"
+              method="POST"
+            >
+              {% csrf_token %}
+              <!-- DELETE BTN -->
+              <input type="submit" value="X" />
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <br />
+  <hr />
+  <br />
+  <div>
+    <h3>Present Students</h3>
+    <table id="present_students" class="studentTable">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for present in presents %}
+        <tr>
+          <td name="{{ present.student_id.studID }}">
+            {{ present.student_id.studID }}
+          </td>
+          <td>{{ present.student_id.firstname }}</td>
+          <td>{{ present.student_id.lastname }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script src="{% static 'scripts/job_placement/sem_att_manager.js' %}?109"></script>
+
+{% endblock bodycontent %}

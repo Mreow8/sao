@@ -140,7 +140,7 @@
       <div class="right-section">
         <div class="login-box">
           <h2>Student Login</h2>
-          <form method="POST" action="{% url 'login' %}">
+          <form method="POST" action="{% url 'signinuser' %}">
             {% csrf_token %} {% if form.errors %}
             <div class="error">Invalid email or password.</div>
             {% endif %}

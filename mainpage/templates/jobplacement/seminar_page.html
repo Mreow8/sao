@@ -1,0 +1,80 @@
+{% extends 'main.html' %} {% block headcontent %} {% load static %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/job_placement/seminarpage.css' %}?506"
+/>
+{% endblock headcontent %} {% block bodycontent %}
+<section>
+  <div class="intro">
+    <p>Career Guidance Tracker</p>
+  </div>
+  <hr id="demo" />
+
+  {% for seminar in seminars %}
+  <div class="container">
+    <div class="card">
+      {% if request.user.is_staff %}
+      <form
+        action="{% url 'jobplacement:seminar_delete' seminar.seminar_id %}"
+        method="POST"
+        id="myForm"
+      >
+        {% csrf_token %}
+        <input type="submit" value="Delete" />
+      </form>
+      {% endif %}
+      <div class="info-group">
+        <h3>Title:</h3>
+        <a href="{% url 'jobplacement:manage_att' seminar.seminar_id %}"
+          >{{ seminar.title }}</a
+        >
+      </div>
+      <div class="info-group">
+        <h3>Theme:</h3>
+        <h3 class="hiring">{{ seminar.theme }}</h3>
+      </div>
+      <div class="info-group">
+        <h3>Date of Event:</h3>
+        <h3 class="hiring">{{ seminar.date_of_event }}</h3>
+      </div>
+      {% if seminar.image %}
+      <img src="{{ seminar.image.url }}" alt="{{ seminar.title }}" />
+      {% else %}
+      <p>No image available</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %} {% if request.user.is_staff %}
+  <div class="button-container">
+    <button class="showform">Add Event</button>
+  </div>
+  {% endif %}
+  <div class="showform_container">
+    <div class="form_container">
+      <button class="closeform">×</button>
+      <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label for="{{ form.title.name }}">Title</label>
+        <input type="text" name="{{ form.title.name }}" />
+
+        <label for="{{ form.title.name }}">Theme</label>
+        <input type="text" name="{{ form.theme.name }}" />
+
+        <label for="date">Date of Event:</label>
+        <input
+          id="date_filter"
+          type="date"
+          name="{{ form.date_of_event.name }}"
+        />
+
+        <label for="image">Upload Image</label>
+        {{ form.image }}
+
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </div>
+</section>
+<script src="{% static 'scripts/job_placement/ojthiring_show.js' %}?320"></script>
+{% endblock bodycontent %}

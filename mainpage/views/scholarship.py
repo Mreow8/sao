@@ -88,7 +88,7 @@ def signinuser(request):
             user = User.objects.get(email=email)
             if user.check_password(password):
                 login(request, user)
-                return redirect('studenthome')
+                return redirect('homepage')
             else:
                 pass
         except User.DoesNotExist:

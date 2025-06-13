@@ -1,0 +1,235 @@
+{% extends 'main.html' %} {% block headcontent %} {% load static %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/job_placement/ojthiring.css' %}?249 "
+/>
+
+{% endblock headcontent %} {% block bodycontent %}
+
+<section>
+  <div class="intro">
+    <p>OJT Hiring</p>
+  </div>
+  <hr id="demo" />
+  <div id="desc">
+    <p>
+      Cebu Technological University - Argao Campus offers internship
+      opportunities for students who may be interested in further developing
+      their skills.
+    </p>
+    <p>Find internship opportunities below and get started:</p>
+  </div>
+
+  {% if request.user.is_staff %}
+
+  <!-- Add company Form-->
+  <!-- <div class="container">      -->
+  <div class="button-container">
+    <button class="showform2">Assign Student</button>
+    <button class="showform">Add Company</button>
+  </div>
+
+  <div class="showform_container">
+    <div class="form_container">
+      <button class="closeform">×</button>
+      <form action="{% url 'jobplacement:ojt_hiring' %}" method="POST">
+        {% csrf_token %}
+        <div>
+          <!-- <label for="{{ form.student.name }}">Student ID:</label>
+                                <input type="text" name="stud_id" id="stud_id">
+                                <div class="search">
+                                    <ul id="search_suggestions">
+                                    </ul>
+                                </div> -->
+          <label for="company">Company Name:</label>
+          <input type="text" name="{{ form.company_name.name }}" />
+
+          <label for="address">Address:</label>
+          <input type="text" name="{{ form.address.name }}" />
+
+          <label for="owner">Owner:</label>
+          <input type="text" name="{{ form.owner.name }}" />
+
+          <label for="position">Position:</label>
+          <input type="text" name="{{ form.position.name}}" />
+
+          <label for="company_contact">Company Contact:</label>
+          <input type="text" name="{{ form.company_contact.name}}" />
+
+          <label for="Shift">Shift:</label>
+          {{ form.shift }}
+
+          <label for="number_of_slots">Slots:</label>
+          <input type="number" name="{{ form.number_of_slots.name }}" />
+
+          <label for="position">Description:</label>
+          <textarea
+            type="text"
+            name="{{ form.description.name }}"
+            rows="4"
+          ></textarea>
+        </div>
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </div>
+  <!-- </div> -->
+
+  <!-- Assign student to company form-->
+  <!-- <div class="container"> -->
+  <div class="studentcontainer">
+    <div class="studentshow">
+      <button class="closeform2">×</button>
+
+      <!-- STUDENT ASSIGNING FORM -->
+      <form action="{% url 'jobplacement:ojthiring_assign' %}" method="POST">
+        {% csrf_token %}
+        <label for="company">Company:</label>
+        <input
+          id="company_id_holder"
+          type="hidden"
+          name="{{ assign_form.company_id.name}}"
+          value=""
+        />
+        <input id="assign_company_id" type="text" name="company_holder" />
+        <ul id="company_suggestions"></ul>
+
+        <label for="student">Student:</label>
+        <input
+          id="student_id_holder"
+          type="hidden"
+          name="{{ assign_form.studID.name }}"
+          value=""
+        />
+        <input id="assign_student_id" type="text" name="student_holder" />
+        <ul id="assign_student_suggestions"></ul>
+
+        <label for="duration">Duration of OJT (hours):</label>
+        <input type="number" name="{{ assign_form.duration.name}}" />
+
+        <label for="endorser">Endorser Fullname:</label>
+        <input type="text" name="endorser_name" />
+
+        <label for="endorser_num">Endorser Phone:</label>
+        <input type="text" name="endorser_num" />
+
+        <label for="endorser_email">Endorser Email:</label>
+        <input type="text" name="endorser_email" />
+
+        <label for="endorser_program">Endorser Program:</label>
+        <select name="endorser_program" id="">
+          <option value="BSIT">BSIT</option>
+          <option value="BEED">BEED</option>
+          <option value="BSED">BSED</option>
+          <option value="BIT_COMTECH">BIT_COMTECH</option>
+          <option value="BIE">BIE</option>
+          <option value="FORESTRY">FORESTRY</option>
+          <option value="PSYCH">PSYCH</option>
+          <option value="BAEL">BAEL</option>
+          <option value="CRIM">CRIM</option>
+          <option value="HM">HM</option>
+          <option value="TOURISM">TOURISM</option>
+          <option value="CAS">CAS</option>
+          <option value="ES">ES</option>
+        </select>
+
+        <input type="submit" value="Confirm" />
+      </form>
+    </div>
+  </div>
+  <!-- </div> -->
+  {% endif %}
+
+  <!-- Samples -->
+  {% for hiring in ojt_list %}
+  <div class="show_container">
+    <div class="showbox">
+      <button class="close-top">×</button>
+      <h1>{{ hiring.company_name }}</h1>
+      <div class="info-groups-container">
+        <div class="info-group">
+          <img src="{% static '/jobplacement/imgs/human.png' %}" alt="human" />
+          <h3 style="font-weight: bold">Employer:</h3>
+          <h3 class="hiring">{{ hiring.owner }}</h3>
+        </div>
+        <div class="info-group">
+          <img
+            src="{% static '/jobplacement/imgs/briefcase.png' %}"
+            alt="case"
+          />
+          <h3 style="font-weight: bold">Position:</h3>
+          <h3 class="hiring">{{ hiring.position }}</h3>
+        </div>
+        <div class="info-group">
+          <img
+            src="{% static '/jobplacement/imgs/placeholder.png' %}"
+            alt="arrow"
+          />
+          <h3 style="font-weight: bold">Address:</h3>
+          <h3 class="hiring">{{ hiring.address }}</h3>
+        </div>
+        <div class="info-group">
+          <img src="{% static '/jobplacement/imgs/phone.png' %}" alt="phone" />
+          <h3 style="font-weight: bold">Contact:</h3>
+          <h3 class="hiring">{{ hiring.company_contact }}</h3>
+        </div>
+        <div class="info-group">
+          <img src="{% static '/jobplacement/imgs/clock.png' %}" alt="clock" />
+          <h3 style="font-weight: bold">Work Shift:</h3>
+          <h3>{{ hiring.shift }}</h3>
+        </div>
+        <div class="info-group">
+          <img src="{% static '/jobplacement/imgs/plus.png' %}" alt="plus" />
+          <h3 style="font-weight: bold">Slots Available:</h3>
+          <h3>{{ hiring.number_of_slots }}</h3>
+        </div>
+      </div>
+      <h3>Job Description:</h3>
+      <p>{{ hiring.description }}</p>
+      <button class="close">Close</button>
+    </div>
+  </div>
+  {% endfor %} {% for hiring in ojt_list %}
+  <div class="card">
+    <div class="card__content">
+      {% if request.user.is_staff %}
+      <form
+        action="{% url 'jobplacement:ojt_hiring_delete' hiring.company_id %}"
+        id="myForm"
+      >
+        {% csrf_token %}
+        <input type="submit" value="Delete" />
+      </form>
+      {% endif %}
+      <h1>{{ hiring.company_name }}</h1>
+      <div class="info-group">
+        <h3>Employer:</h3>
+        <h3 class="hiring">{{ hiring.owner }}</h3>
+      </div>
+      <div class="info-group">
+        <h3>Address:</h3>
+        <h3 class="hiring">{{ hiring.address }}</h3>
+      </div>
+      <div class="info-group">
+        <h3>Contact Details:</h3>
+        <h3 class="hiring">{{ hiring.company_contact }}</h3>
+      </div>
+      <ul>
+        <li>{{ hiring.description }}</li>
+      </ul>
+      <button class="btnshow">Read More</button>
+      {% if request.user.is_staff %}
+      <a
+        class="showtable"
+        href="{% url 'jobplacement:ojthiring_info' hiring.company_id %}"
+        >View</a
+      >
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- </div> -->
+</section>
+<script src="{% static 'scripts/job_placement/ojthiring_show.js' %}?321"></script>
+{% endblock bodycontent %}

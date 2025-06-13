@@ -1,0 +1,413 @@
+section{
+    margin: 0;
+    display: flex;  
+    flex-direction: column;
+    max-height: 100vh;
+    position: relative;
+
+}
+.intro{
+    line-height: 1.6;
+    margin-left: -7%;  
+}
+.intro p{
+    font-size: 20px;
+    color: #FF8000;
+    margin-left: 0;
+    font-weight: bold;
+}
+#desc{
+    line-height: 1.9;
+}
+#desc p{
+    margin-left: -5%; 
+}
+#demo{
+    margin-left: -7%;
+    margin-right: -7% ;
+    margin-bottom: .5rem;
+    margin-top: .2rem;
+}
+
+/* CSS PARA SA CARDS */
+.container{
+    display:flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    height: 70%;
+    overflow-y: scroll;
+    background-color: #fefefe;
+    margin: 2rem;
+    border-radius: 8px;
+}
+
+.card {
+    margin: .2rem;
+    margin-bottom: 2rem;
+    min-height: 15rem;
+    width: 100%;
+    color: black;
+    display: flex;
+    font-size: 1rem;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    background-color: #f2f2f2;
+    box-shadow: 0px 3px 8px 0px rgba(0,0,0,0.5);
+    line-height: 1.2;
+}
+.card__content {
+    position: relative;
+    margin-top: 8%;
+    margin-bottom: 8%;
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    width: calc(100% - 120px);
+    min-height: 30%;
+}
+.info-group {
+    display: flex;
+    align-items: center;
+    margin: .5rem 0;
+}
+.info-group h3 {
+    margin: 0 1rem 0 0;
+    padding-right: 10px;
+}
+.info-group .hiring{
+    font-weight: 400;
+}
+/* .company{
+    background-color: cadetblue;
+    height: 30vmax;
+    font-size: 20px;
+    margin: 4%;
+    overflow: auto;
+    margin-bottom: 0;
+    display: grid;
+    place-items: left;
+}
+.company_name{
+    width: 50%;
+    height: auto;
+    background-color: aquamarine;
+    padding: 2%;
+    margin: 2%;
+    position: relative;
+    vertical-align: top;
+    width: calc(100% - 120px);
+    min-height: 30%;
+} */
+.card__content h3 {
+    margin: 0;
+}
+.card__content h1{
+    color: #FF8000;
+    line-height: 1.6;
+    font-size: 30px;
+}
+.schedule{
+    margin-top: .5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    font-weight: bold;
+}
+.card__content li{
+    font-size: .9rem;
+    margin-top: .5rem;
+    list-style-type: circle;
+}
+
+/* CSS PARA SA READ MORE CARDS, UG POP-UP FORMS */
+.close-top, .closeform, .closeform2 {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #FF8000;
+}
+.closeform:hover, .closeform2:hover, .close-top:hover{
+    text-decoration: underline;
+    background: none;
+}
+.btnshow{
+    position: absolute;
+    top: 40%;
+    right: 4%;
+    padding: 8px 16px;
+    font-weight: 600;
+    outline: none;
+    border: none;
+    background-color: #FF8000;
+    border-radius: 6px;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
+    cursor: pointer;
+    color: #fff;
+    width: 12.5%;
+}
+.showtable{
+    position: absolute;
+    text-align: center;
+    font-size: .8rem;
+    top: 65%;
+    right: 4%;
+    padding: 8px 16px;
+    font-weight: 600;
+    outline: none;
+    border: none;
+    background-color: #FF8000;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    color: #fff;
+    width: 12.5%;
+}
+.showtable:hover{
+    background-color: #cc6600;
+}
+.show_container, 
+.showform_container,
+.studentcontainer
+{
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+.show_container.active,
+.showform_container.active,
+.studentcontainer.active
+{
+    opacity: 1;
+    pointer-events: auto;
+    overflow-y: auto;
+    z-index:1;
+}
+.show_container .showbox, 
+.showform_container .form_container,
+.studentcontainer .studentshow
+{
+    width: 55%;
+    max-width: 90%; 
+    max-height: 90vh;
+    background: #f2f2f2;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 4%;
+    transform: scale(0);
+    transition: transform 0.4s ease;
+    overflow-y: auto; 
+    line-height: 1.9;
+}
+.show_container.active .showbox, 
+.showform_container.active .form_container,
+.studentcontainer.active .studentshow
+{
+    transform: scale(1);
+}
+.showbox h1 {
+    color: #FF8000;
+    line-height: 1.6;
+    font-size: 30px;
+}
+.showbox p {
+    margin: 10px 5px 10px 5px;
+}
+.close {
+    margin-bottom: 0;
+    width: 100%;
+    padding: 8px 10px;
+    font-weight: 600;
+    outline: none;
+    border: none;
+    background-color: #FF8000;
+    cursor: pointer;
+    color: #fff;
+}
+/* .showbox .jobschedule ul {
+    float: left;
+    display: flex;
+    flex-direction: row;
+}
+.showbox .jobschedule li {
+    margin-right: 1.5rem;
+    list-style-type: circle;
+} */
+.info-groups-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem; 
+    padding: 10px;
+    margin-right: -16%;
+    margin-bottom: 1rem;
+}
+.showbox .info-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-right: 5px;
+}
+.showbox .info-group h3 {
+    font-weight: 400;
+    margin-top: .1rem;
+    padding-left: .5rem;
+}
+.showbox .info-group img {
+    width: 1rem;
+    margin-top: .2rem;
+    display: block;
+}
+.clearfix {
+    clear: both;
+}
+button:hover{
+    background-color: #cc6600;
+}
+
+
+/* button para pa show sa form */
+.button-container {
+    position: absolute;
+    top: -1%; 
+    right: -7%;
+    z-index: 1; 
+    display: flex;
+    gap: 1rem; 
+}
+.showform2, .showform {
+    padding: 0.5rem 0.8rem;
+    font-weight: 600;
+    outline: none;
+    border: none;
+    background-color: #FF8000;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+}
+/* CSS PARA SA FILL UP/ POP UP FORM MISMO */
+form {
+    display: flex;
+    flex-direction: column;
+}
+form label {
+    margin: 10px 0 5px;
+}
+form input[type="text"],
+form input[type="number"],
+form textarea,
+form input[type="submit"] {
+    padding: 10px;
+    margin: 5px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    display: inline-block;
+}
+form input[type="submit"]{
+    padding: 0.5rem 0.8rem;
+    font-weight: 600;
+    outline: none;
+    border: none;
+    background-color: #FF8000;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+}
+#myForm input[type="submit"]{
+    /* background-color: #FF8000;
+    color: white;
+    border: none;
+    cursor: pointer; */
+    position: absolute;
+    top: -30%;
+    right: -50%;
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #FF8000;
+}
+#myForm input[type="submit"]:hover{
+    text-decoration: underline; 
+} 
+form select{
+    padding: 10px;
+    margin: 5px 0 20px;
+    outline: none;  
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+}
+
+
+.studentshow #company_suggestions{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 85%;
+    z-index: 1000;
+    background-color: #ffffff;  
+    top: 23.5%;
+    cursor: pointer;
+}
+.studentshow #assign_student_suggestions{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 85%;
+    z-index: 1000;
+    background-color: #ffffff;   
+    top: 40%;
+    cursor: pointer;
+}
+#company_suggestions li,
+#assign_student_suggestions li{
+    background: #ffffff;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid black;
+    border-top: 0;
+    border-bottom: 0;
+}
+#company_suggestions li:hover,
+#assign_student_suggestions li:hover {
+    background-color: #b9b9b9ae;
+    opacity: 1;
+}
+#company_suggestions li:last-child,
+#assign_student_suggestions li:last-child{
+    border-bottom: 1px solid black;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+#company_suggestions li:hover,
+#assign_student_suggestions li:hover {
+    background-color: #b9b9b9ae; 
+    opacity: 1; 
+}
+
+#company_suggestions li:last-child,
+#assign_student_suggestions li:last-child {
+    border-bottom: 1px solid #000000; 
+    border-bottom-right-radius: 4px; 
+    border-bottom-left-radius: 4px; 
+}

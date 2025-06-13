@@ -1,0 +1,113 @@
+{% extends 'main.html' %} {% block headcontent %} {% load static %}
+<!--  link, script here-->
+<link
+  rel="stylesheet"
+  href="{% static 'styles/job_placement/non_acad.css' %}?307"
+/>
+{% endblock headcontent %} {% block bodycontent %}
+<section>
+  <div class="intro">
+    <p>Non-Academic Award Issuance</p>
+  </div>
+  <hr id="demo" />
+  <div class="showbox">
+    <form action="" method="POST">
+      {% csrf_token %}
+      <input id="stud_id_holder" type="hidden" name="student_id" />
+      <!-- real student id-->
+
+      <label for="date">Date Issued: </label>
+      <input type="date" name="date_issued" required />
+
+      <label for="student">Student: </label>
+      <div id="suggestions_container">
+        <input
+          id="assign_student_id"
+          name="student_holder"
+          type="text"
+          required
+        />
+        <ul id="suggestions"></ul>
+      </div>
+
+      <label for="program">Program/Course:</label>
+      <select name="program" id="program_select">
+        <option value="None" selected>----------</option>
+        <option value="AGRICULTURE">Agriculture</option>
+        <option value="BIT">Bachelor of Industrial Technology</option>
+        <option value="BES">Bachelor of Environmental Science</option>
+        <option value="BSHM">
+          Bachelor of Science Hospitality and Management
+        </option>
+        <option value="BSIE">Bachelor of Industrial Engineering</option>
+        <option value="BSIT">
+          Bachelor of Science Information and Technology
+        </option>
+        <option value="CAS">Bachelor of Crafts Arts and Science</option>
+        <option value="COED">College of Education</option>
+        <option value="FORESTRY">Bachelor of Science and Forestry</option>
+      </select>
+
+      <label for="award">Non-Academic Award:</label>
+      <select name="award" id="award_select">
+        <option value="None">----------</option>
+      </select>
+
+      <div class="hidden_fields" id="ojt_fields">
+        <label for="position">Position:</label>
+        <input type="text" name="position" />
+
+        <label for="company_name">Company Name:</label>
+        <input type="text" name="company_name" />
+
+        <label for="company_address">Company Address:</label>
+        <input type="text" name="company_address" />
+      </div>
+
+      <div class="hidden_fields" id="capstone_fields">
+        <label for="title">Capstone Title</label>
+        <input type="text" name="capstone_title" />
+      </div>
+
+      <div class="hidden_fields" id="leadership_fields">
+        <label for="acad_year">Academic Year:</label>
+        <input
+          type="text"
+          name="acad_year"
+          id="acad_year"
+          placeholder="YYYY-YYYY"
+          pattern="\d{4}-\d{4}"
+          title="Enter a year range in the format YYYY-YYYY"
+        />
+      </div>
+
+      <div class="hidden_fields" id="research_fields">
+        <label for="research_title">Research Title:</label>
+        <input type="text" name="research_title" />
+      </div>
+
+      <div class="hidden_fields" id="Others">
+        <label for="achievement">Achievement Title:</label>
+        <input
+          type="text"
+          name="achievement"
+          placeholder="New achievement Title"
+        />
+
+        <label for="acad_year">Academic Year:</label>
+        <input
+          type="text"
+          name="acad_year"
+          id="acad_year"
+          placeholder="YYYY-YYYY"
+          pattern="\d{4}-\d{4}"
+          title="Enter a year range in the format YYYY-YYYY"
+        />
+      </div>
+
+      <input type="submit" value="Submit" />
+    </form>
+  </div>
+</section>
+<script src="{% static 'scripts/job_placement/non_academic.js' %}?309"></script>
+{% endblock bodycontent %}
