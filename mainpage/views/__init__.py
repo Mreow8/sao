@@ -3,3 +3,5 @@ from .studentorg import *
 from .views import *
 from .scholarship import *
 from .job_placement import *
+from .medical import *
+from .studentlife import *

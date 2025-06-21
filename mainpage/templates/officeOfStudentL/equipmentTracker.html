@@ -1,0 +1,47 @@
+{% extends 'main.html' %} {% load static %} {% block bodycontent %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/studentlife/equipmentTracker.css' %}"
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap"
+  rel="stylesheet"
+/>
+
+<div>
+  <div class="sub-title">
+    <h3>OFFICE OF STUDENT LIFE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">> Equipment Tracker</p>
+  </div>
+  <div class="equipmentContents">
+    <h2>Equipment Tracker</h2>
+    <table class="equipmentTable">
+      <thead>
+        <tr>
+          <th>Item ID</th>
+          <th>Name of Borrower</th>
+          <th>Course/Program</th>
+          <th>Equipment Name</th>
+          <th>Date Borrowed</th>
+          <th>Date Returned</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in borrowing_records %}
+        <tr>
+          <td>{{ record.equipment.itemId }}</td>
+          <td>{{ record.student.firstname }} {{ record.student.lastname }}</td>
+          <td>{{ record.student.degree }}</td>
+          <td>{{ record.equipment.equipmentName }}</td>
+          <td>{{ record.date_borrowed }}</td>
+          <td>{{ record.date_returned }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock bodycontent %}

@@ -16,25 +16,7 @@ Scheduler{% endblock %} {% block headcontent %}
   >
   <div class="form-container">
     <form>
-      {% csrf_token %}
-      <h2>Intake Interview</h2>
-      <label>Enter ID number:</label>
-      <span id="search_id">
-        <input
-          type="text"
-          name="studentID"
-          placeholder="search"
-          required=""
-          id="studentIDBox"
-        />
-        <button class="OrangeButton" id="searchButton">Search</button>
-        <ul class="messages">
-          {% for message in messages %}
-          <li class="{{ message.tags }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      </span>
-      <table id="info_table" class="hidden">
+      <table id="info_table">
         <tr id="info_table_head">
           <th>PROFILE NO</th>
           <th>STUDENT ID</th>
@@ -44,7 +26,7 @@ Scheduler{% endblock %} {% block headcontent %}
         </tr>
       </table>
     </form>
-    <form method="post" action="" id="intakeForm" class="hidden">
+    <form method="post" action="" id="intakeForm">
       {% csrf_token %}
       <input type="hidden" name="individualId" id="individualId" />
       <label>I. Individual Inventory Service</label>

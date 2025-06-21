@@ -1,0 +1,42 @@
+{% extends 'main.html' %} {% load static %} {% block title %}Emergency Health
+Assistance Record{% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/admin/prescription.css' %}" />
+{% endblock %} {% block content %}
+<div class="container">
+  {% if messages %} {% for message in messages %}
+  <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+    {{ message }}
+  </p>
+  {% endfor %} {% endif %}
+  <h2>Emergency Health Assistance</h2>
+  <br />
+  <form method="POST" class="prescription-form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="student_id">Student ID:</label>
+      <input type="text" id="student_id" name="student_id" required />
+    </div>
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required />
+    </div>
+    <div class="form-group">
+      <label for="problem">Reason:</label>
+      <input type="text" id="problem" name="problem" required />
+    </div>
+    <div class="form-group">
+      <label for="date">Date:</label>
+      <input type="date" id="date" name="date_assisted" required />
+    </div>
+    <div style="display: flex">
+      <button type="submit" class="action-button">Save</button>
+      <a
+        class="schedule-button"
+        href="{% url 'medical:emergency_health_records' %}"
+        >View Records</a
+      >
+      <!-- <button type="submit" class="action-button" onclick="this.value='view';" name="view">View Records</button> -->
+    </div>
+  </form>
+</div>
+{% endblock %}

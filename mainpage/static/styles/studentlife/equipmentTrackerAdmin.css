@@ -1,0 +1,210 @@
+.body-content {
+  margin-top: -750px;
+}
+
+.sub-title {
+  margin-top: 150px;
+  margin-left: 345px;
+}
+
+.sub-title h3 {
+  color: black;
+  font-family: "Rubik", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.sub-title p {
+  display: inline;
+}
+
+.title-txt p {
+  color: black;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.hometext {
+  color: gray;
+}
+
+.certxt {
+  margin-left: 5px;
+  color: #ff8000;
+}
+
+.equipmentContents {
+  width: 1155px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  color: black;
+  margin-top: 40px;
+  margin-left: 330px;
+}
+
+.equipmentContents h2 {
+  color: black;
+}
+
+input[name="search"] {
+  background-color: #dddeee;
+  color: black;
+  border: none;
+  padding: 0.5em;
+  height: 35px;
+  flex-grow: 1;
+  min-width: 150px;
+  max-width: 150px;
+}
+
+input[name="search"]:focus {
+  outline: none;
+  border-color: transparent;
+}
+
+.equipmentform td {
+  font-weight: bold;
+}
+
+table {
+  margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 8px;
+  text-align: left;
+}
+
+.equipmentTable td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f2f2f2;
+  color: #ff8000;
+}
+
+table td {
+  color: black;
+}
+
+.searchBtn {
+  color: white;
+  background-color: #ff8000;
+  height: 35px;
+  width: 100px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+input[name="borrowername"],
+input[name="courseprogram"],
+input[name="dateborrowed"] {
+  background-color: #dddeee;
+  color: black;
+  border: none;
+  padding: 0.5em;
+  height: 35px;
+  flex-grow: 1;
+  min-width: 400px;
+  max-width: 400px;
+}
+
+input[name="borrowername"],
+input[name="courseprogram"],
+input[name="dateborrowed"]:focus {
+  border-color: transparent;
+  outline: none;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.button-container a,
+.button-container .saveBtn {
+  background-color: #ff8000;
+  height:40px;
+  width: 150px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 15px;
+  margin-right: 150px; 
+}
+
+.button-container a:first-child {
+  margin-right: 20px;
+}
+
+
+#equipmentName{
+  background-color: #dddeee;
+  color: black;
+  border: none;
+  padding: 0.5em;
+  height: 35px;
+  flex-grow: 1;
+  min-width: 400px;
+  max-width: 400px;
+  border-radius: 8px;
+}
+
+#equipmentName:focus{
+  border-color: transparent;
+  outline: none;
+}
+
+.returnBtn{
+  color: white;
+  background-color: #ff8000;
+  height: 30px;
+  width: 60px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+.success-message{
+  margin-top: 10px;
+  background-color: #1cbf19;
+  border-radius: 5px;
+  width: 360px;
+  align-items: center;
+  height: 30px;
+  padding-top: 5px;
+  padding-left: 5px;
+  color: white;
+}
+
+
+
+.error-message{
+  margin-top: 10px;
+  background-color: red;
+  border-radius: 5px;
+  width: 150px;
+  align-items: center;
+  height: 30px;
+  padding-top: 5px;
+  padding-left: 5px;
+  color: white;
+}

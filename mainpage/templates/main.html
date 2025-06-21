@@ -4,6 +4,7 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        
         <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -20,30 +21,30 @@
     </head>
     <body>
         <div class="left-side">
-            <!-- <div class="orange-bar">
+             <div class="orange-bar">
                 <img src="{% static 'imgs/CTU_logo.png'%}" class="logo">
                 <img src="{% static 'imgs/barSort.png'%}" class="bars">
-            </div> -->
+            </div>
+            <div>
             <nav class="side-nav">
                 <ul>
                     <li><a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE 
                         <span class="fas fa-caret-down first"></span>
                     </a>
-                        <ul class="studentlife">
-                            <li><a href="#">Equipment</a></li>
-                            <li><a href="#">Good Moral Certificate Issuance</a></li>
-                            <li><a href="#">PPMP Tracker</a></li>
-                            <li><a href="#">Monthly Calendar of Activites</a></li>
-                        </ul>
+                         <ul class="studentlife">
+                        <li><a href="/equipmenttracker">Equipment Tracker</a></li>
+                        <li><a href="/requestgmc">Good Moral Certificate Issuance</a></li>
+                        <li><a href="/monthlyCalendar">Monthly Calendar of Activites</a></li>
+                    </ul>
                     </li>
                     <li><a href="#" class="scholar-btn">SCHOLARSHIP
                         <span class="fas fa-caret-down second"></span>
                     </a>
                     <ul class="scholar-show">
-                        <li><a href="{% url 'student_req'%}">Submission of Requirements Tracker</a></li>
+                       
                         <li><a href="#">Scholars Profile and Validation</a></li>
-                        <li><a href="#">Grade Submission with GPA Computation</a></li>
-                        <li><a href="#">Mentorship Program</a></li>
+                        <li><a href="{% url 'studentapplication'%}">Grade Submission with GPA Computation</a></li>
+                        <li><a href="{% url 'mentor' %}">Mentorship Program</a></li>
                         <li><a href="#">Admin Cost Liquidation Tracker</a></li>
                         <li><a href="#">CHED Reports Submission</a></li>
                         <li><a href="#">Transaction Reports</a></li>
@@ -120,31 +121,44 @@
                         <span class="fas fa-caret-down ninth"></span>
                         </a>
                         <ul class="medical-show">
-                            <li><a href="#">Patient Profile</a></li>
-                            <li><a href="#">Student Medical Requirements Tracker</a></li>
-                            <li><a href="#">Emergency Health Assistance</a></li>
-                            <li><a href="#">PWD Profile</a></li>
-                            <li><a href="#">Dental Services</a></li>
-                            <li><a href="#">Medical Clearance Issuance</a></li>
-                            <li><a href="#">Prescription Issuance</a></li>
-                            <li><a href="#">Transaction Reports</a></li>
+                              <li><a href="{% url 'medical:patient_profile' %}">Patient Profile</a></li>
+                            <li><a href="{% url 'medical:viewrequest' %}">View Requests</a></li>
+                            <li><a href="{% url 'medical:medtracker' %}">Student Medical Requirements Tracker</a></li>
+                            <li><a href="{% url 'medical:emergency_asst' %}">Emergency Health Assistance</a></li>
+                            <li><a href="{% url 'medical:pwdlist' %}">PWD Profile</a></li>
+                            <li><a href="{% url 'medical:dentalrequest' %}">Dental Services</a></li>
+                            <li><a href="{% url 'medical:prescription' %}">Prescription Issuance</a></li>
+                            <li><a href="{% url 'medical:transactions' %}">Transaction Reports</a></li>
                         </ul>
                     </li>
                 </ul>
             </nav>
-        </div>
-        <div class="right-side">
-            <div class="search-container">
-                <div class="search-icon">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </div>
-                <input type="text" placeholder="Search...">
             </div>
-            <main class="main_content">
-                {% block bodycontent %}{% endblock %}
-            </main>
         </div>
-        
+       <div class="right-side">
+    <div class="search-container">
+        <div class="search-icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <input type="text" placeholder="Search...">
+         <div style="right: auto;">
+        {% if user.is_authenticated %}
+            <div class="student-account-info" style="margin: 16px 0; text-align: right;">
+                <strong>Student ID:</strong> {{ user.username }}<br>
+                <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}
+            </div>
+        {% else %}
+            <div class="student-account-info" style="margin: 16px 0; text-align: right;">
+                <a href="{% url 'signinuser' %}">Sign in</a>
+            </div>
+        {% endif %}
+    </div>
+    </div>
+   
+    <main class="main_content">
+        {% block bodycontent %}{% endblock %}
+    </main>
+</div>
 
        <script src="{% static 'scripts/guidance/main.js'%}"></script>
     </body>

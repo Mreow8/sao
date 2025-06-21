@@ -1,0 +1,152 @@
+.body-content {
+    margin-top: -750px;
+    
+  }
+  
+  .sub-title {
+    margin-top: 150px;
+    margin-left: 345px;
+  }
+  
+
+
+  .sub-title h3 {
+    color: black;
+    font-family: "Rubik", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  
+  .sub-title p {
+    display: inline;
+  }
+  
+.title-txt p{
+  color: black;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.txt-underline{
+  text-decoration: none;
+}
+
+  .hometext {
+    color: gray;
+  }
+  
+  .certxt {
+    margin-left: 5px;
+    color: #ff8000;
+  }
+
+  .equipmentContents {
+    width: 1155px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: black;
+    margin-top: 40px;
+    margin-left: 330px;
+  }
+
+.equipmentContents h2{
+    color: black;
+}
+    
+input[name="search"]{
+  background-color: #dddeee;
+  color: black;
+  border: none;
+  padding: 0.5em;
+  height: 35px;
+  flex-grow: 1; /* Allows the input to grow and fill available space */
+  min-width: 150px; /* Minimum width */
+  max-width: 150px; /* Maximum width, adjust as necessary */
+  
+}
+
+input[name="search"]:focus{
+  outline: none;
+  border-color: transparent;
+}
+.equipmentform td{
+  font-weight: bold;
+}
+
+table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table th,
+  table td {
+    padding: 8px;
+    text-align: left;
+   
+  }
+  
+  .equipmentTable td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+
+  table th {
+    background-color: #f2f2f2;
+    color: #ff8000;
+  }
+  
+  table td {
+    color: black;
+  }
+  
+  input[name="equipmentname"],
+  input[name="serialnum"]{
+    background-color: #dddeee;
+    color: black;
+    border: none;
+    padding: 0.5em;
+    height: 35px;
+    flex-grow: 1; 
+    min-width: 400px; 
+    max-width: 400px; 
+  }
+
+  input[name="equipmentname"],
+  input[name="serialnum"]:focus{
+    border-color: transparent;
+    outline: none;
+
+  }
+
+
+  .saveBtn{
+    margin-top: 15px;
+    margin-left: 10px;
+    color: white;
+    background-color: #ff8000;
+    height: 35px;
+    width: 120px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 430px;
+  }
+
+  .success-message{
+    margin-top: 10px;
+    background-color: #1cbf19;
+    border-radius: 5px;
+    width: 250px;
+    align-items: center;
+    height: 30px;
+    padding-top: 5px;
+    padding-left: 5px;
+    color: white;
+  }

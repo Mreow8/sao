@@ -36,29 +36,14 @@
   <div class="form-container">
     {% csrf_token %}
     <h2>Request Exit Interview</h2>
-    <label>Enter ID number:</label>
-    <span id="search_id">
-      <input
-        type="text"
-        name="studentID"
-        placeholder="search"
-        required=""
-        id="studentIDBox"
-      />
-      <button class="OrangeButton" id="searchButton">Search</button>
-      <ul class="messages">
-        {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-      </ul>
-    </span>
+
     <table id="info_table" class="hidden">
       <tr id="info_table_head">
         <th>NAME</th>
         <th>CONTACT NO.</th>
       </tr>
     </table>
-    <form method="post" action="" id="questionForm" class="hidden">
+    <form method="post" action="" id="questionForm">
       {% csrf_token %}
       <div id="requestScheduleContainer">
         <div id="datetimepicker">

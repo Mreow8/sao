@@ -49,7 +49,6 @@ def logoutuser(request):
 
 def signupuser(request):
     error_message = None
-    success_message = None
 
     if request.method == 'POST':
         studentID = request.POST.get('studID')
@@ -57,27 +56,29 @@ def signupuser(request):
         password = request.POST.get('password')
         cpassword = request.POST.get('cpassword')
 
+        # Check if student ID exists in studentInfo
         try:
             student = studentInfo.objects.get(studID=studentID)
         except studentInfo.DoesNotExist:
             error_message = 'Invalid student ID.'
+            return render(request, 'scholarship/register.html', {'error_message': error_message})
 
-        if not error_message:
-            if cpassword != password:
-                error_message = 'Passwords do not match.'
-            elif len(password) < 8:
-                error_message = 'Password must be at least 8 characters.'
-            elif User.objects.filter(username=studentID).exists():
-                error_message = 'Student ID already exists.'
-            elif User.objects.filter(email=email).exists():
-                error_message = 'Email already exists.'
-            else:
-                user = User.objects.create_user(username=studentID, email=email, password=password)
-                user.save()
-                success_message = 'Account created successfully'
-                return redirect('signinuser')
+        # Password and user checks
+        if cpassword != password:
+            error_message = 'Passwords do not match.'
+        elif len(password) < 8:
+            error_message = 'Password must be at least 8 characters.'
+        elif User.objects.filter(username=studentID).exists():
+            error_message = 'Student ID already exists.'
+        elif User.objects.filter(email=email).exists():
+            error_message = 'Email already exists.'
+        else:
+            user = User.objects.create_user(username=studentID, email=email, password=password)
+            user.save()
+            messages.success(request, 'Account created successfully. Please log in.')
+            return redirect('signinuser')
 
-    return render(request, 'scholarship/register.html', {'error_message': error_message, 'success_message': success_message})
+    return render(request, 'scholarship/register.html', {'error_message': error_message})
 
 def signinuser(request):
     if request.method == 'POST':
@@ -319,7 +320,6 @@ def adminreqsubmission(request):
     return render(request, 'scholarship/adminrequirements.html', context)
 
 
-
 def studentreqsubmission(request):
     studID = request.user.username
     is_requesting = AdminRequest.objects.filter(requesting=True).exists()
@@ -329,7 +329,13 @@ def studentreqsubmission(request):
     requirement_data = Requirement.objects.filter(studID__studID=studID, status="PENDING", record="NEW").first()
     
     user = request.user
-    
+
+    # Always define these before the try block!
+    student = None
+    scholar = None
+    passed = None
+    is_scholar = False
+
     try:
         student = studentInfo.objects.get(studID=user.username)
         scholar = scholars.objects.get(studID=student)

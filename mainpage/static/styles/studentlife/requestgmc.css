@@ -1,0 +1,183 @@
+.body-content {
+  margin-top: -750px;
+  
+}
+
+.sub-title {
+  margin-top: 150px;
+  margin-left: 345px;
+}
+
+.sub-title h3 {
+  color: black;
+  font-family: "Rubik", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.sub-title p {
+  display: inline;
+}
+
+.hometext {
+  color: gray;
+}
+.certxt {
+  margin-left: 5px;
+  color: #ff8000;
+}
+
+#comboBox
+{
+  height: 35px;
+  width: 200px;
+  background: #dddeee;
+  color: black;
+  border: 1px black;
+  
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 0.5em;
+
+}
+
+#comboBox:focus{
+  outline: none;
+  border-color: transparent;
+}
+
+.success-message{
+  margin-bottom: 15px;
+  background-color: #1cbf19;
+  border-radius: 5px;
+  width: 400px;
+  align-items: center;
+  height: 30px;
+  padding-top: 5px;
+  padding-left: 5px;
+  color: white;
+}
+
+.error-message{
+  margin-bottom: 15px;
+  background-color: red;
+  border-radius: 5px;
+  width: 220px;
+  align-items: center;
+  height: 30px;
+  padding-top: 5px;
+  padding-left: 5px;
+  color: white;
+}
+
+.gmc-form {
+  width: 1155px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  color: black;
+  margin-top: 40px;
+  margin-left: 330px;
+}
+
+.gmc-form h2 {
+  color: black;
+  margin-bottom: 20px;
+}
+
+.gmc-form p {
+  color: black;
+  margin-bottom: 15px;
+  margin-left: 5px;
+}
+
+.searchBtn {
+  margin-left: -2em;
+}
+
+.requestBtn{
+  margin-left: 0.5em;
+}
+
+.title-txt {
+  display: flex;
+  gap: 1em;
+  margin-top: 20px;
+}
+
+.printBtn{
+  color: white;
+  background-color: #ff8000;
+  height: 30px;
+  width: 60px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.searchBtn,
+.requestBtn {
+  color: white;
+  background-color: #ff8000;
+  height: 35px;
+  width: 120px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+table {
+  margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f2f2f2;
+  color: #ff8000;
+}
+
+table td {
+  color: black;
+}
+
+#alert {
+  color: white;
+}
+.input-dropdown-container {
+  display: flex;
+  align-items: center;
+  gap: 2em; /* Adds space between input and dropdown */
+}
+
+.searchID {
+  background-color: #dddeee;
+  color: black;
+  border: none;
+  padding: 0.5em;
+  flex-grow: 1; /* Allows the input to grow and fill available space */
+  min-width: 200px; /* Minimum width */
+  max-width: 200px; /* Maximum width, adjust as necessary */
+}
+
+.searchID:focus {
+  outline: none;
+  border-color: transparent;
+}
+
+input[name="ornum"]{
+  border: 1px solid black;
+  width: 80px;
+  height: 28px;
+  border-radius: 5px;
+}
+
