@@ -1,0 +1,67 @@
+{% extends 'main.html' %} {% block bodycontent %}
+<section class="h-auto ml-[300px] flex items-center justify-center bg-gray">
+  <div class="mx-auto container text-black">
+    <div class="flex items-center justify-center mt-[200px]">
+      <div class="bg-white w-full p-11 h-auto flex flex-col gap-5">
+        <h1 class="text-[36px] font-bold mb-4">Job Fairs</h1>
+        {% if job_fairs %} {% for job_fair in job_fairs %}
+        <div
+          class="flex flex-col border rounded-lg hover:border-black rounded-2xl p-5 gap-5 w-[700px]"
+        >
+          <div>
+            <h1 class="font-bold text-[26px] underline">
+              {{ job_fair.jobtitle }}
+            </h1>
+          </div>
+          <div>
+            <p class="text-[20px]">
+              <i class="fa-solid fa-calendar-days mr-3"></i>
+              {{ job_fair.posted_date }}
+            </p>
+          </div>
+          <div>
+            <p class="text-[25px]">
+              <i class="fa-regular fa-building mr-3"></i>
+              {{ job_fair.companyname }}
+            </p>
+          </div>
+          <div>
+            <p class="text-[20px]">
+              <i class="fa-solid fa-location-dot mr-3"></i>
+              {{ job_fair.joblocation }}
+            </p>
+          </div>
+          <div>
+            <p class="text-[20px]">
+              <i class="fa-solid fa-money-bill mr-2"></i>
+              {{ job_fair.jobsalary }}
+            </p>
+          </div>
+          <div>
+            <p class="text-[20px]">
+              <i class="fa-solid fa-clock mr-3"></i>
+              {{ job_fair.employmenttype }}
+            </p>
+          </div>
+          <div>
+            <p class="text-[20px]">
+              <i class="fa-solid fa-hourglass-end mr-3"></i>
+              {{ job_fair.applicationdeadline }}
+            </p>
+          </div>
+          <div>
+            <ul class="ml-5">
+              <li class="list-disc">{{ job_fair.jobdescription }}</li>
+            </ul>
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <p class="text-[20px] font-bold text-center mt-10">
+          No job fairs available
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

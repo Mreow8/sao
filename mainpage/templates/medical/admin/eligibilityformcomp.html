@@ -1,11 +1,11 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Eligibility Form{%
-endblock %} {% block extra_css %}
+{% extends 'adminmain.html' %} {% load static %} {% block title %}Eligibility
+Form{% endblock %} {% block extra_css %}
 <link
   rel="stylesheet"
   href="{% static 'styles/admin/eligibility_form.css' %}"
 />
 <link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
-{% endblock %} {% block content %}
+{% endblock %} {% block {% endblock %} {% block bodycontent %} %}
 <div class="container">
   {% if messages %} {% for message in messages %}
   <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">

@@ -1,78 +1,283 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Officer Login Form</title>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Officer Login - CTU</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
 
-<style>
-    body{
-        background-color: blanchedalmond;
-    }
-</style>
-</head>
-<body>
-    <h2>Officer Login Form</h2>
-    <form method="post" action="{% url 'register_officer' %}">
-        {% csrf_token %}
-        <label for="student_id">Student ID:</label><br>
-        <input type="number" id="student_id" name="student_id" required><br><br>
-        
-        <label for="student_lname">Last Name:</label><br>
-        <input type="text" id="student_lname" name="student_lname" maxlength="100" required><br><br>
-        
-        <label for="student_fname">First Name:</label><br>
-        <input type="text" id="student_fname" name="student_fname" maxlength="100" required><br><br>
-        
-        <label for="student_mname">Middle Name:</label><br>
-        <input type="text" id="student_mname" name="student_mname" maxlength="100" required><br><br>
-        
-        <label for="course">Course:</label>
-        <select id="course" name="course" required>
-            <option value=""></option>
-            <option value="BSIT">BSIT</option>
-            <option value="BSIE">BSIE</option>
-            <option value="BIT-CT">BIT-COMPTECH</option>
-            <option value="BIT-GARMENTS">BIT-GARMENTS</option>
-            <option value="BIT-AUTOMOTIVE">BIT-AUTOMOTIVE</option>
-            <option value="BIT-DRAFTING">BIT-DRAFTING</option>
-            <option value="BIT-ELECTRONICS">BIT-ELECTRONICS</option>
-            <option value="BEED">BEED</option>
-            <option value="BSED-MATH">BSED-MATH</option>
-            <option value="BTLED">BTLED</option>
-            <option value="BSF">BSF</option>
-            <option value="BSA">BSA</option>
-            <option value="BAL">BAL</option>
-            <option value="BAEL">BAEL</option>
-            <option value="BS-PSYCHOLOGY">BS-PSYCHOLOGY</option>
-            <option value="BSHM">BSHM</option>
-            <option value="BSTM">BSTM</option>
-        </select>
+      body,
+      html {
+        height: 100%;
+        width: 100%;
+      }
 
-        <label for="officer_position">Position:</label><br>
-        <input type="text" id="officer_position" name="officer_position" maxlength="200" required><br><br>
-        
-        <label for="year_lvl">Year Level:</label><br>
-        <select id="year_lvl" name="year_lvl" required>
-            <option value="1st">1st</option>
-            <option value="2nd">2nd</option>
-            <option value="3rd">3rd</option>
-            <option value="4th">4th</option>
-            <option value="Irregular">Irregular</option>
-        </select><br><br>
-        <select id="organization" name="organization" required>
-            <option value="FSTLP">FSTLP</option>
-            <option value="SI++">SI++</option>
-            <option value="SSG">SSG</option>
-            <option value="THE EQUATIONERS">THE EQUATIONERS</option>
-            <option value="TECHNOCRATS">TECHNOCRATS</option>
-        </select>
-        
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" maxlength="100" required><br><br>
-        
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" maxlength="128" required><br><br>
-        
-        <input type="submit" value="Submit">
-    </form>
-</body>
+      .lcontainer {
+        display: flex;
+        width: 100%;
+      }
+
+      .left-section {
+        flex: 1;
+        background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
+          center center;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .left-section img {
+        width: 150px;
+        margin-bottom: 20px;
+      }
+
+      .left-section p {
+        color: white;
+        font-size: 50px;
+        font-weight: bold;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px 20px;
+        border-radius: 10px;
+      }
+
+      .right-section {
+        flex: 1;
+        background-color: #4884b4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .form-box {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-box h2 {
+        text-align: center;
+        color: #ff9f43;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      input[type="password"],
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff9f43;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #fb8c00;
+      }
+
+      .footer {
+        margin-top: 15px;
+        text-align: center;
+        font-size: 0.9em;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="lcontainer">
+      <!-- Left Section -->
+      <div class="left-section">
+        <img src="{% static 'imgs/ctu_logo.png' %}" alt="CTU Logo" />
+        <p>WELCOME</p>
+      </div>
+
+      <!-- Right Section -->
+      <div class="right-section">
+        <div class="form-box">
+          <h2>Officer Login</h2>
+          <form method="POST" action="{% url 'register_officer' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label for="student_id">Student ID</label>
+              <input type="number" id="student_id" name="student_id" required />
+            </div>
+
+            <div class="form-group">
+              <label for="student_lname">Last Name</label>
+              <input
+                type="text"
+                id="student_lname"
+                name="student_lname"
+                maxlength="100"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="student_fname">First Name</label>
+              <input
+                type="text"
+                id="student_fname"
+                name="student_fname"
+                maxlength="100"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="student_mname">Middle Name</label>
+              <input
+                type="text"
+                id="student_mname"
+                name="student_mname"
+                maxlength="100"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="course">Course</label>
+              <select id="course" name="course" required>
+                <option value=""></option>
+                <option value="BSIT">BSIT</option>
+                <option value="BSIE">BSIE</option>
+                <option value="BIT-CT">BIT-COMPTECH</option>
+                <option value="BIT-GARMENTS">BIT-GARMENTS</option>
+                <option value="BIT-AUTOMOTIVE">BIT-AUTOMOTIVE</option>
+                <option value="BIT-DRAFTING">BIT-DRAFTING</option>
+                <option value="BIT-ELECTRONICS">BIT-ELECTRONICS</option>
+                <option value="BEED">BEED</option>
+                <option value="BSED-MATH">BSED-MATH</option>
+                <option value="BTLED">BTLED</option>
+                <option value="BSF">BSF</option>
+                <option value="BSA">BSA</option>
+                <option value="BAL">BAL</option>
+                <option value="BAEL">BAEL</option>
+                <option value="BS-PSYCHOLOGY">BS-PSYCHOLOGY</option>
+                <option value="BSHM">BSHM</option>
+                <option value="BSTM">BSTM</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="officer_position">Position</label>
+              <input
+                type="text"
+                id="officer_position"
+                name="officer_position"
+                maxlength="200"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="year_lvl">Year Level</label>
+              <select id="year_lvl" name="year_lvl" required>
+                <option value="1st">1st</option>
+                <option value="2nd">2nd</option>
+                <option value="3rd">3rd</option>
+                <option value="4th">4th</option>
+                <option value="Irregular">Irregular</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="organization">Organization</label>
+              <select id="organization" name="organization" required>
+                <option value="FSTLP">FSTLP</option>
+                <option value="SI++">SI++</option>
+                <option value="SSG">SSG</option>
+                <option value="THE EQUATIONERS">THE EQUATIONERS</option>
+                <option value="TECHNOCRATS">TECHNOCRATS</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                maxlength="100"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                maxlength="128"
+                required
+              />
+            </div>
+
+            <button type="submit">Submit</button>
+          </form>
+          {% if messages %}
+          <div style="margin-bottom: 15px">
+            {% for message in messages %}
+            <div
+              style="
+                background-color: #ffe0e0;
+                color: #a94442;
+                border: 1px solid #f5c6cb;
+                padding: 10px;
+                border-radius: 6px;
+                font-size: 14px;
+                margin-bottom: 10px;
+              "
+            >
+              {{ message }}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <div class="footer">
+            Already registered? Contact your administrator for access.
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

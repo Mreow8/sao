@@ -14,7 +14,6 @@ from .. models import(
     RiskAssessment, 
     MedicalRequirement, 
     PatientRequest, 
-    Student,
     TransactionRecord,
     MedicalHistory,
     FamilyMedicalHistory,
@@ -28,10 +27,11 @@ from .. models import(
 from django.core.mail import send_mail
 from django.conf import settings
 import csv
-
+from mainpage.models import studentInfo 
 # Patient's basic information
 def patient_basic_info(request, student_id):
-    student = Student.objects.get(student_id=student_id)
+    student = studentInfo.objects.get(studID=student_id)  # ✅ use studID here
+
     if request.method == "POST":
         birth_date = request.POST.get("birth_date")
         age = request.POST.get("age")
@@ -54,34 +54,38 @@ def patient_basic_info(request, student_id):
         parent_guardian_contact_number = request.POST.get("parent_guardian_contact_number")
 
         Patient.objects.create(
-            student = student,
-            birth_date = birth_date,
-            age = age,
-            weight = weight,
-            height = height,
-            bloodtype = bloodtype,
-            allergies = allergies,
-            medications = medications,
-            home_address = home_address,
-            city = city,
-            state_province = state_province,
-            postal_zipcode = postal_zipcode,
-            country = country,
-            nationality = nationality,
-            civil_status = civil_status,
-            number_of_children = number_of_children,
-            academic_year = academic_year,
-            section = section,
-            parent_guardian = parent_guardian,
-            parent_guardian_contact_number = parent_guardian_contact_number
+            student=student,
+            birth_date=birth_date,
+            age=age,
+            weight=weight,
+            height=height,
+            bloodtype=bloodtype,
+            allergies=allergies,
+            medications=medications,
+            home_address=home_address,
+            city=city,
+            state_province=state_province,
+            postal_zipcode=postal_zipcode,
+            country=country,
+            nationality=nationality,
+            civil_status=civil_status,
+            number_of_children=number_of_children,
+            academic_year=academic_year,
+            section=section,
+            parent_guardian=parent_guardian,
+            parent_guardian_contact_number=parent_guardian_contact_number
         )
 
         messages.success(request, "You may now do your transactions")
         return redirect("medical:request")
-    if Patient.objects.filter(student__student_id = student_id).exists():
-        patient = Patient.objects.get(student__student_id = student_id)
+
+    # ✅ Use student__studID in related lookups
+    if Patient.objects.filter(student__studID=student_id).exists():
+        patient = Patient.objects.get(student__studID=student_id)
         return render(request, "medical/students/basicinfo.html", {"student": student, "patient": patient})
+
     return render(request, "medical/students/basicinfo.html", {"student": student})
+
 
 # view for handling clearance form submission
 def medicalclearance_view(request, student_id):
@@ -317,16 +321,18 @@ def eligibilty_form(request, student_id):
         return HttpResponseForbidden("You don't have permission to access this page.")
     
 # List of student for patient profile
+
 def patient_profile(request):
     if request.user.is_superuser or request.user.is_staff:
-        patients = Patient.objects.all().order_by('student__lastname')
+        patients = Patient.objects.select_related("student").all().order_by("student__lastname")
+
         if request.method == "POST":
-            student_id = request.POST.get("student_id")
-            try:
-                patient = Patient.objects.filter(student__student_id = student_id)
-                return render(request, "medical/admin/patientprofile.html", {"patients": patient})
-            except Student.DoesNotExist:
-                return render(request, "medical/admin/patientprofile.html", {"patients": patients})
+            student_id = request.POST.get("student_id", "").strip()
+
+            if student_id:
+                # ✅ Use the correct field name from studentInfo
+                patients = patients.filter(student__studID=student_id)
+
         return render(request, "medical/admin/patientprofile.html", {"patients": patients})
     else:
         return HttpResponseForbidden("You don't have permission to access this page.")
@@ -672,7 +678,7 @@ def prescription(request):
                 return redirect('medical:patient_basicinfo', student_id)
 
             # Retrieve student associated with the patient
-            student = get_object_or_404(Student, student_id=student_id)
+            student = get_object_or_404(studentInfo, student_id=student_id)
             full_name = f"{student.firstname} {student.lastname}"
 
             # Validate inputted name against student's name (case-insensitive)
@@ -703,7 +709,7 @@ def check_student_match(request):
         name = request.GET.get("name")
 
         try:
-            student = Student.objects.get(student_id=student_id)
+            student = studentInfo.objects.get(student_id=student_id)
             student_name = f"{student.firstname} {student.lastname}"
 
             # Check if the provided name matches the student name associated with the student ID
@@ -711,7 +717,7 @@ def check_student_match(request):
                 return JsonResponse({'success': True})
             else:
                 return JsonResponse({'success': False, 'message': 'Student name does not match the provided name'})
-        except Student.DoesNotExist:
+        except studentInfo.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'Student with the provided ID does not exist'})   
 
 # Record Emergency Health Assistance
@@ -722,39 +728,59 @@ def emergency_asst(request):
             name = request.POST.get("name")
             reason = request.POST.get("problem")
             str_date_assisted = request.POST.get("date_assisted")
-            date_assisted = datetime.strptime(str_date_assisted, "%Y-%m-%d")
+            print("📌 Raw student ID input:", repr(student_id))
+            # Convert date string to datetime object
+            try:
+                date_assisted = datetime.strptime(str_date_assisted, "%Y-%m-%d")
+            except (ValueError, TypeError):
+                messages.error(request, "Invalid date format.")
+                return redirect('medical:emergency_asst')
 
             try:
-                # Retrieve the patient information based on the student ID
-                patient = Patient.objects.get(student__student_id=student_id)
-                # Convert both names to lowercase for case-insensitive comparison
-                inputted_name_lower = name.lower()
-                student_name_lower = f"{patient.student.firstname} {patient.student.lastname}".lower()
-                # Validate if the inputted name matches the first name and last name of the patient
+                # Get the student based on studID
+                student = studentInfo.objects.get(studID=student_id)
+                # Get the linked patient object
+                patient = Patient.objects.get(student=student)
+
+                # Compare inputted name with student's name (case-insensitive)
+                inputted_name_lower = name.strip().lower()
+                student_name_lower = f"{student.firstname} {student.lastname}".strip().lower()
+
                 if inputted_name_lower != student_name_lower:
-                    messages.error(request, "The entered name does not match the student's name associated with the inputted student ID.")
-                    return redirect('medical:emergency_asst')  # Redirect to the same page
+                    messages.error(
+                        request,
+                        "The entered name does not match the student's name associated with the inputted student ID."
+                    )
+                    return redirect('medical:emergency_asst')
+
+            except studentInfo.DoesNotExist:
+                messages.error(request, "Student ID not found.")
+                return redirect('medical:emergency_asst')
+
             except Patient.DoesNotExist:
-                messages.info(request, "Fill out this form first to record patient's basic information")
+                messages.info(request, "Fill out this form first to record patient's basic information.")
                 return redirect('medical:patient_basicinfo', student_id)
-            
-            # Create EmergencyHealthAssistanceRecord
+
+            # Create Emergency Health Assistance record
             EmergencyHealthAssistanceRecord.objects.create(
                 name=name,
                 patient=patient,
                 reason=reason,
                 date_assisted=date_assisted
             )
-            messages.success(request, "Record Saved")
+
+            messages.success(request, "Record Saved Successfully.")
+
             # Record transaction
             record_transaction(patient, "Emergency Health Assistance")
-            
-            return redirect('medical:emergency_asst')  # Redirect to the same page after successful record creation
-        
+
+            return redirect('medical:emergency_asst')
+
+        # GET request: show the form
         return render(request, "medical/admin/emergency_asst.html", {})
+
     else:
         return HttpResponseForbidden("You don't have permission to access this page.")
-    
 def record_transaction(patient, transac_type):
     TransactionRecord.objects.create(
         patient = patient, 
@@ -765,50 +791,42 @@ def record_transaction(patient, transac_type):
 # Record students request eg. Medical Clearance for OJT/Practicum, Eligibility Form and Medical Certificate
 def submit_request(request):
     if request.method == "POST":
-        student_id = request.POST.get("student_id")
-        valid_id = Student.objects.filter(student_id=student_id).exists()
-        if not valid_id:
-            messages.error(request, "The ID you entered does not exist.")
+        try:
+            student = request.user.studentinfo
+        except studentInfo.DoesNotExist:
+            messages.error(request, "Your account is not linked to a student record.")
             return render(request, "medical/students/requestform.html", {})
-        
-        student = Student.objects.get(student_id=student_id)
-        # Check if student already in the patients database
-        if not Patient.objects.filter(student__student_id = student_id).exists():
+
+        student_id = student.studID
+
+        if not Patient.objects.filter(student=student).exists():
             messages.info(request, "Fill out this form first before doing any transactions")
-            return redirect('medical:patient_basicinfo', student_id)
-            #return render(request, "medical/students/basicinfo.html", {"student": student})
-        
+            return redirect('medical:patient_basicinfo', student_id=student_id)
+
         request_type = request.POST.get("request_type")
-        
-        if PatientRequest.objects.filter(patient__student__student_id=student_id, request_type=request_type).exists():
+
+        if PatientRequest.objects.filter(patient__student=student, request_type=request_type).exists():
             messages.error(request, "You have already submitted this type of request")
             return render(request, "medical/students/requestform.html", {})
-        
-        patient = Patient.objects.get(student__student_id=student_id)
-        transac_type = f"Request for {request_type}"
-        
-        # Create the student request object
-        patient_request = PatientRequest.objects.create(
+
+        patient = Patient.objects.get(student=student)
+
+        PatientRequest.objects.create(
             patient=patient,
             request_type=request_type,
-            date_requested=datetime.now()
+            date_requested=timezone.now()
         )
 
-        # Send confirmation email to the student
-        patient_name = f"{patient.student.firstname} {patient.student.lastname}"
-        patient_email = patient.student.email
         email_subject = 'Request Confirmation'
         email_body = f"""
         <html>
-        <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
-            <div style='max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #f9f9f9;'>
-                <h2 style='text-align: center; color: #0056b3;'>REQUEST CONFIRMATION</h2>
-                <p>Dear <strong>{patient_name}</strong>,</p>
-                <p>Thank you for submitting your request for the document <strong>'{request_type}'</strong>. We have received it and our team is now processing it with utmost care and attention.</p>
-                <p>Your request is currently being evaluated by our clinic nurse. You will receive another email once your document is approved.</p>
-                <p>If you have any questions or need further assistance, feel free to reply to this email or contact our support team at support@example.com.</p>
-                <p>Best Regards,</p>
-                <p><strong>CTU - Argao Campus Kahimsug Clinic Team</strong></p>
+        <body>
+            <div>
+                <h2>Request Confirmation</h2>
+                <p>Dear {student.firstname} {student.lastname},</p>
+                <p>Your request for <strong>{request_type}</strong> has been received.</p>
+                <p>You'll receive another email upon approval.</p>
+                <p>CTU - Argao Campus Kahimsug Clinic Team</p>
             </div>
         </body>
         </html>
@@ -818,17 +836,16 @@ def submit_request(request):
             email_subject,
             '',
             settings.EMAIL_HOST_USER,
-            [patient_email],
+            [student.emailadd],
             html_message=email_body,
             fail_silently=False,
         )
 
         messages.success(request, "Request submitted. A confirmation email has been sent.")
-        # record_transaction(patient, transac_type)
         return render(request, "medical/students/requestform.html", {})
+
     return render(request, "medical/students/requestform.html", {})
 
-# Views for medical requirements tracker
 def student_medical_requirements_tracker(request):
      if request.method == "POST":
         student_id = request.POST.get("student_id")
@@ -850,12 +867,15 @@ def student_medical_requirements_tracker(request):
 
 # Views for handling the medical requirements uploaded file
 def upload_requirements(request):
+    patient = None
+    md = None
+
     if request.method == "POST":
         student_id = request.POST.get("student_id")
+
         try:
-            patient = Patient.objects.get(student__student_id=student_id)
+            patient = Patient.objects.get(student=student_id)
         except Patient.DoesNotExist:
-            # If patient does not exist, redirect to basicinfo.html
             messages.info(request, "Fill out this form first before doing any transactions")
             return redirect('medical:patient_basicinfo', student_id=student_id)
 
@@ -865,16 +885,15 @@ def upload_requirements(request):
         stool_exam = request.FILES.get("stool-exam")
         pwd_card = request.FILES.get("pwd-card")
 
-        # Check if file is less than 5 MB, pwd card excluded
-        if (x_ray and (x_ray.size / 1_048_576) > 5) or (cbc and (cbc.size / 1_048_576) > 5) or (stool_exam and (stool_exam.size / 1_048_576) > 5) or (drug_test and (drug_test.size / 1_048_576) > 5):
-            messages.error(request, "File size exceeds the limit.")
-            return render(request, "medical/students/medupload.html", {"patient": patient})
+        # Validate file size (excluding pwd_card)
+        for file in [x_ray, cbc, drug_test, stool_exam]:
+            if file and (file.size / 1_048_576) > 5:
+                messages.error(request, "File size exceeds the 5MB limit.")
+                return render(request, "medical/students/medupload.html", {"patient": patient, "md": md})
 
-        # Check if the medical requirements already exist
         try:
             md = MedicalRequirement.objects.get(patient=patient)
 
-            # Update existing records
             if x_ray:
                 md.chest_xray.save(x_ray.name, x_ray)
             if cbc:
@@ -889,13 +908,12 @@ def upload_requirements(request):
             md.save()
             messages.success(request, "Your files have been successfully updated")
         except MedicalRequirement.DoesNotExist:
-            # Create new records
             md = MedicalRequirement.objects.create(
                 patient=patient,
                 chest_xray=x_ray,
                 cbc=cbc,
                 drug_test=drug_test,
-                stool_examination=stool_exam
+                stool_examination=stool_exam,
             )
             if pwd_card:
                 md.pwd_card.save(pwd_card.name, pwd_card)
@@ -904,57 +922,53 @@ def upload_requirements(request):
 
         return render(request, "medical/students/medupload.html", {"patient": patient, "md": md})
 
-    # GET request
-    if request.method == "GET":
+    elif request.method == "GET":
         student_id = request.GET.get("student_id")
+
         if student_id:
             try:
-                patient = Patient.objects.get(student__student_id=student_id)
-                md = MedicalRequirement.objects.get(patient=patient)
-                return render(request, "medical/students/medupload.html", {"patient": patient, "md": md})
+                patient = Patient.objects.get(student=student_id)
+                try:
+                    md = MedicalRequirement.objects.get(patient=patient)
+                except MedicalRequirement.DoesNotExist:
+                    md = None
             except Patient.DoesNotExist:
-                # If patient does not exist, redirect to basicinfo.html
-                messages.info(request, "Fill out this form first before doing any transactions")
+                messages.error(request, "Student record not found. Please fill out basic info first.")
                 return redirect('medical:patient_basicinfo', student_id=student_id)
-            except MedicalRequirement.DoesNotExist:
-                return render(request, "medical/students/medupload.html", {"patient": patient})
 
-    return render(request, "medical/students/medupload.html", {})
+    return render(request, "medical/students/medupload.html", {"patient": patient, "md": md})
+
 # Views for handling students request for dental services
+
+# @login_required
 def dental_services(request):
     if request.method == "POST":
-        transac_type = ""
-        student_id = request.POST.get("student_id")
         service_type = request.POST.get("service_type")
 
-        valid_id = Student.objects.filter(student_id=student_id).exists()
-        if not valid_id:
-            messages.error(request, "The ID you entered does not exist.")
-            return render(request, "medical/students/dentalrequestform.html", {})
-        
-        if not Patient.objects.filter(student__student_id = student_id).exists():
-            messages.info(request, "Fill out this form first before doing any transactions")
-            return redirect('medical:patient_basicinfo', student_id)
-            #return render(request, "medical/students/basicinfo.html", {"student": student})
-        
-        dental_service_request = DentalRecords.objects.filter(patient__student__student_id=student_id, service_type=service_type)
-        if dental_service_request.exists():
-            messages.error(request, "You have already requested this type of service")
-            return render(request, "medical/students/dentalrequestform.html", {})
-        
-        patient = Patient.objects.get(student__student_id=student_id)
-        transac_type = f"Request for dental {service_type}"
-        
-        # Create dental service request object
-        dental_request = DentalRecords.objects.create(
+        try:
+            student = request.user.studentinfo
+        except studentInfo.DoesNotExist:
+            messages.error(request, "Your account is not linked to a student record.")
+            return redirect('main:home')  # Or any other safe page
+
+        if not Patient.objects.filter(student=student).exists():
+            messages.info(request, "Please complete the patient info form before submitting a request.")
+            return redirect('medical:patient_basicinfo', student.studID)
+
+        if DentalRecords.objects.filter(patient__student=student, service_type=service_type).exists():
+            messages.error(request, "You have already requested this type of service.")
+            return render(request, "medical/students/dentalrequestform.html")
+
+        patient = Patient.objects.get(student=student)
+
+        DentalRecords.objects.create(
             patient=patient,
             service_type=service_type,
             date_requested=datetime.now()
         )
 
-        # Send confirmation email to the student
-        patient_name = f"{patient.student.firstname} {patient.student.lastname}"
-        patient_email = patient.student.email
+        # Send confirmation email
+        patient_name = f"{student.firstname} {student.lastname}"
         email_subject = 'Dental Services Request Submitted'
         email_body = f"""
         <html>
@@ -970,22 +984,19 @@ def dental_services(request):
         </body>
         </html>
         """
-
         send_mail(
-            email_subject,
-            '',
-            settings.EMAIL_HOST_USER,
-            [patient_email],
+            subject=email_subject,
+            message='',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[student.emailadd],
             html_message=email_body,
             fail_silently=False,
         )
 
         messages.success(request, "Request submitted. A confirmation email has been sent.")
-        # record_transaction(patient, transac_type)
-        return render(request, "medical/students/dentalrequestform.html", {})
-    
-    return render(request, "medical/students/dentalrequestform.html", {})
+        return render(request, "medical/students/dentalrequestform.html")
 
+    return render(request, "medical/students/dentalrequestform.html")
 # Views for appointing students dental requests
 def dental_request(request):
     if not request.user.is_superuser and not request.user.is_staff:

@@ -4,6 +4,7 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         
         <link
         rel="stylesheet"
@@ -13,17 +14,23 @@
         referrerpolicy="no-referrer"
         />
         <link rel="stylesheet" href="{% static 'styles/guidance/main.css'%}">
+        <link rel="stylesheet" href="{% static 'styles/sub-title.css'%}">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         {% block headcontent %}
 
         {% endblock headcontent %}
 
     </head>
+    
     <body>
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Open sidebar">
+  &#9776;
+</button>
         <div class="left-side">
+                 
              <div class="orange-bar">
                 <img src="{% static 'imgs/CTU_logo.png'%}" class="logo">
-                <img src="{% static 'imgs/barSort.png'%}" class="bars">
+                <img src="{% static 'studentorg/css/barSort.png'%}" class="bars">
             </div>
             <div>
             <nav class="side-nav">
@@ -32,9 +39,12 @@
                         <span class="fas fa-caret-down first"></span>
                     </a>
                          <ul class="studentlife">
-                        <li><a href="/equipmenttracker">Equipment Tracker</a></li>
-                        <li><a href="/requestgmc">Good Moral Certificate Issuance</a></li>
-                        <li><a href="/monthlyCalendar">Monthly Calendar of Activites</a></li>
+                        <li><a href="{% url 'requestgmc' %}">Good Moral Certificate Issuance</a></li>
+<li><a href="{% url 'equipmentTracker' %}">Equipment Tracker</a></li>
+<li><a href="{% url 'upload_files' %}">Post student</a></li>
+<li><a href="{% url 'adminmain' %}">Admin</a></li>
+<li><a href="{% url 'monthlyCalendar' %}">Monthly Calendar of Activities</a></li>
+
                     </ul>
                     </li>
                     <li><a href="#" class="scholar-btn">SCHOLARSHIP
@@ -42,12 +52,12 @@
                     </a>
                     <ul class="scholar-show">
                        
-                        <li><a href="#">Scholars Profile and Validation</a></li>
-                        <li><a href="{% url 'studentapplication'%}">Grade Submission with GPA Computation</a></li>
-                        <li><a href="{% url 'mentor' %}">Mentorship Program</a></li>
-                        <li><a href="#">Admin Cost Liquidation Tracker</a></li>
-                        <li><a href="#">CHED Reports Submission</a></li>
-                        <li><a href="#">Transaction Reports</a></li>
+                               <li><a href="{% url "student_req" %}">Submission of Requirements</a></li>
+                 
+                        <li><a href="{% url "studentapplication" %}">Application form</a></li>
+                        
+                        <li><a href="{% url "profile_student" %}">Scholars Profile</a></li>
+                        <li><a href="{% url "mentor" %}">Mentorship Program</a></li>
                     </ul>
                     </li>
                     <li><a href="#" class="jobplace-btn">JOB PLACEMENT
@@ -67,9 +77,9 @@
                     <span class="fas fa-caret-down fourth"></span>
                     </a>
                     <ul class="student_disc-show">
-                        <li><a href="#">Case Profile</a></li>
+                     <li><a href="{% url 'case_profile' %}">Case Profile</a></li>
                         <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
-                        <li><a href="#">Good Moral Certificate Issuance</a></li>
+                       
                         <li><a href="#">Transaction Reports</a></li>
                         
                     </ul>
@@ -90,12 +100,13 @@
                     <span class="fas fa-caret-down sixth"></span>
                     </a>
                     <ul class="alumni-show">
-                        <li><a href="#">Alumni ID Requests</a></li>
-                        <li><a href="#">Graduate Tracer</a></li>
-                        <li><a href="#">Alumni Reunion and Events</a></li>
-                        <li><a href="#">Job Fairs</a></li>
-                        <li><a href="#">Digital Yearbook</a></li>
-                        <li><a href="#">Transaction Reports</a></li>
+                      <li><a href="{% url 'idRequest' %}">Alumni ID Requests</a></li>
+<li><a href="{% url 'graduateTracer' %}">Graduate Tracer</a></li>
+<li><a href="{% url 'alumni_events' %}">Alumni Reunion and Events</a></li>
+<li><a href="{% url 'jobfairs' %}">Job Fairs</a></li>
+<li><a href="{% url 'yearbook' %}">Digital Yearbook</a></li>
+
+
                     </ul>
                     </li>
                     <li><a href="#" class="community-btn">COMMUNITY INVOLVEMENT
@@ -121,14 +132,18 @@
                         <span class="fas fa-caret-down ninth"></span>
                         </a>
                         <ul class="medical-show">
-                              <li><a href="{% url 'medical:patient_profile' %}">Patient Profile</a></li>
+                               <li><a href="{% url 'medical:upload_requirements' %}">Student Medical Requirements Tracker</a>
+                        </li>
+                        <li><a href="{% url 'medical:request' %}">Medical Form Request</a></li>
+                        <li><a href="{% url 'medical:dentalservice' %}">Dental Services</a></li>
+                              <!-- <li><a href="{% url 'medical:patient_profile' %}">Patient Profile</a></li>
                             <li><a href="{% url 'medical:viewrequest' %}">View Requests</a></li>
                             <li><a href="{% url 'medical:medtracker' %}">Student Medical Requirements Tracker</a></li>
                             <li><a href="{% url 'medical:emergency_asst' %}">Emergency Health Assistance</a></li>
                             <li><a href="{% url 'medical:pwdlist' %}">PWD Profile</a></li>
                             <li><a href="{% url 'medical:dentalrequest' %}">Dental Services</a></li>
                             <li><a href="{% url 'medical:prescription' %}">Prescription Issuance</a></li>
-                            <li><a href="{% url 'medical:transactions' %}">Transaction Reports</a></li>
+                            <li><a href="{% url 'medical:transactions' %}">Transaction Reports</a></li> -->
                         </ul>
                     </li>
                 </ul>
@@ -146,6 +161,8 @@
             <div class="student-account-info" style="margin: 16px 0; text-align: right;">
                 <strong>Student ID:</strong> {{ user.username }}<br>
                 <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}
+                <button class="btn btn-primary" style="margin-left: 10px;">
+                    <a href="{% url 'logout' %}" style="color: white; text-decoration: none;">Logout</a>
             </div>
         {% else %}
             <div class="student-account-info" style="margin: 16px 0; text-align: right;">
@@ -160,7 +177,38 @@
     </main>
 </div>
 
-       <script src="{% static 'scripts/guidance/main.js'%}"></script>
+       <script src="{% static 'scripts/main.js'%}"></script><script>
+  // Sidebar toggle logic (single instance)
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const leftSide = document.querySelector('.left-side');
+
+  if (sidebarToggle && leftSide) {
+    sidebarToggle.addEventListener('click', function(e) {
+      e.stopPropagation(); // Prevent click from bubbling to document
+      leftSide.classList.toggle('active');
+    });
+
+    // Hide sidebar when clicking outside on small screens
+    document.addEventListener('click', function(e) {
+      if (
+        window.innerWidth <= 900 &&
+        leftSide.classList.contains('active') &&
+        !leftSide.contains(e.target) &&
+        e.target !== sidebarToggle
+      ) {
+        leftSide.classList.remove('active');
+      }
+    });
+
+    // Remove .active on resize to large screens
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 900) {
+        leftSide.classList.remove('active');
+        leftSide.style.transform = '';
+      }
+    });
+  }
+</script>
     </body>
     
 </html>

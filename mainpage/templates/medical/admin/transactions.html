@@ -1,12 +1,7 @@
-{% extends 'main.html' %}  <!-- Extends the base template -->
-
-{% load static %}  <!-- Loads static files like CSS and JavaScript -->
-
-{% block title %}Medical{% endblock %}  <!-- Sets the title of the page -->
-
-{% block extra_css %}  <!-- Defines additional CSS styles -->
-<link rel="stylesheet" href="{% static 'styles/admin/transac.css' %}">  <!-- Link to custom CSS file -->
-<link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}">  <!-- Link to CSS file for print media -->
+{% extends 'adminmain.html' %}  <!-- Extends the base template -->
+{% block headcontent %} {% load static %} <!-- Defines additional CSS styles -->
+<link rel="stylesheet" href="{% static 'styles/medical/admin/transac.css' %}">  <!-- Link to custom CSS file -->
+<link rel="stylesheet" media="print" href="{% static 'styles/medical/print.css' %}">  <!-- Link to CSS file for print media -->
 <style>
     /* Style for the confirm and print buttons */
     #confirm-search, #print-report {
@@ -137,9 +132,9 @@
         }
     }
 </style>
-{% endblock %}
+{% endblock headcontent %} {% block bodycontent %} {% load static %}
 
-{% block content %}  <!-- Begins the content block -->
+  <!-- Begins the content block -->
 {% if messages %}  <!-- Checks if there are any messages to display -->
 <div>
     {% for message in messages %}  <!-- Iterates over each message -->
@@ -149,7 +144,7 @@
 {% endif %}
 <div class="container">
 <div class="header">
-    <img class="ctu-bp-logo" src="{% static 'images/CTU_logo.png' %}" alt="CTU_logo">
+    <img class="ctu-bp-logo" src="{% static 'imgs/CTU_logo.png' %}" alt="CTU_logo">
     <div class="header-text">
         <div class="content1">REPUBLIC OF THE PHILIPPINES</div>
         <div class="content2">CEBU TECHNOLOGICAL UNIVERSITY</div>
@@ -158,7 +153,7 @@
         <div class="content4">Website: https://www.argao.ctu.edu.ph E-mail: cdargao@ctu.edu.ph</div>
         <div class="content4">Phone No.:(032) 401-0737 local 1700</div>
     </div>
-    <img class="ctu-bp-logo" src="{% static 'images/BP_logo.png' %}" alt="BP_logo">
+    <img class="ctu-bp-logo" src="{% static 'studentorg/css/BagongPilipinaslogo.png' %}" alt="BP_logo">
 </div>
 <h2>Transaction Records</h2>
 <div class="filter-options">

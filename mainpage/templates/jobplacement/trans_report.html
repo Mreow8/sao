@@ -1,79 +1,99 @@
-{% extends 'main.html' %} {% block headcontent %} {% load static %}
-<link
-  rel="stylesheet"
-  href="{% static 'styles/job_placement/trans_rep.css' %}"
-/>
+{% extends 'adminmain.html' %} {% block headcontent %} {% load static %}
+<script src="https://cdn.tailwindcss.com"></script>
 {% endblock headcontent %} {% block bodycontent %}
-<section>
-  <form action="" method="POST">
+<section
+  class="max-w-4xl mx-auto my-6 rounded-lg shadow-lg bg-white overflow-hidden px-6 py-4 relative"
+>
+  <form method="POST" class="mb-4 flex flex-col md:flex-row md:items-end gap-4">
     {% csrf_token %}
-    <input type="submit" value="Apply filter" class="filter-button" />
-    <div>
-      <div class="date-container">
-        <label for="date">Please select a Date:</label>
-        <input
-          id="date_time_filter"
-          type="datetime-local"
-          name="date_time_filter"
-          value="{{ date_time }}"
-        />
-        <label class="switch">
-          <input
-            type="checkbox"
-            name="monthly_filter"
-            {%
-            if
-            prev_period
-            %}
-            value="True"
-            {%
-            else
-            %}
-            value="false"
-            {%
-            endif
-            %}
-            onclick="togglemonthlyfilter(this)"
-          />
-          <span class="slider round"></span>
-        </label>
-        <label for="yesbtn" class="padded">Monthly</label>
-      </div>
+
+    <div class="flex-1">
+      <label
+        for="date_time_filter"
+        class="block text-sm font-medium text-gray-700 mb-1"
+      >
+        Please select a Date:
+      </label>
+      <input
+        id="date_time_filter"
+        name="date_time_filter"
+        type="datetime-local"
+        value="{{ date_time }}"
+        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400"
+      />
     </div>
+
+    <div class="flex items-center space-x-2 mt-2">
+      <label for="monthly_filter" class="relative inline-block w-14 h-8">
+        <input
+          id="monthly_filter"
+          type="checkbox"
+          name="monthly_filter"
+          class="sr-only peer"
+          {%
+          if
+          prev_period
+          %}checked{%
+          endif
+          %}
+          onclick="togglemonthlyfilter(this)"
+        />
+        <div
+          class="w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-blue-500 transition-all"
+        ></div>
+        <div
+          class="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-all peer-checked:translate-x-6"
+        ></div>
+      </label>
+      <label for="monthly_filter" class="text-sm text-gray-700 font-medium"
+        >Monthly</label
+      >
+    </div>
+
+    <input
+      type="submit"
+      value="Apply Filter"
+      class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md shadow"
+    />
   </form>
-  <h1>Transaction Report</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>User</th>
-        <th>Action</th>
-        <th>Date/Time</th>
-        <th>User Type</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for transaction in transactions %}
-      <tr>
-        <td>{{ transaction.user }}</td>
-        <td>{{ transaction.action }}</td>
-        <td>{{ transaction.date_created }}</td>
-        <td>{{ transaction.user_type }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <h1
+    class="text-xl font-bold text-center text-green-600 bg-green-100 py-2 rounded mb-4"
+  >
+    Transaction Report
+  </h1>
 
-  <!-- GoTo Download -->
-  <form action="{% url 'jobplacement:rep_print' %}" method="POST">
+  <div class="overflow-x-auto rounded-md border border-gray-200">
+    <table class="w-full table-fixed text-sm text-left text-gray-700">
+      <thead class="bg-orange-500 text-white">
+        <tr>
+          <th class="p-3">User</th>
+          <th class="p-3">Action</th>
+          <th class="p-3">Date/Time</th>
+          <th class="p-3">User Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for transaction in transactions %}
+        <tr class="hover:bg-gray-100 border-b">
+          <td class="px-3 py-2 truncate">{{ transaction.user }}</td>
+          <td class="px-3 py-2 truncate">{{ transaction.action }}</td>
+          <td class="px-3 py-2 truncate">{{ transaction.date_created }}</td>
+          <td class="px-3 py-2 truncate">{{ transaction.user_type }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <form action="{% url 'jobplacement:rep_print' %}" method="POST" class="mt-6">
     {% csrf_token %}
     <input type="hidden" name="date_filter" value="{{ date_time }}" />
     <input type="hidden" name="period_filter" value="{{ prev_period }}" />
     <input
-      class="download-button"
-      id="dl_filter"
       type="submit"
       value="Go To Download"
+      class="fixed bottom-5 right-5 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-5 rounded-full shadow-lg cursor-pointer"
     />
   </form>
 </section>

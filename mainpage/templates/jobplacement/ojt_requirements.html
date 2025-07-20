@@ -6,7 +6,7 @@
 {% endblock headcontent %}
 
 {% block bodycontent %}
-<section>
+
     {% if request.user.is_staff %}
         <!-- ADMIN VIEW -->
         <div id="main_container">
@@ -19,9 +19,13 @@
                 <input id="attend_student_list" type="submit" value="Search">
             </form>
             <div class="intro">
-                <p>OJT Requirements Tracker (Admin)</p>
             </div>
-
+ <div class="sub-title">
+      <h3>JOB PLACEMENT</h3>
+      <p class="hometext">Home</p>
+      <p class="certxt">&gt;OJT Requirements Tracker (Admin)
+</p>
+    </div>
             <div class="admintable">
                 <table>
                     <thead>
@@ -344,6 +348,6 @@
         
     {% endif %}
 
-</section>
+
 <script src="{% static 'scripts/job_placement/ojt_requirements.js' %}?206" ></script>
 {% endblock bodycontent %}

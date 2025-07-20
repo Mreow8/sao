@@ -7,3 +7,5 @@ def calendar(request):
     return render(request, 'officeOfStudentL/calendarOfEvents.html')
 def login_view(request):
     return render(request, 'login.html')
+def post(request):
+    return render(request, 'scrapper.html')

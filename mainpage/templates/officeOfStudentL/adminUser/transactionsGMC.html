@@ -1,0 +1,197 @@
+{% extends 'admin/main.html' %}<!-- Extends the base template -->
+
+{% load static %}  <!-- Loads static files like CSS and JavaScript -->
+
+
+{% block extra_css %}  <!-- Defines additional CSS styles -->
+<link rel="stylesheet" href="{% static 'styles/viewrequest.css' %}">  <!-- Link to custom CSS file -->
+<!-- <link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}">  Link to CSS file for print media -->
+<style>
+    /* Style for the confirm and print buttons */
+    #confirm-search, #print-report {
+        color: white;
+    }
+    #confirm-search, #filter-dropdown, #year-input, #month-dropdown, #print-report {
+        background-color: #FF8000; /* Orange */
+        border: none;
+        padding: 5px 5px; /* Reduce padding for the button */
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-top: 30px; /* Adjust margin for both elements */
+        margin-bottom: -30px;
+        cursor: pointer;
+        border-radius: 8px; /* Slightly reduce border radius */
+        border: 2px solid transparent; /* Add border for the button */
+        transition: background-color 0.3s, border-color 0.3s; /* Add transition for smoother hover effect */
+    }
+    /* Hover effect for the buttons */
+    #confirm-search:hover, #print-report:hover {
+        background-color: #FF8000; /* Darker shade of orange on hover */
+        border-color: #FF8000; /* Darker shade of orange border on hover */
+    }
+    /* Style for the dropdown options */
+    #filter-dropdown, #month-dropdown {
+        width: 200px; /* Adjust the width as needed */
+        margin-right: 10px; /* Add margin to separate from the button */
+        padding: 5px; /* Add padding to the dropdown */
+        border: 2px solid #FF8000; /* Match the button border color */
+        border-radius: 8px; /* Match the button border radius */
+        background-color: white; /* White background for dropdown */
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+        outline: none; /* Remove default focus outline */
+        cursor: pointer;
+    }
+    /* Style for dropdown options */
+    #filter-dropdown option {
+        padding: 5px; /* Add padding to the options */
+        border-radius: 5px; /* Add border radius to options */
+        cursor: pointer;
+        transition: background-color 0.3s; /* Add transition for smoother hover effect */
+    }
+    /* Hover effect for dropdown options */
+    #filter-dropdown option:hover {
+        background-color: #f2f2f2; /* Light gray background on hover */
+    }
+    /* Style for the year input */
+    #year-input {
+        width: 200px; /* Adjust the width as needed */
+        padding: 5px; /* Add padding to the text field */
+        border: 2px solid #FF8000; /* Match the button border color */
+        border-radius: 8px; /* Match the button border radius */
+        background-color: white; /* White background for text field */
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+        outline: none; /* Remove default focus outline */
+        margin-right: 10px; /* Add margin to separate from the button */
+        color: black; /* Set text color */
+        font-size: 16px; /* Match font size */
+    }
+    /* Print-specific styles */
+    @media print {
+        body * {
+            visibility: hidden; /* Hide everything initially */
+        }
+        .container, .container * {
+            visibility: visible; /* Make only the container and its contents visible */
+        }
+        .body-content{
+            margin-top: -95vh;
+            margin-left: 350px;
+        }
+        .container {
+            position: relative;
+            left: -40%;
+            top: 0;
+            box-shadow: none;
+            width:200%;
+            padding: 0; 
+            margin: 0;
+        }
+        .header, .footer {
+            page-break-inside: avoid; 
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            height: 100px; 
+        }
+        .header-text .content1 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .header-text .content2 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .header-text .content3 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .header-text .content4 {
+            font-size: 14px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #print-report {
+            display: none; /* Hide the print button */
+        }
+        /* Hide the dropdown */
+#filter-dropdown, #month-dropdown, #year-input, #confirm-search {
+    display: none;
+}
+    }
+</style>
+{% endblock %}
+
+{% block bodycontent %}
+<div class="body-content">
+    <div class="container">
+        <div class="header">
+            <img class="ctu-bp-logo" src="{% static 'images/CTU_logo.png' %}" alt="CTU_logo">
+            <div class="header-text">
+                <div class="content1">REPUBLIC OF THE PHILIPPINES</div>
+                <div class="content2">CEBU TECHNOLOGICAL UNIVERSITY</div>
+                <div class="content3">ARGAO CAMPUS</div>
+                <div class="content4">Ed Kintanar Street, Lamacan, Argao, Cebu</div>
+                <div class="content4">Website: https://www.argao.ctu.edu.ph E-mail: cdargao@ctu.edu.ph</div>
+                <div class="content4">Phone No.:(032) 401-0737 local 1700</div>
+            </div>
+            <img class="ctu-bp-logo" src="{% static 'images/BP_logo.png' %}" alt="BP_logo">
+        </div>
+        <h2>Daily Issuance of Good Moral Certificate</h2>
+        <div class="filter-options">
+            <button id="print-report">Print</button>
+        </div>
+        <div class="request">
+            <table>
+                <thead>
+                    <tr class="tr-header">
+                        <th>No.</th>
+                        <th>Student</th>
+                        <th>Transaction Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in transaction_records %}
+                        <tr class="tr-td">
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ record.student }}</td>
+                            <td>{{ record.request_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="footer">
+            <img src="{% static 'images/footer.png' %}" alt="">
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('print-report').addEventListener('click', function() {
+        console.log("Print button clicked");
+        window.print();
+    });
+</script>
+{% endblock %}
+

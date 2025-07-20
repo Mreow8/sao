@@ -12,7 +12,7 @@ from django.template.defaulttags import register
 from django.core.mail import send_mail
 from django.http import HttpResponse
 
-def upload_file(request):
+def upload_files(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():

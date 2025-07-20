@@ -1,8 +1,14 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Medical{% endblock
-%} {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/admin/patientlist.css' %}" />
-<link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
-{% endblock %} {% block content %}
+{% extends 'adminmain.html' %} {% block headcontent %} {% load static %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/medical/admin/patientlist.css' %}"
+/>
+<link
+  rel="stylesheet"
+  media="print"
+  href="{% static 'styles/medical/print.css' %}"
+/>
+{% endblock headcontent %} {% block bodycontent %} {% load static %}
 <div class="container">
   <h2>Emergency Health Assistance Records</h2>
   <br /><br />

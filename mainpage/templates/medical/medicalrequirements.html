@@ -1,8 +1,11 @@
 {% extends 'main.html' %} {% load static %} {% block title %}Medical
 Requirements Tracking{% endblock %} {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/medicalrequirements.css' %}" />
-{% endblock %} {% block content %}
-<div class="container">
+<link
+  rel="stylesheet"
+  href="{% static 'styles/medical/medicalrequirements.css' %}"
+/>
+{% endblock %} {% block bodycontent %}
+<div class="container-medical">
   {% if messages %}
   <div class="message-container">
     {% for message in messages %}
@@ -32,9 +35,8 @@ Requirements Tracking{% endblock %} {% block extra_css %}
         </tr>
       </thead>
       <tbody>
+        {% if med_requirements.chest_xray %}
         <tr>
-          {% if med_requirements.chest_xray or med_requirements.cbc or
-          med_requirements.drug_test or med_requirements.stool_examination %}
           <td>Chest X-Ray</td>
           {% if med_requirements.chest_xray.url %}
           <td>Submitted</td>
@@ -43,11 +45,11 @@ Requirements Tracking{% endblock %} {% block extra_css %}
           </td>
           {% else %}
           <td>Not Submitted</td>
-          {% endif %} {% endif %}
+          <td></td>
+          {% endif %}
         </tr>
+        {% endif %} {% if med_requirements.cbc %}
         <tr>
-          {% if med_requirements.chest_xray or med_requirements.cbc or
-          med_requirements.drug_test or med_requirements.stool_examination %}
           <td>Complete Blood Count</td>
           {% if med_requirements.cbc.url %}
           <td>Submitted</td>
@@ -56,22 +58,22 @@ Requirements Tracking{% endblock %} {% block extra_css %}
           </td>
           {% else %}
           <td>Not Submitted</td>
-          {% endif %} {% endif %}
+          <td></td>
+          {% endif %}
         </tr>
+        {% endif %} {% if med_requirements.drug_test %}
         <tr>
-          {% if med_requirements.chest_xray or med_requirements.cbc or
-          med_requirements.drug_test or med_requirements.stool_examination %}
           <td>Drug Test</td>
           {% if med_requirements.drug_test.url %}
           <td>Submitted</td>
           <td><a href="{{ med_requirements.drug_test.url }}">Drug Test</a></td>
           {% else %}
           <td>Not Submitted</td>
-          {% endif %} {% endif %}
+          <td></td>
+          {% endif %}
         </tr>
+        {% endif %} {% if med_requirements.stool_examination %}
         <tr>
-          {% if med_requirements.chest_xray or med_requirements.cbc or
-          med_requirements.drug_test or med_requirements.stool_examination %}
           <td>Stool Examination</td>
           {% if med_requirements.stool_examination.url %}
           <td>Submitted</td>
@@ -82,25 +84,16 @@ Requirements Tracking{% endblock %} {% block extra_css %}
           </td>
           {% else %}
           <td>Not Submitted</td>
-          {% endif %} {% endif %}
+          <td></td>
+          {% endif %}
         </tr>
-        {% if med_requirements.pwd_card %}
+        {% endif %} {% if med_requirements.pwd_card %}
         <tr>
           <td>PWD Card</td>
           <td>Submitted</td>
           <td><a href="{{ med_requirements.pwd_card.url }}">PWD Card</a></td>
         </tr>
         {% endif %}
-        <!-- {% for requirement in medical_requirements %}
-                    <tr class="tr-td">
-                        <td></td>
-                        <td></td>
-                    </tr>
-                {% empty %}
-                    <tr class="tr-td">
-                        <td colspan="2">No medical requirements found</td>
-                    </tr>
-                {% endfor %} -->
       </tbody>
     </table>
   </div>

@@ -68,23 +68,23 @@ def requestedgmc(request):
         reason = request.POST.get("reason")
         if reason:
             try:
-                student = studentInfo.objects.get(user_student=request.user)
+                student = studentInfo.objects.get(studID=int(request.user.username))
                 RequestedGMC.objects.create(student=student, reason=reason)
                 messages.success(request, "Good Moral Certificate request submitted successfully")
-                return redirect('officeOfStudentL_system:requestgmc')
+                return redirect('requestgmc')
             except studentInfo.DoesNotExist:
                 messages.error(request, "Student not found")
 
     context = {"student": student}
     return render(request, "officeOfStudentL/requestgmc.html", context)
 
+# @sao_admin_required
 
 # Processing Goodmoral Certificate Admin side 
-@sao_admin_required
 def adminRequestedGmc(request):
     gmc_requests = RequestedGMC.objects.filter(processed=False)
     context = {"gmc_requests": gmc_requests}
-    return render(request, "adminUser/adminRequestedGmc.html", context)
+    return render(request, "officeOfStudentL/adminUser/adminRequestedGmc.html", context)
 
 # Making of Goodmoral Certificate
 def generateGmc(request, request_id):
@@ -107,7 +107,7 @@ def generateGmc(request, request_id):
             "today_date": localtime(now()).strftime('%B %d, %Y'),
             "or_num": or_num  # Include the OR Number in the context
         }
-        return render(request, "adminUser/good_moral_certificate.html", context)
+        return render(request, "officeOfStudentL/adminUser/good_moral_certificate.html", context)
     except RequestedGMC.DoesNotExist:
         messages.error(request, "GMC Request not found")
         return redirect('adminRequestedGmc')
@@ -117,7 +117,7 @@ def processed_gmc_transactions(request):
     # Fetch all processed GMC requests
     processed_gmcs = RequestedGMC.objects.filter(processed=True)
     
-    return render(request, 'adminUser/transactionsGMC.html', {
+    return render(request, 'officeOfStudentL/adminUser/transactionsGMC.html', {
         'transaction_records': processed_gmcs
     })
 
@@ -144,7 +144,7 @@ def monthlyCalendar(request):
     return render(request, "officeOfStudentL/monthlyCalendar.html", context)
 
 # Calendar of Activities Admin 
-@sao_admin_required
+# @sao_admin_required
 def monthlyCalendarAdmin(request):
     schedules = Schedule.objects.all()
     sched_res = {}
@@ -163,7 +163,7 @@ def monthlyCalendarAdmin(request):
     context = {
         'sched_json': json.dumps(sched_res)
     }
-    return render(request, 'adminUser/monthlyCalendarAdmin.html', context)
+    return render(request, 'officeOfStudentL/adminUser/monthlyCalendarAdmin.html', context)
 
 
 # Save Schedule
@@ -181,7 +181,7 @@ def save_schedule(request):
             return redirect('officeOfStudentL_system:monthlyCalendarAdmin')
     else:
         form = ScheduleForm()
-    return render(request, 'adminUser/monthlyCalendarAdmin.html', {'form': form})
+    return render(request, 'officeOfStudentL/adminUser/monthlyCalendarAdmin.html', {'form': form})
 
 
 # Update schedule start and end datetime drag & drop
@@ -231,7 +231,7 @@ def equipmentTracker(request):
     }
     return render(request, 'officeOfStudentL/equipmentTracker.html', context)
 
-@sao_admin_required
+# @sao_admin_required
 def equipmentTrackerAdmin(request):
     student = None
     borrowing_records = BorrowingRecord.objects.all()
@@ -250,7 +250,7 @@ def equipmentTrackerAdmin(request):
         'all_equipment': all_equipment,
         'borrowing_records': borrowing_records
     }
-    return render(request, 'adminUser/equipmentTrackerAdmin.html', context)
+    return render(request, 'officeOfStudentL/adminUser/equipmentTrackerAdmin.html', context)
 
 
 # Add Equipment

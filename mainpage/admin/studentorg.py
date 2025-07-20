@@ -1,6 +1,20 @@
 from django.contrib import admin
 from ..models import  Officer, Project, FinancialStatement, Accreditation, Adviser, AdminLogin, OfficerLogin
+from django.contrib import admin
+from ..models import Organization
 
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'logo_preview')
+    search_fields = ('name', 'slug')
+    readonly_fields = ('slug', 'logo_preview')
+
+    def logo_preview(self, obj):
+        if obj.logo:
+            return f'<img src="{obj.logo.url}" width="80" height="80" style="object-fit: contain;" />'
+        return "No image"
+    logo_preview.allow_tags = True
+    logo_preview.short_description = 'Logo'
 # Register your models here.
 class OfficerAdmin(admin.ModelAdmin):
     list_display = ('surname','Officer_profile_picture','firstname','middlename','organization','course', 'year', 'status')

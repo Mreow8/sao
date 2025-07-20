@@ -1,0 +1,169 @@
+{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+
+<!-- SweetAlert2 and jQuery (before anything else) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- FullCalendar -->
+<script src="{% static 'styles/studentlife/fullcalendar/lib/main.min.js' %}"></script>
+<link
+  rel="stylesheet"
+  href="{% static 'styles/studentlife/fullcalendar/lib/main.min.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'styles/studentlife/calendarOfEvents.css' %}"
+/>
+
+<div class="container">
+  <div class="sub-title">
+    <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
+    <p class="hometext">Admin</p>
+    <p class="certxt">> Monthly Calendar of Activities</p>
+  </div>
+
+  <!-- Calendar Container -->
+  <div class="container py-3" id="page-container">
+    <div class="row">
+      <div class="col-md-9">
+        <div id="calendar"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backend Schedule JSON -->
+<script>
+  var scheds = JSON.parse("{{ sched_json|escapejs }}");
+</script>
+
+<!-- Calendar Init with Swal on Click -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var calendarEl = document.getElementById("calendar");
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth",
+      selectable: true,
+      events: Object.values(scheds),
+      dateClick: function (info) {
+        Swal.fire({
+          title: "Add Schedule",
+          html:
+            `<input id="swal-title" class="swal2-input" placeholder="Title">` +
+            `<textarea id="swal-description" class="swal2-textarea" placeholder="Description"></textarea>` +
+            `<input id="swal-start" type="datetime-local" class="swal2-input" value="${info.dateStr}T08:00">` +
+            `<input id="swal-end" type="datetime-local" class="swal2-input" value="${info.dateStr}T17:00">`,
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonText: "Save",
+          preConfirm: () => {
+            const title = document.getElementById("swal-title").value;
+            const description =
+              document.getElementById("swal-description").value;
+            const start_datetime = document.getElementById("swal-start").value;
+            const end_datetime = document.getElementById("swal-end").value;
+
+            if (!title || !description || !start_datetime || !end_datetime) {
+              Swal.showValidationMessage("All fields are required.");
+              return false;
+            }
+
+            return { title, description, start_datetime, end_datetime };
+          },
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await fetch("{% url 'save_schedule' %}", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: JSON.stringify(result.value),
+              });
+
+              if (!response.ok) throw new Error("Failed to save schedule.");
+
+              Swal.fire("Saved!", "Schedule has been added.", "success").then(
+                () => {
+                  location.reload();
+                }
+              );
+            } catch (error) {
+              Swal.fire("Error", error.message, "error");
+            }
+          }
+        });
+      },
+    });
+
+    calendar.render();
+  });
+</script>
+
+<!-- (Optional) Existing Event Modal -->
+<div
+  class="modal fade"
+  tabindex="-1"
+  data-bs-backdrop="static"
+  id="event-details-modal"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-0">
+      <div class="modal-header rounded-0">
+        <h5 class="modal-title">Schedule Details</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body rounded-0">
+        <div class="container-fluid">
+          <dl>
+            <dt class="text-muted">Title</dt>
+            <dd id="title" class="fw-bold fs-4"></dd>
+            <dt class="text-muted">Description</dt>
+            <dd id="description" class=""></dd>
+            <dt class="text-muted">Start</dt>
+            <dd id="start" class=""></dd>
+            <dt class="text-muted">End</dt>
+            <dd id="end" class=""></dd>
+          </dl>
+        </div>
+      </div>
+      <div class="modal-footer rounded-0">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm rounded-0"
+          id="edit"
+          data-id=""
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger btn-sm rounded-0"
+          id="delete"
+          data-id=""
+        >
+          Delete
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm rounded-0"
+          data-bs-dismiss="modal"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'studentlife/newmain.js' %}"></script>
+
+{% endblock bodycontent %}

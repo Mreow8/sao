@@ -1,8 +1,8 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Medical{% endblock
-%} {% block extra_css %}
+{% extends 'adminmain.html' %} {% load static %} {% block title %}Medical{%
+endblock %} {% block extra_css %}
 <link rel="stylesheet" href="{% static 'styles/viewrequest.css' %}" />
 <link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
-{% endblock %} {% block content %}
+{% endblock %} {% block bodycontent %}
 
 <div class="container">
   {% if messages %}

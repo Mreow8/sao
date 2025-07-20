@@ -25,7 +25,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 # @login_required
 def adminhome(request):
-    return render(request, 'adminhome.html', {})
+    return render(request, 'adminmain.html', {})
 
 def studenthome(request):
     user = request.user
@@ -83,25 +83,34 @@ def signupuser(request):
 def signinuser(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        password = request.POST.get('set_password')
+        password = request.POST.get('password')
 
+        # First, check if a user with that username/email exists
         try:
-            user = User.objects.get(email=email)
-            if user.check_password(password):
-                login(request, user)
-                return redirect('homepage')
-            else:
-                pass
+            user_obj = User.objects.get(username=email)
         except User.DoesNotExist:
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                if user.is_superuser:
-                    login(request, user)
-                    return redirect('adminhome')
-                else:
-                    return redirect('studenthome')
+            messages.error(request, "Account does not exist.")
+            return render(request, 'login.html')
+
+        # Check if the account is active
+        if not user_obj.is_active:
+            messages.error(request, "This account is inactive. Please contact admin.")
+            return render(request, 'login.html')
+
+        # Now try to authenticate
+        user = authenticate(request, username=email, password=password)
+
+        if user is not None:
+            login(request, user)
+
+            if user.is_superuser:
+                return redirect('adminhome')
+            elif hasattr(user, 'user_type') and user.user_type == 'student':
+                return redirect('studenthome')
             else:
-                pass
+                return redirect('homepage')
+        else:
+            messages.error(request, "Incorrect password.")
 
     return render(request, 'login.html')
 

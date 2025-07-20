@@ -1,0 +1,265 @@
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+/* section{
+  background: url("../imgs/ctu.jpg");
+  background-repeat: repeat-y;
+  background-position: auto;
+  background-size: cover;
+} */
+h1 {
+  text-align: center;
+  padding: 5px;
+  background-color: #4CAF50;
+  color: #000;
+  margin: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th, td {
+  /* padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd; */
+  padding: 10px; 
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  white-space: nowrap;
+  font-size: 14px; 
+}
+
+th {
+  background-color: #FF8000;
+  color: #fff;
+}
+
+tr:hover {
+  background-color: #f2f2f2;
+}
+
+/* TOGGLE SWITCH */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 65px;
+  height: 37px;
+}
+
+
+.switch input { 
+  padding-top: 9px;
+  margin-left: 10px;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider.round{
+  margin-bottom: 5px;
+  
+
+}
+
+.slider {
+  
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #5C5470;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(35px);
+  -ms-transform: translateX(35px);
+  transform: translateX(35px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* pag adjust sa date  */
+.date-container {
+  flex-grow: 1; 
+  text-align: left; 
+  margin-left: 10px;
+
+}
+#date_time_filter {
+  width: 200px; 
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.filter-button {
+  margin-top: 10px;
+  margin-left: 10px;
+  background-color: #4CAF50;
+  border-radius: 10px;
+  padding: 12.4px;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-size: 10.5px;
+  font-weight: 800;
+  margin-bottom: 5px;
+  color: #f2f2f2;
+}
+
+/* .card {
+  border: 2px solid black;
+}
+.card__content input, .card__content textarea{
+  border: 2px solid red;
+}
+#col_container{
+  display: flex;
+  flex-direction: column;
+} */
+
+.showform {
+  position: absolute;
+  top: 10%;
+  right: 2%;
+  padding: 8px 16px;
+  font-weight: 600;
+  outline: none;
+  border: none;
+  background-color: #FF8000;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  color: #f2f2f2;
+}
+
+.closeform {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #FF8000;
+}
+
+.showform_container {
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+.showform_container.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.form_container {
+  width: 50%;
+  max-width: 600px;
+  max-height: 90vh;
+  background: #f2f2f2;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  transform: scale(0);
+  transition: transform 0.4s ease;
+  overflow-y: auto;
+}
+
+.showform_container.active .form_container {
+  transform: scale(1);
+}
+
+/* CSS PARA SA FILL UP/ POP UP FORM MISMO */
+#col_container {
+  display: flex;
+  flex-direction: column;
+}
+
+#col_container label {
+  margin: 10px 0 5px;
+}
+
+#col_container input[type="text"],
+#col_container input[type="number"],
+#col_container textarea,
+#col_container input[type="submit"] {
+  padding: 10px;
+  margin: 5px 0 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+#col_container input[type="submit"] {
+  background-color: #FF8000;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#col_container input[type="submit"]:hover {
+  background-color: #e67300;
+}
+
+.download-button {
+  position: fixed;
+  bottom: 20px; 
+  right: 20px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  border-radius: 10px;
+  padding: 12.4px;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #f2f2f2;
+} 

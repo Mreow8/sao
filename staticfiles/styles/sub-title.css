@@ -1,0 +1,14 @@
+.sub-title h3 {
+  color: black;
+  font-family: "Rubik", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.sub-title p {
+  display: inline;
+}
+.certxt {
+  margin-left: 5px;
+  color: #ff8000;
+}

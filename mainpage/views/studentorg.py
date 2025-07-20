@@ -4,15 +4,171 @@ from django.contrib import messages
 from ..forms import OfficerForm
 from ..forms import ProjectForm
 from ..forms import FinancialStatementForm, AdminLoginForm, LoginForm
-from ..forms import AccreditationForm, AdviserForm
+from ..forms import AccreditationForm, AdviserForm, OrganizationForm
 from ..models import Project, Accreditation, Adviser, OfficerLogin
 from ..models import FinancialStatement, Officer, AdminLogin
+from ..models import Organization
+import base64, uuid
+from django.core.files.base import ContentFile
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
-def home(request):
-    return render (request, "studentorg/VIEW/OrgMain.html")
+from django.shortcuts import render, get_object_or_404
+# views.py
+
+def adviser_form(request, slug):
+    organization = get_object_or_404(Organization, slug=slug)
+
+    if request.method == 'POST':
+        form = AdviserForm(request.POST, request.FILES)
+        if form.is_valid():
+            adviser = form.save(commit=False)
+            adviser.organization = organization  # if Adviser has FK to Organization
+            adviser.save()
+            return redirect('adviser_form', slug=slug)
+    else:
+        form = AdviserForm()
+
+    return render(request, f'studentorg/adviserform/{slug}_adviserdata.html', {
+        'form': form,
+        'organization': organization,
+        'slug': slug,
+    })
+def officer_form(request, slug):
+    organization = get_object_or_404(Organization, slug=slug)
+
+    if request.method == 'POST':
+        form = OfficerForm(request.POST, request.FILES)
+        if form.is_valid():
+            officer = form.save(commit=False)
+            officer.organization = organization
+            officer.save()
+            return redirect('officer_form', slug=slug)
+
+    return render(request, 'studentorg/Main/officer_form.html', {'organization': organization})
+
+def view_officers(request, slug):
+    org = get_object_or_404(Organization, slug=slug)
+    statements = Officer.objects.filter(organization=org)
+    return render(request, 'studentorg/Main/view_officer.html', {
+        'org': org,
+        'statements': statements
+    })
+def edit_org(request, slug):
+    org = get_object_or_404(Organization, slug=slug)
+    if request.method == 'POST':
+        form = OrganizationForm(request.POST, request.FILES, instance=org)
+        if form.is_valid():
+            form.save()
+            return redirect('FSTLP_profile')  # or use `slug` dynamically
+    else:
+        form = OrganizationForm(instance=org)
+    return render(request, 'studentorg/Main/OrgMain.html', {'form': form})
+def view_project_by_slug(request, slug):
+    org = get_object_or_404(Organization, slug=slug)
+    projects = Project.objects.filter(status='approved', org=org)
+    return render(request, 'studentorg/Main/view_projects.html', {
+        'org': org,
+        'projects': projects
+    })
+def org_profile(request, slug):
+    org = get_object_or_404(Organization, slug=slug)
+    is_edit = request.GET.get('edit') == 'true'
+
+    if request.method == 'POST':
+        form = OrganizationForm(request.POST, request.FILES, instance=org)
+
+        key_elements_raw = request.POST.getlist('key_elements[]')
+        key_elements_cleaned = []
+        for item in key_elements_raw:
+            if ':' in item:
+                title, desc = item.split(':', 1)
+                key_elements_cleaned.append({'title': title.strip(), 'description': desc.strip()})
+            elif item.strip():
+                key_elements_cleaned.append({'title': None, 'description': item.strip()})
+
+        org.key_elements = key_elements_cleaned  # ✅ Save structured data
+
+        if form.is_valid():
+            form.save()
+            return redirect('org_profile', slug=org.slug)
+    else:
+        form = OrganizationForm(instance=org)
+
+    return render(request, 'studentorg/Main/OrgMain.html', {
+        'org': org,
+        'form': form,
+        'is_edit': is_edit,
+        'key_elements': org.key_elements or [],
+    })
+
+import json
+
+def org_profile_view(request, org_id, mode='view'):
+    org = get_object_or_404(Organization, id=org_id)
+    
+    if mode == 'edit':
+        if request.method == 'POST':
+            form = OrganizationForm(request.POST, request.FILES, instance=org)
+            if form.is_valid():
+                form.save()
+                return redirect('org_profile', org_id=org.id)
+        else:
+            form = OrganizationForm(instance=org)
+        return render(request, 'studentorg/org_profile.html', {
+            'org': org,
+            'form': form,
+            'is_edit': True,
+        })
+    
+    else:
+        # View Mode
+        key_elements = []
+        if org.key_elements:
+            try:
+                key_elements = json.loads(org.key_elements)
+            except:
+                key_elements = org.key_elements.split(",")
+        return render(request, 'studentorg/org_profile.html', {
+            'org': org,
+            'key_elements': key_elements,
+            'is_edit': False,
+        })
+
+def Gen_Home(request):
+    orgs = Organization.objects.all()
+    return render(request, "studentorg/VIEW/OrgMain.html", {"orgs": orgs})
+# def home(request):
+#     return render (request, "studentorg/VIEW/OrgMain.html")
 
 #login
+
+@csrf_exempt
+def add_organization(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        img_data = request.POST.get("imgData")
+
+        if not name or not img_data:
+            return JsonResponse({"success": False, "error": "Missing fields."})
+
+        format, imgstr = img_data.split(";base64,")
+        ext = format.split("/")[-1]
+        file_name = f"{uuid.uuid4()}.{ext}"
+        image_file = ContentFile(base64.b64decode(imgstr), name=file_name)
+
+        org = Organization(name=name, logo=image_file)
+        org.save()
+
+        return JsonResponse({
+            "success": True,
+            "name": org.name,
+            "slug": org.slug,
+            "image_url": org.logo.url
+        })
+
+    return JsonResponse({"success": False, "error": "Invalid request."})
 
 def admin_transactionreport(request):
     financial_statements = FinancialStatement.objects.all()
@@ -52,7 +208,6 @@ def admin_login(request):
     else:
         form = AdminLoginForm()
     return render(request, 'studentorg/ADMIN/admin_login.html', {'form': form})
-
 def register_officer(request):
     if request.method == 'POST':
         student_id = request.POST['student_id']
@@ -66,11 +221,15 @@ def register_officer(request):
         username = request.POST['username']
         password = request.POST['password']
 
-        # Check if the officer's last name and first name exist in the Officer table
         try:
             officer = Officer.objects.get(surname=student_lname, firstname=student_fname)
         except Officer.DoesNotExist:
             messages.error(request, 'Officer with the provided last name and first name does not exist.')
+            return render(request, 'studentorg/ADMIN/registerofficer.html')
+
+        # ✅ Check if student_id matches the officer’s ID in the Officer table
+        if str(officer.student_id) != str(student_id):
+            messages.error(request, 'Student ID does not match the officer\'s record.')
             return render(request, 'studentorg/ADMIN/registerofficer.html')
 
         # Check if the officer's organization matches
@@ -101,9 +260,10 @@ def register_officer(request):
         )
         officer_login.save()
         messages.success(request, 'You have successfully created an officer account.')
-        return redirect('officer_login')  # Use the name of the URL pattern for the officer login page
+        return redirect('officer_login')
     
-    return render(request, 'studentorg/ADMIN/registerofficer.html')    
+    return render(request, 'studentorg/ADMIN/registerofficer.html')
+
 
 def officer_login(request):
     if request.method == 'POST':
@@ -481,7 +641,7 @@ def THEEQUATIONERS_accreditation(request):
     return render (request, "studentorg/THEEQUATIONER/THEEQUATIONER_accreditation.html", context)
 
 def THEEQUATIONERS_CBL(request):
-    return render (request, "studentorg/THEEQUATIONER/THEEQUATIONER_CBL.html")
+    return render (request, "studentorg/THEEQUATIONER/CBLTheEquationers.html")
 
 #THE EQUATIONERS ADD
 def THEEQUATIONERS_projects(request):
@@ -724,8 +884,7 @@ def TECHNOCRATS_viewadviser(request):
 
 #General View
 
-def Gen_Home(request):
-     return render (request, "studentorg/VIEW/OrgMain.html")
+
 
 def Gen_FSTLP_profile(request):
     return render (request, "studentorg/VIEW/FSTLP_profile.html")
@@ -766,8 +925,15 @@ def Gen_SI_viewadviser(request):
     return render(request, 'studentorg/VIEW/SI++_viewadviser.html', {'advisers': approved_projects})
 
 def Gen_THEEQUATIONERS_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='THE EQUATIONERS')
-    return render(request, 'studentorg/VIEW/THEEQUATIONER_viewproject.html', {'projects': approved_projects})
+    try:
+        org = Organization.objects.get(name='THE EQUATIONERS')
+        approved_projects = Project.objects.filter(status='approved', org=org)
+    except Organization.DoesNotExist:
+        approved_projects = []
+
+    return render(request, 'studentorg/VIEW/THEEQUATIONER_viewproject.html', {
+        'projects': approved_projects
+    })
 def Gen_THEEQUATIONERS_viewfinancial(request):
     approved_projects = FinancialStatement.objects.filter(status='approved', org='THE EQUATIONERS')
     return render(request, 'studentorg/VIEW/THEEQUATIONER_viewfinancial.html', {'statements': approved_projects})

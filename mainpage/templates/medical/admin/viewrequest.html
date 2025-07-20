@@ -1,8 +1,12 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Medical{% endblock
-%} {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/viewrequest.css' %}" />
-<link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
-{% endblock %} {% block content %}
+{% extends 'adminmain.html' %}{% block headcontent %} {% load static %}
+<!-- ignore prettier -->
+<link rel="stylesheet" href="{% static 'styles/medical/viewrequest.css' %}" />
+<link
+  rel="stylesheet"
+  media="print"
+  href="{% static 'styles/medical/print.css' %}"
+/>
+{% endblock headcontent %} {% block bodycontent %} {% load static %}
 <div class="container">
   {% if messages %} {% for message in messages %}
   <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
@@ -50,7 +54,7 @@
               name="request_type"
               value="{{ request.request_type }}"
             />
-            <td><a href="#">{{ request.patient.student.student_id }}</a></td>
+            <td><a href="#">{{ request.patient.student.studID }}</a></td>
             <td>
               <a href="#">{{ request.patient.student.lastname|title }}</a>
             </td>
@@ -114,31 +118,31 @@
             />
             <td>
               <a
-                href="{% url 'medical:eligibility_form' request.patient.student.student_id %}"
-                >{{ request.patient.student.student_id }}</a
+                href="{% url 'medical:eligibility_form' request.patient.student.studID %}"
+                >{{ request.patient.student.studID }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:eligibility_form' request.patient.student.student_id %}"
+                href="{% url 'medical:eligibility_form' request.patient.student.studID %}"
                 >{{ request.patient.student.lastname|title }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:eligibility_form' request.patient.student.student_id %}"
+                href="{% url 'medical:eligibility_form' request.patient.student.studID %}"
                 >{{ request.patient.student.firstname|title }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:eligibility_form' request.patient.student.student_id %}"
+                href="{% url 'medical:eligibility_form' request.patient.student.studID %}"
                 >{{ request.request_type }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:eligibility_form' request.patient.student.student_id %}"
+                href="{% url 'medical:eligibility_form' request.patient.student.studID %}"
                 >{{ request.date_approved }}</a
               >
             </td>
@@ -165,31 +169,31 @@
             />
             <td>
               <a
-                href="{% url 'medical:medicalclearance' request.patient.student.student_id %}"
-                >{{ request.patient.student.student_id }}</a
+                href="{% url 'medical:medicalclearance' request.patient.student.studID  %}"
+                >{{ request.patient.student.studID }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:medicalclearance' request.patient.student.student_id %}"
+                href="{% url 'medical:medicalclearance' request.patient.student.studID  %}"
                 >{{ request.patient.student.lastname|title }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:medicalclearance' request.patient.student.student_id %}"
+                href="{% url 'medical:medicalclearance' request.patient.student.studID %}"
                 >{{ request.patient.student.firstname|title }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:medicalclearance' request.patient.student.student_id %}"
+                href="{% url 'medical:medicalclearance' request.patient.student.studID %}"
                 >{{ request.request_type }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:medicalclearance' request.patient.student.student_id %}"
+                href="{% url 'medical:medicalclearance' request.patient.student.studID %}"
                 >{{ request.date_approved }}</a
               >
             </td>
@@ -216,31 +220,31 @@
             />
             <td>
               <a
-                href="{% url 'medical:med_cert_for_intrams' request.patient.student.student_id %}"
-                >{{ request.patient.student.student_id }}</a
+                href="{% url 'medical:med_cert_for_intrams' request.patient.student.studID  %}"
+                >{{ request.patient.student.studID }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:med_cert_for_intrams' request.patient.student.student_id %}"
+                href="{% url 'medical:med_cert_for_intrams' request.patient.student.studID  %}"
                 >{{ request.patient.student.lastname|title }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:med_cert_for_intrams' request.patient.student.student_id %}"
+                href="{% url 'medical:med_cert_for_intrams' request.patient.student.studID  %}"
                 >{{ request.patient.student.firstname|title }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:med_cert_for_intrams' request.patient.student.student_id %}"
+                href="{% url 'medical:med_cert_for_intrams' request.patient.student.studID  %}"
                 >{{ request.request_type }}</a
               >
             </td>
             <td>
               <a
-                href="{% url 'medical:med_cert_for_intrams' request.patient.student.student_id %}"
+                href="{% url 'medical:med_cert_for_intrams' request.patient.student.studID  %}"
                 >{{ request.date_approved }}</a
               >
             </td>
@@ -251,7 +255,7 @@
             </td>
           </form>
         </tr>
-        {% endif %} {% endif %} {% empty %}
+        {% endif %}{% empty %}
         <tr class="tr-td">
           <td colspan="6">No requests found</td>
         </tr>

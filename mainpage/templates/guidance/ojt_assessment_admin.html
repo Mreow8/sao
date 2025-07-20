@@ -1,5 +1,4 @@
-<script src="{% static 'scripts/guidance/intake.js'%}"></script>
-{% extends "main.html" %} {% load static %} {% block title %}OJT
+{% extends "adminmain.html" %} {% load static %} {% block title %}OJT
 Assessments/Psychological Issuance Admin{% endblock %} {% block headcontent %}
 <link
   rel="stylesheet"
@@ -126,6 +125,7 @@ Assessments/Psychological Issuance Admin{% endblock %} {% block headcontent %}
         {% endfor %}
       </ul>
     </span>
+    <!-- prettier-ignore -->
     <table id="info_table">
       <tr id="info_table_head">
         <th>DATE RECEIVED</th>
@@ -142,11 +142,12 @@ Assessments/Psychological Issuance Admin{% endblock %} {% block headcontent %}
           class="OjtRequestID"
           value="{{ ojt_request.OjtRequestID }}"
         />
+
         <td>{{ ojt_request.dateRecieved }}</td>
         <td>{{ ojt_request.studentID.studID }}</td>
         <td>
-          {{ ojt_request.studentID.lastname }}, {{
-          ojt_request.studentID.firstname }}
+          {{ ojt_request.studentID.lastname }},
+           {{ojt_request.studentID.firstname }}
         </td>
         <td>{{ ojt_request.schoolYear }}</td>
 
@@ -159,19 +160,23 @@ Assessments/Psychological Issuance Admin{% endblock %} {% block headcontent %}
           <span class="pending">{{ ojt_request.status }}</span>
           {% elif ojt_request.status == 'Expired' %}
           <span class="expired">{{ ojt_request.status }}</span>
-          {% endif %}
-        </td>
-        <td>
-          <div class="horizontal">
-            {% if ojt_request.status != 'Expired' and ojt_request.status !=
-            'Accepted' and ojt_request.status != 'Declined' %}
-            <button class="accept">ACCEPT</button>
-            <button class="decline">DECLINE</button>
-            {% endif %}
-            <button class="delete">DELETE</button>
-          </div>
-        </td>
-        <td>
+         {% endif %}
+</td>
+<td>
+  <div class="horizontal">
+    {% if ojt_request.status != 'Expired' %}
+      {% if ojt_request.status != 'Accepted' %}
+        {% if ojt_request.status != 'Declined' %}
+          <button class="accept">ACCEPT</button>
+          <button class="decline">DECLINE</button>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    <button class="delete">DELETE</button>
+  </div>
+</td>
+<td>
+
           {% csrf_token %} {% if ojt_request.status == 'Accepted' %}
           <button class="showformButton">SHOW FORM</button>
           {% else %}
@@ -185,4 +190,6 @@ Assessments/Psychological Issuance Admin{% endblock %} {% block headcontent %}
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="{% static 'scripts/guidance/ojt_assessment_admin.js'%}"></script>
+<script src="{% static 'scripts/guidance/intake.js'%}"></script>
+
 {% endblock %}

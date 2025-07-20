@@ -1,0 +1,64 @@
+{% extends 'alumni/users/adminbase.html' %}
+
+{% block content %}
+<section class="h-auto ml-[300px] flex items-center justify-center  bg-grayyy ">
+  <div class="mx-auto container text-black" style="margin-top: -70%;">
+    <div class="flex items-center  justify-center mt-[200px]">
+      <div class="bg-white w-full p-11 h-screen flex flex-col gap-5">
+        <h1 class="text-[26px] font-bold mb-4">Admin Events</h1>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="bg-green-500 border border-green-400 text-green-700 w-[500px] px-4 py-3 rounded-md mb-4">
+          <p class="text-center text-white font-bold">
+            {{ message }}
+          </p>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <form class="flex flex-col w-full gap-2" method="post" action="{% url 'studentLife_system:admin_events' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class=" flex gap-5 w-full">
+            <div class="w-full">
+              <p>Events Name</p>
+              <input type="text" name="eventsName" class="bg-grayyy outline-none h-[49px] w-full p-2" required />
+            </div>
+            <div class="w-full">
+              <p>Events Date</p>
+              <input type="date" name="eventsDate" class="bg-grayyy outline-none h-[49px] w-full p-2" required />
+            </div>
+
+            <div class="w-full">
+              <p>Events Location</p>
+              <input type="text" name="eventsLocation" class="bg-grayyy outline-none h-[49px] w-full p-2" required />
+            </div>
+
+          </div>
+
+          <div class=" flex gap-5">
+            <div>
+              <p>Description</p>
+              <textarea required name="eventsDescription" class="bg-grayyy w-[500px] h-[200px] outline-none p-5"></textarea>
+            </div>
+          </div>
+
+          <div class=" flex gap-5">
+            <div class="mt-5">
+              <p>Upload Image Here</p>
+              <input type="file" id="myfile" name="eventsImage" required>
+            </div>
+          </div>
+          <div class="flex items-center justify-center mt-5">
+            <button class="bg-blo p-3 text-white w-[150px]">Submit</button>
+          </div>
+        </form>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

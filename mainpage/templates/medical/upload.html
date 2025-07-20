@@ -2,12 +2,13 @@
 
 <!DOCTYPE html>
 <html>
-    <head></head>
-    <body>
-        <form action="" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="file" name="file-upload">
-            <input type="submit" value="Submit">
-        </form>
-    </body>
+  <head></head>
+  <body>
+    <p>CSRv</p>
+    <form action="" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="file-upload" />
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
 </html>

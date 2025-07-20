@@ -1,0 +1,334 @@
+{% extends 'adminUser/adminmain.html' %}
+{% load static %}
+
+{% block bodycontent %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+        />
+        <link rel="stylesheet" href="{% static 'studentlife/main.css'%}">
+        <link rel="stylesheet" href="{% static 'studentlife/p_style.css'%}">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- style para sa printing purchase items-->
+        <style>
+          .myheader {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+          .p-content a {
+            text-decoration: none;
+          }
+
+          table {
+            width: 98%;
+            border-collapse: collapse;
+          }
+
+          th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            font-size: 14.5px;
+          }
+          th{
+            background-color: #f2f2f2;
+          }
+
+          .print-button{
+            margin: 10px 0;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+          }
+
+          .print-button hover {
+            background-color: #45a0;
+          }
+
+          .p-content p{
+              text-align: center;
+              font-weight: bold;
+              font-size: 20px;
+            }
+
+            .txt {
+              font-size: 15px;
+            }
+
+            .fc_text .fc {
+              font-size: 15px;
+              margin-left: 850px;
+              margin-top: -20px;
+            }
+
+            .fc_text .input-container {
+                margin-top: -21px;
+               
+            }
+
+          .fc_text .input-container input[type="text"] {
+                  padding: 5px; 
+                  width: 200px; 
+                  font-size: 13px; 
+                  margin-left: 950px;    
+          }
+
+          .purchased-container {
+            margin-bottom: 30px;
+            margin-top: 10px;
+          }  
+
+        .requested-by-container {
+              display: flex;
+              align-items: center;
+          }
+
+          .requested-by-labels,
+          .requested-by-inputs {
+              display: flex;
+              flex-direction: column;
+          }
+
+          .requested-by-labels h5 {
+            text-align: left;
+            margin: 2px;
+          }
+
+          .requested-by-inputs input {
+              margin-left: 150px;
+              margin-top: 2px;
+          }
+
+          h5{
+            text-align: left;
+          }
+          
+          .sidebyside {
+            display: flex;
+          }
+
+          .sidebyside #office {
+            padding: 2px;
+            background-color: transparent;
+            text-align: left; 
+          }
+          @media print {
+            .side-nav,
+            .search-container,
+            .orange-bar,
+            .p-content h2,
+            .p-content h4,
+            .print-button {
+                display: none !important;
+            }
+            
+           
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+
+            .purchased-container {
+                margin: 0 auto;
+            }
+
+           
+            @page {
+                size: auto; 
+                margin: 2mm;
+            }
+
+            .p-content {
+                margin-left: 1%;
+                margin-right: 1%;
+                margin-top: 15px;
+              }
+       
+            .txt {
+                font-size: 14px; 
+                white-space: nowrap;
+            }
+
+            .fc_text .fc {
+                font-size: 14px; 
+            }
+
+            .fc_text .input-container {
+                margin-top: -21px;
+            }
+
+            .fc_text .input-container input[type="text"] {
+                padding: 5px; 
+                width: 200px; 
+                font-size: 13px; 
+                margin-left: 950px; 
+            }
+
+            .purchased-container {
+                margin-bottom: 30px;
+                margin-top: 10px;
+            }
+
+           
+            table {
+                width: 100%;
+            }
+            
+            .myheader {
+            display: block;
+            margin-left: 150px;
+          
+          }
+           
+            .p-content p {
+                margin-top: 5px;
+                margin-left: 250px;
+                font-weight: bold;
+                font-size: 20px;
+                white-space: nowrap;
+            }
+
+            .txt {
+                font-size: 15px;
+                white-space: nowrap;
+            }
+
+            .fc_text {
+                margin-left: 20px;
+            } 
+
+        }
+
+        </style>
+  </head>
+  <body>
+  <div class="p-content">
+    <h2>OFFICE OF STUDENT LIFE</h2><br>
+    <div>
+      <h4><a href="/display_items"><span class="gray-text">PPMP View</span></a>
+      <span class="orange-text">&nbsp;&gt;&nbsp;Purchased Items</span></h4>
+    </div>
+    <button class="print-button" onclick="window.print()">Print</button>
+    <img src="{% static 'studentlife/images/my_header.png'%}" class="myheader">
+    <p>PURCHASE REQUEST</p>
+    <br>
+    <div class = "txt">Entity name: CTU - Argao Campus</div>
+    <div class = "fc_text">
+        <div class = "fc">Fund Checker: </div>
+        <div class = "input-container"><input type="text" placeholder="Input fund checker."></div>
+   </div>
+    <div class = "purchased-container"> 
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2">
+            <div class="sidebyside">
+            <h5> Office: </h5> <input type="text" id="office"> 
+            </div>
+          </th>
+          <th colspan="2">
+            <div class="sidebyside">
+            <h5> PR No: </h5> <input type="text" id="office"> 
+          </div>
+          <div class="sidebyside">
+            <h5> Responsibility Course Code: </h5><input type="text" id="office">
+          </div> 
+          </th>
+          <th colspan="2"> 
+            <div class="sidebyside">
+            <h5> Date: </h5><input type="date" id="office">
+          </div>
+          </th>
+        </tr>
+        <tr>
+          <th>Item/Property No.</th>
+          <th>Unit</th>
+          <th>Item Description</th>
+          <th>Quantity</th>
+          <th>Unit Cost</th>
+          <th>Total Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %} 
+        <tr>
+          <td>{{ item.itemid }}</td>
+          <td>{{ item.unit }}</td>
+          <td>{{ item.item }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.unit_price }}</td>
+          <td>{{ item.total_cost|floatformat:2  }}</td>
+        </tr>
+   
+        {% empty %}
+        <tr>
+          <td colspan="6">No purchased items available</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Total Purchased:</td>
+          <td>{{ total_cost_sum|floatformat:2 }}</td> 
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td>
+            <h6 style="text-align: left;">Allotment Authority:</h6>
+            <input type="text" style="text-align: center;" placeholder="Printed Name">
+            <h5 style="text-align: center;">Budget Officer</h5>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <h5 style="text-align: left;">Purpose:</h5>
+            <input type="text" placeholder="Type in purchase request purpose.">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <h5 style="text-align: center;">Requested By:</h5>
+            <div class="requested-by-container">
+                <div class="requested-by-labels">
+                    <h5>Signature:</h5>
+                    <h5>Printed Name:</h5>
+                    <h5>Designation:</h5>
+                </div>
+                <div class="requested-by-inputs">
+                     <br>
+                    <input type="text" id="printed_name" style="text-align: center;" placeholder="Printed Name">
+                    <input type="text" id="designation" style="text-align: center;" placeholder="Designation">
+                </div>
+            </div>
+        </td>
+          <td colspan="3">
+            <h5 style="text-align: center;">Approved By:</h5>
+            <div class="requested-by-inputs">
+              <br>
+             <input type="text" id="printed_name" style="text-align: center;" placeholder="Printed Name">
+             <input type="text" id="designation" style="text-align: center;" placeholder="Designation">
+         </div>
+          </td>
+        </tr>
+                
+      </tbody>
+    </table>
+  </div>
+    </div>
+  </body>
+  {% endblock bodycontent %}

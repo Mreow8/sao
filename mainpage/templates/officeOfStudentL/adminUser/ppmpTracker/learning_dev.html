@@ -1,0 +1,58 @@
+{% extends 'adminUser/adminmain.html' %}
+{% load static %}
+
+{% block bodycontent %}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+        />
+        
+        <link rel="stylesheet" href="{% static 'studentlife/p_style.css'%}">
+        <link rel="stylesheet" href="{% static 'studentlife/ppmp.css'%}">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        
+        <div class="p-content">
+            <h2>OFFICE OF STUDENT LIFE</h2><br>
+                <div>
+                    <h4><a href="/upload"><span class="gray-text">PPMP Tracker</span></a>
+                    <span class="orange-text">&nbsp;&gt;&nbsp;Learning & Development</span></h4>
+                </div>
+               
+                <div class="upload-container">
+                    <h1>Learning and Development</h1>
+                    <form action="{% url 'studentLife_system:lnd_file' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <br>
+                        <button type="submit" class="button">Upload</button>
+                    </form>
+                    <form action="/edit" method="get">
+                        <button type="submit" class="button">Display</button>
+                    </form>
+                </div>
+        </div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+         {% endif %}
+
+<script>
+     document.getElementById('fileInput').addEventListener('change', function() {
+        var fileName = this.value.split('\\').pop();
+        document.getElementById('fileNameDisplay').innerText = fileName;
+    });
+</script>
+        
+            
+<script src="{% static 'studentlife/main.js'%}"></script>
+            
+</body>
+{% endblock bodycontent %}

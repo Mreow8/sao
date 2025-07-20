@@ -1,0 +1,59 @@
+{% extends 'adminUser/adminmain.html' %}
+{% load static %}
+
+{% block bodycontent %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'studentlife/main.css'%}">
+    <link rel="stylesheet" href="{% static 'studentlife/p_style.css'%}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+        />
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <div class="p-content"><h2>OFFICE OF STUDENT LIFE</h2><br>
+    <div>
+      <h4><a href="/display_items" class="gray-text">PPMP View</a>
+      <span class="orange-text">&nbsp;&gt;&nbsp;Delivered Items</span></h4>
+    </div>
+    <center><p>Stored Items</p></center>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Item</th>
+                        <th>Serial Number</th>
+                        <th>Unit Price</th> <!-- this is the amount for each item-->
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for storage in storage_items %}
+                    <tr>
+                        <td>{{ storage.procurement_item.itemid }}</td>
+                        <td>{{ storage.procurement_item.item }}</td>
+                        <td>{{ storage.serial_no }}</td>
+                        <td>{{ storage.procurement_item.unit_price }}</td>
+                        <td>
+                            {% if not storage.serial_no %}
+                            <a href="{% url 'studentLife_system:update_serial_no' storage.id %}">Update Serial No</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No stored items available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+{% endblock bodycontent %}

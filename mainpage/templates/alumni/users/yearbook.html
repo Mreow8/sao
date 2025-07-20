@@ -1,0 +1,111 @@
+{% extends 'main.html' %} {% block bodycontent %}
+<section class="h-auto ml-[300px] flex items-center justify-center bg-grayyy">
+  <div class="mx-auto container text-black">
+    <div class="flex items-center justify-center mt-[200px]">
+      <div class="bg-white w-full p-11 h-auto flex flex-col gap-5">
+        <h1 class="font-bold text-[36px] text-left">Digital Yearbook</h1>
+        {% if error_message %}
+        <div
+          class="bg-red-500 border border-red-400 text-red-700 w-[483px] px-4 py-3 rounded-md mb-4"
+        >
+          <p class="text-center text-white font-bold">{{ error_message }}</p>
+        </div>
+        {% endif %}
+
+        <form
+          class="flex flex-col gap-2 mb-10"
+          action="{% url 'search_yearbook' %}"
+          method="get"
+        >
+          {% csrf_token %}
+          <h6 class="text-[29px] mb-5">Search</h6>
+          <div class="flex gap-5">
+            <div class="flex flex-col">
+              <p>First Name</p>
+              <input
+                type="text"
+                name="yeargetfirstname"
+                class="bg-grayyy outline-none h-[49px] w-[316px] p-2"
+                required
+              />
+            </div>
+            <div class="flex flex-col">
+              <p>Last Name</p>
+              <input
+                type="text"
+                name="yeargetlastname"
+                class="bg-grayyy outline-none h-[49px] w-[316px] p-2"
+                required
+              />
+            </div>
+
+            <div class="flex items-end">
+              <button
+                class="bg-blo p-1 text-[18px] text-white w-[150px] h-[49px]"
+              >
+                Search
+              </button>
+            </div>
+          </div>
+        </form>
+
+        {% if yearbook_entry %}
+        <div class="flex flex-row items-start">
+          <div class="w-[600px]">
+            <img
+              class="w-[313px] h-[470px]"
+              src="{{ yearbook_entry.yearbookImage.url }}"
+            />
+          </div>
+
+          <div class="flex flex-col items-start gap-5 w-full">
+            <div class="mb-10">
+              <h1 class="text-blo font-bold text-[35px]">
+                <!-- value of firstname  -->
+                {{ yearbook_entry.yearbookFirstname }}
+              </h1>
+            </div>
+
+            <div class="flex flex-row gap-5 w-auto">
+              <p class="text-[20px] font-bold w-[150px]">Full Name:</p>
+              <h1 class="text-[20px]">
+                <!-- value of  firstname and full name-->
+                {{ yearbook_entry.yearbookFirstname }} {{
+                yearbook_entry.yearbookLastname }}
+              </h1>
+            </div>
+
+            <div class="flex flex-row gap-5 min-w-auto">
+              <p class="text-[20px] font-bold w-[150px]">Gender:</p>
+              <h1 class="text-[20px]">
+                <!-- value of address -->
+                {{ yearbook_entry.yearbookGender }}
+              </h1>
+            </div>
+
+            <div class="flex flex-row gap-5 min-w-auto">
+              <p class="text-[20px] font-bold w-[150px]">Address:</p>
+              <h1 class="text-[20px]">
+                <!-- value of address -->
+                {{ yearbook_entry.yearbookAddress }}
+              </h1>
+            </div>
+
+            <div class="flex flex-row gap-5 items-center">
+              <p class="text-[20px] font-bold w-[150px]">Course:</p>
+              <h1 class="text-[20px]">{{ yearbook_entry.yearbookCourse }}</h1>
+            </div>
+
+            <div class="flex flex-row gap-5 items-center">
+              <p class="text-[20px] font-bold w-[150px]">Year Graduated:</p>
+              <h1 class="text-[20px]">{{ yearbook_entry.yearbookYearGrad }}</h1>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

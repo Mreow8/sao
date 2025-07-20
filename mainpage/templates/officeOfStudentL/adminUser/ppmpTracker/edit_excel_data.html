@@ -1,0 +1,165 @@
+{% extends 'adminUser/adminmain.html' %}
+{% load static %}
+
+{% block bodycontent %}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+        />
+        <link rel="stylesheet" href="{% static 'studentlife/main.css'%}">
+        <link rel="stylesheet" href="{% static 'studentlife/p_style.css'%}">
+        <link rel="stylesheet" href="{% static 'studentlife/ppmp.css'%}">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    
+       
+
+    
+        <style>
+            table {
+                width: 90%; /* Adjusted to 90% to fit within the page */
+                border-collapse: collapse;
+                margin-right: 10px; /* Center the table on the page */
+            }
+            th, td {
+                border: 1px solid black;
+                padding: 1px; /* Slightly reduced padding for a more compact table */
+                text-align: center;
+                font-size: 14.5px;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            .success-message {
+                color: green;
+            }
+            .edit-input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            /* Adjusting the widths of individual columns */
+            th:nth-child(1), td:nth-child(1) {
+                width: 12%;
+            }
+            th:nth-child(2), td:nth-child(2) {
+                width: 8%;
+            }
+            th:nth-child(3), td:nth-child(3) {
+                width: 10%;
+            }
+            th:nth-child(4), td:nth-child(4) {
+                width: 10%;
+            }
+            th:nth-child(5), td:nth-child(5) {
+                width: 10%;
+            }
+            th:nth-child(6), td:nth-child(6) {
+                width: 10%;
+            }
+            th:nth-child(7), td:nth-child(7) {
+                width: 10%;
+            }
+            th:nth-child(8), td:nth-child(8) {
+                width: 10%;
+            }
+            th:nth-child(9), td:nth-child(9) {
+                width: 10%;
+            }
+            th:nth-child(10), td:nth-child(10) {
+                width: 10%;
+            }
+        </style>
+    
+</head>
+<body>
+   
+    <div class="p-content">
+        <h2>OFFICE OF STUDENT LIFE</h2><br>
+        <div>
+          <h4><a href="/lnd_file"><span class="gray-text">Learning & Development</span></a>
+            <a href="/edit"><span class="orange-text">&nbsp;&gt;&nbsp;L&D View</span></h4></a>
+        </div>
+            <center><h2>Learning and Development Activities Expenses</h2></center>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title of L & D</th>
+                        <th>Frequency</th>
+                        <th>Category</th>
+                        <th>Expected Number of Participants</th>
+                        <th>Duration</th>
+                        <th>Registration Fees</th>
+                        <th>Travelling Expenses</th>
+                        <th>Planned Total Budget</th>
+                        <th>Actual Total Budget</th>
+                        <th>Variance</th>
+                        <th>Remarks</th>
+                        <th>Actions</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in excel_data %}
+                    <tr>
+                        <form method="post" action="{% url 'studentLife_system:update_excel_data' data.id %}">
+                            {% csrf_token %}
+                            <td><input type="text" name="title_of_l_d" value="{{ data.title_of_l_d }}" class="edit-input"></td>
+                            <td><input type="text" name="frequency" value="{{ data.frequency }}" class="edit-input"></td>
+                            <td><input type="text" name="category" value="{{ data.category }}" class="edit-input"></td>
+                            <td><input type="text" name="expected_number_of_participants" value="{{ data.expected_number_of_participants }}" class="edit-input"></td>
+                            <td><input type="text" name="duration" value="{{ data.duration }}" class="edit-input"></td>
+                            <td><input type="text" name="registration_fees" value="{{ data.registration_fees }}" class="edit-input"></td>
+                            <td><input type="text" name="travelling_expenses" value="{{ data.travelling_expenses }}" class="edit-input"></td>
+                            <td><input type="text" name="planned_total_budget" value="{{ data.planned_total_budget }}" class="edit-input"></td>
+                            <td><input type="text" name="actual_total_budget" value="{{ data.actual_total_budget }}" class="edit-input"></td>
+                            <td>
+                                {% if data.variance is not None %}
+                                    {{ data.variance }}
+                                {% endif %}
+                            </td>
+                            <td>
+                            <!--<td><input type="text" name="admin_remarks" value="{{ data.admin_remarks }}" class="edit-input"></td>-->
+                            {% if data.admin_remarks %}
+                                <input type="text" name="admin_remarks" value="{{ data.admin_remarks }}" class="edit-input">
+                            {% else %}
+                                <input type="text" name="admin_remarks" value="" class="edit-input">
+                            {% endif %}
+                            </td>
+                            <td><button type="submit">Save</button></td>
+                        </form>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="7"><strong>Total</strong></td>
+                        <td><strong>{{ total_planned_budget }}</strong></td>
+                        <td><strong>{{ total_actual_budget }}</strong></td>
+                        <td><strong>{{ total_variance }}</strong></td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <center>
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                </center>
+                {% endfor %}
+            </ul>
+         {% endif %}
+
+<script>
+     document.getElementById('fileInput').addEventListener('change', function() {
+        var fileName = this.value.split('\\').pop();
+        document.getElementById('fileNameDisplay').innerText = fileName;
+    });
+</script>
+        
+<script src="{% static 'studentlife/main.js'%}"></script>
+
+</body>
+{% endblock bodycontent %}

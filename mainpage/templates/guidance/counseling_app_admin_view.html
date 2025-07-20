@@ -1,5 +1,6 @@
-{% extends "main.html" %} {% load static %} {% block title %}Counseling App With
-Scheduler{% endblock %} {% block headcontent %}
+<!-- prettier-ignore -->
+{% extends "adminmain.html" %} {% load static %} {% block title %}Counseling App
+With Scheduler{% endblock %} {% block headcontent %}
 <link
   rel="stylesheet"
   type="text/css"
@@ -53,17 +54,17 @@ Scheduler{% endblock %} {% block headcontent %}
         />
         <td>{{ schedule_request.dateRecieved }}</td>
         <td>
-          {{ schedule_request.studentID.lastname }}, {{
-          schedule_request.studentID.firstname }}
+          {{ schedule_request.studentID.lastname }},
+          {{schedule_request.studentID.firstname }}
         </td>
         <td>
-          {{ schedule_request.studentID.degree }} {{
-          schedule_request.studentID.yearlvl }}
+          {{ schedule_request.studentID.degree }}
+          {{schedule_request.studentID.yearlvl }}
         </td>
         <td>0{{ schedule_request.studentID.contact }}</td>
         <td>
-          {{ schedule_request.scheduled_date }} {{
-          time|get_formatted_time:schedule_request.scheduled_time }}
+          {{ schedule_request.scheduled_date }}
+          {{time|get_formatted_time:schedule_request.scheduled_time }}
         </td>
         <td>{{ schedule_request.reason }}</td>
         <td>
@@ -78,10 +79,9 @@ Scheduler{% endblock %} {% block headcontent %}
           {% else %} {{ schedule_request.status }} {% endif %}
         </td>
         <td>
+          <!-- prettier-ignore -->
           <div class="horizontal">
-            {% if schedule_request.status != 'Expired' and
-            schedule_request.status != 'Accepted' and schedule_request.status !=
-            'Declined' %}
+            {% if schedule_request.status != 'Expired' and schedule_request.status != 'Accepted' and schedule_request.status != 'Declined' %}
             <button class="accept">ACCEPT</button>
             <button class="decline">DECLINE</button>
             {% endif %}

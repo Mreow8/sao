@@ -2,7 +2,17 @@ from django import forms
 from ..models import Officer
 from ..models import Project
 from ..models import FinancialStatement
-from ..models import Accreditation, Adviser
+from ..models import Accreditation, Adviser, Organization
+# forms.py
+
+class OrganizationForm(forms.ModelForm):
+    class Meta:
+        model = Organization
+        fields = [ 'logo', 'description']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+           
+        }
 
 class ProjectForm(forms.ModelForm):
     class Meta:

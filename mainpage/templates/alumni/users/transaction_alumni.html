@@ -1,0 +1,381 @@
+{% extends 'alumni/users/adminbase.html' %}
+{% load static %}
+{% block content %}
+<section class="h-auto ml-[300px] flex items-center justify-center bg-grayyy">
+  <div class="mx-auto container text-black" style="margin-top: -100%;">
+    <div class="flex items-center justify-center mt-[200px]">
+      <div class="bg-white w-full p-11 h-auto flex flex-col items-center gap-5">
+        <h1 class="text-[36px] font-bold mb-4">Alumni Transactions</h1>
+        <form method="post" action="{% url 'studentLife_system:transac_search' %}">
+          {% csrf_token %}
+          <div class="flex gap-5">
+            <select name="transac_choice" class="bg-grayyy outline-none h-[49px] w-[300px] p-2" required>
+              <option value="" disabled selected class="text-gray-400">Select Transactions</option>
+              <option value="Alumni ID Requests">Alumni ID Requests</option>
+              <option value="Graduate Tracer">Graduate Tracer</option>
+            </select>
+            <select name="transac_frequency" class="bg-grayyy outline-none h-[49px] w-[300px] p-2" required>
+              <option value="" disabled selected class="text-gray-400">Select Frequency</option>
+              <option value="Monthly">Monthly</option>
+              <option value="Yearly">Yearly</option>
+            </select>
+            <button type="submit" class="bg-blo p-1 text-[18px] text-white w-[150px] h-[49px]">
+              Search
+            </button>
+          </div>
+        </form>
+
+        <!-- Alumni Requests -->
+        {% if transac_choice == 'Alumni ID Requests' %}
+        {% if alumni_requests %}
+        <div id="printableArea" class="flex flex-col w-full mt-11">
+          <div class="flex items-center justify-center">
+            <img src="{% static 'alumni/users/images/ctulogo.jpg' %}" class="w-full max-w-[800px]" alt="CTU Logo">
+          </div>
+          <h3 class="text-[20px] font-bold">Alumni ID Request</h3>
+          {% if transac_frequency == 'Monthly' %}
+          <p class="w-full font-bold">Monthly Report</p>
+          {% elif transac_frequency == 'Yearly' %}
+          <p class="w-full font-bold">Yearly Report</p>
+          {% endif %}
+          <table class="w-full mt-5 border-collapse border">
+            <thead>
+              <tr>
+                <th class="border p-2 text-left">First Name</th>
+                <th class="border p-2 text-left">Last Name</th>
+                <th class="border p-2 text-left">Date Request</th>
+                <th class="border p-2 text-left">Date Claimed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for request in alumni_requests %}
+              <tr>
+                <td class="border p-2">
+                  {{ request.student.firstname }}
+                </td>
+                <td class="border p-2">
+                  {{ request.student.lastname }}
+                </td>
+                <td class="border p-2">
+                  {{ request.alumnidate }}
+                </td>
+                <td class="border p-2">
+                  {% if request.claimed_date %}
+                  {{ request.claimed_date|date:"F d, Y" }}
+                  {% else %}
+                  --
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <p class="mt-5">Total number of records for
+            {{ transac_frequency }} reports:
+            {{ total_count }}
+          </p>
+        </div>
+        <button id="print" class="bg-blo p-1 text-[18px] text-white w-[150px] h-[49px] mt-5">Print</button>
+        {% else %}
+        <div id="noDataMessage" class="flex flex-col w-full mt-11">
+          <div class="flex items-center justify-center">
+            <img src="{% static 'alumni/users/images/ctulogo.jpg' %}" class="w-full max-w-[800px]" alt="CTU Logo">
+          </div>
+          <h3 class="text-[20px] font-bold">Alumni ID Request</h3>
+          <p class="w-full font-bold text-center mt-11 text-[30px]">No reports available</p>
+        </div>
+        {% endif %}
+        {% endif %}
+
+
+
+
+        {% if transac_choice == 'Graduate Tracer' %}
+        {% if graduate_tracer_data %}
+        <div id="printableArea" class="flex flex-col w-full mt-11">
+          <div class="flex items-center justify-center">
+            <img src="{% static 'alumni/users/images/ctulogo.jpg' %}" class="w-full max-w-[800px]" alt="CTU Logo">
+          </div>
+          <h3 class="text-[20px] font-bold">Graduate Tracer</h3>
+          {% if transac_frequency == 'Monthly' %}
+          <p class="w-full font-bold">Monthly Report</p>
+          {% elif transac_frequency == 'Yearly' %}
+          <p class="w-full font-bold">Yearly Report</p>
+          {% endif %}
+          <div class="overflow-x-auto border">
+            <table class="w-full mt-5 border-collapse border">
+              <thead>
+                <tr>
+                  <th class="border text-[9px] text-left p-2">First Name</th>
+                  <th class="border text-[9px] text-left p-2">Last Name</th>
+                  <th class="border text-[9px] text-left p-2">Date Graduated</th>
+                  <th class="border text-[9px] text-left p-2">Name of Organization / Employer</th>
+                  <th class="border text-[9px] text-left p-2">Employment Type</th>
+                  <th class="border text-[9px] text-left p-2">Occupational Classification</th>
+                  <th class="border text-[9px] text-left p-2">Job Related</th>
+                  <th class="border text-[9px] text-left p-2">Years in the Company</th>
+                  <th class="border text-[9px] text-left p-2">Place of Work</th>
+                  <th class="border text-[9px] text-left p-2">First Job Post-Graduation?</th>
+                  <th class="border text-[9px] text-left p-2">Reasons for Staying on the Job</th>
+                  <th class="border text-[9px] text-left p-2">Designation</th>
+                  <th class="border text-[9px] text-left p-2">Department/Division</th>
+                  <th class="border text-[9px] text-left p-2">Status</th>
+                  <th class="border text-[9px] text-left p-2">Monthly Income Range</th>
+                  <th class="border text-[9px] text-left p-2">Work While Studying at CTU</th>
+                  <th class="border text-[9px] text-left p-2">Find a Job After Graduating from CTU?</th>
+                  <th class="border text-[9px] text-left p-2">Reason for Gap</th>
+                  <th class="border text-[9px] text-left p-2">Nature of Employment</th>
+                  <th class="border text-[9px] text-left p-2">Number of Years</th>
+                  <th class="border text-[9px] text-left p-2">Monthly Income Range</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for tracer in graduate_tracer_data %}
+                <tr>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.firstname }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.lastname }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.dategraduated|date:"F d, Y" }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.nameoforganization }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.employmenttype }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.occupationalClass }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.firstjobgraduate }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.yearscompany }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.placework }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.firstjobgraduate }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.reasonstayingjob }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.designation }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.department }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.status }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.monthlyincome }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.workwhileworking }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.ifnotworking }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.reasontimegap }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.natureemployment }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.numberofyears }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ tracer.monthlyincome2 }}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <table class="w-full mt-5 border-collapse border">
+              <thead>
+                <tr>
+                  <th class="border text-[9px] text-left p-2">Academic Profession</th>
+                  <th class="border text-[9px] text-left p-2">Research Capability</th>
+                  <th class="border text-[9px] text-left p-2">Learning Efficiency</th>
+                  <th class="border text-[9px] text-left p-2">People Skills</th>
+                  <th class="border text-[9px] text-left p-2">Problem Solving Skills</th>
+                  <th class="border text-[9px] text-left p-2">Information Technology Skills</th>
+                  <th class="border text-[9px] text-left p-2">Meeting Professional Needs</th>
+                  <th class="border text-[9px] text-left p-2">Community Engagement in Field</th>
+                  <th class="border text-[9px] text-left p-2">Global Engagement in Field</th>
+                  <th class="border text-[9px] text-left p-2">Critical Thinking Skills</th>
+                  <th class="border text-[9px] text-left p-2">Salary Improvement</th>
+                  <th class="border text-[9px] text-left p-2">Opportunities Abroad</th>
+                  <th class="border text-[9px] text-left p-2">Personality Development</th>
+                  <th class="border text-[9px] text-left p-2">Technologies Values Formation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.academicprofession|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.researchcapability|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.learningefficiency|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.peopleskills|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.problemsolvingskills|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.informationtechnologyskills|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.meetingprofessionalneeds|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.communityfield|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.globalfield|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.criticalskills|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.salaryimprovement|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.opportunitiesabroad|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.personalitydevelopment|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.technologiesvaluesformation|default:"N/A"|floatformat:2 }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table class="w-full mt-5 border-collapse border">
+              <thead>
+                <tr>
+                  <th class="border text-[9px] text-left p-2">Range of Courses</th>
+                  <th class="border text-[9px] text-left p-2">Relevance to your Profession</th>
+                  <th class="border text-[9px] text-left p-2">Extracurricular Activities</th>
+                  <th class="border text-[9px] text-left p-2">Premium Given Research</th>
+                  <th class="border text-[9px] text-left p-2">Interdisciplinary Learning</th>
+                  <th class="border text-[9px] text-left p-2">Teaching Environment</th>
+                  <th class="border text-[9px] text-left p-2">Quality of Instruction</th>
+                  <th class="border text-[9px] text-left p-2">Teacher-Student Relationships</th>
+                  <th class="border text-[9px] text-left p-2">Library Resources</th>
+                  <th class="border text-[9px] text-left p-2">Laboratory Resources</th>
+                  <th class="border text-[9px] text-left p-2">Class Size</th>
+                  <th class="border text-[9px] text-left p-2">Prof. Pedagogical Expertise</th>
+                  <th class="border text-[9px] text-left p-2">Prof. Knowledge of Subject Matter</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.rangeofcourses|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.relevanceprofession|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.extracurricular|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.premiumresearch|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.interlearning|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.teachingenvironment|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.qualityinstruction|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.teachrelationship|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.libraryresources|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.labresources|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.classize|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.profexpertise|default:"N/A"|floatformat:2 }}
+                  </td>
+                  <td class="border text-[9px] p-2">
+                    {{ weighted_means.profsubjectmatter|default:"N/A"|floatformat:2 }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-5">Total number of records for
+            {{ transac_frequency }} reports:
+            {{ total_count }}
+          </p>
+        </div>
+        <button id="print" class="bg-blo p-1 text-[18px] text-white w-[150px] h-[49px] mt-5">Print</button>
+        {% else %}
+        <div id="noDataMessage" class="flex flex-col w-full mt-11">
+          <div class="flex items-center justify-center">
+            <img src="{% static 'alumni/users/images/ctulogo.jpg' %}" class="w-full max-w-[800px]" alt="CTU Logo">
+          </div>
+          <h3 class="text-[20px] font-bold">Graduates Tracer</h3>
+          <p class="w-full font-bold text-center mt-11 text-[30px]">No reports available</p>
+        </div>
+        {% endif %}
+        {% endif %}
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const printBtn = document.getElementById('print');
+  const cssLinkMain = "{% static 'alumni/users/print_alumni.css' %}";
+  const cssLinkTable = "{% static 'alumni/users/print-table.css' %}";
+
+  printBtn.addEventListener('click', function() {
+    const printableContent = document.getElementById('printableArea').innerHTML;
+    const printWindow = window.open('', '', 'height=500, width=800');
+    printWindow.document.write('<html><head><title>Print</title>');
+    printWindow.document.write('<link rel="stylesheet" href="' + cssLinkMain + '" type="text/css" />');
+    printWindow.document.write('<link rel="stylesheet" href="' + cssLinkTable + '" type="text/css" />');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<div id="printableArea">' + printableContent + '</div>');
+    printWindow.document.write('</body></html>');
+
+    printWindow.document.close();
+    printWindow.onload = function() {
+      printWindow.print();
+      printWindow.close();
+    };
+  });
+</script>
+{% endblock %}

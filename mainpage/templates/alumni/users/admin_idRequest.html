@@ -1,0 +1,69 @@
+{% extends 'alumni/users/adminbase.html' %}
+
+{% block content %}
+<section class="h-auto ml-[300px] flex items-center justify-center bg-grayyy">
+  <div class="mx-auto container text-black" style="margin-top: -65%;">
+    <div class="flex items-center justify-center mt-[200px]">
+      <div class="bg-white w-full h-screen p-6">
+        <h1 class="text-[26px] font-bold mb-4">Alumni ID Requests</h1>
+
+        <div class="flex flex-col w-full border justify-between items-center p-2">
+          <div class="grid grid-cols-7 w-full items-center justify-center">
+            <h3 class="text-blo font-bold text-[20px] w-full text-center">Alumni ID</h3>
+            <h3 class="text-blo font-bold text-[20px] w-full text-center">Student ID</h3>
+            <h3 class="text-blo font-bold text-[20px] w-full text-center">First Name</h3>
+            <h3 class="text-blo font-bold text-[20px] w-full text-center">Last Name</h3>
+            <h3 class="text-blo font-bold text-[20px] w-full text-center">Date Requested</h3>
+            <h3 class="text-blo font-bold text-[20px] w-full text-center">Date Released</h3>
+            <h3 class="text-blo font-bold text-[20px] w-full text-center">Confirmation</h3>
+            {% for alumni_request in alumni_requests %}
+            <p class="w-full font-bold text-center mt-3">
+              {{ alumni_request.alumniID }}
+            </p>
+            <p class="w-full font-bold text-center mt-3">
+              {{ alumni_request.student.studID }}
+            </p>
+            <p class="w-full font-bold text-center mt-3">
+              {{ alumni_request.student.firstname }}
+            </p>
+            <p class="w-full font-bold text-center mt-3">
+              {{ alumni_request.student.lastname }}
+            </p>
+            <p class="w-full font-bold text-center mt-3">
+              {{ alumni_request.alumnidate }}
+            </p>
+            <p class="w-full font-bold text-center mt-3">
+              {% if alumni_request.claimed_date %}
+              {{ alumni_request.claimed_date|date:"Y-m-d" }}
+              {% else %}
+              --
+              {% endif %}
+            </p>
+
+
+            {% if alumni_request.claimed_date %}
+            <p class="w-full font-bold text-center mt-3">
+
+              Claimed
+            </p>
+            {% else %}
+            {% if alumni_request.approved %}
+            <form action="{% url 'studentLife_system:claim_alumni_id' alumni_request.alumniID %}" method="post" class="w-full text-center">
+              {% csrf_token %}
+              <button type="submit" class="bg-blue-500 p-2 text-white text-[14px] rounded-full">Claimed</button>
+            </form>
+            {% else %}
+            <form action="{% url 'studentLife_system:approve_alumni_request' alumni_request.alumniID %}" method="post" class="w-full text-center">
+              {% csrf_token %}
+              <button type="submit" class="bg-green-500 p-2 text-white text-[14px] rounded-full">Approve</button>
+            </form>
+            {% endif %}
+            {% endif %}
+
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+{% endblock %}

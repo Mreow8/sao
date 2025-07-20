@@ -1,0 +1,48 @@
+.f1 {
+    border-bottom: 2px solid #FF8000;
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+h1 {
+    color: black; align-content: center;
+}
+
+.logoimg {
+    width: auto; height: 110px; padding-right: 10px;
+}
+
+.bot {
+    padding-bottom: 20px;
+}
+
+.cen{
+	text-align: center;
+}
+
+.len {
+    text-align: left;
+}
+
+.pf {
+	border-top: 2px solid #FF8000;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.pf2 {
+	list-style-type: none;
+	padding-left: 0;
+	border-bottom: 2px solid #FF8000;
+	padding-bottom: 10px;
+}
+
+.subcontain {
+    width: 100%;
+}
+
+.text-content li {
+    margin-bottom: 20px;
+    color: black;
+}

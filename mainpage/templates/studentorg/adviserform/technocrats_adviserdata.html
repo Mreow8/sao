@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECHNOCRATS Add Adviser(Officer)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 15px;
+            height: 60px;
+            width: 90px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Adviser Data</h1>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h3> A. Personal Data</h3>
+                        <label for="Adviser_profile_picture">Profile Picture:</label>
+                        <input type="file" id="Adviser_profile_picture" name="Adviser_profile_picture" accept="image/*">
+                        {% if uploaded_files.Adviser_profile_picture %}
+                            <a href="{{ uploaded_files.Adviser_profile_picture.url }}" target="_blank">View Uploaded Profile Picture</a>
+                        {% endif %}
+
+    
+        
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" name="surname" required>
+
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" name="firstname" required>
+
+            <label for="middlename">Middle Initial:</label>
+            <input type="text" id="middlename" name="middlename" required>   
+            
+            <label for="department">Department:</label>
+            <select id="department" name="department" required>
+                <option value="BIT">BIT</option>
+            </select>  
+            <label for="for organization">Advisory For:</label>
+            <select id="organization" name="organization" required>
+                <option value="TECHNOCRATS">TECHNOCRATS</option>
+            </select>
+            
+            <label for="date_employed">Date Employed:</label>
+            <input type="date" id="date_employed_" name="date_employed">
+
+            <label for="number_of_years">Number of years Employed:</label>
+            <input type="number" id="number_of_years" name="number_of_years" required>
+
+            <label for="town_address">Town Address:</label>
+            <input type="text" id="town_address" name="town_address" required>
+
+            <label for="home_address">Home Address:</label>
+            <input type="text" id="home_address" name="home_address" required>
+
+            <label for="cell1">Mobile Number</label>
+            <input type="text" id="cell1" name="cell1" required>
+
+            <label for="cell2">Mobile Number</label>
+            <input type="text" id="cell2" name="cell2">
+
+            <label for="position">Position:</label>
+            <input type="text" id="position" name="position" required>
+
+            <label for="date_of_birth">Date of Birth:</label>
+            <input type="date" id="date_of_birth" name="date_of_birth" required>
+
+            <label for="place_of_birth">Place of Birth:</label>
+            <input type="text" id="place_of_birth" name="place_of_birth" required>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+            
+            <label for="nationality">Nationality:</label>
+            <input type="text" id="nationality" name="nationality" required>
+
+            <label for="sex">Sex:</label>
+            <select id="sex" name="sex" required>
+                <option value=""></option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+
+            <label for="civil_status">Civil Status:</label>
+            <select id="civil_status" name="civil_status" required>
+                <option value=""></option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Widowed">Widowed</option>
+                <option value="Separated">Separated</option>
+                <option value="Divorced">Divorced</option>
+            </select>
+
+           
+
+            <label for="height">Height:</label>
+            <input type="number" id="height" name="height" required>
+
+            <label for="weight">Weight:</label>
+            <input type="number" id="weight" name="weight" required>
+
+            <label for="distinguishing_mark">Distinguishing Mark:</label>
+            <input type="text" id="distinguishing_mark" name="distinguishing_mark">
+
+            <label for="hobbies">Hobbies:</label>
+            <input type="text" id="hobbies" name="hobbies">
+
+            <label for="special_talent">Special Talent:</label>
+            <input type="text" id="special_talent" name="special_talent">
+
+
+            <h3>Parents:</h3>
+            <!--Father-->
+            <h2>Father</h2>
+            <label for="father_name">Father Name:</label>
+            <input type="text" id="father_name" name="father_name">
+
+            <label for="father_occupation">Father Occupation:</label>
+            <input type="text" id="father_occupation" name="father_occupation">
+
+            <label for="father_address">Father Address:</label>
+            <input type="text" id="father_address" name="father_address">
+
+            <label for="father_mobile_number">Father Mobile Number:</label>
+            <input type="number" id="father_mobile_number" name="father_mobile_number">
+
+            <!--Mother-->
+            <h2>Mother</h2>
+            <label for="mother_name">Mother Name:</label>
+            <input type="text" id="mother_name" name="mother_name">
+
+            <label for="mother_occupation">Mother Occupation:</label>
+            <input type="text" id="mother_occupation" name="mother_occupation">
+
+            <label for="mother_address">Mother Address:</label>
+            <input type="text" id="mother_address" name="mother_address">
+
+            <label for="mother_number">Mother Mobile Number:</label>
+            <input type="number" id="mother_number" name="mother_number">
+
+            <!--Spouse-->
+            <h2>Spouse</h2>
+            <label for="spouse_name">Guardian Name:</label>
+            <input type="text" id="spouse_name" name="spouse_name">
+
+            <label for="spouse_occupation">Guardian Occupation:</label>
+            <input type="text" id="spouse_occupation" name="spouse_occupation">
+
+            <label for="spouse_address">Guardian Address:</label>
+            <input type="text" id="spouse_address" name="spouse_address">
+
+            <label for="spouse_mobile_number">Spouse Mobile Number:</label>
+            <input type="text" id="spouse_mobile_number" name="spouse_mobile_number">
+
+            <!--First-->
+            <h2>Tertiary</h2>
+            <label for="first_institution">Institution:</label>
+            <input type="text" id="first_institution" name="first_institution">    
+            
+            <label for="first_address">Address:</label>
+            <input type="text" id="first_address" name="first_address">
+            
+            <label for="first_degree_level">Degree:</label>
+            <input type="text" id="first_degree_level" name="first_degree_level">
+            
+            <label for="first_date">Date Graduated:</label>
+            <input type="date" id="first_date" name="first_date">
+
+             <!--Second-->
+             <h2>Secondary</h2>
+             <label for="second_institution">Institution:</label>
+             <input type="text" id="second_institution" name="second_institution">
+             
+             <label for="second_address">Address:</label>
+             <input type="text" id="second_address" name="second_address">
+             
+             <label for="second_degree_level">Degree:</label>
+             <input type="text" id="second_degree_level" name="second_degree_level">
+             
+             <label for="secondary_date">Date Graduated:</label>
+             <input type="date" id="secondary_date" name="secondary_date">
+
+              <!--Third-->
+            <h2>Third</h2>
+            <label for="third_institution">Institution:</label>
+            <input type="text" id="third_institution" name="third_institution">
+            
+            <label for="third_address">Address:</label>
+            <input type="text" id="third_address" name="third_address">
+            
+            <label for="third_degree_level">Degree:</label>
+            <input type="text" id="third_degree_level" name="third_degree_level">
+            
+            <label for="third_date">Date Graduated:</label>
+            <input type="date" id="third_date" name="third_date">   
+
+            <!--Fourth-->
+            <h2>Fourth</h2>
+            <label for="fourth_institution">Institution:</label>
+            <input type="text" id="fourth_institution" name="fourth_institution">
+            
+            <label for="fourth_address">Address:</label>
+            <input type="text" id="fourth_address" name="fourth_address">
+            
+            <label for="fourth_degree_level">Degree:</label>
+            <input type="text" id="fourth_degree_level" name="fourth_degree_level">
+            
+            <label for="fourth_date">Date Graduated:</label>
+            <input type="date" id="fourth_date" name="fourth_date">
+
+              <!--Fifth-->
+            <h2>Fifth</h2>
+            <label for="fifth_institution">Institution:</label>
+            <input type="text" id="fifth_institution" name="fifth_institution">
+            
+            <label for="fifth_address">Address:</label>
+            <input type="text" id="fifth_address" name="fifth_institution">
+            
+            <label for="fifth_degree_level">Degree</label>
+            <input type="text" id="fifth_degree_level" name="fifth_degree_level">
+            
+            <label for="fifth_date">Date Graduated</label>
+            <input type="date" id="fifth_date" name="fifth_date">
+
+            <!--Work Experience-->
+            <h3>Work background</h3>
+            <h2>FirsT Work</h2>
+            <label for="work_institution1">Institution:</label>
+            <input type="text" id="work_institution1" name="work_institution1">      
+            
+            <label for="work_position1">Position Hold</label>
+            <input type="text" id="work_position1" name="work_position1">
+            
+            <label for="work_period1">Period Covered</label>
+            <input type="text" id="work_period1" name="work_period1">
+
+            <h2>Second Work</h2>
+            <label for="work_institution2">Institution:</label>
+            <input type="text" id="work_institution2" name="work_institution2">      
+                
+            <label for="work_position2">Position Hold:</label>
+            <input type="text" id="work_position2" name="work_position2">
+                
+            <label for="work_period2">Period Covered</label>
+            <input type="text" id="work_period2" name="work_period2">
+
+            <h2>Third Work</h2>
+            <label for="work_institution3">Institution:</label>
+            <input type="text" id="work_institution3" name="work_institution3">      
+            
+            <label for="work_position3">Position Hold:</label>
+            <input type="text" id="work_position3" name="work_position3">
+            
+            <label for="work_period3">Period Covered</label>
+            <input type="text" id="work_period3" name="work_period3">
+
+            <h2>Fourth Work</h2>
+            <label for="work_institution4">Institution:</label>
+            <input type="text" id="work_institution4" name="work_institution4">      
+            
+            <label for="work_position4">Position Hold:</label>
+            <input type="text" id="work_position4" name="work_position4">
+            
+            <label for="work_period4">Period Covered</label>
+            <input type="text" id="work_period4" name="work_period4">
+
+            <h2>Fifth Work</h2>
+            <label for="work_institution5">Institution:</label>
+            <input type="text" id="work_institution5" name="work_institution5">      
+            
+            <label for="work_position5">Position Hold:</label>
+            <input type="text" id="work_position5" name="work_position5">
+            
+            <label for="work_period5">Period Covered</label>
+            <input type="text" id="work_period5" name="work_period5">
+
+            <h2>Membership in Other Organization</h2>
+            <h2>First</h2>
+            <label for="org_name1">Name of Organization</label>
+            <input type="text" id="org_name1" name="org_name1">
+
+            <label for="org_position1">Position Held</label>
+            <input type="text" id="org_position1" name="org_position1">
+
+            <label for="org_period1">Year:</label>
+            <input type="text" id="org_period1" name="org_period1">
+
+            <h2>Second</h2>
+            <label for="org_name2">Name of Organization:</label>
+            <input type="text" id="org_name2" name="org_name2">
+
+            <label for="org_position2">Position Held</label>
+            <input type="text" id="org_position2" name="org_position2">
+
+            <label for="org_period2">Year:</label>
+            <input type="text" id="org_period2" name="org_period2">
+
+
+            <h3>Advisory</h3>
+            <h2>Advisory 1</h2>
+            <label for="advisory1">Name of Organization</label>
+            <input type="text" id="advisory1" name="advisory1">
+            
+            <label for="inclusive_advisory1">Inclusive Year's:</label>
+            <input type="date" id="inclusive_advisory1" name="inclusive_advisory1">
+            
+            <h2>Advisory 2</h2>
+            <label for="advisory2">Name of Organization:</label>
+            <input type="text" id="advisory2" name="advisory2">
+            
+            <label for="inclusive_advisory2">Inclusive Year's:</label>
+            <input type="date" id="inclusive_advisory2" name="inclusive_advisory2">
+
+            <h2>Advisory 3</h2>
+            <label for="advisory3">Name of Organization:</label>
+            <input type="text" id="advisory3" name="advisory3">
+            
+            <label for="inclusive_advisory3">Inclusive Year's</label>
+            <input type="date" id="inclusive_advisory3" name="inclusive_advisory3">
+
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

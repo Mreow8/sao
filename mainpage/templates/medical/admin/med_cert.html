@@ -1,8 +1,8 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Medical Certificate
-for Intramurals{% endblock %} {% block extra_css %}
+{% extends 'adminmain.html' %} {% load static %} {% block title %}Medical
+Certificate for Intramurals{% endblock %} {% block extra_css %}
 <link rel="stylesheet" href="{% static 'styles/admin/med_cert.css' %}" />
 <link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
-{% endblock %} {% block content %}
+{% endblock %} {% block bodycontent %}
 <div class="container">
   {% if messages %} {% for message in messages %}
   <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">

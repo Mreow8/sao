@@ -1,9 +1,17 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Dental Request{%
-endblock %} {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/admin/dentalappoint.css' %}" />
-<link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
-{% endblock %} {% block content %}
+<!-- prettier-ignore -->
 
+{% extends 'adminmain.html' %} {% block headcontent %} {% load static %}
+
+<link
+  rel="stylesheet"
+  href="{% static 'styles/medical/admin/dentalappoint.css' %}"
+/>
+<link
+  rel="stylesheet"
+  media="print"
+  href="{% static 'styles/medical/print.css' %}"
+/>
+{% endblock headcontent %} {% block bodycontent %} {% load static %}
 <div class="container">
   {% if messages %} {% for message in messages %}
   <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
@@ -28,8 +36,8 @@ endblock %} {% block extra_css %}
           </tr>
         </thead>
         <tbody>
-          {% for request in service_request %} {% if not request.date_appointed
-          %}
+          {% for request in service_request %} {%comment%}eeeeeee {%endcomment%}
+          {% if not request.date_appointed%}
           <tr class="tr-td">
             <input
               type="hidden"
@@ -37,7 +45,7 @@ endblock %} {% block extra_css %}
               name="request_id"
               value="{{ request.id }}"
             />
-            <td><a href="#">{{ request.patient.student.student_id }}</a></td>
+            <td><a href="#">{{ request.patient.student.studId }}</a></td>
             <td>
               <a href="#">{{ request.patient.student.lastname|title }}</a>
             </td>

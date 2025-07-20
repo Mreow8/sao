@@ -1,81 +1,110 @@
-<!-- prettier-ignore -->
-{% extends 'main.html' %} {% load static %} 
-{% block title %}Medical {% endblock %} {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/admin/patientlist.css' %}" />
-<link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
-{% endblock %} {% block content %}
-<div class="container">
+{% extends 'adminmain.html' %} {% load static %}
+<!-- ignore prettier -->
+<!-- ignore prettier -->
+{% block title %}Medical {% endblock %} {% block extra_css %}{% endblock %}
+{%block bodycontent %}
+<div class="w-full min-h-screen bg-gray-100 py-6 px-4">
   {% if messages %}
-  <div class="message-container">
+  <div class="mb-4">
     {% for message in messages %}
-    <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+    <p
+      class="text-sm font-semibold text-white px-4 py-2 rounded {{ message.tags|default:'bg-blue-500' }}"
+    >
       {{ message }}
     </p>
     {% endfor %}
   </div>
   {% endif %}
-  <h2>Patient Profile</h2>
-  <br /><br />
-  <form method="POST" class="search-form">
+
+  <h2 class="text-2xl font-bold text-center text-gray-800">Patient Profile</h2>
+
+  <form method="POST" class="flex items-center mt-6 mb-4">
     {% csrf_token %}
-    <input type="text" name="student_id" placeholder="Enter ID to search" />
-    <button type="submit">Search</button>
+    <input
+      type="text"
+      name="student_id"
+      placeholder="Enter ID to search"
+      class="w-72 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none"
+    />
+    <button
+      type="submit"
+      class="px-4 py-2 bg-orange-500 text-white font-semibold rounded-r-md hover:bg-orange-600"
+    >
+      Search
+    </button>
   </form>
-  <div class="request">
-    <table>
-      <thead>
-        <tr class="tr-header">
-          <th>Student ID</th>
-          <th>Lastname</th>
-          <th>Firstname</th>
-          <th>Degree</th>
-          <th>Year Level</th>
-          <th>Sex</th>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-center bg-white shadow-md rounded-md">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="py-3 px-4">Student ID</th>
+          <th class="py-3 px-4">Lastname</th>
+          <th class="py-3 px-4">Firstname</th>
+          <th class="py-3 px-4">Degree</th>
+          <th class="py-3 px-4">Year Level</th>
+          <th class="py-3 px-4">Sex</th>
         </tr>
       </thead>
       <tbody>
-        {% for patient in patients %}
-        <tr class="tr-td">
-          <td>
+        {% for patient in patients %} {% if patient.student.student_id %}
+        <tr class="hover:bg-gray-100">
+          <td class="py-2 px-4">
             <a
               href="{% url 'medical:physical_exam' patient.student.student_id %}"
-              >{{ patient.student.student_id }}</a
+              class="text-black hover:underline"
             >
+              {{ patient.student.student_id }}
+            </a>
           </td>
-          <td>
+          <td class="py-2 px-4">
             <a
               href="{% url 'medical:physical_exam' patient.student.student_id %}"
-              >{{ patient.student.lastname|title }}</a
+              class="text-black hover:underline"
             >
+              {{ patient.student.lastname|title }}
+            </a>
           </td>
-          <td>
+          <td class="py-2 px-4">
             <a
               href="{% url 'medical:physical_exam' patient.student.student_id %}"
-              >{{ patient.student.firstname|title }}</a
+              class="text-black hover:underline"
             >
+              {{ patient.student.firstname|title }}
+            </a>
           </td>
-          <td>
+          <td class="py-2 px-4">
             <a
               href="{% url 'medical:physical_exam' patient.student.student_id %}"
-              >{{ patient.student.degree }}</a
+              class="text-black hover:underline"
             >
+              {{ patient.student.degree }}
+            </a>
           </td>
-          <td>
+          <td class="py-2 px-4">
             <a
               href="{% url 'medical:physical_exam' patient.student.student_id %}"
-              >{{ patient.student.year_level }}</a
+              class="text-black hover:underline"
             >
+              {{ patient.student.year_level }}
+            </a>
           </td>
-          <td>
+          <td class="py-2 px-4">
             <a
               href="{% url 'medical:physical_exam' patient.student.student_id %}"
-              >{{ patient.student.sex }}</a
+              class="text-black hover:underline"
             >
+              {{ patient.student.sex }}
+            </a>
           </td>
         </tr>
-        {% empty %}
-        <tr class="tr-td">
-          <td colspan="6">No patients found</td>
+        {% else %}
+        <tr class="text-gray-400 italic">
+          <td colspan="6" class="py-3">Student data missing or incomplete</td>
+        </tr>
+        {% endif %} {% empty %}
+        <tr class="text-gray-400 italic">
+          <td colspan="6" class="py-3">No patients found</td>
         </tr>
         {% endfor %}
       </tbody>

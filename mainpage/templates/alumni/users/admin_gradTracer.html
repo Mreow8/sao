@@ -1,0 +1,47 @@
+{% extends 'alumni/users/adminbase.html' %}
+
+{% block content %}
+<section class="h-auto ml-[300px] flex items-center justify-center  bg-grayyy ">
+  <div class="mx-auto container text-black" style="margin-top: -65%;">
+    <div class="flex items-center  justify-center mt-[200px]">
+      <div class="bg-white w-full h-screen p-11">
+        <h1 class="text-[26px] font-bold mb-4">Graduates</h1>
+
+
+        <div class="flex flex-col w-full border justify-between items-center p-2">
+
+          <div class="grid grid-cols-5 w-full items-center justify-center">
+            <h3 class="text-blo font-bold text-[24px] w-full text-center">Alumni ID</h3>
+            <h3 class="text-blo font-bold text-[24px] w-full text-center">First Name</h3>
+            <h3 class="text-blo font-bold text-[24px] w-full text-center">Last Name</h3>
+            <h3 class="text-blo font-bold text-[24px] w-full text-center">Date Gradaute</h3>
+            <h3 class="text-blo font-bold text-[24px] w-full text-center ">Email</h3>
+
+            {% for graduate_request in graduate_requests %}
+
+            <p class="w-full font-bold text-center">
+              {{ graduate_request.alumniID.alumniID }}
+            </p>
+            <p class="w-full font-bold text-center">
+              {{ graduate_request.firstname }}
+            </p>
+            <p class="w-full font-bold text-center">
+              {{ graduate_request.lastname }}
+            </p>
+            <p class="w-full font-bold text-center">
+              {{ graduate_request.dategraduated|date:"F d, Y" }}
+            </p>
+            <p class="w-full font-bold text-center text-[14px]">
+              {{ graduate_request.email_add }}
+            </p>
+
+            {% endfor %}
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,7 +1,10 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Emergency Health
-Assistance Record{% endblock %} {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/admin/prescription.css' %}" />
-{% endblock %} {% block content %}
+{% extends 'adminmain.html' %}{% block headcontent %} {% load static %}
+
+<link
+  rel="stylesheet"
+  href="{% static 'styles/medical/admin/prescription.css' %}"
+/>
+{% endblock headcontent %} {% block bodycontent %} {% load static %}
 <div class="container">
   {% if messages %} {% for message in messages %}
   <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">

@@ -22,15 +22,18 @@ Organization{% endblock %} {% block headcontent %}
     transition: color 0.3s, transform 0.3s;
     text-decoration: none;
   }
+
   .pages a:hover {
     color: #ff8000;
     transform: scale(1.1);
   }
+
   .pf2 {
     list-style-type: none;
     border-bottom: 2px solid #ff8000;
     padding-bottom: 10px;
   }
+
   .add-org-btn {
     margin: 20px 0 10px 0;
     background: #ff8000;
@@ -42,22 +45,17 @@ Organization{% endblock %} {% block headcontent %}
     cursor: pointer;
     transition: background 0.2s, color 0.2s, transform 0.2s;
   }
+
   .add-org-btn:hover {
     background: #e06d00;
     transform: scale(1.05);
   }
 </style>
 {% endblock %} {% block bodycontent %}
-
 <div class="container">
   <div
     class="headert"
-    style="
-      margin-left: 100px;
-      margin-top: 100px;
-      text-align: center;
-      justify-content: center;
-    "
+    style="margin-left: 100px; text-align: center; justify-content: center"
   >
     <h1 class="pf2" style="color: black">CTU-AC STUDENT ORGS</h1>
     <p class="pages" style="font-size: 20px; color: black; padding-top: 10px">
@@ -67,33 +65,44 @@ Organization{% endblock %} {% block headcontent %}
       <i class="fa fa-plus"></i> Add Organization
     </button>
     <p class="pages pf2" id="orgLinks">
-      <a href="/Gen_FSTLP_profile">FSTLP</a> -
-      <a href="/Gen_SI_profile">SI++</a> -
-      <a href="/Gen_THEEQUATIONERS_profile">Equationers</a> -
-      <a href="/Gen_SSG_profile">SSG</a> -
-      <a href="/Gen_TECHNOCRATS_profile">Technocrats</a>
+      <a href="{% url 'Gen_FSTLP_profile' %}">FSTLP</a> -
+      <a href="{% url 'Gen_SI_profile' %}">SI++</a> -
+      <a href="{% url 'Gen_THEEQUATIONERS_profile' %}">Equationers</a> -
+      <a href="{% url 'Gen_SSG_profile' %}">SSG</a> -
+      <a href="{% url 'Gen_TECHNOCRATS_profile' %}">Technocrats</a>
     </p>
   </div>
+
   <div class="row" id="orgImagesRow1">
-    <a href="/Gen_FSTLP_profile" class="image"
-      ><img src="{% static 'studentorg/css/org1.png' %}"
-    /></a>
-    <a href="/Gen_SI_profile" class="image"
-      ><img src="{% static 'studentorg/css/org2.png' %}"
-    /></a>
-    <a href="/Gen_THEEQUATIONERS_profile" class="image"
-      ><img src="{% static 'studentorg/css/org3.png' %}"
-    /></a>
+    <a href="{% url 'Gen_FSTLP_profile' %}" class="image">
+      <img src="{% static 'studentorg/css/org1.png' %}" />
+    </a>
+    <a href="{% url 'Gen_SI_profile' %}" class="image">
+      <img src="{% static 'studentorg/css/org2.png' %}" />
+    </a>
+    <a href="{% url 'Gen_THEEQUATIONERS_profile' %}" class="image">
+      <img src="{% static 'studentorg/css/org3.png' %}" />
+    </a>
   </div>
+
   <div class="row" id="orgImagesRow2">
-    <a href="/Gen_SSG_profile" class="image"
-      ><img src="{% static 'studentorg/css/org4.png' %}"
-    /></a>
-    <a href="/Gen_TECHNOCRATS_profile" class="image"
-      ><img src="{% static 'studentorg/css/org5.png' %}"
-    /></a>
+    <a href="{% url 'Gen_SSG_profile' %}" class="image">
+      <img src="{% static 'studentorg/css/org4.png' %}" />
+    </a>
+    <a href="{% url 'Gen_TECHNOCRATS_profile' %}" class="image">
+      <img src="{% static 'studentorg/css/org5.png' %}" />
+    </a>
   </div>
 </div>
+
+<div class="row" id="orgImagesRow1">
+  {% for org in orgs %}
+  <a href="{% url 'org_profile' slug=org.slug %}" class="image">
+    <img src="{{ org.logo.url }}" alt="{{ org.name }}" />
+  </a>
+  {% endfor %}
+</div>
+
 <script>
   document.getElementById("addOrgBtn").addEventListener("click", function () {
     Swal.fire({
@@ -124,28 +133,35 @@ Organization{% endblock %} {% block headcontent %}
       confirmButtonText: "Add",
     }).then((result) => {
       if (result.isConfirmed && result.value) {
-        // Add new org link
-        const orgLinks = document.getElementById("orgLinks");
-        if (orgLinks.innerHTML.trim().endsWith("-")) {
-          orgLinks.innerHTML += " ";
-        } else {
-          orgLinks.innerHTML += " - ";
-        }
-        orgLinks.innerHTML += `<span>${result.value.name}</span>`;
+        const formData = new FormData();
+        formData.append("name", result.value.name);
+        formData.append("imgData", result.value.imgData);
 
-        // Add new org image (to second row for demo)
-        const orgImagesRow2 = document.getElementById("orgImagesRow2");
-        const a = document.createElement("a");
-        a.href = "#";
-        a.className = "image";
-        a.innerHTML = `<img src="${result.value.imgData}" alt="${result.value.name}"/><div style="text-align:center;">${result.value.name}</div>`;
-        orgImagesRow2.appendChild(a);
+        fetch("{% url 'add_organization' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              const orgLinks = document.getElementById("orgLinks");
+              orgLinks.innerHTML += ` - <a href="/org/${data.slug}/">${data.name}</a>`;
 
-        Swal.fire(
-          "Added!",
-          `${result.value.name} has been added (client-side only).`,
-          "success"
-        );
+              const orgImagesRow2 = document.getElementById("orgImagesRow2");
+              const a = document.createElement("a");
+              a.href = `/org/${data.slug}/`;
+              a.className = "image";
+              a.innerHTML = `<img src="${data.image_url}" alt="${data.name}"/><div style="text-align:center;">${data.name}</div>`;
+              orgImagesRow2.appendChild(a);
+
+              Swal.fire("Added!", `${data.name} has been saved.`, "success");
+            } else {
+              Swal.fire("Error", data.error, "error");
+            }
+          });
       }
     });
   });

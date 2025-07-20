@@ -1,0 +1,63 @@
+{% extends 'adminUser/adminmain.html' %}
+{% load static %}
+
+{% block bodycontent %}
+<link rel="stylesheet" href="{% static 'studentlife/addEquipment.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap" rel="stylesheet">
+
+<div class="body-content">
+    <div class="sub-title">
+        <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
+        <p class="hometext">Home </p><a href="{% url 'studentLife_system:equipmentTrackerAdmin' %}" class="txt-underline"><p class="hometext"> > Equipment Tracker</p></a><p class="certxt"> > Equipment Tracker</p>
+    </div>
+    <div class="equipmentContents">
+        <form id="trackerForm" action="{% url 'studentLife_system:addEquipment' %}" method="POST">
+            {% csrf_token %}
+            <table id="equipmentTable">
+                <h2>Add Equipment</h2>
+                {% if messages %}
+                    <ul class="messages success-message">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>   
+                {% endif %}
+                <table class="equipmentform">
+                    <tbody>
+                        <tr>
+                            <td>Equipment Name:</td>
+                            <td>Equipment Serial Number:</td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="equipmentname" id="equipmentName" placeholder="Equipment Name" required></td>
+                            <td><input type="text" name="serialnum" id="serialnum" placeholder="Equipment Serial Number"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="button">
+                    <button class="saveBtn" type="submit">SAVE</button>
+                </div>
+                <table class="equipmentTable">
+                    <thead>
+                        <tr>
+                            <th>Item ID</th>
+                            <th>Equipment Name</th>
+                            <th>Equipment Serial Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for equipment in all_equipment %}
+                        <tr>
+                            <td>{{ equipment.itemId }}</td>
+                            <td>{{ equipment.equipmentName }}</td>
+                            <td>{{ equipment.equipmentSN }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </table>
+        </form>
+    </div>
+{% endblock bodycontent %}

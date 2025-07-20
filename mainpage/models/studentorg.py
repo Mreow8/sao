@@ -1,14 +1,29 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-
-
+from django.utils.text import slugify
 
 def validate_file_extension(value):
     valid_extensions = ('.pdf', '.docx', '.jpg', '.jpeg', '.png', '.gif')
     if not value.name.lower().endswith(valid_extensions):
         raise ValidationError('Only .pdf, .docx, .jpg, .jpeg, .png, and .gif files are allowed.')
-    
+class Organization(models.Model):
+    id = None  # remove default 'id'
+    org_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+    logo = models.ImageField(upload_to='org_logos/')
+    description = models.TextField(blank=True)
+    key_elements = models.JSONField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
 class Officer(models.Model):
     Officer_profile_picture =models.FileField(upload_to='Officer_Profile/', validators=[validate_file_extension])
     surname = models.CharField(max_length=100)
@@ -298,20 +313,13 @@ class Adviser(models.Model):
     def __str__(self):
         return f"{self.surname}, {self.firstname} {self.middlename}"
 
-    
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     objective = models.CharField(max_length=255)
     activities = models.TextField()
     
-    org_choices = [
-        ('SSG', 'SSG'),
-        ('FSTLP', 'FSTLP'),
-        ('SI++', 'SI++'),
-        ('THE EQUATIONERS', 'THE EQUATIONERS'),
-        ('TECHNOCRATS', 'TECHNOCRATS'),
-    ]
-    org = models.CharField(max_length=15, choices=org_choices, default='')
+    org = models.ForeignKey(Organization, on_delete=models.CASCADE)  #
+    
 
     target_choices = [
         ('Q1', 'Q1'),
@@ -325,7 +333,7 @@ class Project(models.Model):
     expected_output = models.TextField()
     actual_accomplishment = models.FileField(upload_to='projects/', validators=[validate_file_extension])
     remarks = models.TextField()
-    
+
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
@@ -335,7 +343,6 @@ class Project(models.Model):
 
     def __str__(self):
         return self.objective
-    
 
 class FinancialStatement(models.Model):
     financial_id = models.AutoField(primary_key=True)

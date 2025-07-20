@@ -1,0 +1,144 @@
+{% extends 'adminUser/adminmain.html' %}
+{% load static %}
+
+{% block bodycontent %}
+    <title>Displayed Items</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+        />
+        <link rel="stylesheet" href="{% static 'studentlife/main.css'%}">
+        <link rel="stylesheet" href="{% static 'studentlife/p_style.css'%}">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <div class="p-content">
+      <h2>OFFICE OF STUDENT LIFE</h2><br>
+      <div>
+        <h4><a href="/upload" class="gray-text">PPMP Tracker</a>
+        <span class="orange-text">&nbsp;&gt;&nbsp;PPMP View</span>
+        <a href="/purchased_items" class="gray-text1">Purchased Items</a>
+        <a href="/display_storage_items" class="gray-text2">Delivered Items</a>
+      </h4>
+      </div>
+      <div class="title">
+      <center><h2>Project Procurement Management Plan</h2></center>
+      </div>
+      <h5>End User Unit: <input type="text" name="enduser"></span></h5>
+      <h5>Charged To: <input type="text" name="charge"></span></h5>
+      <h5>Projects, Programs and Activities(PPAs)</span></h5>
+      <br>
+  <table>
+    <thead>
+      <tr>
+        <th>Item ID</th>
+        <th>Items & Specifications</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th>Estimated Budget</th>
+        <th>Mode of Procurement</th>
+        <th>Jan</th>
+        <th>Feb</th>
+        <th>Mar</th>
+        <th>Apr</th>
+        <th>May</th>
+        <th>Jun</th>
+        <th>Jul</th>
+        <th>Aug</th>
+        <th>Sep</th>
+        <th>Oct</th>
+        <th>Nov</th>
+        <th>Dec</th>
+        <th>Unit Price</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr> 
+          <td>{{ item.itemid }}</td>
+          <td>{{ item.item }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.unit }}</td>
+          <td>{{ item.estimated_budget }}</td>
+          <td>{{ item.mode_of_procurement }}</td>
+          <td>{{ item.jan }}</td>
+          <td>{{ item.feb }}</td>
+          <td>{{ item.mar }}</td>
+          <td>{{ item.apr }}</td>
+          <td>{{ item.may }}</td>
+          <td>{{ item.jun }}</td>
+          <td>{{ item.jul }}</td>
+          <td>{{ item.aug }}</td>
+          <td>{{ item.sep }}</td>
+          <td>{{ item.oct }}</td>
+          <td>{{ item.nov }}</td>
+          <td>{{ item.dec }}</td>
+          <td>{{ item.unit_price }}</td>
+          <td>
+            <span id="status_{{ item.itemid }}">{{ item.status }}</span>
+            <div class="status-buttons">
+            <button onClick="updateStatus('{{ item.itemid }}', 'purchased')" {% if item.status != 'for_purchase' %}disabled{% endif %}>Purchased</button>
+            <button onClick="updateStatus('{{ item.itemid }}', 'delivered')" {% if item.status != 'purchased' %}disabled{% endif %}>Delivered</button>
+          </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="20">No items available</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie('csrftoken');
+
+  function updateStatus(itemId, newStatus) {
+    $.ajax({
+      url: '/update_status/',
+      type: 'POST',
+      data: {
+        'item_id': itemId,
+        'new_status': newStatus,
+        'csrfmiddlewaretoken': csrftoken
+      },
+      success: function(response) {
+        $('#status_' + itemId).text(newStatus);
+        if (newStatus === 'purchased') {
+          $('button[onClick="updateStatus(\'' + itemId + '\', \'purchased\')"]').prop('disabled', true);
+          $('button[onClick="updateStatus(\'' + itemId + '\', \'delivered\')"]').prop('disabled', false);
+        } else if (newStatus === 'delivered') {
+          $('button[onClick="updateStatus(\'' + itemId + '\', \'delivered\')"]').prop('disabled', true);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+      }
+    });
+  }
+</script>
+
+<script src="{% static 'studentlife/main.js' %}"></script>
+ 
+  
+{% endblock bodycontent %}

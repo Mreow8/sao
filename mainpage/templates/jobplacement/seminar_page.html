@@ -1,17 +1,29 @@
-{% extends 'main.html' %} {% block headcontent %} {% load static %}
+{% extends base_template|default:"main.html" %} {% block headcontent %}
+
+<!-- ignore prettier -->
+{% load static %}
 <link
   rel="stylesheet"
   href="{% static 'styles/job_placement/seminarpage.css' %}?506"
 />
 {% endblock headcontent %} {% block bodycontent %}
-<section>
-  <div class="intro">
-    <p>Career Guidance Tracker</p>
+<div class="container">
+  <div class="header-bar">
+    <div class="sub-title">
+      <h3>JOB PLACEMENT</h3>
+      <p class="hometext">Home</p>
+      <p class="certxt">&gt; Career Guidance Tracker</p>
+    </div>
+    {% if request.user.is_staff %}
+    <div class="button-container">
+      <button class="showform">Add Event</button>
+    </div>
+    {% endif %}
   </div>
   <hr id="demo" />
 
   {% for seminar in seminars %}
-  <div class="container">
+  <div class="scontainer">
     <div class="card">
       {% if request.user.is_staff %}
       <form
@@ -44,11 +56,7 @@
       {% endif %}
     </div>
   </div>
-  {% endfor %} {% if request.user.is_staff %}
-  <div class="button-container">
-    <button class="showform">Add Event</button>
-  </div>
-  {% endif %}
+  {% endfor %}
   <div class="showform_container">
     <div class="form_container">
       <button class="closeform">×</button>
@@ -75,6 +83,6 @@
       </form>
     </div>
   </div>
-</section>
+</div>
 <script src="{% static 'scripts/job_placement/ojthiring_show.js' %}?320"></script>
 {% endblock bodycontent %}

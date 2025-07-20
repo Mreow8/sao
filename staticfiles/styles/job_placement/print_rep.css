@@ -1,0 +1,47 @@
+body{
+    background: url('../imgs/report_bg.jpg');
+    background-repeat: repeat-y;
+    background-size: cover;
+}
+
+section{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body{
+    min-height: 13in;
+    max-height: 13in;
+}  
+table {
+    /* margin-left: 18%; */
+    width: 11in;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  
+  th, td {
+    
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+  }
+  h1{
+    margin-top: 30%;
+    text-align: center;
+  }
+
+  #stamp_container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  #timestamp {
+    position: relative;
+    right: 2in;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+  }

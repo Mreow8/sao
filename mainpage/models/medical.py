@@ -1,24 +1,10 @@
 from django.db import models
 import os
-
 # Create your models here.
-class Student(models.Model):
-    student_id = models.CharField(max_length=100, primary_key=True)
-    lrn = models.CharField(max_length=100)
-    lastname = models.CharField(max_length=100)
-    firstname = models.CharField(max_length=100)
-    middlename = models.CharField(max_length=100, null=True, blank=True)
-    degree = models.CharField(max_length=100)
-    year_level = models.PositiveIntegerField()
-    sex = models.CharField(max_length=6)
-    email = models.EmailField()
-    contact_number = models.CharField(max_length=15)
-    
-    def __str__(self):
-        return f"{self.lastname}, {self.firstname}"
+from mainpage.models.guidance import studentInfo  # ✅ Safer if you split models
 
 class Patient(models.Model):
-    student = models.OneToOneField(Student, on_delete=models.CASCADE, primary_key=True)
+    student = models.OneToOneField(studentInfo, on_delete=models.CASCADE, primary_key=True)
     birth_date = models.CharField(max_length=100)
     age = models.PositiveIntegerField()
     weight = models.FloatField()

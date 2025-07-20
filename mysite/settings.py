@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 # Use only pathlib
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,8 +23,9 @@ SECRET_KEY = 'django-insecure-wqcuti7mokhf)l@v3r0@@xo@(#ss02u8r8_xa6cw0xs96tpxd!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
+import os
+BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Application definition
 
 INSTALLED_APPS = [
@@ -119,3 +120,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# ✅ For development only: print emails to the console
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

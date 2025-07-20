@@ -1,0 +1,72 @@
+{% extends 'main.html' %} {% load static %} {% block bodycontent %}
+
+<!-- Stylesheet -->
+<link
+  rel="stylesheet"
+  href="{% static 'styles/studentlife/disciplineAdmin.css' %}"
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap"
+  rel="stylesheet"
+/>
+
+<div class="container">
+  <div class="sub-title">
+    <h3>OFFICE OF STUDENT LIFE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">> Student Discipline > Case Profile</p>
+  </div>
+
+  <div class="disciplineContents">
+    <div class="header-row">
+      <h2>Disciplinary Case Profiles</h2>
+      <a href="{% url 'add_case' %}" class="btn btn-add">+ Add New Case</a>
+    </div>
+
+    <table class="disciplineTable">
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Student Name</th>
+          <th>Offense</th>
+          <th>Date Reported</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for case in case_profiles %}
+        <tr>
+          <td>{{ case.case_id }}</td>
+          <td>{{ case.student.firstname }} {{ case.student.lastname }}</td>
+          <td>{{ case.offense_type }}</td>
+          <td>{{ case.date_reported }}</td>
+          <td>
+            <span class="status {{ case.status|lower }}">
+              {{ case.status }}
+            </span>
+          </td>
+          <td>
+            <a href="{% url 'view_case' case.id %}" class="btn-view">View</a>
+            <a href="{% url 'edit_case' case.id %}" class="btn-edit">Edit</a>
+            <a
+              href="{% url 'delete_case' case.id %}"
+              class="btn-delete"
+              onclick="return confirm('Are you sure you want to delete this case?');"
+              >Delete</a
+            >
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6">No cases found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock bodycontent %}

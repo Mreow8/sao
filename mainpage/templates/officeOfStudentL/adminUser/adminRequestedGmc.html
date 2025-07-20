@@ -1,0 +1,115 @@
+{% extends 'adminmain.html' %} {% load static %} {% load tz %}
+<!-- prettier-ignore -->
+{% block bodycontent    %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/studentlife/requestgmc.css' %}"
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+  rel="stylesheet"
+/>
+
+<div class="body-content">
+  <div class="sub-title">
+    <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
+    <p class="hometext">Admin</p>
+    <p class="certxt">> Good Moral Certificate Issuance</p>
+  </div>
+  <div class="gmc-form">
+    <form id="trackerForm" action="{% url 'adminRequestedGmc' %}" method="GET">
+      <h2>List of Request for Good Moral Certificate</h2>
+    </form>
+
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div class="alert alert-danger" id="alert" role="alert">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <table id="trackerTable">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Student Name</th>
+          <th>Course/Program</th>
+          <th>Year Level</th>
+          <th>Reason</th>
+          <th>OR Number</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for request in gmc_requests %}
+        <tr>
+          <td>{{ request.student.studID }}</td>
+          <td>
+            {{ request.student.firstname }} {{ request.student.lastname }}
+          </td>
+          <td>{{ request.student.degree }}</td>
+          <td>{{ request.student.yearlvl }}</td>
+          <td>{{ request.reason }}</td>
+          <td>
+            <input
+              type="text"
+              name="ornum"
+              class="ornum-input"
+              data-request-id="{{ request.id }}"
+              required
+            />
+          </td>
+          <td>
+            <button class="printBtn" data-request-id="{{ request.id }}">
+              Print
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const printButtons = document.querySelectorAll(".printBtn");
+
+    printButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const requestId = this.getAttribute("data-request-id");
+        const orNumInput = document.querySelector(
+          `.ornum-input[data-request-id="${requestId}"]`
+        );
+        const orNum = orNumInput.value;
+
+        if (!orNum) {
+          alert("OR Number is required");
+          orNumInput.focus();
+          return; // Stop execution if ORN number is empty
+        }
+
+        const printWindow = window.open(
+          `/generate-gmc/${requestId}/?ornum=${orNum}`,
+          "_blank"
+        );
+
+        // Poll for the print window close event
+        const interval = setInterval(() => {
+          if (printWindow.closed) {
+            clearInterval(interval);
+            // Delay the refresh slightly to ensure print dialog is fully closed
+            setTimeout(() => {
+              location.reload();
+            }, 500);
+          }
+        }, 500);
+      });
+    });
+  });
+</script>
+{% endblock bodycontent %}

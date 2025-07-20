@@ -166,33 +166,42 @@ def mainpage(request):
 
 #   OJT HIRING THINGS
 # @login_required(login_url='jobplacement:admin_student')
-def ojt_hiring(request): # ojthiring main page
+def ojt_hiring(request):
     ojt_hiring_form = OjtHiringForm()
     ojt_assign_form = OJTStudentForm()
     ojt_hiring = OJTCompany.objects.all()
+
+    # Decide the layout to extend in the template
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
     if request.method == 'POST':
         if not (request.user.is_staff or request.user.is_superuser):
             messages.info(request, 'Must be staff/admin to access page')
             return redirect('jobplacement:admin_login')
         
-        if not (isinstance(request.user, JobPlacementAdminUser) or request.user.is_superuser ):
-            messages.info(request, 'Must be Jobplacement staff/admin to access page')
+        # Optional: specific role check (e.g., JobPlacementAdminUser)
+        if not (isinstance(request.user, JobPlacementAdminUser) or request.user.is_superuser):
+            messages.info(request, 'Must be Job Placement staff/admin to access page')
             return redirect('jobplacement:admin_login')
-            
+        
         form = OjtHiringForm(request.POST)
         if form.is_valid():
             newojt = form.save(commit=False)
             newojt.save()
             messages.success(request, "New OJT Hiring created successfully!")
-            log_activity(request.user, "Created new OJT hiring")  # Log the activity
-            return render(request, 'jobplacement/ojthiring.html', {'form': ojt_hiring_form, 'ojt_list':ojt_hiring, 'assign_form':ojt_assign_form} )
+            log_activity(request.user, "Created new OJT hiring")
+            return redirect('jobplacement:ojt_hiring')  # redirect to prevent resubmission
         else:
             messages.error(request, "Form invalid")
 
-    context = {'form': ojt_hiring_form, 'ojt_list':ojt_hiring, 'assign_form':ojt_assign_form}
-    return render(request, 'jobplacement/ojthiring.html', context)
+    context = {
+        'form': ojt_hiring_form,
+        'assign_form': ojt_assign_form,
+        'ojt_list': ojt_hiring,
+        'base_template': base_template,
+    }
 
+    return render(request, 'jobplacement/ojthiring.html', context)
 @login_required(login_url='jobplacement:admin_login')
 def ojt_assign_student(request): # handle assigning student to company
     if not (request.user.is_staff or request.user.is_superuser): # prevent student/alien access
@@ -529,21 +538,21 @@ def ojt_requirements_accept(request):
 
 # SEMINAR THINGS
 # @login_required(login_url='jobplacement:admin_student')
-def seminar(request): # seminar page
-
+def seminar(request):
     seminars = Seminar.objects.all()
     form = SeminarForm()
 
-    # handle seminar creation
+    # Determine the layout (admin or student)
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
     if request.method == 'POST':
-        if not (request.user.is_staff or request.user.is_superuser):  # prevent student access
+        if not (request.user.is_staff or request.user.is_superuser):
             messages.info(request, 'Must be staff/admin to access page')
             return redirect('jobplacement:admin_login')
 
-        if not ( isinstance(request.user, JobPlacementAdminUser) or request.user.is_superuser): # prevent other admin access
-
+        if not (isinstance(request.user, JobPlacementAdminUser) or request.user.is_superuser):
             messages.info(request, 'Must be Jobplacement staff/admin to access page')
-            return redirect('jobplacement:admin_login')    
+            return redirect('jobplacement:admin_login')
 
         form = SeminarForm(request.POST, request.FILES)
         if form.is_valid():
@@ -551,9 +560,14 @@ def seminar(request): # seminar page
             newseminar.save()
             log_activity(request.user, f"Scheduled new seminar: {newseminar.title}")
             return redirect('jobplacement:seminar_page')
-            
-    context = {'seminars':seminars, 'form':form}
+
+    context = {
+        'seminars': seminars,
+        'form': form,
+        'base_template': base_template,
+    }
     return render(request, 'jobplacement/seminar_page.html', context)
+
 
 # @login_required(login_url='jobplacement:admin_login')
 def seminar_delete(request, id):

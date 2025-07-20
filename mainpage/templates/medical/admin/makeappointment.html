@@ -1,8 +1,8 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Dental Request{%
-endblock %} {% block extra_css %}
+{% extends 'adminmain.html' %} {% load static %} {% block title %}Dental
+Request{% endblock %} {% block extra_css %}
 <link rel="stylesheet" href="{% static 'styles/admin/dentalappoint.css' %}" />
 <link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
-{% endblock %} {% block content %} {% if messages %}
+{% endblock %} {% block bodycontent %} {% if messages %}
 <div>{% for message in messages %} {{ message }} {% endfor %}</div>
 {% endif %}
 <div class="container">

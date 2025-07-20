@@ -1,59 +1,34 @@
 {% extends "main.html" %} {% load static %} {% block title %}STUDENT LIFE
 INFORMATION SYSTEM{% endblock %} {% block headcontent %}
+<script src="{% static 'styles/studentlife/fullcalendar/lib/main.min.js' %}"></script>
 
 <link
   rel="stylesheet"
-  href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-  integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
-  crossorigin="anonymous"
+  href="{% static 'styles/studentlife/requestgmc.css' %}"
 />
 <link
   rel="stylesheet"
-  href="{% static 'studentlife/css/bootstrap.min.css' %}"
+  href="{% static 'styles/studentlife/fullcalendar/lib/main.min.css'%}"
 />
-<link
-  rel="stylesheet"
-  href="{% static 'studentlife/fullcalendar/lib/main.min.css'%}"
-/>
-<link
-  rel="shortcut icon"
-  type="x-icon"
-  href="{% static 'studentlife/imgs/CTU_logo.png' %}"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-  integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-/>
+<link rel="stylesheet" href="{% static 'styles/calendarOfEvents.css' %}" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{% endblock headcontent%} {% block bodycontent %}
+{% endblock headcontent %} {% block bodycontent %}
+<div class="container">
+  <div class="sub-title">
+    <h3>OFFICE OF STUDENT LIFE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Monthly Calendar of Activities</p>
+  </div>
 
-<div class="sub-title">
-  <h3>OFFICE OF STUDENT LIFE</h3>
-  <p class="hometext">Home</p>
-  <p class="certxt">> Monthly Calendar of Activities</p>
-</div>
-<header class="me">
-  <nav>
-    <img src="logoctu.png" class="ctulogo" alt="logoschool" />
-  </nav>
-</header>
-
-<div class="container py-5" id="page-container">
-  <div class="row">
-    <div class="col-md-9">
-      <div id="calendar"></div>
+  <div class="container py-2" id="page-container">
+    <div class="row">
+      <div class="col-md-9">
+        <div id="calendar"></div>
+      </div>
     </div>
   </div>
+  <!-- Event Details Modal -->
 </div>
-<!-- Event Details Modal -->
-
 <script>
   var scheds = JSON.parse("{{ sched_json|escapejs }}");
 </script>

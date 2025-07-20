@@ -1,0 +1,657 @@
+{% extends 'main.html' %}
+
+{% block bodycontent %}
+<section class="h-auto ml-[300px] flex items-center justify-center bg-gray-100">
+  <div class="mx-auto container text-black" style="margin-top: -8%;">
+    <div class="flex items-center justify-center mt-[200px]">
+
+      {% csrf_token %}
+      <div class="flex flex-col gap-5 justify-center items-center w-full h-auto p-11 bg-white">
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="
+                    {% if message.tags == 'error' %} bg-red-500 border border-red-400 text-red-700
+                    {% elif message.tags == 'success' %} bg-green-500 border border-green-400 text-green-700
+                    {% else %} bg-gray-500 border border-gray-400 text-gray-700
+                    {% endif %}
+                    w-[483px] px-4 py-3 rounded-md mb-4">
+          <p class="text-center text-white font-bold">
+            {{ message }}
+          </p>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="flex flex-col gap-5 w-full">
+          <h1 class="text-[36px] font-bold mb-11">Graduates Form</h1>
+
+          <form class="flex flex-col gap-2" action="{% url 'search_id2' %}" method="get">
+            {% csrf_token %}
+            <h6 class="text-[19px]">Search ID</h6>
+            <div class="flex gap-5">
+              <input type="hidden" name="student_id" value="{{ student_id }}" />
+              <input type="number" name="student_id" class="bg-gray-100 outline-none h-[49px] w-[316px] p-2" required />
+              <button class="bg-blue-600 p-1 text-[18px] text-white w-[150px]">
+                Search
+              </button>
+            </div>
+          </form>
+
+          <div class="flex items-center justify-between">
+            {% if alumni  %}
+            <div class="flex flex-col">
+              <p class="text-blue-700 font-bold">StudentID</p>
+              <p class="font-bold">
+                {{alumni.student.studID }}
+              </p>
+            </div>
+            <div class="flex flex-col">
+              <p class="text-blue-700 font-bold">First Name</p>
+              <p class="font-bold">
+                {{ alumni.firstname  }}
+              </p>
+            </div>
+            <div class="flex flex-col">
+              <p class="text-blue-700 font-bold">Last Name</p>
+              <p class="font-bold">
+                {{ alumni.lastname }}
+              </p>
+            </div>
+            <div class="flex flex-col">
+              <p class="text-blue-700 text-center font-bold">Degree</p>
+              <p class="font-bold">
+                {{ alumni.degree }}
+              </p>
+            </div>
+          </div>
+
+          <form class="w-full h-auto bg-white" method="post" action="{% url 'studentLife_system:graduateTracer_submit' %}">
+            {% csrf_token %}
+            <input type="hidden" name="student_id" value="{{ alumni.student.studID }}" />
+            <input type="hidden" name="firstname" value="{{ alumni.firstname }}" />
+            <input type="hidden" name="lastname" value="{{ alumni.lastname }}" />
+            <input type="hidden" name="degree" value="{{ alumni.degree }}" />
+            <input type="hidden" name="sex" value="{{ alumni.sex }}" />
+            <input type="hidden" name="email_add" value="{{  alumni.email_add }}" />
+            <input type="hidden" name="contactnum" value="{{  alumni.alumnicontact }}" />
+            <input type="hidden" name="alumniaddress" value="{{  alumni.alumniaddress }}" />
+        </div>
+        <!--$ end Personal Details -->
+
+        <!--$ Educational Background -->
+        <div class="flex flex-col gap-5 w-full">
+          <h1 class="text-[26px] font-bold">Educational Background</h1>
+          <div class="flex gap-5">
+            <div class="w-full">
+              <p class="text-[14px] text-gray-600 mb-2">Date Graduated</p>
+              <input type="date" name="dategraduated" class="bg-gray-100 outline-none h-[49px] w-[456px] p-2" required />
+            </div>
+          </div>
+        </div>
+        <!--$ end Educational Background -->
+
+        <!--$ Employment Information -->
+        <div>
+          <div class="flex flex-col gap-5 w-full">
+            <h1 class="text-[26px] font-bold ">4. Employment Information</h1>
+            <h6 class="text-[19px] font-bold">A. EMPLOYER'S DETAILS</h6>
+            <div class="flex gap-5">
+              <div class="w-full">
+                <p class="text-[14px] text-gray-600 mb-2">Name of Organization /Employer</p>
+                <input type="text" name="nameoforganization" required class="bg-gray-100 outline-none h-[49px] w-full p-2" />
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2">Type of Organization</p>
+                <select name="employmentype" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="Private">Private</option>
+                  <option value="Public">Public</option>
+                  <option value="NGO">NGO</option>
+                  <option value="Non-Profit">Non-Profit</option>
+                </select>
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2">Employment Type</p>
+                <select name="employmentype" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="Working Fulltime">Working Fulltime</option>
+                  <option value="Working Partime">Working Partime</option>
+                  <option value="Working Part-time but seeking fulltime work">Working Part-time but seeking fulltime work</option>
+                  <option value="Working part-time but not seeking fulltime work">Working part-time but not seeking fulltime work</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2">Occupational Classification</p>
+                <select class="bg-gray-100 outline-none h-[49px] w-full p-2 " name="occupationalClass" required>
+                  <option value="" disabled selected class="text-gray-400">Selecet</option>
+                  <option value="Official of Government and Special-Interest Organizations">Official of Government and Special-Interest Organizations</option>
+                  <option value="Corporate Executive or Manager">Corporate Executive or Manager</option>
+                  <option value="Managing Proprietor or Supervisor">Managing Proprietor or Supervisor</option>
+                  <option value="Technician or Associate Professional">Technician or Associate Professional</option>
+                  <option value="Clerk">Clerk</option>
+                  <option value="Service Worker or Shop and Market Sales Worker">Service Worker or Shop and Market Sales Worker</option>
+                  <option value="Farmer or Forestry Worker or Fisherman">Farmer or Forestry Worker or Fisherman</option>
+                  <option value="Trader or Related Worker">Trader or Related Worker</option>
+                  <option value="Plant and Machine Operator and Assembler">Plant and Machine Operator and Assembler</option>
+                  <option value="Laborer or Unskilled Worker">Laborer or Unskilled Worker</option>
+                  <option value="Special Occupation">Special Occupation</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <!--! end FIrst -->
+
+            <!--! Second  -->
+            <div class="flex gap-5">
+              <div class="w-full">
+                <p class="text-[13px] font-bold italic mb-2">Is your job related to your grad course?</p>
+                <select name="gradscholrelated" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="male">Yes</option>
+                  <option value="female">No</option>
+                </select>
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2"> Number of years in the company</p>
+                <select name="yearscompany" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="1-5">1-5</option>
+                  <option value="6-10">6-10</option>
+                  <option value="11-15">11-15</option>
+                  <option value="16-20">16-20</option>
+                  <option value="21-25">21-25</option>
+                  <option value="21 Above">21 Above</option>
+                </select>
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2">Place of work</p>
+                <select class="bg-gray-100 outline-none h-[49px] w-full p-2 " name="placework" required>
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="Working Fulltime">Local</option>
+                  <option value="Working Fulltime">Abroad</option>
+                </select>
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] font-bold italic mb-2">Is this your first job post-graduation?</p>
+                <select name="firstjobgraduate" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="Official of Government and Special-Interest Organizations">Yes</option>
+                  <option value="Corporate Executive or Manager">No</option>
+                </select>
+              </div>
+            </div>
+            <!--! end Second -->
+
+            <!--! Third -->
+            <div class="w-full flex flex-col justify-center ">
+              <p class="text-[14px] font-bold mb-2">Please state your reasons for staying on the job</p>
+              <div class="flex ">
+                <textarea required name="reasonstayingjob" class="bg-gray-100 w-[800px] h-[300px] outline-none p-5"></textarea>
+              </div>
+            </div>
+            <!--!End of Third -->
+
+            <!--! Fourth  -->
+            <div class="flex gap-5 ">
+              <div class="w-full">
+                <p class="text-[14px] text-gray-600 mb-2">Designation</p>
+                <input type="text" name="designation" required class="bg-gray-100 outline-none h-[49px] w-full p-2" />
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] text-gray-600 mb-2">Department/Division</p>
+                <input type="text" name="department" required class="bg-gray-100 outline-none h-[49px] w-full p-2" />
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2">Status</p>
+                <select name="status" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="Permanent">Permanent</option>
+                  <option value="Contractual">Contractual</option>
+                  <option value="Casual">Casual</option>
+                </select>
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2">Monthly Income Range</p>
+                <select name="monthlyincome" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="Below 10,000">Below 10,000</option>
+                  <option value="10,000-20,000">10,000-20,000</option>
+                  <option value="21,000-30,000">21,000-30,000</option>
+                  <option value="31,000-40,000">31,000-40,000</option>
+                  <option value="41,000-50,000">41,000-50,000</option>
+                  <option value="51,000-60,000">51,000-60,000</option>
+                  <option value="61,000-70,000">61,000-70,000</option>
+                  <option value="71,000 above">71,000 above</option>
+                </select>
+              </div>
+            </div>
+            <!--! end of Fourth -->
+
+            <!--! Fifth  -->
+            <div class="flex gap-5 ">
+              <div class="w-full">
+                <p class="text-[14px] font-bold italic mb-2">Did you work while studying at CTU?</p>
+                <select name="workwhileworking" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="Permanent">Yes</option>
+                  <option value="Contractual">No</option>
+                </select>
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] font-bold italic mb-2">If not, how long did it take to find a job after graduating from CTU?</p>
+                <input type="text" name="ifnotworking" required class="bg-gray-100 outline-none h-[49px] w-full p-2" />
+              </div>
+            </div>
+            <!--! end of Fifth -->
+
+            <!--! Sixth -->
+            <div class="w-full flex flex-col justify-center ">
+              <p class="text-[14px] font-bold mb-2">Please give reasons for any time gap between obtaining your degree and your first employment</p>
+              <div class="flex ">
+                <textarea required name="reasontimegap" class="bg-gray-100 w-[800px] h-[300px] outline-none p-5"></textarea>
+              </div>
+            </div>
+            <!--!End of Sixth -->
+          </div>
+
+          <!--! Seventh  -->
+          <div class="flex flex-col gap-5 w-full mt-5">
+            <h6 class="text-[19px] font-bold">B. IN THE CASE OF SELF EMPLOYMENT</h6>
+            <div class="flex gap-5 ">
+              <div class="w-full">
+                <p class="text-[14px] text-gray-600 mb-2">Nature of Employment</p>
+                <input type="text" name="natureemployment" required class="bg-gray-100 outline-none h-[49px] w-full p-2" />
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2">Number of Years</p>
+                <select name="numberofyears" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="0-5">0-5</option>
+                  <option value="6-10">6-10</option>
+                  <option value="10-15">10-15</option>
+                  <option value="16 above">16 above</option>
+                </select>
+              </div>
+              <div class="w-full">
+                <p class="text-[14px] mb-2">Monthly Income Range</p>
+                <select name="monthlyincome2" required class="bg-gray-100 outline-none h-[49px] w-full p-2 ">
+                  <option value="" disabled selected class="text-gray-400">Select</option>
+                  <option value="Below 10,000">Below 10,000</option>
+                  <option value="10,000-20,000">10,000-20,000</option>
+                  <option value="21,000-30,000">21,000-30,000</option>
+                  <option value="31,000-40,000">31,000-40,000</option>
+                  <option value="41,000-50,000">41,000-50,000</option>
+                  <option value="51,000-60,000">51,000-60,000</option>
+                  <option value="61,000-70,000">61,000-70,000</option>
+                  <option value="71,000 above">71,000 above</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!--! end of Seventh -->
+
+          <!--! Eight  -->
+          <div class="flex flex-col gap-5 w-full mt-5">
+            <h6 class="text-[19px] font-bold">C. IN THE CASE OF UNEMPLOYED</h6>
+            <div class="w-full flex flex-col justify-center ">
+              <p class="text-[14px] font-bold mb-2">Please give reasons for any time gap between obtaining your degree and your first employment</p>
+              <div class="flex ">
+                <textarea required name="reasontimegap" class="bg-gray-100 w-[800px] h-[300px] outline-none p-5"></textarea>
+              </div>
+            </div>
+          </div>
+          <!--! end of Eight -->
+        </div>
+        <!--$ end Employment Information -->
+
+        <!--$ Personal Growth Ratings -->
+        <div class="flex flex-col gap-5 w-full">
+          <h1 class="text-[26px] font-bold">5. HOW WOULD YOU RATE THE CONTRIBUTION OF THE PROGRAM OF YOUR STUDY AT THE CTU-AC GRADUATE SCHOOL TO YOUR PERSONAL AND PROFESSIONAL GROWTH IN TERMS OF THE FOLLOWING: </h1>
+          <h6>(1-poorly 2-fairly 3-highly 4-very highly)</h6>
+          <div class="flex gap-5">
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Academic Profession</p>
+              <select name="academicprofession" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Research Capability</p>
+              <select name="researchcapability" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Learning Efficiency</p>
+              <select name="learningefficiency" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2"> People Skills</p>
+              <select name="peopleskills" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Problem Solving Skills</p>
+              <select name="problemsolvingskills" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+          </div>
+          <!--! end First -->
+
+          <!--! Second -->
+          <div class="flex gap-5">
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Information Technology Skills</p>
+              <select name="informationtechnologyskills" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Meeting Professional Needs</p>
+              <select name="meetingprofessionalneeds" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Community Engagement in Field</p>
+              <select name="communityfield" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Global Engagement in Field</p>
+              <select name="globalfield" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2"> Critical Thinking Skills</p>
+              <select name="criticalskills" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+          </div>
+          <!--! end Second -->
+
+          <!--! third -->
+          <div class="flex gap-5 items-start">
+            <div class="w-[204px]">
+              <p class="text-[14px] mb-2">Salary Improvement </p>
+              <select name="salaryimprovement" class="bg-gray-100 outline-none h-[49px] w-[204px] p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-[204px]">
+              <p class="text-[14px] mb-2">Opportunities Abroad</p>
+              <select name="opportunitiesabroad" class="bg-gray-100 outline-none h-[49px] w-[204px] p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-[204px]">
+              <p class="text-[14px] mb-2">Personality Development</p>
+              <select name="personalitydevelopment" class="bg-gray-100 outline-none h-[49px] w-[204px] p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-[204px]">
+              <p class="text-[14px] mb-2">Technologies Values Formation</p>
+              <select name="technologiesvaluesformation" class="bg-gray-100 outline-none h-[49px] w-[204px] p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+          </div>
+          <!--! end thid -->
+        </div>
+        <!--$ end Personal Growth Ratings -->
+
+        <!--$ Degree program rate -->
+        <div class="flex flex-col gap-5 w-full">
+          <h1 class="text-[26px] font-bold">6. HOW WOULD YOU RATE THE DEGREE PROGRAM YOU FINISHED AT THE UST GRADUATE SCHOOL IN TERMS OF:</h1>
+          <h6>(1-poorly 2-fairly 3-highly 4-very highly)</h6>
+          <div class="flex gap-5">
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Range of Courses</p>
+              <select name="rangeofcourses" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Relevance to your Profession</p>
+              <select name="relevanceprofession" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Extracurricular Activies</p>
+              <select name="extracurricular" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Premium Given Research</p>
+              <select name="premiumresearch" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Interdisciplinary Learning</p>
+              <select name="interlearning" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+          </div>
+          <!--! end First -->
+
+          <!--! Second -->
+          <div class="flex gap-5">
+            <div class="w-full">
+              <p class="text-[14px] mb-2"> Teaching Environment</p>
+              <select name="teachingenvironment" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Quality of Instruction</p>
+              <select name="qualityinstruction" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Teacher-Student Relationships</p>
+              <select name="teachrelationship" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Library Resources</p>
+              <select name="libraryresources" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] mb-2">Laboratory Resources</p>
+              <select name="labresources" class="bg-gray-100 outline-none h-[49px] w-full p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+          </div>
+          <!--! end Second -->
+
+          <!--! third -->
+          <div class="flex gap-5">
+            <div class="w-[203px]">
+              <p class="text-[14px] mb-2">Class Size</p>
+              <select name="classize" class="bg-gray-100 outline-none h-[49px] w-[203px] p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-[203px]">
+              <p class="text-[14px] mb-2">Prof. Pedagogical Expertise</p>
+              <select name="profexpertise" class="bg-gray-100 outline-none h-[49px] w-[203px] p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="w-[230px]">
+              <p class="text-[14px] mb-2"> Prof. Knowledge of Subject Matte</p>
+              <select name="profsubjectmatter" class="bg-gray-100 outline-none h-[49px] w-[203px] p-2 " required>
+                <option value="" disabled selected class="text-gray-400">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+          </div>
+          <!--! end thid -->
+        </div>
+        <!--$ end Degree program rate -->
+
+        <!--$ Pursuing further studies -->
+        <div class="flex flex-col gap-5 w-full">
+          <h1 class="text-[26px] font-bold">7. If Pursuing Further Studies</h1>
+          <div class="flex gap-5">
+            <div class="w-full">
+              <p class="text-[14px] text-gray-600 mb-2">Enrollment Date</p>
+              <input type="date" name="enrollmentdate" class="bg-gray-100 outline-none h-[49px] w-full p-2" required />
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] text-gray-600 mb-2">Degree Program</p>
+              <input type="text" name="studiesdegree" class="bg-gray-100 outline-none h-[49px] w-full p-2" required />
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] text-gray-600 mb-2">University/Institution</p>
+              <input type="text" name="universityinstitution" class="bg-gray-100 outline-none h-[49px] w-full p-2" required />
+            </div>
+            <div class="w-full">
+              <p class="text-[14px] text-gray-600 mb-2">Address</p>
+              <input type="text" name="studiesAddress" class="bg-gray-100 outline-none h-[49px] w-full p-2" required />
+            </div>
+          </div>
+          <!--! end First -->
+          <div class="w-full flex flex-col justify-center ">
+            <p class="text-[14px] font-bold mb-2">Reasons for pursuing further studies</p>
+            <div class="flex ">
+              <textarea required name="pursuingstudies" class="bg-gray-100 w-[800px] h-[300px] outline-none p-5"></textarea>
+            </div>
+          </div>
+          <!--!End of second -->
+        </div>
+        <!--$ end Pursuing further studies -->
+        <button class="bg-blue-600 p-3 text-white w-[150px]" name='s'>Submit</button>
+      </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

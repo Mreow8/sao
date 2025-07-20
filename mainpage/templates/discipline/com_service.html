@@ -1,0 +1,39 @@
+{% extends "main.html" %} {% block title %}Community Service Tracker{% endblock
+%} {% block bodycontent %}
+<h1 class="text-2xl font-bold mb-4">Community Service Hours Tracker</h1>
+
+<a
+  href="{% url 'add_community_service' %}"
+  class="bg-blue-500 text-white px-4 py-2 rounded"
+  >Add Record</a
+>
+
+<table class="w-full mt-4 table-auto border border-collapse">
+  <thead>
+    <tr class="bg-gray-200">
+      <th class="border px-4 py-2">Student</th>
+      <th class="border px-4 py-2">Date</th>
+      <th class="border px-4 py-2">Hours</th>
+      <th class="border px-4 py-2">Activity</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for service in services %}
+    <tr>
+      <td class="border px-4 py-2">{{ service.student }}</td>
+      <td class="border px-4 py-2">{{ service.date }}</td>
+      <td class="border px-4 py-2">{{ service.hours_rendered }}</td>
+      <td class="border px-4 py-2">{{ service.activity_description }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4" class="text-center py-4">No records found.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p class="mt-4 font-semibold text-lg">
+  Total Hours Rendered: {{ total_hours }} hrs
+</p>
+{% endblock %}

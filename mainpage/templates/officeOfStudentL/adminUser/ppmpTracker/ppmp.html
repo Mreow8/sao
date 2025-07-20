@@ -1,0 +1,51 @@
+{% extends 'adminUser/adminmain.html' %}
+{% load static %}
+
+{% block bodycontent %}
+<link rel="stylesheet" href="{% static 'studentlife/p_style.css' %}">
+    <link rel="stylesheet" href="{% static 'studentlife/ppmp.css' %}">
+<div class="p-content">
+    <h2>Project Procurement Management Plan Tracker</h2><br>
+    <div>
+        <h4><span class="gray-text">Home</span>
+            <span class="orange-text">&nbsp;&gt;&nbsp;PPMP Tracker</span></h4>
+    </div>
+    <div class="lnd">
+        <!--ongoing pa ang pag finalize sa l&d-->
+        <h4><a href="{% url 'studentLife_system:lnd_file' %}"><span class="gray-text">Learning & Development</span></a></h4>
+    </div>
+    <div class="upload-container">
+        
+        <div class="button-container">
+        <form method="post" enctype="multipart/form-data" id="uploadForm">
+            {% csrf_token %}
+            <label for="fileInput" class="custom-file-label">Choose File</label>
+            <input type="file" id="fileInput" name="file" class="custom-file-input">
+            <div id="fileNameDisplay" class="file-name-display"></div>
+            <button type="submit" class="button">Upload</button>
+        </form>
+        <form action="{% url 'studentLife_system:display_items' %}" method="get">
+            <button type="submit" class="button">Display</button>
+        </form>
+        </div>
+    </div>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', function () {
+        var fileName = this.value.split('\\').pop();
+        document.getElementById('fileNameDisplay').innerText = fileName;
+    });
+</script>
+
+<script src="{% static 'studentlife/main.js' %}"></script>
+
+{% endblock bodycontent %}

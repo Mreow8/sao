@@ -158,13 +158,16 @@
               <input
                 type="password"
                 placeholder="Enter your password"
-                name="set_password"
+                name="password"
                 required
               />
             </div>
 
             <button type="submit" class="btn-login">Login</button>
           </form>
+          {% if messages %} {% for message in messages %}
+          <div class="error">{{ message }}</div>
+          {% endfor %} {% endif %}
           <div class="footer">
             Don't have an account? Contact your administrator.
             <a href="{% url 'signupuser' %}">Register</a>

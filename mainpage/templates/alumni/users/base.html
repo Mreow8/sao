@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+{% load static %}
+
+<head>
+  <link rel="shortcut icon" type="x-icon" href="{% static 'studentlife/images/CTU_logo.png' %}">
+  <title>STUDENT LIFE INFORMATION SYSTEM</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://kit.fontawesome.com/c384d92761.js" crossorigin="anonymous"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        container: {
+          padding: {
+            DEFAULT: "15px",
+          },
+        },
+
+        extend: {
+          colors: {
+            grayyy: "#f1f1f1",
+            gray2: "#F2F2F2",
+            orng: "#FF8000",
+            blo: "#4682B4",
+            tgray: "#5A5A5A",
+
+          },
+
+          fontWeight: {
+            medium: 500,
+            semibold: 600,
+            bold: 700,
+          },
+          fontStyle: {
+            sfLight: [
+              "SF Pro Text",
+              "Arial",
+              "sans-serif",
+              {
+                "font-weight": 600,
+                "font-style": "normal"
+              },
+            ],
+            sfRegular: [
+              "SF Pro Text",
+              "Arial",
+              "sans-serif",
+              {
+                "font-weight": 400,
+                "font-style": "normal"
+              },
+            ],
+          },
+
+        },
+      },
+    }
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="/static/alumni/users/styles.css">
+
+</head>
+
+<body>
+  <div class="orange-bar">
+    <a href="/homepage"><img src="{% static 'studentlife/images/CTU_logo.png' %}" class="logo"></a>
+    <img src="{% static 'studentlife/images/barSort.png' %}" class="bars">
+  </div>
+
+
+
+  <div class="left-side">
+    <nav class="side-nav">
+      <ul>
+
+        <li><a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE
+            <span class="fas fa-caret-down first"></span>
+          </a>
+          <ul class="studentlife">
+            <li><a href="/equipmenttracker">Tracker</a></li>
+            <li><a href="/requestgmc">Good Moral Certificate Issuance</a></li>
+            <li><a href="/monthlyCalendar">Monthly Calendar of Activites</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="scholar-btn">SCHOLARSHIP
+            <span class="fas fa-caret-down second"></span>
+          </a>
+          <ul class="scholar-show">
+            <li><a href="#">Submission of Requirements Tracker</a></li>
+            <li><a href="#">Scholars Profile and Validation</a></li>
+            <li><a href="#">Grade Submission with GPA Computation</a></li>
+            <li><a href="#">Mentorship Program</a></li>
+            <li><a href="#">Admin Cost Liquidation Tracker</a></li>
+            <li><a href="#">CHED Reports Submission</a></li>
+            <li><a href="#">Transaction Reports</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="jobplace-btn">JOB PLACEMENT
+            <span class="fas fa-caret-down third"></span>
+          </a>
+          <ul class="jobplace-show">
+            <li><a href="{% url 'jobplacement:ojt_hiring' %}">OJT Hiring</a></li>
+            <li><a href="{% url 'jobplacement:seminar_page' %}">Career Guidance Tracker</a></li>
+            <li><a href="{% url 'jobplacement:ojt_requirements_tracker' %}">OJT Requirements Tracker</a></li>
+            {% if request.user.is_staff %}
+            <li><a href="{% url 'jobplacement:non_acad' %}">Non-Academic Award Issuance</a></li>
+            <li><a href="{% url 'jobplacement:job_trans_rep' %}">Transaction Reports</a></li>
+            {% endif%}
+            {% if request.user.is_superuser %}
+            <li><a href="{% url 'jobplacement:admin_signup' %}">Admin Signup</a></li>
+            {% endif %}
+            {% if request.user.is_staff %}
+            <li><a href="{% url 'custom_user:register' %}">Student Signup</a></li>
+            {% endif %} 
+          </ul>
+        </li>
+        <li><a href="#" class="student_disc-btn">STUDENT DISCIPLINE
+            <span class="fas fa-caret-down fourth"></span>
+          </a>
+          <ul class="student_disc-show">
+            <li><a href="{% url 'studentLife_discipline:NewCase' %}">Case Profile</a></li>
+            <li><a href="{% url 'studentLife_discipline:case-list' %}">Hours Rendered for Community Service Tracker</a></li>
+            <li><a href="{% url 'studentLife_discipline:req_goodmoral' %}">Good Moral Certificate Issuance</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="guide-btn">GUIDANCE
+            <span class="fas fa-caret-down fifth"></span>
+          </a>
+          <ul class="guide-show">
+            <li><a href="{% url 'studentLife_system:Individual Profile'%}">Individual Profile with Guidance Concern</a>
+            </li>
+            <li><a href="{% url 'studentLife_system:Counseling App With Scheduler'%}">Counseling App with Scheduler</a>
+            </li>
+            <li><a href="{% url 'studentLife_system:Exit Interview'%}">Exit Interview</a></li>
+            <li><a href="{% url 'studentLife_system:OJT Assessment'%}">OJT Assessments/Psychological Issuance</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="alumni-btn">ALUMNI
+            <span class="fas fa-caret-down sixth"></span>
+          </a>
+          <ul class="alumni-show">
+            <li><a href="{% url 'studentLife_system:idRequest' %}">Alumni ID Requests</a></li>
+            <li><a href="{% url 'studentLife_system:graduateTracer' %}">Graduate Tracer</a></li>
+            <li><a href="{% url 'studentLife_system:alumni_events' %}">Alumni Reunion and Events</a></li>
+            <li><a href="{% url 'studentLife_system:jobfairs' %}">Job Fairs</a></li>
+            <li><a href="{% url 'studentLife_system:yearbook' %}">Digital Yearbook</a></li>
+
+          </ul>
+        </li>
+        <li><a href="#" class="community-btn">COMMUNITY INVOLVEMENT
+            <span class="fas fa-caret-down seventh"></span>
+          </a>
+          <ul class="community-show">
+            <li><a href="{% url 'studentLife_system:programs' %}">Events</a></li>
+            <li><a href="{% url 'studentLife_system:projects' %}">CrowdFunding Projects</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="student_org-btn">STUDENT ORGANIZATION
+            <span class="fas fa-caret-down eight"></span>
+          </a>
+          <ul class="student_org-show">
+            <li><a href="{% url 'studentLife_system:Gen_Home' %}">Org Profile</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="medical-btn">MEDICAL
+            <span class="fas fa-caret-down ninth"></span>
+          </a>
+          <ul class="medical-show">
+            <li><a href="{% url 'medicalv2:upload_requirements' %}">Student Medical Requirements Tracker</a></li>
+            <li><a href="{% url 'medicalv2:request' %}">Medical Form Request</a></li>
+            <li><a href="{% url 'medicalv2:dentalservice' %}">Dental Services</a></li>
+            <br><br><br>
+          </ul>
+        </li>
+      </ul>
+  </div>
+  </div>
+
+
+
+  <div class="search-container">
+    
+    <p class="login">
+      {% if user.is_authenticated %}
+    <div class="dropdown">
+      <a href="#" class="dropdown-link" id="username">Hi, {{ user.first_name }} {{ user.last_name }}</a>
+      <div class="dropdown-content">
+        <a href="#">Help & Support</a>
+        <a href="{% url 'custom_user:logout' %}">Logout</a>
+      </div>
+    </div>
+    {% else %}
+    <a href="{% url 'custom_user:index' %}" class="login-link">Log In | </a>
+    <a href="{% url 'custom_user:register' %}" class="signup-link">Sign up</a>
+    {% endif %}
+    </p>
+  </div>
+
+  </nav>
+
+  {% block content %}
+
+  {% endblock %}
+
+  <script src="{% static 'studentlife/newmain.js' %}"></script>
+
+  </script>
+</body>
+
+</html>

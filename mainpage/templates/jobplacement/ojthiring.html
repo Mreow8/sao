@@ -1,14 +1,23 @@
-{% extends 'main.html' %} {% block headcontent %} {% load static %}
+{% extends base_template|default:"main.html" %} {% block headcontent %}
+<!-- ignore prettier -->
+{% load static %}
 <link
   rel="stylesheet"
   href="{% static 'styles/job_placement/ojthiring.css' %}?249 "
 />
 
 {% endblock headcontent %} {% block bodycontent %}
-
-<section>
-  <div class="intro">
-    <p>OJT Hiring</p>
+<div class="container">
+  <div class="header-bar">
+    <div class="sub-title">
+      <h3>JOB PLACEMENT</h3>
+      <p class="hometext">Home</p>
+      <p class="certxt">&gt; Ojt Hiring</p>
+    </div>
+    <div class="button-container">
+      <button class="showform2">Assign Student</button>
+      <button class="showform">Add Company</button>
+    </div>
   </div>
   <hr id="demo" />
   <div id="desc">
@@ -24,10 +33,6 @@
 
   <!-- Add company Form-->
   <!-- <div class="container">      -->
-  <div class="button-container">
-    <button class="showform2">Assign Student</button>
-    <button class="showform">Add Company</button>
-  </div>
 
   <div class="showform_container">
     <div class="form_container">
@@ -217,19 +222,23 @@
       <ul>
         <li>{{ hiring.description }}</li>
       </ul>
-      <button class="btnshow">Read More</button>
-      {% if request.user.is_staff %}
-      <a
-        class="showtable"
-        href="{% url 'jobplacement:ojthiring_info' hiring.company_id %}"
-        >View</a
-      >
-      {% endif %}
+      <div class="button-bar">
+        <button class="btnshow">Read More</button>
+        {% if request.user.is_staff %}
+        <a
+          class="showtable"
+          href="{% url 'jobplacement:ojthiring_info' hiring.company_id %}"
+          >View</a
+        >
+
+        {% endif %}
+      </div>
     </div>
   </div>
   {% endfor %}
 
   <!-- </div> -->
-</section>
+</div>
+
 <script src="{% static 'scripts/job_placement/ojthiring_show.js' %}?321"></script>
 {% endblock bodycontent %}

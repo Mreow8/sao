@@ -1,5 +1,5 @@
-{% extends 'main.html' %} {% load static %} {% block title %}Student Detail{%
-endblock %} {% block extra_css %}
+{% extends 'adminmain.html' %} {% load static %} {% block title %}Student
+Detail{% endblock %} {% block extra_css %}
 <link rel="stylesheet" href="{% static 'styles/admin/pwd_details.css' %}" />
 <style>
   .student-id img {
@@ -9,7 +9,7 @@ endblock %} {% block extra_css %}
     margin: 0 auto 20px; /* Add some bottom margin */
   }
 </style>
-{% endblock %} {% block content %}
+{% endblock %} {% block bodycontent %}
 <div class="container">
   {% if messages %}
   <div class="message-container">
