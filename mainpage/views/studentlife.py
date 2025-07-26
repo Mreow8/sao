@@ -265,7 +265,7 @@ def addEquipment(request):
             new_equipment.save()
             
             messages.success(request, "Equipment added successfully")
-            return redirect('officeOfStudentL_system:addEquipment')
+            return redirect('addEquipment')
         else:
             messages.error(request, "Please provide both equipment name and serial number")
     
@@ -273,7 +273,7 @@ def addEquipment(request):
     all_equipment = Equipment.objects.all()
 
     # Pass the equipment objects to the template context
-    return render(request, 'adminUser/addEquipment.html', {'all_equipment': all_equipment})
+    return render(request, 'officeOfStudentL/adminUser/addEquipment.html', {'all_equipment': all_equipment})
 
 def save_equipment_borrowing(request):
     if request.method == "POST":

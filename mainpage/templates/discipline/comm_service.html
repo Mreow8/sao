@@ -1,0 +1,119 @@
+{% extends 'main.html' %} {% load static %} {% block bodycontent %}
+
+<link
+  rel="stylesheet"
+  href="{% static 'studentdiscipline/css/cstracker.css' %}"
+/>
+<link
+  href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Lato&display=swap"
+  rel="stylesheet"
+/>
+
+<div class="container">
+  <h2>Community Service Time Record</h2>
+  <div class="btn-container">
+    <a href="{% url 'studentLife_discipline:NewCase' %}" class="btn-home"
+      >Home</a
+    >
+  </div>
+
+  <div class="table-container">
+    <form id="serviceForm" method="post" action="">
+      {% csrf_token %}
+      <div class="input-container">
+        <div class="inputs">
+          <label for="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            value="{{student.lastname}}, {{student.firstname}} {{student.middlename}}"
+          />
+        </div>
+        <div class="inputs">
+          <label for="year_section">Course/Year/Section:</label>
+          <input
+            type="text"
+            id="year_section"
+            value="{{student.degree}} - {{student.year_level}} "
+          />
+        </div>
+        <div class="inputs">
+          <label for="service-hours">Community service hours: </label>
+          <input
+            type="text"
+            id="service-hours"
+            value="{{student.community_service_hours}}"
+          />
+        </div>
+        <div class="inputs">
+          <label for="service-deadline">Community service deadline: </label>
+          <input
+            type="text"
+            id="service-deadline"
+            value="{{student.community_service_deadline}}"
+          />
+        </div>
+      </div>
+      <table id="serviceTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+            <th>Hours Rendered</th>
+            <th>Student Signature</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for service in community_services %}
+          <tr>
+            <td>{{ service.service_date }}</td>
+            <td>{{ service.time_in }}</td>
+            <td>{{ service.time_out }}</td>
+            <td>{{ service.time_rendered }}</td>
+            <td>{{ service.student_signature }}</td>
+            <td>{{ service.remarks }}</td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td><input type="date" id="id_date" name="service_date" /></td>
+            <td><input type="time" id="id_time_in" name="time_in" /></td>
+            <td><input type="time" id="id_time_out" name="time_out" /></td>
+            <td>
+              <input
+                type="text"
+                id="id_hours_rendered"
+                name="hours_rendered"
+                readonly
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                id="id_student_signature"
+                name="student_signature"
+              />
+            </td>
+            <td><input type="text" id="id_remark" name="remarks" /></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Total Time Rendered: {{total_hours}} hour, {{total_minutes}} minutes
+      </p>
+      {% if student.sanction_completed is True %}
+      <p>Sanction Completed</p>
+      {% else %}
+      <p>Sanction Not Completed</p>
+      {% endif %}
+      <button class="btn-save" type="submit">Save</button>
+    </form>
+  </div>
+</div>
+<script src="{% static 'js/cstracker.js' %}"></script>
+{%endblock%}

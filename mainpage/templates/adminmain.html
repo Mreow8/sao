@@ -96,14 +96,18 @@
               <span class="fas fa-caret-down second"></span>
             </a>
             <ul class="scholar-show">
-              <li><a href="#">Submission of Requirements Tracker(Admin)</a></li>
-              <li><a href="#">Scholars Profile and Validation(Admin)</a></li>
+              <li><a href="{% url 'admin_req'%}"">Submission of Requirements Tracker(Admin)</a></li>
+              <li>
+                <a href="{% url 'profile'%}"
+                  >Scholars Profile and Validation(Admin)</a
+                >
+              </li>
               <li>
                 <a href="#">Grade Submission with GPA Computation(Admin)</a>
               </li>
               <li><a href="#">Mentorship Program(Admin)</a></li>
-              <li><a href="#">Admin Cost Liquidation Tracker(Admin)</a></li>
-              <li><a href="#">CHED Reports Submission(Admin)</a></li>
+              <li><a href="{% url 'liquidation'%}">Admin Cost Liquidation Tracker(Admin)</a></li>
+              <li><a href="{% url 'ched'%}">CHED Reports Submission(Admin)</a></li>
               <li><a href="#">Transaction Reports(Admin)</a></li>
             </ul>
           </li>

@@ -5,6 +5,7 @@ from ..models import studentInfo
 
 
 class applicants(models.Model):
+    application_id = models.AutoField(primary_key=True)
     studID = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
     cor_file = models.FileField(upload_to='applicants/cor_pic/', blank=True, null=True)
     grade_file = models.FileField(upload_to='applicants/grade_pic/', blank=True, null=True)

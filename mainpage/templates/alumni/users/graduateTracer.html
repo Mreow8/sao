@@ -1,9 +1,9 @@
 {% extends 'main.html' %}
 
 {% block bodycontent %}
-<section class="h-auto ml-[300px] flex items-center justify-center bg-gray-100">
-  <div class="mx-auto container text-black" style="margin-top: -8%;">
-    <div class="flex items-center justify-center mt-[200px]">
+<div class="container">
+  <div >
+    <div >
 
       {% csrf_token %}
       <div class="flex flex-col gap-5 justify-center items-center w-full h-auto p-11 bg-white">
@@ -26,18 +26,7 @@
         <div class="flex flex-col gap-5 w-full">
           <h1 class="text-[36px] font-bold mb-11">Graduates Form</h1>
 
-          <form class="flex flex-col gap-2" action="{% url 'search_id2' %}" method="get">
-            {% csrf_token %}
-            <h6 class="text-[19px]">Search ID</h6>
-            <div class="flex gap-5">
-              <input type="hidden" name="student_id" value="{{ student_id }}" />
-              <input type="number" name="student_id" class="bg-gray-100 outline-none h-[49px] w-[316px] p-2" required />
-              <button class="bg-blue-600 p-1 text-[18px] text-white w-[150px]">
-                Search
-              </button>
-            </div>
-          </form>
-
+        
           <div class="flex items-center justify-between">
             {% if alumni  %}
             <div class="flex flex-col">
@@ -66,7 +55,7 @@
             </div>
           </div>
 
-          <form class="w-full h-auto bg-white" method="post" action="{% url 'studentLife_system:graduateTracer_submit' %}">
+          <form class="w-full h-auto bg-white" method="post" action="{% url 'graduateTracer_submit' %}">
             {% csrf_token %}
             <input type="hidden" name="student_id" value="{{ alumni.student.studID }}" />
             <input type="hidden" name="firstname" value="{{ alumni.firstname }}" />
@@ -617,41 +606,77 @@
         <!--$ end Degree program rate -->
 
         <!--$ Pursuing further studies -->
-        <div class="flex flex-col gap-5 w-full">
+        <div>
+  <label for="further_studies" class="block text-sm font-medium text-gray-700">
+    Are you pursuing further studies?
+  </label>
+  <select
+    id="further_studies"
+    name="further_studies"
+    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500"
+    onchange="toggleStudyDetails(this.value)"
+  >
+    <option value="">-- Select an option --</option>
+    <option value="yes">Yes</option>
+    <option value="no">No</option>
+  </select>
+</div>
+
+<div id="studyDetailsContainer" class="mt-4 hidden">
+ 
+  <div id="study_details" class="flex flex-col gap-5 w-full">
           <h1 class="text-[26px] font-bold">7. If Pursuing Further Studies</h1>
           <div class="flex gap-5">
             <div class="w-full">
               <p class="text-[14px] text-gray-600 mb-2">Enrollment Date</p>
-              <input type="date" name="enrollmentdate" class="bg-gray-100 outline-none h-[49px] w-full p-2" required />
+              <input type="date" name="enrollmentdate" class="bg-gray-100 outline-none h-[49px] w-full p-2"  />
             </div>
             <div class="w-full">
               <p class="text-[14px] text-gray-600 mb-2">Degree Program</p>
-              <input type="text" name="studiesdegree" class="bg-gray-100 outline-none h-[49px] w-full p-2" required />
+              <input type="text" name="studiesdegree" class="bg-gray-100 outline-none h-[49px] w-full p-2"  />
             </div>
             <div class="w-full">
               <p class="text-[14px] text-gray-600 mb-2">University/Institution</p>
-              <input type="text" name="universityinstitution" class="bg-gray-100 outline-none h-[49px] w-full p-2" required />
+              <input type="text" name="universityinstitution" class="bg-gray-100 outline-none h-[49px] w-full p-2"  />
             </div>
             <div class="w-full">
               <p class="text-[14px] text-gray-600 mb-2">Address</p>
-              <input type="text" name="studiesAddress" class="bg-gray-100 outline-none h-[49px] w-full p-2" required />
+              <input type="text" name="studiesAddress" class="bg-gray-100 outline-none h-[49px] w-full p-2"  />
             </div>
           </div>
           <!--! end First -->
           <div class="w-full flex flex-col justify-center ">
             <p class="text-[14px] font-bold mb-2">Reasons for pursuing further studies</p>
             <div class="flex ">
-              <textarea required name="pursuingstudies" class="bg-gray-100 w-[800px] h-[300px] outline-none p-5"></textarea>
+              <textarea name="pursuingstudies" class="bg-gray-100 w-[800px] h-[300px] outline-none p-5"></textarea>
             </div>
           </div>
           <!--!End of second -->
         </div>
+</div>
+
+       
         <!--$ end Pursuing further studies -->
         <button class="bg-blue-600 p-3 text-white w-[150px]" name='s'>Submit</button>
       </div>
       </form>
+      {% else %}
+      <p>ejrjrtjertj</p>
       {% endif %}
     </div>
   </div>
-</section>
+</div>
+
+<script>
+  function toggleStudyDetails(value) {
+    const container = document.getElementById("studyDetailsContainer");
+    if (value === "yes") {
+      container.classList.remove("hidden");
+    } else {
+      container.classList.add("hidden");
+      document.getElementById("study_details").value = ""; // clear input if hidden
+    }
+  }
+</script>
+
 {% endblock %}

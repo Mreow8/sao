@@ -11,15 +11,18 @@ from mainpage.decorators import sao_admin_required  # Adjust path if your decora
 def idRequest(request):
     user = request.user
     student = None
+    alumni = None
+
     if user.is_authenticated:
         try:
-            # Use studentInfo and match studID to username
             student = studentInfo.objects.get(studID=user.username)
+            alumni = Alumni.objects.filter(student=student).first()
         except studentInfo.DoesNotExist:
             student = None
 
     context = {
         'student': student,
+        'alumni': alumni  # Pass alumni object to template
     }
     return render(request, 'alumni/users/id_alumni.html', context)
 
@@ -61,7 +64,7 @@ def add_alumni(request):
         
         if Alumni.objects.filter(student__studID=student_id).exists():
             messages.error(request, f'You already requested Alumni ID!')
-            return redirect('studentLife_system:idRequest')
+            return redirect(' idRequest')
 
         student = get_object_or_404(studentInfo, studID=student_id)
         alumni = Alumni.objects.create(student=student, firstname=firstname, lastname=lastname,
@@ -72,37 +75,51 @@ def add_alumni(request):
         
         messages.success(request, f'Your request is successful! Your alumni ID requested is {alumni_id}')
         
-        return redirect('studentLife_system:idRequest')
+        return redirect('idRequest')
     else:
-        return redirect('studentLife_system:idRequest')    
+        return redirect('idRequest')    
     
 
-def graduateTracer(request):
-    return render(request, 'alumni/users/graduateTracer.html')
+def graduateTracer(request, stud_id):
+    try:
+        alumni = Alumni.objects.select_related('student').get(student__studID=stud_id)
+    except Alumni.DoesNotExist:
+        alumni = None
 
+    return render(request, 'alumni/users/graduateTracer.html', {'alumni': alumni})
+
+    
+    
 def search_id2(request):
-    if request.method == 'GET':
-        student_id = request.GET.get('student_id')
-        if student_id:
-            try:
-                
-                alumni_obj = Alumni.objects.get(student__studID=student_id)
-                
-                
-                if graduateForm.objects.filter(student__studID=student_id).exists():
-                    messages.error(request, 'You have already filled out this form.')
-                    return render(request, 'alumni/users/graduateTracer.html')
-                
-                return render(request, 'alumni/users/graduateTracer.html', {'alumni': alumni_obj})
-            except Alumni.DoesNotExist:
-                messages.error(request, 'Not Found! Please request first for alumni ID')
-                return render(request, 'alumni/users/graduateTracer.html')
-        else:
-            messages.error(request, 'Please provide a student ID.')
-            return render(request, 'alumni/users/graduateTracer.html')
-    else:
+    user = request.user
+    if not user.is_authenticated:
+        messages.error(request, 'Please log in to continue.')
+        return redirect('login')  # or wherever your login URL is
+
+    try:
+        student_id = user.username
+        alumni_obj = Alumni.objects.get(student__studID=student_id)
+
+        if graduateForm.objects.filter(student__studID=student_id).exists():
+            messages.error(request, 'You have already filled out this form.')
+            return render(request, 'alumni/users/graduateTracer.html', {
+                'alumni': alumni_obj,
+                'student_id': student_id
+            })
+
+        return render(request, 'alumni/users/graduateTracer.html', {
+            'alumni': alumni_obj,
+            'student_id': student_id
+        })
+        
+    except Alumni.DoesNotExist:
+        messages.error(request, 'Not Found! Please request first for alumni ID.')
         return render(request, 'alumni/users/graduateTracer.html')
-    
+
+    except Exception as e:
+        messages.error(request, f'An error occurred: {str(e)}')
+        return render(request, 'alumni/users/graduateTracer.html')
+
 def graduateTracer_submit(request):
     if request.method == 'POST':
         student_id = request.POST.get('student_id')
@@ -154,7 +171,9 @@ def graduateTracer_submit(request):
         classize = request.POST.get('classize')
         profexpertise = request.POST.get('profexpertise')
         profsubjectmatter = request.POST.get('profsubjectmatter')
-        enrollmentdate = request.POST.get('enrollmentdate')
+        raw_enrollmentdate = request.POST.get('enrollmentdate')
+        enrollmentdate = raw_enrollmentdate if raw_enrollmentdate else None
+
         studiesdegree = request.POST.get('studiesdegree')
         universityinstitution = request.POST.get('universityinstitution')
         studiesAddress = request.POST.get('studiesAddress')
@@ -168,13 +187,13 @@ def graduateTracer_submit(request):
             student = get_object_or_404(studentInfo, studID=student_id)
         except:
             messages.error(request, 'Student ID not found.')
-            return redirect('studentLife_system:graduateTracer')
+            return redirect('graduateTracer')
 
         try:
             alumni = get_object_or_404(Alumni, student=student)
         except:
             messages.error(request, 'No Alumni matches the given query.')
-            return redirect('studentLife_system:graduateTracer')
+            return redirect('graduateTracer')
         gradform = graduateForm.objects.create( alumniID=alumni,student=student,
                                     degree=degree,
                                     email_add=email_add,
@@ -239,9 +258,9 @@ def graduateTracer_submit(request):
         alumni_id = alumni.alumniID
         
         messages.success(request, f'Your request is successful! Your alumni ID is {alumni_id}')
-        return redirect('studentLife_system:graduateTracer')
+        return redirect('graduateTracer')
     else:
-        return redirect('studentLife_system:graduateTracer')    
+        return redirect('graduateTracer')    
     
 def alumni_events(request):
     events = Event.objects.all()    
@@ -365,7 +384,7 @@ def transac_search(request):
 
 
 # admin alumni
-@sao_admin_required
+# @sao_admin_required
 def admin_id_request(request):
     alumni_requests = Alumni.objects.all()
     return render(request, 'alumni/users/admin_idRequest.html', {'alumni_requests': alumni_requests})
@@ -389,19 +408,19 @@ def approve_alumni_request(request, alumni_id):
         except (socket.error, BadHeaderError) as e:
             messages.error(request, f'Error sending email: {e}')
         
-        return redirect('studentLife_system:admin_idRequest')
+        return redirect('admin_idRequest')
 
-    return redirect('studentLife_system:admin_idRequest')
+    return redirect('admin_idRequest')
     
 def claim_alumni_id(request, alumni_id):
     if request.method == 'POST':
         alumni = get_object_or_404(Alumni, pk=alumni_id)
         alumni.claimed_date = timezone.now()
         alumni.save()
-        return redirect('studentLife_system:admin_idRequest')
+        return redirect(' admin_idRequest')
 
-    return redirect('studentLife_system:admin_idRequest')
-@sao_admin_required
+    return redirect(' admin_idRequest')
+# @sao_admin_required
 def admin_gradTracer(request):
     graduate_requests = graduateForm.objects.select_related('alumniID').all()
     return render(request, 'alumni/users/admin_gradTracer.html', {'graduate_requests': graduate_requests})
@@ -425,13 +444,13 @@ def admin_events(request):
         )
         messages.success(request, 'Successfully Added!')
         
-        return redirect('studentLife_system:admin_events')
+        return redirect(' admin_events')
 
     return render(request, 'alumni/users/admin_events.html')
 
 
 
-@sao_admin_required
+# @sao_admin_required
 def admin_jobfairs(request):
     if request.method == "POST":
         jobtitle = request.POST.get("jobtitle")
@@ -455,14 +474,14 @@ def admin_jobfairs(request):
         )
 
         messages.success(request, "Successfully Added!")
-        return redirect("studentLife_system:admin_jobfairs")
+        return redirect("admin_jobfairs")
 
     job_fairs = JobFair.objects.order_by('-posted_date')
     return render(request, "alumni/users/admin_jobfairs.html", {"job_fairs": job_fairs})
 
 
 
-@sao_admin_required
+# @sao_admin_required
 def admin_yearbook(request):
     if request.method == 'POST':
         yearbookFirstname = request.POST.get('yearfirstname')
@@ -488,6 +507,6 @@ def admin_yearbook(request):
             )
             messages.success(request, 'Successfully Added!')
         
-        return redirect('studentLife_system:admin_yearbook')
+        return redirect('admin_yearbook')
 
     return render(request, 'alumni/users/admin_yearbook.html')

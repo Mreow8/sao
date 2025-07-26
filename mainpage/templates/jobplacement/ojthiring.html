@@ -1,11 +1,12 @@
 {% extends base_template|default:"main.html" %} {% block headcontent %}
 <!-- ignore prettier -->
 {% load static %}
+<link rel="stylesheet" href="{% static 'header.css' %}" />
+
 <link
   rel="stylesheet"
   href="{% static 'styles/job_placement/ojthiring.css' %}?249 "
 />
-
 {% endblock headcontent %} {% block bodycontent %}
 <div class="container">
   <div class="header-bar">

@@ -1,69 +1,81 @@
-{% extends 'alumni/users/adminbase.html' %}
+{% extends 'adminmain.html' %} {% block bodycontent %}
+<div class="sub-title">
+  <h3>Alumni(Admin)</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; ID request</p>
+</div>
+<div class="container mx-auto py-10">
+  <div class="bg-white shadow-2xl rounded-2xl p-10">
+    <div
+      class="grid grid-cols-7 gap-4 text-sm font-semibold text-gray-700 border-b pb-4 mb-4 text-center"
+    >
+      <div>Alumni ID</div>
+      <div>Student ID</div>
+      <div>First Name</div>
+      <div>Last Name</div>
+      <div>Date Requested</div>
+      <div>Date Released</div>
+      <div>Confirmation</div>
+    </div>
 
-{% block content %}
-<section class="h-auto ml-[300px] flex items-center justify-center bg-grayyy">
-  <div class="mx-auto container text-black" style="margin-top: -65%;">
-    <div class="flex items-center justify-center mt-[200px]">
-      <div class="bg-white w-full h-screen p-6">
-        <h1 class="text-[26px] font-bold mb-4">Alumni ID Requests</h1>
+    <div class="space-y-4">
+      {% for alumni_request in alumni_requests %}
+      <div
+        class="grid grid-cols-7 gap-4 text-center items-center bg-indigo-50 rounded-xl p-4 shadow-sm hover:bg-indigo-100 transition"
+      >
+        <p class="font-medium">{{ alumni_request.alumniID }}</p>
+        <p class="font-medium">{{ alumni_request.student.studID }}</p>
+        <p class="font-medium">{{ alumni_request.student.firstname }}</p>
+        <p class="font-medium">{{ alumni_request.student.lastname }}</p>
+        <p class="font-medium">{{ alumni_request.alumnidate }}</p>
 
-        <div class="flex flex-col w-full border justify-between items-center p-2">
-          <div class="grid grid-cols-7 w-full items-center justify-center">
-            <h3 class="text-blo font-bold text-[20px] w-full text-center">Alumni ID</h3>
-            <h3 class="text-blo font-bold text-[20px] w-full text-center">Student ID</h3>
-            <h3 class="text-blo font-bold text-[20px] w-full text-center">First Name</h3>
-            <h3 class="text-blo font-bold text-[20px] w-full text-center">Last Name</h3>
-            <h3 class="text-blo font-bold text-[20px] w-full text-center">Date Requested</h3>
-            <h3 class="text-blo font-bold text-[20px] w-full text-center">Date Released</h3>
-            <h3 class="text-blo font-bold text-[20px] w-full text-center">Confirmation</h3>
-            {% for alumni_request in alumni_requests %}
-            <p class="w-full font-bold text-center mt-3">
-              {{ alumni_request.alumniID }}
-            </p>
-            <p class="w-full font-bold text-center mt-3">
-              {{ alumni_request.student.studID }}
-            </p>
-            <p class="w-full font-bold text-center mt-3">
-              {{ alumni_request.student.firstname }}
-            </p>
-            <p class="w-full font-bold text-center mt-3">
-              {{ alumni_request.student.lastname }}
-            </p>
-            <p class="w-full font-bold text-center mt-3">
-              {{ alumni_request.alumnidate }}
-            </p>
-            <p class="w-full font-bold text-center mt-3">
-              {% if alumni_request.claimed_date %}
-              {{ alumni_request.claimed_date|date:"Y-m-d" }}
-              {% else %}
-              --
-              {% endif %}
-            </p>
+        <!-- prettier-ignore -->
+        <p class="font-medium">
+          {% if alumni_request.claimed_date %}
+            {{ alumni_request.claimed_date|date:"Y-m-d" }}
+          {% else %}
+            --
+          {% endif %}
+        </p>
 
-
-            {% if alumni_request.claimed_date %}
-            <p class="w-full font-bold text-center mt-3">
-
-              Claimed
-            </p>
-            {% else %}
-            {% if alumni_request.approved %}
-            <form action="{% url 'studentLife_system:claim_alumni_id' alumni_request.alumniID %}" method="post" class="w-full text-center">
-              {% csrf_token %}
-              <button type="submit" class="bg-blue-500 p-2 text-white text-[14px] rounded-full">Claimed</button>
-            </form>
-            {% else %}
-            <form action="{% url 'studentLife_system:approve_alumni_request' alumni_request.alumniID %}" method="post" class="w-full text-center">
-              {% csrf_token %}
-              <button type="submit" class="bg-green-500 p-2 text-white text-[14px] rounded-full">Approve</button>
-            </form>
-            {% endif %}
-            {% endif %}
-
-            {% endfor %}
-          </div>
+        <div>
+          {% if alumni_request.claimed_date %}
+          <span
+            class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold"
+            >Claimed</span
+          >
+          {% else %} {% if alumni_request.approved %}
+          <form
+            action="{% url 'claim_alumni_id' alumni_request.alumniID %}"
+            method="post"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-semibold transition"
+            >
+              Mark as Claimed
+            </button>
+          </form>
+          {% else %}
+          <form
+            action="{% url 'approve_alumni_request' alumni_request.alumniID %}"
+            method="post"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full text-xs font-semibold transition"
+            >
+              Approve
+            </button>
+          </form>
+          {% endif %} {% endif %}
         </div>
       </div>
+      {% endfor %}
     </div>
-</section>
+  </div>
+</div>
+
 {% endblock %}

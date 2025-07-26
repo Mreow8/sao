@@ -104,7 +104,7 @@
                 <tbody>
                     {% for data in excel_data %}
                     <tr>
-                        <form method="post" action="{% url 'studentLife_system:update_excel_data' data.id %}">
+                        <form method="post" action="{% url ' update_excel_data' data.id %}">
                             {% csrf_token %}
                             <td><input type="text" name="title_of_l_d" value="{{ data.title_of_l_d }}" class="edit-input"></td>
                             <td><input type="text" name="frequency" value="{{ data.frequency }}" class="edit-input"></td>

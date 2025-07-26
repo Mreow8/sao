@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
     <head>
         <title>{% block title %}{% endblock %}</title>
@@ -78,7 +77,8 @@
                     </a>
                     <ul class="student_disc-show">
                      <li><a href="{% url 'case_profile' %}">Case Profile</a></li>
-                        <li><a href="#">Hours Rendered for Community Service Tracker</a></li>
+<prettier-ignore>
+                        <li><a href="{% url 'community-service-tracker' user.username  %}">Hours Rendered for Community Service Tracker</a></li></prettier-ignore>
                        
                         <li><a href="#">Transaction Reports</a></li>
                         
@@ -101,7 +101,7 @@
                     </a>
                     <ul class="alumni-show">
                       <li><a href="{% url 'idRequest' %}">Alumni ID Requests</a></li>
-<li><a href="{% url 'graduateTracer' %}">Graduate Tracer</a></li>
+<li><a href="{% url 'graduateTracer' user.username %}">Graduate Tracer</a></li>
 <li><a href="{% url 'alumni_events' %}">Alumni Reunion and Events</a></li>
 <li><a href="{% url 'jobfairs' %}">Job Fairs</a></li>
 <li><a href="{% url 'yearbook' %}">Digital Yearbook</a></li>

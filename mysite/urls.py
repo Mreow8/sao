@@ -2,17 +2,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from mainpage import views  # import your homepage view here
+from mainpage import views
 
 urlpatterns = [
-    path('', views.homepage, name='homepage'),  # this is the root page
+    path('', views.homepage, name='homepage'),  # Homepage (root)
     path('admin/', admin.site.urls),
-    path('alum/', include('mainpage.zsao_urls.alum_url')),
-    path('job/', include('mainpage.zsao_urls.job_url')),
-    path('', include('mainpage.zsao_urls.mainurls')),
-    path('med/', include('mainpage.zsao_urls.med_urls')),
-    path('schol/', include('mainpage.zsao_urls.schol_url')),
+
+    # Use unique prefixes to avoid collisions
+    path('scholarship/', include('mainpage.zsao_urls.schol_url')),
     path('slife/', include('mainpage.zsao_urls.slife_url')),
+    path('jobplacement/', include('mainpage.zsao_urls.job_url')),
+    path('alum/', include('mainpage.zsao_urls.alum_url')),
+    path('main/', include('mainpage.zsao_urls.mainurls')),
+    path('med/', include('mainpage.zsao_urls.med_urls')),
 ]
 
 # Serve static and media files in development

@@ -80,29 +80,29 @@ def signupuser(request):
 
     return render(request, 'scholarship/register.html', {'error_message': error_message})
 
+
+
 def signinuser(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
+        email = request.POST.get('email').strip()
         password = request.POST.get('password')
 
-        # First, check if a user with that username/email exists
         try:
-            user_obj = User.objects.get(username=email)
+            # Try finding the user by email
+            user_obj = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, "Account does not exist.")
             return render(request, 'login.html')
 
-        # Check if the account is active
         if not user_obj.is_active:
             messages.error(request, "This account is inactive. Please contact admin.")
             return render(request, 'login.html')
 
-        # Now try to authenticate
-        user = authenticate(request, username=email, password=password)
+        # Authenticate using the username (since Django auth uses username by default)
+        user = authenticate(request, username=user_obj.username, password=password)
 
         if user is not None:
             login(request, user)
-
             if user.is_superuser:
                 return redirect('adminhome')
             elif hasattr(user, 'user_type') and user.user_type == 'student':
@@ -111,6 +111,7 @@ def signinuser(request):
                 return redirect('homepage')
         else:
             messages.error(request, "Incorrect password.")
+            return render(request, 'login.html')
 
     return render(request, 'login.html')
 
@@ -569,11 +570,22 @@ def process_grade_image(request):
         return JsonResponse({'success': True, 'gpa': gpa, 'total_units': total_units})
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
-
 def scholars_profile_admin(request):
-    scholar_type = request.GET.get('scholar_type', '').lower()
+    scholar_type = request.GET.get('scholar_type', '').strip()
+    search_query = request.GET.get('search', '').strip()
     msg = ""
     context = {}
+
+    # Initial queryset: All accepted applicants
+    applicant_data = applicants.objects.filter(status='ACCEPTED')
+
+    # Filter by scholar type if selected
+    if scholar_type:
+        applicant_data = applicant_data.filter(scholar_type__iexact=scholar_type)
+
+    # Filter by search query if provided (Application ID = primary key of applicant)
+    if search_query:
+        applicant_data = applicant_data.filter(application_id__icontains=search_query)
 
     if request.method == 'POST':
         for key in request.POST.keys():
@@ -585,42 +597,38 @@ def scholars_profile_admin(request):
                 gpa = request.POST.get(f'gpa_{index}')
 
                 if not scholars.objects.filter(scholar_ID=scholar_id).exists():
-                    applicant = applicants.objects.get(id=applicant_id)
-                    student = applicant.studID
+                    try:
+                        applicant = applicants.objects.get(id=applicant_id)
+                        student = applicant.studID
 
-                    new_scholar = scholars(
-                        scholar_ID=scholar_id,
-                        studID=student,
-                        scholar_type=applicant.scholar_type,
-                        year=year
-                    )
-                    new_scholar.save()
+                        new_scholar = scholars(
+                            scholar_ID=scholar_id,
+                            studID=student,
+                            scholar_type=applicant.scholar_type,
+                            year=year
+                        )
+                        new_scholar.save()
 
-                    # Update the applicant's GPA
-                    applicant.gpa = gpa
-                    applicant.status = 'APPROVED'
-                    applicant.save()
+                        # Update GPA and status
+                        applicant.gpa = gpa
+                        applicant.status = 'APPROVED'
+                        applicant.save()
 
-                    msg = "Scholar added successfully."
+                        messages.success(request, "Scholar added successfully.")
+                    except applicants.DoesNotExist:
+                        messages.error(request, "Applicant not found.")
                 else:
                     messages.error(request, "Scholar ID already exists.")
 
-                context['msg'] = msg
-                return redirect('profile')
-
-    if scholar_type:
-        if scholar_type == 'all':
-            applicant_data = applicants.objects.filter(status='ACCEPTED')
-        else:
-            applicant_data = applicants.objects.filter(status='ACCEPTED', scholar_type=scholar_type)
-    else:
-        applicant_data = applicants.objects.filter(status='ACCEPTED')
+                return redirect('profile')  # Redirect to refresh data
 
     student_data = studentInfo.objects.all()
-    context = {'student_data': student_data, 'applicant_data': applicant_data, 'msg': msg}
-
+    context = {
+        'student_data': student_data,
+        'applicant_data': applicant_data,
+        'msg': msg
+    }
     return render(request, 'scholarship/scholarsprofileadmin.html', context)
-    
 
 def add_scholar(request):
     if request.method == 'POST':
@@ -1222,7 +1230,7 @@ def chedreports_Coscho(request):
 
 # ------------------------ ADMINLIQUIDATION ---------------------------
 def adminliquidation(request):
-    return render(request, 'adminliquidation.html', {})
+    return render(request, 'scholarship/adminliquidation.html', {})
 
 from ..models import LiquidationTES
 from django.views.decorators.csrf import csrf_exempt

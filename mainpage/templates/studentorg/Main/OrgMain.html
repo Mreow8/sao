@@ -79,7 +79,8 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
           <p>{{ org.description|linebreaksbr }}</p>
         </div>
         <div class="con bot">
-          <a href="/{{ org.slug }}_CBL" class="button">View CBL</a>
+          <a href="/main/{{ org.slug }}_CBL" class="button">View CBL</a>
+
           <a href="{% url 'officer_form' slug=org.slug %}" class="button"
             >Register Officer</a
           >
@@ -89,7 +90,9 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
           >
 
           <a href="/Gen_FSTLP_viewadviser" class="button">List Adviser</a>
-          <a href="/TECHNOCRATS_adviserdata" class="button">Register Adviser</a>
+          <a href="/main/{{ org.slug }}_adviserdata" class="button"
+            >Registers Adviser</a
+          >
         </div>
         {% if key_elements %}
         <h2 class="pf">Key elements of the logo include:</h2>

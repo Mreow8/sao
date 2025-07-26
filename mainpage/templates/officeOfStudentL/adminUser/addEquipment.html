@@ -1,8 +1,8 @@
-{% extends 'adminUser/adminmain.html' %}
+{% extends 'adminmain.html' %}
 {% load static %}
 
 {% block bodycontent %}
-<link rel="stylesheet" href="{% static 'studentlife/addEquipment.css' %}">
+<link rel="stylesheet" href="{% static 'styles/studentlife/addEquipment.css' %}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap" rel="stylesheet">
@@ -10,10 +10,10 @@
 <div class="body-content">
     <div class="sub-title">
         <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
-        <p class="hometext">Home </p><a href="{% url 'studentLife_system:equipmentTrackerAdmin' %}" class="txt-underline"><p class="hometext"> > Equipment Tracker</p></a><p class="certxt"> > Equipment Tracker</p>
+        <p class="hometext">Home </p><a href="{% url 'equipmentTrackerAdmin' %}" class="txt-underline"><p class="hometext"> > Equipment Tracker</p></a><p class="certxt"> > Add Equipment</p>
     </div>
     <div class="equipmentContents">
-        <form id="trackerForm" action="{% url 'studentLife_system:addEquipment' %}" method="POST">
+        <form id="trackerForm" action="{% url 'addEquipment' %}" method="POST">
             {% csrf_token %}
             <table id="equipmentTable">
                 <h2>Add Equipment</h2>

@@ -75,11 +75,12 @@ class graduateForm(models.Model):
     classize = models.CharField(max_length=100, null=False)
     profexpertise = models.CharField(max_length=100, null=False)
     profsubjectmatter = models.CharField(max_length=100, null=False)
-    enrollmentdate = models.DateField(null=False)
-    studiesdegree = models.CharField(max_length=100, null=False)
-    universityinstitution = models.CharField(max_length=255, null=False)
-    studiesAddress = models.CharField(max_length=255, null=False)
-    pursuingstudies = models.TextField(null=False)
+    enrollmentdate = models.DateField(null=True, blank=True)
+
+    studiesdegree = models.CharField(max_length=100, null=True)
+    universityinstitution = models.CharField(max_length=255, null=True)
+    studiesAddress = models.CharField(max_length=255, null=True)
+    pursuingstudies = models.TextField(null=True)
 
     def alumni_id(self):
         return self.alumni.alumniID

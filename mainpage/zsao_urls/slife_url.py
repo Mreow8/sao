@@ -1,9 +1,9 @@
 from django.urls import path
 from mainpage.views import studentlife as views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path("requestgmc/", views.requestedgmc, name="requestgmc"),
-    path("equipmenttracker/", views.equipmentTracker, name="equipmentTracker"),
     path("equipmenttrackerAdmin/", views.equipmentTrackerAdmin, name="equipmentTrackerAdmin"),
     path("save_equipment_borrowing/", views.save_equipment_borrowing, name="save_equipment_borrowing"),
     path("update_return_status/", views.update_return_status, name="update_return_status"),
@@ -23,7 +23,7 @@ urlpatterns = [
     
     # Equipment Management
     path("addEquipment/", views.addEquipment, name="addEquipment"),
-    path("upload/", views.upload_file, name="upload_file"),
+    # path("upload/", views.upload_file, name="upload_file"),
     path("display_items/", views.display_items, name="display_items"),
     path("purchased_items/", views.purchased_items, name="purchased_items"),
     
@@ -35,4 +35,4 @@ urlpatterns = [
     # Excel Data
     path("edit/", views.edit_excel_data, name="edit_excel_data"),
     path("update/<int:pk>/", views.update_excel_data, name="update_excel_data"),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
