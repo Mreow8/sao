@@ -24,37 +24,43 @@
         {% endif %}
 
         <div class="flex flex-col gap-5 w-full">
-          <h1 class="text-[36px] font-bold mb-11">Graduates Form</h1>
+        <div class="sub-title">
+    <h3>Alumni</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Graduates Form</p>
+  </div>
+    {% if alumni %}
+  <div class="flex flex-wrap gap-12 px-6 py-4 text-neutral-800 tracking-wide">
+    
+    <div class="min-w-[200px]">
+      <p class="text-xs uppercase text-gray-500 mb-1">Student ID</p>
+      <p class="text-[17px] text-slate-900 font-medium">{{ alumni.student.studID }}</p>
+    </div>
 
-        
-          <div class="flex items-center justify-between">
-            {% if alumni  %}
-            <div class="flex flex-col">
-              <p class="text-blue-700 font-bold">StudentID</p>
-              <p class="font-bold">
-                {{alumni.student.studID }}
-              </p>
-            </div>
-            <div class="flex flex-col">
-              <p class="text-blue-700 font-bold">First Name</p>
-              <p class="font-bold">
-                {{ alumni.firstname  }}
-              </p>
-            </div>
-            <div class="flex flex-col">
-              <p class="text-blue-700 font-bold">Last Name</p>
-              <p class="font-bold">
-                {{ alumni.lastname }}
-              </p>
-            </div>
-            <div class="flex flex-col">
-              <p class="text-blue-700 text-center font-bold">Degree</p>
-              <p class="font-bold">
-                {{ alumni.degree }}
-              </p>
-            </div>
-          </div>
+    <div class="min-w-[200px]">
+      <p class="text-xs uppercase text-gray-500 mb-1">First Name</p>
+      <p class="text-[17px] text-slate-900 font-medium">{{ alumni.firstname }}</p>
+    </div>
 
+    <div class="min-w-[200px]">
+      <p class="text-xs uppercase text-gray-500 mb-1">Last Name</p>
+      <p class="text-[17px] text-slate-900 font-medium">{{ alumni.lastname }}</p>
+    </div>
+
+    <div class="min-w-[200px]">
+      <p class="text-xs uppercase text-gray-500 mb-1">Degree</p>
+      <p class="text-[17px] text-slate-900 font-medium">{{ alumni.degree }}</p>
+    </div>
+
+  </div>
+          
+{% if already_submitted %}
+  <div class="bg-green-100 text-green-800 p-6 rounded-xl border border-green-300 shadow">
+    <h2 class="text-xl font-semibold mb-2">✅ Already Submitted</h2>
+    <p>You have already submitted the Graduate Tracer Form.</p>
+    <p class="mt-2 text-sm text-gray-600">If you need to update your submission, please contact the alumni office.</p>
+  </div>
+{% else %}
           <form class="w-full h-auto bg-white" method="post" action="{% url 'graduateTracer_submit' %}">
             {% csrf_token %}
             <input type="hidden" name="student_id" value="{{ alumni.student.studID }}" />
@@ -81,7 +87,9 @@
         <!--$ end Educational Background -->
 
         <!--$ Employment Information -->
+        
         <div>
+
           <div class="flex flex-col gap-5 w-full">
             <h1 class="text-[26px] font-bold ">4. Employment Information</h1>
             <h6 class="text-[19px] font-bold">A. EMPLOYER'S DETAILS</h6>
@@ -660,6 +668,7 @@
         <button class="bg-blue-600 p-3 text-white w-[150px]" name='s'>Submit</button>
       </div>
       </form>
+      {% endif %}
       {% else %}
       <p>ejrjrtjertj</p>
       {% endif %}

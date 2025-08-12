@@ -1,47 +1,99 @@
-{% extends "main.html" %} {% load static %} {% block title %}Student
-Organization (FSTLP){% endblock %} {% block headcontent %}
+{% extends base_template|default:"adminmain.html" %} {% load static %} {% block
+title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
+%}
+<!-- prettier- -->
+{% block headcontent %}
 <link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
 <link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/general.css' %}" />
 <link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
+
+<link rel="stylesheet" href="{% static 'styles/sub-title.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/projects.css' %}" />
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-  integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
 />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %} {% block bodycontent %}
-<div class="container
+<div class="container">
   <div class="headert">
-    <h1>Future Science and Technology Leaders of the Philippines</h1>
+    <h1>{{ org.name|default:"TECHNOCRATS" }}</h1>
+    <p class="pages">
+      <a href="/Gen_Home">Orgs</a> >
+      <a href="#">Projects</a>
+    </p>
   </div>
-  <p class="pages">
-    <a href="{% url 'FSTLP_financial' %}">Financial Statements</a> >
-    <a href="{% url 'FSTLP_viewfinancial' %}"> View Financial Statements</a>
-  </p>
 
+  <!-- Tabs -->
   <div class="tabs">
-    <a href="{% url 'FSTLP_profile' %}" class="tab">Profiles</a>
+    <a href="{% url 'org_profile' slug=org.slug %}" class="tab">Profiles</a>
     <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="tab"
       >Projects</a
     >
-    <a href="{% url 'FSTLP_financial' %}" class="tab">Financial Statements</a>
-    <a href="{% url 'FSTLP_accreditation' %}" class="tab"
+    <a href="#" class="tab active">Financial Statements</a>
+    <a href="/{{ org.slug|default:'TECHNOCRATS' }}_accreditation" class="tab"
       >Accreditation Application</a
     >
   </div>
+  <form method="post">
+    <h2>Submit New Financial Record</h2>
 
+    {% csrf_token %}
+    <div class="maincontain">
+      <div class="form-column">
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required />
+        </div>
+        <div class="form-group">
+          <label for="purpose">Purpose</label>
+          <input type="text" id="purpose" name="purpose" required />
+        </div>
+        <div class="form-group">
+          <label for="source_of_funds">Source of Funds</label>
+          <input type="text" id="source_of_funds" name="source_of_funds" />
+        </div>
+      </div>
+
+      <div class="form-column">
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            style="width: 100px"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="org">Organization</label>
+          <select id="org" name="org" style="width: 100px" required>
+            <option value="{{ org.slug }}">{{ org.name }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="remarks">Remarks</label>
+          <textarea id="remarks" name="remarks" required></textarea>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button type="submit" class="btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
+  <!-- Financial Statements Table -->
   <div class="maincontain">
     <div class="subcontain">
+      <h2>Financial Statements</h2>
       <table>
         <thead>
           <tr>
             <th>Date</th>
             <th>Purpose</th>
             <th>Source of Funds</th>
-            <th>Organizations</th>
+            <th>Organization</th>
             <th>Amount</th>
             <th>Remarks</th>
           </tr>
@@ -56,10 +108,16 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
             <td>{{ statement.amount }}</td>
             <td>{{ statement.remarks }}</td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6">No financial records available.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+
+    <!-- Financial Statement Submission Form -->
   </div>
 </div>
 {% endblock %}

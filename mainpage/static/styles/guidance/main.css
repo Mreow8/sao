@@ -8,6 +8,7 @@
 html,
 body {
   height: 100%;
+  background-color: #f4f6fa;
   min-height: 100vh;
 }
 body {
@@ -89,21 +90,68 @@ body {
   margin-bottom: 13px;
 }
 
-.search-container {
-  left: 299px;
-  width: 100%;
-  background-color: #f1f1f1;
-  padding: 12.5px;
-  box-sizing: border-box;
+.custom-search-wrapper .search-container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f7f9fc;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.search-icon i {
+.custom-search-wrapper .search-icon i {
+  font-size: 18px;
+  color: #444;
   margin-right: 10px;
-  cursor: pointer;
-  color: black;
-  font-size: 20px;
+}
+
+.custom-search-wrapper input[type="text"] {
+  flex-grow: 1;
+  max-width: 300px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.custom-search-wrapper .account-info {
+  margin-left: auto;
+  text-align: right;
+  font-size: 14px;
+}
+
+.custom-search-wrapper .student-account-info {
+  color: #333;
+}
+
+.custom-search-wrapper .student-account-info a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.custom-search-wrapper .student-account-info a:hover {
+  text-decoration: underline;
+}
+
+.custom-search-wrapper .logout-btn {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+}
+
+.custom-search-wrapper .logout-btn a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.custom-search-wrapper .logout-btn:hover {
+  background-color: #0056b3;
 }
 
 input[type="text"] {
@@ -224,7 +272,6 @@ input[type="text"] {
   cursor: pointer;
   box-shadow: 0 2px 8px #ff800044;
 }
-
 @media (max-width: 900px) {
   .left-side {
     position: fixed;
@@ -232,17 +279,21 @@ input[type="text"] {
     top: 0;
     height: 100vh;
     z-index: 2000;
-    transform: translateX(-99%);
-    transition: transform 0.3s;
+    width: 299px;
+    transform: translateX(-95%);
+    transition: transform 0.3s ease-in-out;
     box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    background-color: #4682b4;
   }
-  /* Show sidebar on hover or focus */
+
   .left-side:hover,
   .left-side:focus-within {
     transform: translateX(0);
     box-shadow: 4px 0 24px rgba(70, 130, 180, 0.12);
   }
-  /* Show a small edge as a handle */
+
   .left-side::before {
     content: "";
     position: absolute;
@@ -256,8 +307,5 @@ input[type="text"] {
     box-shadow: 2px 0 8px #ff800044;
     cursor: pointer;
     z-index: 2100;
-  }
-  .right-side {
-    margin-left: 0 !important;
   }
 }

@@ -6,44 +6,39 @@ Scheduler{% endblock %} {% block headcontent %}
   href="{% static 'styles/guidance/counseling_app.css'%}"
 />
 {% endblock %} {% block bodycontent %}
-
-<div class="container">
-  {{form.errors}}
-  <h3>GUIDANCE</h3>
-  <span
-    ><label id="dir-gray">Home</label
-    ><label id="dir-orange"> > Counseling App with Scheduler</label></span
-  >
-  <div class="form-container">
-    <form>
-      {% csrf_token %}
-      <h2>Request Counseling Schedule</h2>
-      <label>Enter ID number:</label>
-
-      <table id="info_table">
-        <tr id="info_table_head">
-          <th>NAME</th>
-          <th>PROGRAM/YEAR AND SECTION</th>
-          <th>CONTACT NO.</th>
-        </tr>
-      </table>
-    </form>
-    <form method="post" action="" id="requestForm">
-      {% csrf_token %}
-      <input type="hidden" id="student_id_val" name="student_id_val" />
-      <div id="requestScheduleContainer">
-        <label>Reason of counseling</label>
-        {{ form.reason }}
-        <div id="datetimepicker">
-          <label>Schedule Date and Time</label>
-          {{ form.scheduled_date }} {{ form.scheduled_time }}
-        </div>
-        <label>Email Address:</label>
-        {{form.email}}
-        <button type="submit" class="OrangeButton">Request</button>
-      </div>
-    </form>
+  <div class="sub-title">
+    <h3>GUIDANCE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Counseling App with Scheduler</p>
   </div>
+  <div class="container">
+    {{form.errors}}
+
+    <div class="form-container">
+      <form method="post" action="" id="requestForm">
+        {% csrf_token %}
+        <input
+          type="hidden"
+          id="student_id_val"
+          name="student_id_val"
+          value="{{ user.username }}"
+        />
+        <h2>Request Counseling Schedule</h2>
+
+        <div id="requestScheduleContainer">
+          <label>Reason of counseling</label>
+          {{ form.reason }}
+          <div id="datetimepicker">
+            <label>Schedule Date and Time</label>
+            {{ form.scheduled_date }} {{ form.scheduled_time }}
+          </div>
+          <label>Email Address:</label>
+          {{ form.email }}
+          <button type="submit" class="OrangeButton">Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="{% static 'scripts/guidance/counseling_app.js'%}"></script>
+  {% endblock %}
 </div>
-<script src="{% static 'scripts/guidance/counseling_app.js'%}"></script>
-{% endblock %}

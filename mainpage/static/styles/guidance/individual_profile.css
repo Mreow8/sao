@@ -444,3 +444,34 @@
 .disabled {
   background-color: #999999 !important;
 }
+.student-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.student-info-table #info_table_head {
+  background-color: #003366; /* Deep blue header */
+  color: #ffffff;
+  text-align: left;
+}
+
+.student-info-table th,
+.student-info-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.student-info-table tr:hover {
+  background-color: #f5faff;
+}
+
+.student-info-table td {
+  color: #333;
+}

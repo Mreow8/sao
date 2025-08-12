@@ -1,0 +1,10 @@
+<p class="pages">
+    <a href="{% url 'FSTLP_financial' %}">Financial Statements</a> >
+    <a href="{% url 'FSTLP_viewfinancial' %}"> View Financial Statements</a>
+  </p>
+
+    <a href="{% url 'FSTLP_financial' %}" class="tab">Financial Statements</a>
+    <a href="{% url 'FSTLP_accreditation' %}" class="tab"
+      >Accreditation Application</a
+    <a href="{% url 'FSTLP_profile' %}" class="tab">Profiles</a>
+    >

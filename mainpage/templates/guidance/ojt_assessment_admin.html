@@ -99,13 +99,11 @@ Assessments/Psychological Issuance Admin{% endblock %} {% block headcontent %}
 </div>
 <div class="container">
   {{form.errors}}
-  <h3>GUIDANCE(Admin)</h3>
-  <span
-    ><label id="dir-gray">Home</label
-    ><label id="dir-orange">
-      > OJT Assessments/Psychological Issuance</label
-    ></span
-  >
+  <div class="sub-title">
+    <h3>GUIDANCE(Admin)</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; OJT Assessments/Psychological Issuance</p>
+  </div>
   <div class="form-container">
     {% csrf_token %}
     <h2>OJT Assessments/Psychological Issuance Request List</h2>

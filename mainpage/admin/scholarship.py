@@ -31,7 +31,6 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('username',)
     filter_horizontal = ('groups', 'user_permissions',)
 
-admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
 # class (admin.ModelAdmin):
@@ -77,7 +76,7 @@ class ScholarsAdmin(admin.ModelAdmin):
 admin.site.register(scholars, ScholarsAdmin)
 
 class ApplicantsAdmin(admin.ModelAdmin):
-    list_display = ('get_studID', 'get_first_name', 'get_last_name', 'get_degree', 'cor_file', 'grade_file', 'schoolid_file', 'scholar_type', 'gpa', 'status', 'note')
+    list_display = (      'application_id','get_studID', 'get_first_name', 'get_last_name', 'get_degree', 'cor_file', 'grade_file', 'schoolid_file', 'scholar_type', 'gpa', 'status', 'note')
     search_fields = ('studID__studID', 'studID__lastname', 'studID__firstname', 'scholar_type', 'status')
     list_filter = ('scholar_type', 'status')
 

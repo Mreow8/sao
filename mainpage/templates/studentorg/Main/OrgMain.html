@@ -1,5 +1,11 @@
-{% extends "main.html" %} {% load static %} {% block title %}Student
-Organization (FSTLP){% endblock %} {% block headcontent %}
+{% extends base_template|default:"adminmain.html" %}{% load static %}
+<!-- prettier-ignore -->
+<!-- DEBUG: user.username={{ user.username }} | user.id={{ user.id }} -->
+
+{% block title%}Student Organization (FSTLP){% endblock %}
+<!-- prettier-ignore -->
+
+{% block headcontent%}
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
@@ -8,6 +14,9 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
 <link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
 <link rel="stylesheet" href="{% static 'studentorg/css/profiles.css' %}" />
 <link rel="stylesheet" href="{% static 'studentorg/css/general.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/sub-title.css' %}" />
+
+<link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %} {% block bodycontent %}
 <div class="container">
@@ -20,7 +29,7 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
   </p>
 
   <div class="tabs">
-    <a href="/Gen_FSTLP_profile" class="tab active">Profiles</a>
+    <a href="" class="tab active">Profiles</a>
     <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="tab"
       >Projects</a
     >
@@ -34,8 +43,11 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
           <h1>{{ org.name }} LOGO SYMBOLISM</h1>
           <img src="{{ org.logo.url }}" alt="{{ org.name }}" class="logoimg" />
         </div>
-
-        {% if is_edit %}
+        {% if user.is_authenticated %} {% if user.role == 'superadmin' %}
+        <a href="?edit=true" class="button">Edit</a>
+        {% elif user.role == 'org_member' and user.organization == org %}
+        <a href="?edit=true" class="button">Edit</a>
+        {% endif %} {% endif %} {% if is_edit %}
         <!-- Edit Mode -->
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %} {{ form.as_p }}
@@ -91,7 +103,7 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
 
           <a href="/Gen_FSTLP_viewadviser" class="button">List Adviser</a>
           <a href="/main/{{ org.slug }}_adviserdata" class="button"
-            >Registers Adviser</a
+            >Register Adviser</a
           >
         </div>
         {% if key_elements %}
@@ -108,8 +120,7 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
         {% else %}
         <p>No key elements provided.</p>
         {% endif %}
-
-        <a href="?edit=true" class="button">Edit</a>
+        <!-- prettier-ignore -->
         {% endif %}
       </div>
     </div>

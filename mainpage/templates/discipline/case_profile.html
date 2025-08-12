@@ -1,13 +1,54 @@
-<!-- prettier-ignore -->{% extends "main.html" %} {% block title %}Case Profile{% endblock %} 
- {% block bodycontent %}
-<div class="max-w-4xl mx-auto mt-8">
-  <h2 class="text-2xl font-extrabold text-blue-700 mb-6 text-center">
-    Student Case Profile
-  </h2>
+<!-- prettier-ignore -->{% extends base_template|default:"main.html" %}{% block title %}Case Profile{% endblock %} 
+ {% load static %}{% load widget_tweaks %}
+<style>
+  input[type="text"],
+  input[type="date"],
+  input[type="email"],
+  input[type="number"],
+  textarea,
+  select {
+    @apply w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+</style>
+{% block bodycontent %}
 
+<div class="container">
+  <div class="sub-title">
+    <h3>STUDENT DISCIPLINE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Student Case Profile</p>
+  </div>
+  <!-- prettier-ignore -->
+  {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
   <form method="post" class="bg-white shadow-md rounded-lg p-6 mb-8 space-y-4">
     {% csrf_token %}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">{{ form.as_p }}</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {% for field in form %}
+      <div>
+        <datalist id="student-options">
+          {% for student in students %}
+          <option value="{{ student.studID }}">
+            {{ student.firstname }} {{ student.lastname }}
+          </option>
+          {% endfor %}
+        </datalist>
+        <label
+          class="block text-sm font-medium text-gray-700 mb-1"
+          for="{{ field.id_for_label }}"
+        >
+          {{ field.label }}
+        </label>
+        <!-- prettier-ignore -->
+        {{ field|add_class:"w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" }}
+ {% if field.errors %}
+        <p class="text-red-600 text-sm mt-1">{{ field.errors|striptags }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Add this script block to style all inputs -->
+
     <div class="flex justify-end">
       <button
         type="submit"
@@ -17,6 +58,7 @@
       </button>
     </div>
   </form>
+  {% endif %}
 
   <div class="overflow-x-auto">
     <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
@@ -38,7 +80,12 @@
       <tbody>
         {% for case in case_list %}
         <tr class="hover:bg-blue-50 transition">
-          <td class="px-4 py-2 border-b">{{ case.student_name }}</td>
+          <td class="px-4 py-2 border-b">
+            {{ case.student }}
+            <span
+              >{{ case.student.firstname }} {{ case.student.lastname }}</span
+            >
+          </td>
           <td class="px-4 py-2 border-b">{{ case.offense_type }}</td>
           <td class="px-4 py-2 border-b">{{ case.date_of_incident }}</td>
           <td class="px-4 py-2 border-b">
@@ -49,7 +96,9 @@
             </span>
           </td>
           <td class="px-4 py-2 border-b">
-            <a href="#" class="text-blue-600 hover:underline font-medium"
+            <a
+              href="{% url 'student_hours' case.id %}"
+              class="text-blue-600 hover:underline font-medium"
               >View</a
             >
           </td>

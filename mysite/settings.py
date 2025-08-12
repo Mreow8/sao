@@ -2,6 +2,9 @@ from pathlib import Path
 import os
 # Use only pathlib
 BASE_DIR = Path(__file__).resolve().parent.parent
+AUTH_USER_MODEL = 'mainpage.CustomUser'
+# Redirects to this URL if @login_required is used without a specific `login_url`
+LOGIN_URL = '/login/'  # or the correct path or name
 
 STATIC_URL = '/static/'
 
@@ -32,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'mainpage',
+    'widget_tweaks',
+
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -104,11 +109,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+USE_TZ = True
+TIME_ZONE = 'Asia/Manila'  # Or your appropriate timezone
+
 
 USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

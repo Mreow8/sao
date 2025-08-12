@@ -79,17 +79,40 @@ def add_alumni(request):
     else:
         return redirect('idRequest')    
     
+def graduateTracer(request):
+    # Make sure the user is logged in and linked to a student record
+    if not request.user.is_authenticated:
+        return redirect('login')  # or show an error page
 
-def graduateTracer(request, stud_id):
+    try:
+        stud_id = request.user.student.studID  # get student ID from logged-in user
+    except AttributeError:
+        # Handle case where logged-in user is not linked to a Student
+        return render(request, 'alumni/users/graduateTracer.html', {
+            'alumni': None,
+            'already_submitted': False,
+            'error': 'No student record found for your account.'
+        })
+
     try:
         alumni = Alumni.objects.select_related('student').get(student__studID=stud_id)
     except Alumni.DoesNotExist:
         alumni = None
 
-    return render(request, 'alumni/users/graduateTracer.html', {'alumni': alumni})
+    if alumni:
+        existing_form = graduateForm.objects.filter(alumniID=alumni).first()
+        if existing_form:
+            return render(request, 'alumni/users/graduateTracer.html', {
+                'alumni': alumni,
+                'already_submitted': True,
+                'submitted_form': existing_form,
+            })
 
-    
-    
+    return render(request, 'alumni/users/graduateTracer.html', {
+        'alumni': alumni,
+        'already_submitted': False,
+    })
+
 def search_id2(request):
     user = request.user
     if not user.is_authenticated:
@@ -193,6 +216,10 @@ def graduateTracer_submit(request):
             alumni = get_object_or_404(Alumni, student=student)
         except:
             messages.error(request, 'No Alumni matches the given query.')
+            return redirect('graduateTracer')
+        existing_form = graduateForm.objects.filter(alumniID=alumni).first()
+        if existing_form:
+            messages.error(request, f"A graduate tracer form already exists for Alumni ID {alumni.alumniID}.")
             return redirect('graduateTracer')
         gradform = graduateForm.objects.create( alumniID=alumni,student=student,
                                     degree=degree,
@@ -424,7 +451,7 @@ def claim_alumni_id(request, alumni_id):
 def admin_gradTracer(request):
     graduate_requests = graduateForm.objects.select_related('alumniID').all()
     return render(request, 'alumni/users/admin_gradTracer.html', {'graduate_requests': graduate_requests})
-@sao_admin_required
+# @sao_admin_required
 def admin_events(request):
     if request.method == 'POST':
         

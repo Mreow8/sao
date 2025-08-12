@@ -327,11 +327,11 @@ def ojt_hiring_info(request, id):   # ojt company page
     context = {'hired_students':hiredStudents, 'ojt':ojt}
     return render(request, 'jobplacement/ojthiring_info.html', context)
 
-@login_required(login_url='jobplacement:admin_student')
+# @login_required(login_url='jobplacement:admin_student')
 def ojtRequirements_tracker(request): # ojt requirement tracker page
     req_records = OJTRequirements.objects.all() # show all requirement tracker for admin view
     existing_requirement = None
-
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html" 
     # handles search 
     if request.method == 'POST':
         id = request.POST.get('student_id')
@@ -348,48 +348,42 @@ def ojtRequirements_tracker(request): # ojt requirement tracker page
 
     context = {'form': _reqform, 
                'existing_form':existing_requirement, 
+        'base_template': base_template,
                'status':stat_widgets, 
                'req_records':req_records} #
     return render(request, 'jobplacement/ojt_requirements.html', context)
 
-login_required(login_url='jobplacement:student_login')
+# login_required(login_url='jobplacement:student_login')
+
 def ojt_requirements_submit(request):
-    if not isinstance(request.user, StudentUser): # prevent access for unenrolled student
-        return redirect('jobplacement:student_login')
+    if request.method == 'POST':
+        if not request.user.is_authenticated or not isinstance(request.user, StudentUser):
+            messages.error(request, "You must be logged in as a student to submit requirements.")
+            return redirect('jobplacement:ojt_requirements_tracker')
 
-    if request.method == 'POST': # handles ojt requirement submission
-        if request.user.is_authenticated and isinstance(request.user, StudentUser):
-            print(request.user.emailadd, "as Student")
-            try:
-                existing_requirement = OJTRequirements.objects.get(student_id=request.user, is_valid=True)
-                # updates exisiting requirement
-                newform = OJTRequirementsForm(request.POST, request.FILES, instance=existing_requirement)
-                if newform.is_valid():
-                    _req = newform.save(commit=False)
-                    _req.student_id = request.user
-                    _req.save()
-                    messages.success(request, "Form submitted Successfully")
-                    log_activity(request.user, "Submitted OJT requirements")
+        try:
+            # Try to get existing valid OJT requirement for the student
+            existing_requirement = OJTRequirements.objects.get(student_id=request.user, is_valid=True)
+            form = OJTRequirementsForm(request.POST, request.FILES, instance=existing_requirement)
+        except OJTRequirements.DoesNotExist:
+            # Create new requirement if none exists
+            form = OJTRequirementsForm(request.POST, request.FILES)
 
-                    return redirect('jobplacement:ojt_requirements_tracker')
-                else:
-                    messages.error(request, "Form submission unsuccessful")
-            except OJTRequirements.DoesNotExist:
-                messages.error(request, "OJTRequirement instance does not exist")
-                newform = OJTRequirementsForm(request.POST, request.FILES)
-                if newform.is_valid():
-                    _req = newform.save(commit=False)
-                    _req.student_id = request.user
-                    _req.save()
-                    messages.success(request, "Form submitted Successfully")
-                    return redirect('jobplacement:ojt_requirements_tracker')
-                else:
-                    messages.error(request, "Form submission unsuccessful")
-            except:
-                # create new requirements
-                messages.error(request, "User is not logged in as student")
+        if form.is_valid():
+            requirement = form.save(commit=False)
+            requirement.student_id = request.user
+            requirement.save()
+            log_activity(request.user, "Submitted OJT requirements")
+            messages.success(request, "Form submitted successfully.")
+            print("Form submitted successfully.")
+        else:
+            messages.error(request, "Form submission unsuccessful. Please check your input.")
+            print("Form submission unsuccessful. Please check your input.")
+        return redirect('jobplacement:ojt_requirements_tracker')
 
-    return redirect('jobplacement:')
+    # For GET or other non-POST methods
+    return redirect('jobplacement:ojt_requirements_tracker')
+
     
 
 @login_required(login_url='jobplacement:admin_login')
@@ -711,7 +705,6 @@ def attend_all_pending(request, id): # handle attend all button
     return redirect('jobplacement:manage_att', id=id)
 
     # NON-ACADEMIC AWARD ISSUANCE
-@login_required(login_url='jobplacement:admin_login')
 def non_acad_page(request):
     if not (request.user.is_staff or request.user.is_superuser): # prevent student/alien access
         messages.info(request, 'Must be staff/admin to access page')
@@ -1259,7 +1252,7 @@ def log_activity(user, action): # transaction report auto record
         user_type=user_type
     )
 
-@login_required(login_url='jobplacement:admin_login')
+# @login_required(login_url='jobplacement:admin_login')
 def transRep(request): # transaction report page
     if not (request.user.is_staff or request.user.is_superuser): # prevent student/alien access
         messages.info(request, 'Must be staff/admin to access page')

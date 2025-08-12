@@ -10,11 +10,12 @@ With Scheduler{% endblock %} {% block headcontent %}
 
 <div class="container">
   {{form.errors}}
-  <h3>GUIDANCE(Admin)</h3>
-  <span
-    ><label id="dir-gray">Home</label
-    ><label id="dir-orange"> > Counseling App with Scheduler</label></span
-  >
+  <div class="sub-title">
+    <h3>GUIDANCE(Admin)</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Counseling App with Schedule</p>
+  </div>
+
   <div class="form-container">
     {% csrf_token %}
     <h2>Counseling Schedule Request List</h2>

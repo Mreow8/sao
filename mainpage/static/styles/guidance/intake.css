@@ -1,295 +1,176 @@
-/* Color palette and variables */
-:root {
-  --primary: #ff8000;
-  --primary-dark: #e06d00;
-  --gray: #636363;
-  --light-gray: #f5f6fa;
-  --border: #e2e2e2;
-  --white: #fff;
-  --error: #ff4d4f;
-  --success: #52c41a;
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-}
-
+/* Base Styles */
 body {
-  background: var(--light-gray);
-  font-family: "Segoe UI", "Arial", sans-serif;
-  color: #222;
-  margin: 0;
-  padding: 0;
-}
-
-#dir-gray {
-  color: var(--gray);
-}
-
-#dir-orange {
-  color: var(--primary);
+  background-color: #f4f6fa;
+  color: #2c2c2c;
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 32px 0;
-  align-items: center;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
-h2,
-h3 {
+/* Section Title */
+.container h3 {
+  font-size: 24px;
   font-weight: 600;
-  color: var(--primary-dark);
-  margin-bottom: 16px;
+  color: #2b2b2b;
+  margin-bottom: 5px;
 }
 
-.form-container {
-  background: var(--white);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-  padding: 40px 32px;
+.container span label {
+  font-size: 14px;
+}
+
+#dir-gray {
+  color: #666;
+}
+
+#dir-orange {
+  color: #ff8000;
+  font-weight: 500;
+}
+
+/* Tables */
+table {
   width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  border: 1px solid var(--border);
-}
-
-.form-container form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-#search_id {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-}
-
-#search_id input {
-  background: var(--light-gray);
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: #222;
-  font-size: 16px;
-  transition: border 0.2s;
-}
-
-#search_id input:focus {
-  border: 1.5px solid var(--primary);
-  outline: none;
-}
-
-.OrangeButton,
-.actionButton,
-.saveButton {
-  background: var(--primary);
-  color: var(--white);
-  border: none;
-  border-radius: 8px;
-  padding: 10px 28px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(255, 128, 0, 0.08);
-}
-
-.OrangeButton:hover,
-.actionButton:hover,
-.saveButton:hover {
-  background: var(--primary-dark);
-}
-
-.disabled {
-  background: #cccccc !important;
-  cursor: not-allowed;
-}
-
-.success {
-  color: var(--success);
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.error {
-  color: var(--error);
-  font-size: 16px;
-  font-weight: 500;
-}
-
-#info_table,
-#individual_inventory,
-#appraisal,
-#counseling,
-#follow,
-#information,
-#consultation {
   border-collapse: collapse;
-  width: 100%;
-  margin-top: 10px;
-  background: var(--white);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  margin: 25px 0;
+  font-size: 14px;
 }
 
-#info_table th,
-#info_table td,
-#individual_inventory th,
-#individual_inventory td,
-#appraisal th,
-#appraisal td,
-#counseling th,
-#counseling td,
-#follow th,
-#follow td,
-#information th,
-#information td,
-#consultation th,
-#consultation td {
-  padding: 12px 10px;
+table th,
+table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+table th {
+  background-color: #f7f7f7;
+  color: #ff8000;
+  font-weight: 600;
   text-align: left;
 }
 
-#info_table th,
-#individual_inventory th,
-#appraisal th,
-#counseling th,
-#follow th,
-#information th,
-#consultation th {
-  background: var(--primary);
-  color: var(--white);
-  font-weight: 500;
+table td {
+  color: #444;
 }
 
-#info_table tr,
-#individual_inventory tr,
-#appraisal tr,
-#counseling tr,
-#follow tr,
-#information tr,
-#consultation tr {
-  border-bottom: 1px solid var(--border);
-}
-
-#info_table tr:last-child,
-#individual_inventory tr:last-child,
-#appraisal tr:last-child,
-#counseling tr:last-child,
-#follow tr:last-child,
-#information tr:last-child,
-#consultation tr:last-child {
-  border-bottom: none;
-}
-
-.field_container input,
-.field_container select,
-input[type="text"],
-input[type="number"],
-input[type="date"],
-input[type="email"],
-select {
-  background: var(--light-gray);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 9px 12px;
-  font-size: 15px;
-  color: #222;
-  transition: border 0.2s;
+table input[type="text"],
+table input[type="date"] {
   width: 100%;
-  box-sizing: border-box;
-}
-
-.field_container input:focus,
-input:focus,
-select:focus {
-  border: 1.5px solid var(--primary);
-  outline: none;
-}
-
-input[type="checkbox"],
-input[type="radio"] {
-  accent-color: var(--primary);
-}
-
-.deleteBox button {
-  background: #ff4d4f;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 16px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 8px;
   font-size: 14px;
+}
+
+.field_container {
+  padding: 0;
+}
+
+/* Radio Button Layout */
+.side-way {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Button Styling */
+.OrangeButton {
+  background-color: #ff8000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background-color 0.3s ease;
+}
+.deleteRow {
+  background-color: #ef5350;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.OrangeButton:hover {
+  background-color: #e67300;
 }
 
-.deleteBox button:hover {
-  background: #d9363e;
-}
-
+/* Centered Buttons */
 .center_object {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-top: 18px;
+  margin: 20px 0;
 }
 
-@media (max-width: 900px) {
-  .form-container {
-    padding: 18px 8px;
-    max-width: 100%;
-  }
-  .container {
-    padding: 12px 0;
-  }
+.deleteBox {
+  display: flex;
+  justify-content: center;
 }
 
-@media (max-width: 600px) {
-  .form-container {
-    padding: 8px 2px;
-  }
-  #info_table th,
-  #info_table td,
-  #individual_inventory th,
-  #individual_inventory td,
-  #appraisal th,
-  #appraisal td,
-  #counseling th,
-  #counseling td,
-  #follow th,
-  #follow td,
-  #information th,
-  #information td,
-  #consultation th,
-  #consultation td {
-    padding: 8px 4px;
-    font-size: 13px;
-  }
-  .OrangeButton,
-  .actionButton,
-  .saveButton {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-  background: var(--light-gray);
-}
-::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
-  border-radius: 8px;
-}
-/* Add this at the end of your CSS file */
-#info_table_head {
-  background: var(--white) !important;
-}
-
-#info_table_head th {
-  color: var(--primary) !important;
-  background: var(--white) !important;
+/* Labels */
+form label {
+  display: block;
   font-weight: 600;
+  font-size: 16px;
+  margin: 30px 0 10px;
+  color: #2c2c2c;
+}
+
+/* Responsive Table Layout */
+@media (max-width: 768px) {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    padding: 12px;
+  }
+
+  tbody td {
+    position: relative;
+    padding-left: 50%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    font-weight: 600;
+    color: #ff8000;
+    white-space: nowrap;
+  }
+
+  tbody td:last-child {
+    border-bottom: none;
+  }
 }

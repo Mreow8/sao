@@ -145,7 +145,14 @@ def monthlyCalendar(request):
 
 # Calendar of Activities Admin 
 # @sao_admin_required
+
+import json
+from django.shortcuts import render
+from ..models import Schedule  # adjust import path if needed
+
 def monthlyCalendarAdmin(request):
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
     schedules = Schedule.objects.all()
     sched_res = {}
 
@@ -154,37 +161,62 @@ def monthlyCalendarAdmin(request):
             'id': schedule.sched_Id,
             'title': schedule.title,
             'description': schedule.description,
-            'start_datetime': schedule.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
-            'end_datetime': schedule.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            'start': schedule.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),  # FullCalendar expects 'start'
+            'end': schedule.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),      # FullCalendar expects 'end'
             'sdate': schedule.start_datetime.strftime("%B %d, %Y %I:%M %p"),
             'edate': schedule.end_datetime.strftime("%B %d, %Y %I:%M %p")
         }
 
     context = {
-        'sched_json': json.dumps(sched_res)
+        'sched_json': json.dumps(sched_res),
+           'is_admin': request.user.is_authenticated and request.user.is_staff, 
+                    'base_template': base_template,  # or your admin check
+
     }
     return render(request, 'officeOfStudentL/adminUser/monthlyCalendarAdmin.html', context)
 
+# Save Schedule\
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import make_aware
+from django.utils.dateparse import parse_datetime
+from django.http import JsonResponse
+import json
 
-# Save Schedule
+@csrf_exempt  # Optional: if you're manually adding CSRF token in headers
 def save_schedule(request):
     if request.method == 'POST':
-        schedule_id = request.POST.get('id')
-        if schedule_id:
-            schedule = get_object_or_404(Schedule, pk=schedule_id)
-            form = ScheduleForm(request.POST, instance=schedule)
-        else:
-            form = ScheduleForm(request.POST)
-         
-        if form.is_valid():
-            form.save()
-            return redirect('officeOfStudentL_system:monthlyCalendarAdmin')
-    else:
-        form = ScheduleForm()
-    return render(request, 'officeOfStudentL/adminUser/monthlyCalendarAdmin.html', {'form': form})
+        try:
+            data = json.loads(request.body)
+            title = data.get('title')
+            description = data.get('description')
+            start = parse_datetime(data.get('start_datetime'))
+            end = parse_datetime(data.get('end_datetime'))
 
+            if start and start.tzinfo is None:
+                start = make_aware(start)
+            if end and end.tzinfo is None:
+                end = make_aware(end)
 
-# Update schedule start and end datetime drag & drop
+            sched = Schedule.objects.create(
+                title=title,
+                description=description,
+                start_datetime=start,
+                end_datetime=end
+            )
+
+            return JsonResponse({
+                'status': 'success',
+                'id': sched.sched_Id,  # use sched_Id if that's your primary key
+                'title': sched.title,
+                'start': sched.start_datetime.isoformat(),
+                'end': sched.end_datetime.isoformat()
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=405)
+
 def update_schedule(request, schedule_id):
     if request.method == 'POST':
         schedule = get_object_or_404(Schedule, pk=schedule_id)

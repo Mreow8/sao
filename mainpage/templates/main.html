@@ -40,9 +40,7 @@
                          <ul class="studentlife">
                         <li><a href="{% url 'requestgmc' %}">Good Moral Certificate Issuance</a></li>
 <li><a href="{% url 'equipmentTracker' %}">Equipment Tracker</a></li>
-<li><a href="{% url 'upload_files' %}">Post student</a></li>
-<li><a href="{% url 'adminmain' %}">Admin</a></li>
-<li><a href="{% url 'monthlyCalendar' %}">Monthly Calendar of Activities</a></li>
+<li><a href="{% url 'monthlyCalendarAdmin' %}">Monthly Calendar of Activities</a></li>
 
                     </ul>
                     </li>
@@ -68,8 +66,7 @@
                         <li><a href="{% url 'jobplacement:ojt_hiring' %}">OJT Hiring</a></li>
                             <li><a href="{% url 'jobplacement:seminar_page' %}">Career Guidance Tracker</a></li>
                             <li><a href="{% url 'jobplacement:ojt_requirements_tracker' %}">OJT Requirements Tracker</a></li>
-                            <li><a href="{% url 'jobplacement:non_acad' %}">Non-Academic Award Issuance</a></li>
-                            <li><a href="{% url 'jobplacement:job_trans_rep' %}">Transaction Reports</a></li>
+                           
                     </ul>
                     </li>
                     <li><a href="#" class="student_disc-btn">STUDENT DISCIPLINE
@@ -77,11 +74,7 @@
                     </a>
                     <ul class="student_disc-show">
                      <li><a href="{% url 'case_profile' %}">Case Profile</a></li>
-<prettier-ignore>
-                        <li><a href="{% url 'community-service-tracker' user.username  %}">Hours Rendered for Community Service Tracker</a></li></prettier-ignore>
-                       
-                        <li><a href="#">Transaction Reports</a></li>
-                        
+
                     </ul>
                     </li>
                     <li><a href="#" class="guide-btn">GUIDANCE
@@ -101,7 +94,6 @@
                     </a>
                     <ul class="alumni-show">
                       <li><a href="{% url 'idRequest' %}">Alumni ID Requests</a></li>
-<li><a href="{% url 'graduateTracer' user.username %}">Graduate Tracer</a></li>
 <li><a href="{% url 'alumni_events' %}">Alumni Reunion and Events</a></li>
 <li><a href="{% url 'jobfairs' %}">Job Fairs</a></li>
 <li><a href="{% url 'yearbook' %}">Digital Yearbook</a></li>
@@ -151,26 +143,31 @@
             </div>
         </div>
        <div class="right-side">
-    <div class="search-container">
-        <div class="search-icon">
-            <i class="fa-solid fa-magnifying-glass"></i>
+  <div class="custom-search-wrapper">
+  <div class="search-container">
+    <div class="search-icon">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+
+    <input type="text" placeholder="Search..." />
+    <div class="account-info">
+      {% if user.is_authenticated %}
+        <div class="student-account-info">
+          <strong>Student ID:</strong> {{ user.username }}<br />
+          <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}
+          <button class="logout-btn">
+            <a href="{% url 'logout' %}">Logout</a>
+          </button>
         </div>
-        <input type="text" placeholder="Search...">
-         <div style="right: auto;">
-        {% if user.is_authenticated %}
-            <div class="student-account-info" style="margin: 16px 0; text-align: right;">
-                <strong>Student ID:</strong> {{ user.username }}<br>
-                <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}
-                <button class="btn btn-primary" style="margin-left: 10px;">
-                    <a href="{% url 'logout' %}" style="color: white; text-decoration: none;">Logout</a>
-            </div>
-        {% else %}
-            <div class="student-account-info" style="margin: 16px 0; text-align: right;">
-                <a href="{% url 'signinuser' %}">Sign in</a>
-            </div>
-        {% endif %}
+      {% else %}
+        <div class="student-account-info">
+          <a href="{% url 'signinuser' %}">Sign in</a>
+        </div>
+      {% endif %}
     </div>
-    </div>
+  </div>
+</div>
+
    
     <main class="main_content">
         {% block bodycontent %}{% endblock %}

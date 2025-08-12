@@ -8,7 +8,69 @@ from ..models import studentInfo  # Add this import at the top
 
 # Replace these with the correct import paths from your models
 from mainpage.models import CommunityServiceTracker
+from django.shortcuts import render, redirect
+from ..forms import CommunityServiceForm
+from ..models import CommunityServiceTracker
+from django.utils import timezone
+from django.contrib import messages
+
+def student_hours_view(request, case_id):
+    case = get_object_or_404(CaseProfile, pk=case_id)
+    records = CommunityServiceTracker.objects.filter(case=case).order_by('-date')
+
+    if request.method == 'POST':
+        form = CommunityServiceForm(request.POST)
+        if form.is_valid():
+            tracker_date = form.cleaned_data['date']
+
+            # Check if record for this date exists
+            existing = CommunityServiceTracker.objects.filter(case=case, date=tracker_date).first()
+
+            if existing:
+                # Fill the next empty time slot
+                if not existing.morning_in:
+                    existing.morning_in = form.cleaned_data.get('time_in')
+                elif not existing.morning_out:
+                    existing.morning_out = form.cleaned_data.get('time_out')
+                elif not existing.afternoon_in:
+                    existing.afternoon_in = form.cleaned_data.get('time_in')
+                elif not existing.afternoon_out:
+                    existing.afternoon_out = form.cleaned_data.get('time_out')
+                else:
+                    messages.error(request, "All time slots for this date are already filled.")
+                    return redirect('student_hours', case_id=case.id)
+                
+                existing.save()
+                messages.success(request, "Time logged successfully.")
+            else:
+                tracker = form.save(commit=False)
+                tracker.case = case
+                tracker.save()
+                messages.success(request, "New date record created.")
+            
+            return redirect('student_hours', case_id=case.id)
+    else:
+        form = CommunityServiceForm()
+
+    return render(request, 'discipline/student_hours_rendered.html', {
+        'form': form,
+        'records': records,
+        'case': case,
+        'student': case.student,
+    })
+
 def case_profile_view(request):
+    user = request.user
+    students = studentInfo.objects.all()
+    base_template = "adminmain.html" if user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard' else "main.html"
+
+    if user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'):
+        case_list = CaseProfile.objects.all()
+    elif user.is_authenticated and getattr(user, 'role', None) == 'student':
+        case_list = CaseProfile.objects.filter(student__studID=user.username)
+    else:
+        case_list = CaseProfile.objects.none()
+
     if request.method == 'POST':
         form = CaseProfileForm(request.POST)
         if form.is_valid():
@@ -17,12 +79,12 @@ def case_profile_view(request):
     else:
         form = CaseProfileForm()
 
-    case_list = CaseProfile.objects.all()
     return render(request, 'discipline/case_profile.html', {
         'form': form,
-        'case_list': case_list
+        'case_list': case_list,
+        'students': students,
+        'base_template': base_template,
     })
-
     
 from ..models import CommunityService
 from ..forms import CommunityServiceForm
@@ -88,16 +150,16 @@ def serviceTracker(request, student_id):
             remarks = remarks
         )
 
-        return redirect(reverse('studentLife_discipline:community-service-tracker', args=[student_id]))
+        return redirect(reverse('community-service-tracker', args=[student_id]))
     
     context = {'student':student, 'community_services':community_services, 'time_rendered':time_rendered, 'total_hours': total_hours,
         'total_minutes': total_minutes}
     return render(request, 'discipline/comm_service.html', context)
 from django.shortcuts import get_object_or_404
 
-def case_profile_view(request):
-    student = get_object_or_404(studentInfo, user=request.user)  # or however you're identifying the student
-    context = {
-        'student': student
-    }
-    return render(request, 'main.html', context)
+# def case_profile_view(request):
+#     student = get_object_or_404(studentInfo, user=request.user)  # or however you're identifying the student
+#     context = {
+#         'student': student
+#     }
+#     return render(request, 'main.html', context)

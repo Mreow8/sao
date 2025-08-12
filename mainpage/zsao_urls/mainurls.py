@@ -5,9 +5,17 @@ from .. import views
 from ..views import org_profile, add_organization
 
 urlpatterns = [
+     
+           path('assign-role/', views.assign_role, name='assign_role'),
+
     # ... your other direct paths ...
     # urls.py
 path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
+   path('Gen_Home', views.Gen_Home, name="Gen_Home"),
+    path('add-organization/', add_organization, name='add_organization'),
+    path('org/<slug:slug>/', org_profile, name='org_profile'),
+path('<slug:slug>_financial/', views.view_financial, name='financial_statements'),
+
 
       path('officer/<slug:slug>/', views.view_officers, name='view_officers'),
         path('projects/<slug:slug>/', views.view_project_by_slug, name='view_project_by_slug'),
@@ -22,7 +30,8 @@ path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
  
     path('community-service/add/', views.add_community_service, name='add_community_service'), 
     # path('slife', include('mainpage.slife_url')),
-    path('discipline/case-profile/', views.case_profile_view, name='case_profile'),
+path('student-hours/<int:case_id>/', views.student_hours_view, name='student_hours'),
+    path('case-profile/', views.case_profile_view, name='case_profile'),
     path("equipmenttracker", views.equipmentTracker, name="equipmentTracker"),
     path("requestgmc", views.requestedgmc, name="requestgmc"),
     path("equipmenttracker/", views.equipmentTracker, name="equipmentTracker"),
@@ -168,12 +177,7 @@ path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
    path('TECHNOCRATS_viewofficer', views.TECHNOCRATS_viewofficer, name="TECHNOCRATS_viewofficer"),
 
    # General View
-   path('Gen_Home', views.Gen_Home, name="Gen_Home"),
 
- 
-
-    path('add-organization/', add_organization, name='add_organization'),
-    path('org/<slug:slug>/', org_profile, name='org_profile'),
     path('Gen_FSTLP_profile', views.Gen_FSTLP_profile, name="Gen_FSTLP_profile"),
    path('Gen_SI_profile', views.Gen_SI_profile, name="Gen_SI_profile"),
    path('Gen_THEEQUATIONERS_profile', views.Gen_THEEQUATIONERS_profile, name="Gen_THEEQUATIONERS_profile"),

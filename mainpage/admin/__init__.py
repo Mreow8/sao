@@ -4,3 +4,6 @@ from .scholarship import *
 from .job_placement import *
 from .medical import *
 from .alumni import *
+from .discipline import *
+from .main import *
+from .studentlife import *

@@ -1,5 +1,6 @@
-{% extends "main.html" %} {% load static %} {% block title %}Student
-Organization{% endblock %} {% block headcontent %}
+{% extends base_template|default:"main.html" %} {% load static %}
+<!-- wewrwer -->
+{% block title %}Student Organization{% endblock %} {% block headcontent %}
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
@@ -58,12 +59,17 @@ Organization{% endblock %} {% block headcontent %}
     style="margin-left: 100px; text-align: center; justify-content: center"
   >
     <h1 class="pf2" style="color: black">CTU-AC STUDENT ORGS</h1>
+    {% if user.is_authenticated and user.role == 'superadmin'%}
+
     <p class="pages" style="font-size: 20px; color: black; padding-top: 10px">
       Quick Actions
     </p>
+
     <button class="add-org-btn" id="addOrgBtn">
       <i class="fa fa-plus"></i> Add Organization
     </button>
+    {% endif %}
+
     <p class="pages pf2" id="orgLinks">
       <a href="{% url 'Gen_FSTLP_profile' %}">FSTLP</a> -
       <a href="{% url 'Gen_SI_profile' %}">SI++</a> -

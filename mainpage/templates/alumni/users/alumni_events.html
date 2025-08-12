@@ -1,47 +1,119 @@
 {% extends 'main.html' %} {% block bodycontent %}
-<section class="h-auto ml-[300px] flex items-center justify-center bg-gray-100">
-  <div class="mx-auto container text-black">
-    <div class="flex items-center justify-center mt-[200px]">
-      <div class="bg-white w-auto h-auto p-5 gap-10">
-        <h1 class="text-[36px] font-bold mb-10">Alumni Reunion and Events</h1>
-        {% if events %}
-        <div class="grid grid-cols-3 gap-5 w-auto h-auto">
-          {% for event in events %}
-          <div
-            class="rounded-lg flex w-auto min-w-[360px] max-w-[360px] flex-col border gap-2 mt-5"
-          >
-            <div class="min-w-[360px] min-h-[207px]">
-              <img
-                src="{{ event.eventsImage.url }}"
-                class="min-w-[360px] min-h-[207px] rounded-lg max-w-[360px] max-h-[207px]"
-              />
-            </div>
-            <div class="flex flex-col gap-1 w-auto h-auto p-2">
-              <h1
-                class="text-[20px] text-blue-700 hover:underline cursor-pointer font-bold"
-              >
-                {{ event.eventsName }}
-              </h1>
-              <p class="text-[14px] text-gray-500 font-bold">
-                {{ event.eventsDate }}
-              </p>
-              <p class="text-[14px] text-gray-500 font-bold">
-                {{ event.eventsLocation }}
-              </p>
-              <p class="text-[13px] font-bold w-full" id="description">
-                {{ event.eventsDescription }}
-              </p>
-            </div>
+
+<style>
+  section {
+    justify-content: center;
+    align-items: center;
+    background-color: #f7f7f7;
+    min-height: 100vh;
+    color: #222;
+  }
+
+  .container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .event-wrapper {
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .event-wrapper h1 {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: center;
+    color: #333333;
+  }
+
+  .event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+  }
+
+  .event-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .event-card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .event-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background-color: #f0f0f0;
+  }
+
+  .event-details {
+    padding: 16px 20px;
+  }
+
+  .event-details h2 {
+    font-size: 18px;
+    color: #444;
+    font-weight: 500;
+    margin: 0 0 6px;
+  }
+
+  .event-details h2:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .event-details p {
+    font-size: 14px;
+    color: #666;
+    margin: 2px 0;
+    line-height: 1.4;
+  }
+
+  .no-events {
+    font-size: 18px;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 30px;
+    color: #999;
+  }
+</style>
+
+<section>
+  <div class="container">
+    <div class="event-wrapper">
+      <h1>Alumni Reunion and Events</h1>
+      {% if events %}
+      <div class="event-grid">
+        {% for event in events %}
+        <div class="event-card">
+          <img
+            src="{{ event.eventsImage.url }}"
+            alt="Event Image"
+            class="event-img"
+          />
+          <div class="event-details">
+            <h2>{{ event.eventsName }}</h2>
+            <p>{{ event.eventsDate }}</p>
+            <p>{{ event.eventsLocation }}</p>
+            <p>{{ event.eventsDescription }}</p>
           </div>
-          {% endfor %}
         </div>
-        {% else %}
-        <p class="text-[20px] font-bold text-center mt-10">
-          No events available
-        </p>
-        {% endif %}
+        {% endfor %}
       </div>
+      {% else %}
+      <p class="no-events">No events available</p>
+      {% endif %}
     </div>
   </div>
 </section>
+
 {% endblock %}

@@ -1,21 +1,84 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Upload CSV</title>
-</head>
-<body>
-    <h1>Upload CSV</h1>
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Upload</button>
-    </form>
-</body>
-</html>
+{% extends 'adminmain.html' %}
+{% load static %}
+
+{% block extrahead %}
+<style>
+  .upload-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  form {
+    margin-top: 20px;
+  }
+
+  form p {
+    margin-bottom: 15px;
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  ul {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ffe6e6;
+    border: 1px solid #ffb3b3;
+    border-radius: 5px;
+    color: #a94442;
+    list-style: none;
+  }
+
+  li.success {
+    background-color: #e6ffea;
+    border: 1px solid #b3ffcc;
+    color: #2d7a4d;
+  }
+
+  li.error {
+    background-color: #ffe6e6;
+    border: 1px solid #ffb3b3;
+    color: #a94442;
+  }
+</style>
+{% endblock %}
+
+{% block bodycontent %}
+<div class="upload-container">
+  <h1>Upload CSV</h1>
+
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Upload</button>
+  </form>
+</div>
+{% endblock %}

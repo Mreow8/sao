@@ -12,10 +12,38 @@ import base64, uuid
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.decorators import login_required, user_passes_test
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
 # views.py
+# views.py
+def is_superadmin(user):
+    return user.is_authenticated and user.role == 'superadmin'
+
+
+
+def view_financial(request, slug):
+    org_obj = Organization.objects.get(slug=slug)
+    approved_statements = FinancialStatement.objects.filter(status='approved', org=org_obj)
+
+    if request.method == 'POST':
+        form = FinancialStatementForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.organization_slug = slug
+            instance.org = org_obj  # assuming your model has a ForeignKey to Organization
+            instance.save()
+            return redirect('financial_statements', slug=slug)
+    else:
+        form = FinancialStatementForm()
+
+    return render(request, 'studentorg/MAIN/view_financial.html', {
+        'form': form,
+        'statements': approved_statements,
+        'org': org_obj,
+        'slug': slug
+    })
+
 
 def adviser_form(request, slug):
     organization = get_object_or_404(Organization, slug=slug)
@@ -66,19 +94,37 @@ def edit_org(request, slug):
         form = OrganizationForm(instance=org)
     return render(request, 'studentorg/Main/OrgMain.html', {'form': form})
 def view_project_by_slug(request, slug):
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
     org = get_object_or_404(Organization, slug=slug)
     projects = Project.objects.filter(status='approved', org=org)
     return render(request, 'studentorg/Main/view_projects.html', {
         'org': org,
-        'projects': projects
+        'projects': projects,
+           'base_template': base_template,
     })
+
+@login_required
 def org_profile(request, slug):
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
     org = get_object_or_404(Organization, slug=slug)
-    is_edit = request.GET.get('edit') == 'true'
+
+    # Check if user can edit this org
+    user = request.user
+    can_edit = (
+        user.role == 'superadmin' or
+        (user.role == 'org_member' and user.organization == org)
+    )
+
+    is_edit = request.GET.get('edit') == 'true' and can_edit
 
     if request.method == 'POST':
+        if not can_edit:
+            return redirect('org_profile', slug=slug)  # Prevent unauthorized post
+
         form = OrganizationForm(request.POST, request.FILES, instance=org)
 
+        # Process key elements
         key_elements_raw = request.POST.getlist('key_elements[]')
         key_elements_cleaned = []
         for item in key_elements_raw:
@@ -88,7 +134,7 @@ def org_profile(request, slug):
             elif item.strip():
                 key_elements_cleaned.append({'title': None, 'description': item.strip()})
 
-        org.key_elements = key_elements_cleaned  # ✅ Save structured data
+        org.key_elements = key_elements_cleaned  # Assuming this is a JSONField
 
         if form.is_valid():
             form.save()
@@ -100,6 +146,7 @@ def org_profile(request, slug):
         'org': org,
         'form': form,
         'is_edit': is_edit,
+             'base_template': base_template, 
         'key_elements': org.key_elements or [],
     })
 
@@ -137,12 +184,17 @@ def org_profile_view(request, org_id, mode='view'):
         })
 
 def Gen_Home(request):
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
     orgs = Organization.objects.all()
-    return render(request, "studentorg/VIEW/OrgMain.html", {"orgs": orgs})
+    return render(request, "studentorg/VIEW/OrgMain.html", {"orgs": orgs,
+        'base_template': base_template,  # pass base template to HTML
+    })
 # def home(request):
 #     return render (request, "studentorg/VIEW/OrgMain.html")
 
 #login
+@login_required
+@user_passes_test(is_superadmin)
 
 @csrf_exempt
 def add_organization(request):
@@ -392,7 +444,7 @@ def admin_manage_accreditations(request):
             accreditation.save()
             return redirect('admin_manage_accreditations')
     
-    return render(request, 'ADMIN/manage_accreditation.html', {'accreditations': accreditations})
+    return render(request, 'studentorg/ADMIN/manage_accreditation.html', {'accreditations': accreditations})
 
 def FSTLP_certification(request):
     return render(request, 'studentorg/FSTLP/FSTLP_certification.html')

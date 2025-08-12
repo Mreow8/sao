@@ -30,23 +30,24 @@
             <form>
                 {% csrf_token %}
                 <h2 width="width: 100%;">Fill Out Individual Profile</h2>
-                <label>Enter ID number:</label>
-                <span id="search_id">
-                    <input type="text" name="studentID" placeholder="search" required="" id="studentIDBox">
-                    <button class="OrangeButton" id="searchButton">Search</button>
-                    <ul class="messages">
-                        {% for message in messages %}
-                            <li class="{{ message.tags }}">{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                </span>
-                <table id="info_table" class="hidden">
-                    <tr id="info_table_head">
-                        <th>NAME</th>
-                        <th>COURSE</th>
-                        <th>SEX</th>
-                    </tr>
-                </table>
+              
+            {% if student %}
+    <table class="student-info-table">
+    <tr id="info_table_head">
+        <th>NAME</th>
+        <th>COURSE</th>
+        <th>SEX</th>
+    </tr>
+    <tr>
+        <td>{{ student.firstname }} {{ student.lastname }}</td>
+        <td>{{ student.degree }}</td>
+        <td>{{ student.sex }}</td>
+    </tr>
+</table>
+
+{% else %}
+    <p>User information not found.</p>
+{% endif %}
             </form>
             <form method="post" action="" id="individualProfileForm"  enctype="multipart/form-data">
                 {% csrf_token %}

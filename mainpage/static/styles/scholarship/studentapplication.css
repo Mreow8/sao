@@ -87,10 +87,11 @@ label {
 button {
   padding: 7px 35px;
   width: fit-content;
-  background-color: #c66604;
+  background-color: #ff8000;
   border: none;
+  color: white;
   border-radius: 5px;
 }
 button:hover {
-  background-color: #a55503;
+  background-color: #ff8000;
 }

@@ -48,8 +48,16 @@ def calculate_age(birth_date):
     today = datetime.today()
     age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
     return age
-
 def individualProfile(request):
+    student = None
+    user = request.user
+
+    if user.is_authenticated:
+        try:
+            student = studentInfo.objects.get(studID=int(user.username))
+        except studentInfo.DoesNotExist:
+            messages.error(request, "Student not found")
+
     if request.method == 'POST':
         form = IndividualProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -73,22 +81,16 @@ def individualProfile(request):
                 'Lovable', 'Jealous', 'Shy', 'Sarcastic', 'Tactful',
                 'Pessimistic', 'Submissive', 'Optimistic', 'Happy-go-lucky', 'Goal-oriented'
             ]
-            # This shit so slow but it works
 
             describeYouBest_checked = request.POST.getlist('describeYouBest[]')
-    
             student_id = request.POST.get('student_id_val')
-            
+
             date_of_birth_str = form.cleaned_data['dateOfBirth']
             date_of_birth = datetime.strptime(str(date_of_birth_str), '%Y-%m-%d')
             age = calculate_age(date_of_birth)
 
-
-
-            # Get the studentInfo instance corresponding to the provided student ID
             student = get_object_or_404(studentInfo, studID=student_id)
 
-            # Create a dictionary to store the state (checked or not) of each value
             describeYouBest_state = {value: value in describeYouBest_checked for value in describeYouBest_values}
 
             new_form = form.save(commit=False)
@@ -98,15 +100,12 @@ def individualProfile(request):
             new_form.siblingsName = siblings_name
             new_form.siblingsAge = siblings_age
             new_form.siblingsSchoolWork = siblings_placework
-
-            # Assuming the other fields are also JSONFields
             new_form.nameOfOrganization = name_of_organization
             new_form.inOutSchool = in_out_school
             new_form.positionTitle = position
             new_form.inclusiveYears = inclusive_years
             new_form.describeYouBest = describeYouBest_state
 
-            # Handle the studentPhoto field
             if 'studentPhoto' in request.FILES:
                 new_form.studentPhoto = request.FILES['studentPhoto']
 
@@ -115,8 +114,14 @@ def individualProfile(request):
             return redirect('Individual Profile')
     else:
         form = IndividualProfileForm()
-    context = {'form': form}
+
+    context = {
+        'form': form,
+        'student': student,
+    }
     return render(request, 'guidance/individual_profile.html', context)
+
+
 
 def intake_interview_view(request):
     if request.method == 'POST':
@@ -215,15 +220,30 @@ def search_student_info_for_intake(request):
             return JsonResponse({'error': 'Student not found'}, status=404)
 
 def counseling_app(request):
+    student = None
+    user = request.user
+
+    if user.is_authenticated:
+        if user.username.isdigit():  # ✅ Prevent ValueError
+            try:
+                student = studentInfo.objects.get(studID=int(user.username))
+                print(student)
+            except studentInfo.DoesNotExist:
+                messages.error(request, "Student not found")
+        else:
+            messages.error(request, "Invalid username format")
     if request.method == 'POST':
         form = CounselingSchedulerForm(request.POST)
         if form.is_valid():
             current_datetime = timezone.now()
             student_id = request.POST.get('student_id_val')
-            
-            # Get the studentInfo instance corresponding to the provided student ID
-            student = get_object_or_404(studentInfo, studID=student_id)
-            
+
+            if not student_id or not student_id.isdigit():
+                messages.error(request, "Invalid student ID.")
+                return redirect('Counseling App With Scheduler')
+
+            student = get_object_or_404(studentInfo, studID=int(student_id))
+                        
             # Check for ongoing schedules
             ongoing_schedule = counseling_schedule.objects.filter(
                 studentID=student, 
@@ -246,19 +266,27 @@ def counseling_app(request):
                 scheduled_time = time[f'{ongoing_schedule.scheduled_time}']
                 messages.error(request, f'You still have an ongoing schedule on {scheduled_date} on {scheduled_time}.')
                 return redirect('Counseling App With Scheduler')
-            
+            print("erwerer")
             formatted_date = current_datetime.strftime('%Y-%m-%d')
             counseling = form.save(commit=False)
             counseling.dateRecieved = formatted_date
             counseling.studentID = student  # Assign the studentInfo instance
             counseling.save()
-            
+            print("Counseling schedule saved to database:")
+            print("Student:", counseling.studentID)
+            print("Date Received:", counseling.dateRecieved)
+        
+            print("Scheduled Date:", counseling.scheduled_date)
+            print("Scheduled Time:", counseling.scheduled_time)
+
             messages.success(request, 'Your request has been successfully added. An email will be sent if it is accepted.')
             return redirect('Counseling App With Scheduler')
     else:
         form = CounselingSchedulerForm()
     
-    context = {'form': form}
+    context = {'form': form, 
+        'student': student,
+    }
     return render(request, 'guidance/counseling_app.html', context)
 
 def counseling_app_admin_view(request):

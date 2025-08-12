@@ -1,111 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Advisers</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
 
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        button.decline {
-            background-color: #f44336;
-        }
-
-        button:hover {
-            opacity: 0.8;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Manage Advisers</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Officer ID</th>
-                    <th>Profile Picture</th>
-                    <th>Last Name</th>
-                    <th>First Name</th>
-                    <th>Middle Name</th>
-                    <th>Department</th>
-                    <th>Position</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for adviser in advisers %}
-                <tr>
-                    <td>{{ adviser.id }}</td>
-                    <td>{% if adviser.Adviser_profile_picture %}<a href="{{ adviser.Adviser_profile_picture.url }}" target="_blank">View Profile</a>{% endif %}</td>
-                    <td>{{ adviser.surname }}</td>
-                    <td>{{ adviser.firstname }}</td>
-                    <td>{{ adviser.middlename }}</td>
-                    <td>{{adviser.department}}</td>
-                    <td>{{ adviser.position }}</td>
-                    <td>{{ adviser.get_status_display }}</td>
-                    <td>
-                        <form method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="adviser_id" value="{{ adviser.id }}">
-                            {% if adviser.status == 'pending' %}
-                                <button type="submit" name="action" value="approve">Approve</button>
-                                <button type="submit" name="action" value="decline" class="decline">Decline</button>
-                            {% endif %}
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
+<div class="sub-title">
+  <h3>Student Organization(Admin)</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Adviser Management</p>
+</div>
+<div class="container">
+  <div class="tabs">
+    <div class="tabs">
+      <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
+      <a href="{% url 'admin_manageadviser' %}" class="tab active"
+        >Manage Adviser</a
+      >
+      <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
+      <a href="{% url 'admin_managefinancial' %}" class="tab"
+        >Manage Financial</a
+      >
+      <a href="{% url 'admin_manage_accreditations' %}" class="tab"
+        >Manage Applications</a
+      >
+      <a href="/admin_transactionreport" class="tab">Manage Transactions </a>
     </div>
-</body>
-</html>
+  </div>
+  <div class="maincontain" style="width: 1200px">
+    <div class="subcontain">
+      <table>
+        <thead>
+          <tr>
+            <th>Officer ID</th>
+            <th>Profile Picture</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Department</th>
+            <th>Position</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for adviser in advisers %}
+          <tr>
+            <td>{{ adviser.id }}</td>
+            <td>
+              {% if adviser.Adviser_profile_picture %}<a
+                href="{{ adviser.Adviser_profile_picture.url }}"
+                target="_blank"
+                >View Profile</a
+              >{% endif %}
+            </td>
+            <td>{{ adviser.surname }}</td>
+            <td>{{ adviser.firstname }}</td>
+            <td>{{ adviser.middlename }}</td>
+            <td>{{adviser.department}}</td>
+            <td>{{ adviser.position }}</td>
+            <td>{{ adviser.get_status_display }}</td>
+            <td>
+              <form method="post" style="display: inline">
+                {% csrf_token %}
+                <input
+                  type="hidden"
+                  name="adviser_id"
+                  value="{{ adviser.id }}"
+                />
+                {% if adviser.status == 'pending' %}
+                <button type="submit" name="action" value="approve">
+                  Approve
+                </button>
+                <button
+                  type="submit"
+                  name="action"
+                  value="decline"
+                  class="decline"
+                >
+                  Decline
+                </button>
+                {% endif %}
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+       </div>
+</div>
+    </div>
+    {% endblock bodycontent %}
+  </div>
+</div>

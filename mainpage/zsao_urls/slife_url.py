@@ -17,7 +17,8 @@ urlpatterns = [
     # Calendar
     path("monthlyCalendar/", views.monthlyCalendar, name="monthlyCalendar"),
     path("monthlyCalendarAdmin/", views.monthlyCalendarAdmin, name="monthlyCalendarAdmin"),
-    path("save-schedule/", views.save_schedule, name="save_schedule"),
+    path('calendar/save/', views.save_schedule, name='save_schedule'),
+
     path("update-schedule/<int:schedule_id>/", views.update_schedule, name="update_schedule"),
     path("delete-schedule/<int:schedule_id>/", views.delete_schedule, name="delete_schedule"),
     

@@ -67,6 +67,9 @@
               <span class="fas fa-caret-down first"></span>
             </a>
             <ul class="studentlife">
+<li><a href="{% url 'upload_files' %}">Post student</a></li>
+<li><a href="{% url 'assign_role' %}">Profiles</a></li>
+
               <li>
                 <a href="{% url 'equipmentTrackerAdmin' %}"
                   >Equipment Tracker(Admin)</a
@@ -83,9 +86,8 @@
                   >Monthly Calendar of Activites(Admin)</a
                 >
               </li>
-              <li>
-                <a href="/transactionreport">Transaction Report(Admin)</a>
-              </li>
+               <li><a href="{% url 'jobplacement:non_acad' %}">Non-Academic Award Issuance</a></li>
+                            <li><a href="{% url 'jobplacement:job_trans_rep' %}">Transaction Reports</a></li>
             </ul>
           </li>
 
@@ -97,6 +99,8 @@
             </a>
             <ul class="scholar-show">
               <li><a href="{% url 'admin_req'%}"">Submission of Requirements Tracker(Admin)</a></li>
+                        <li><a href="{% url 'adminapplication' %}">Application tracker</a></li>
+
               <li>
                 <a href="{% url 'profile'%}"
                   >Scholars Profile and Validation(Admin)</a
@@ -132,26 +136,13 @@
                   >OJT Requirements Tracker</a
                 >
               </li>
-              {% if request.user.is_staff %}
-              <li>
-                <a href="{% url 'jobplacement:non_acad' %}"
-                  >Non-Academic Award Issuance</a
-                >
-              </li>
+             
               <li>
                 <a href="{% url 'jobplacement:job_trans_rep' %}"
                   >Transaction Reports</a
                 >
               </li>
-              {% endif %} {% if request.user.is_superuser %}
-              <li>
-                <a href="{% url 'jobplacement:admin_signup' %}">Admin Signup</a>
-              </li>
-              {% endif %} {% if request.user.is_staff %} {%comment%}
-              <li>
-                <a href="{% url 'custom_user:register' %}">Student Signup</a>
-              </li>
-              {%endcomment%} {% endif %}
+            
             </ul>
           </li>
 
@@ -161,7 +152,10 @@
               >STUDENT DISCIPLINE
               <span class="fas fa-caret-down fourth"></span>
             </a>
+            
             <ul class="student_disc-show">
+                                   <li><a href="{% url 'case_profile' %}">Case Profile</a></li>
+
               <li><a href="{% url 'transaction' %}">Transaction Reports</a></li>
             </ul>
           </li>
@@ -261,8 +255,14 @@
               {% comment %}
               <li><a href="{% url 'logins' %}">Org Profile</a></li>
               {% endcomment %}
-            </ul>
+               <li>
+            <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
           </li>
+            </ul>  <ul class="student_org-show">
+                            <li><a href="{% url 'Gen_Home'%}">Org Profile</a></li>
+                            
+                        </ul>
+          
 
           <!-- MEDICAL -->
           <li>
@@ -313,31 +313,29 @@
 
     <!-- Header / Search Bar / Account -->
     <div class="right-side">
-      <div class="search-container">
-        <div class="search-icon">
-          <i class="fa-solid fa-magnifying-glass"></i>
+      <div class="custom-search-wrapper">
+  <div class="search-container">
+    <div class="search-icon">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+    <input type="text" placeholder="Search..." />
+    <div class="account-info">
+      {% if user.is_authenticated %}
+        <div class="student-account-info">
+          <strong>Student ID:</strong> {{ user.username }}<br />
+          <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}
+          <button class="logout-btn">
+            <a href="{% url 'logout' %}">Logout</a>
+          </button>
         </div>
-        <input type="text" placeholder="Search..." />
-
-        <div
-          class="student-account-info"
-          style="margin: 16px 0; text-align: right"
-        >
-          {% if request.user.is_authenticated %}
-          <strong>Admin ID:</strong> {{ request.user.username }}<br />
-          <strong>Name:</strong> {{ request.user.first_name }} {{
-          request.user.last_name }}
-          <a
-            href="{% url 'logout' %}"
-            class="btn btn-primary"
-            style="color: white; margin-left: 10px"
-            >Logout</a
-          >
-          {% else %}
+      {% else %}
+        <div class="student-account-info">
           <a href="{% url 'signinuser' %}">Sign in</a>
-          {% endif %}
         </div>
-      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 
       <main class="main_content">{% block bodycontent %}{% endblock %}</main>
     </div>

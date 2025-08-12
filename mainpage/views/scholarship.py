@@ -20,6 +20,11 @@ from django.shortcuts import render
 from django.db.models import Sum
 from django.db import transaction
 import re
+from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
+User = get_user_model() 
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -88,7 +93,6 @@ def signinuser(request):
         password = request.POST.get('password')
 
         try:
-            # Try finding the user by email
             user_obj = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, "Account does not exist.")
@@ -98,15 +102,15 @@ def signinuser(request):
             messages.error(request, "This account is inactive. Please contact admin.")
             return render(request, 'login.html')
 
-        # Authenticate using the username (since Django auth uses username by default)
+        # Authenticate using username, since Django's default auth uses username
         user = authenticate(request, username=user_obj.username, password=password)
 
         if user is not None:
             login(request, user)
             if user.is_superuser:
-                return redirect('adminhome')
-            elif hasattr(user, 'user_type') and user.user_type == 'student':
-                return redirect('studenthome')
+                return redirect('adminmain')
+            elif user.role == 'student':  # Adjusted for your CustomUser model
+                return redirect('main')
             else:
                 return redirect('homepage')
         else:
@@ -196,9 +200,11 @@ def adminapplication(request):
             if key.startswith('action'):
                 action, applicant_id = value.split('_')
                 note = request.POST.get(f'note_{applicant_id}')
+                print(action, applicant_id, note)
                 
                 try:
-                    application_data = applicants.objects.get(id=applicant_id)
+                    application_data = applicants.objects.get(application_id=applicant_id)
+
                     if action == 'UPDATE' and note:
                         application_data.note = note
                         application_data.save()
@@ -585,7 +591,12 @@ def scholars_profile_admin(request):
 
     # Filter by search query if provided (Application ID = primary key of applicant)
     if search_query:
-        applicant_data = applicant_data.filter(application_id__icontains=search_query)
+        if search_query.isdigit():
+            applicant_data = applicant_data.filter(application_id=int(search_query))
+            print("Search query is a valid Application ID:", search_query)
+        else:
+            messages.error(request, "Search must be a valid Application ID (number).")
+            applicant_data = applicants.objects.none()
 
     if request.method == 'POST':
         for key in request.POST.keys():
