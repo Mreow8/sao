@@ -1,445 +1,250 @@
+/* Layout Basics */
 section {
-  margin: 0;
   display: flex;
   flex-direction: column;
   max-height: 100vh;
   position: relative;
+  margin: 0;
 }
+.header-bar .sub-title {
+  text-align: left; /* or right or initial */
+}
+/* Header Bar */
 .header-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-.button-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* spacing between buttons */
-  align-items: flex-start; /* aligns to the left side */
-  margin-top: 10px;
 }
 
-.button-bar .btnshow,
-.button-bar .showtable {
-  padding: 10px 15px;
-  background-color: #ff9f43;
+/* Button Group */
+.button-container {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.button-container button {
+  padding: 0.5rem 1rem;
+  background-color: #ff8000;
   color: white;
-  text-decoration: none;
   border: none;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
-.button-bar .btnshow:hover,
-.button-bar .showtable:hover {
-  background-color: #fb8c00;
+.button-container button:hover {
+  background-color: #cc6600;
 }
 
-.button-container {
-  display: flex;
-  gap: 10px;
-}
-
-.intro {
-  line-height: 1.6;
-  margin-left: -7%;
-}
-.intro p {
-  font-size: 20px;
-  color: #ff8000;
-  margin-left: 0;
-  font-weight: bold;
-}
+/* Description Section */
 #desc {
   line-height: 1.9;
 }
 
 #demo {
-  margin-left: -7%;
-  margin-right: -7%;
-  margin-bottom: 0.5rem;
-  margin-top: 0.2rem;
+  margin: 0.2rem -7% 0.5rem;
 }
 
-/* CSS PARA SA CARDS */
-/* .container{
-    display:flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 2rem;
-    height: 70%;
-    overflow-y: scroll;
-    background-color: #fefefe;
-    margin: 2rem;
-    border-radius: 8px;
-} */
-
+/* Card Styling */
 .card {
-  margin: 0.2rem;
   margin-bottom: 2rem;
-  min-height: 15rem;
-  width: 100%;
-  color: black;
-  display: flex;
-  font-size: 1rem;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border: 1px solid #e2e2e2;
   border-radius: 10px;
-  align-items: center;
-  justify-content: center;
-  background-color: #f2f2f2;
-  box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.5);
-  line-height: 1.2;
-}
-.card__content {
   position: relative;
-  margin-top: 8%;
-  margin-bottom: 8%;
-  display: inline-block;
-  position: relative;
-  vertical-align: top;
-  width: calc(100% - 120px);
-  min-height: 30%;
 }
+
+.card__content h1 {
+  color: #ff8000;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.card__content h3 {
+  margin: 0.2rem 0;
+}
+
+.card__content ul {
+  margin-top: 1rem;
+  padding-left: 1.2rem;
+  list-style: circle;
+}
+
 .info-group {
   display: flex;
   align-items: center;
-  margin: 0.5rem 0;
-}
-.info-group h3 {
-  margin: 0 1rem 0 0;
-  padding-right: 10px;
-}
-.info-group .hiring {
-  font-weight: 400;
-}
-/* .company{
-    background-color: cadetblue;
-    height: 30vmax;
-    font-size: 20px;
-    margin: 4%;
-    overflow: auto;
-    margin-bottom: 0;
-    display: grid;
-    place-items: left;
-}
-.company_name{
-    width: 50%;
-    height: auto;
-    background-color: aquamarine;
-    padding: 2%;
-    margin: 2%;
-    position: relative;
-    vertical-align: top;
-    width: calc(100% - 120px);
-    min-height: 30%;
-} */
-.card__content h3 {
-  margin: 0;
-}
-.card__content h1 {
-  color: #ff8000;
-  line-height: 1.6;
-  font-size: 30px;
-}
-.schedule {
-  margin-top: 0.5rem;
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  font-weight: bold;
-}
-.card__content li {
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  list-style-type: circle;
+  gap: 0.5rem;
 }
 
-/* CSS PARA SA READ MORE CARDS, UG POP-UP FORMS */
-.close-top,
-.closeform,
-.closeform2 {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 30px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #ff8000;
-}
-.closeform:hover,
-.closeform2:hover,
-.close-top:hover {
-  text-decoration: underline;
-  background: none;
+/* Action Buttons */
+.button-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+
+  margin-top: 1.5rem;
 }
 .btnshow {
-  position: absolute;
-  top: 40%;
-  right: 4%;
-  padding: 8px 16px;
-  font-weight: 600;
-  outline: none;
-  border: none;
   background-color: #ff8000;
-  border-radius: 6px;
-  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
-  cursor: pointer;
-  color: #fff;
+  color: white;
 }
+.btnshow,
 .showtable {
-  position: absolute;
-  text-align: center;
-  font-size: 0.8rem;
-  top: 65%;
-  font-size: 16px;
-  right: 4%;
-  padding: 8px 16px;
-  font-weight: 600;
-  outline: none;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  border-radius: 8px;
   border: none;
-  background-color: #ff8000;
-  border-radius: 6px;
-  text-decoration: none;
   cursor: pointer;
-  color: #fff;
-  width: 12.5%;
+  transition: background-color 0.3s ease;
 }
-.showtable:hover {
-  background-color: #cc6600;
+/* Delete Icon Button */
+#myForm {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
+
+#myForm button {
+  background: none;
+  border: none;
+  color: #ff8000;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+#myForm button:hover {
+  color: #cc6600;
+}
+
+/* Popups */
 .show_container,
 .showform_container,
 .studentcontainer {
-  background-color: rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.3s ease;
+  z-index: 999;
 }
+
 .show_container.active,
 .showform_container.active,
 .studentcontainer.active {
   opacity: 1;
   pointer-events: auto;
-  overflow-y: auto;
-  z-index: 1;
 }
-.show_container .showbox,
-.showform_container .form_container,
-.studentcontainer .studentshow {
-  width: 40%;
-  max-width: 90%;
-  max-height: 90vh;
+
+.showbox,
+.form_container,
+.studentshow {
   background: #f2f2f2;
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  padding: 4%;
-  transform: scale(0);
-  transition: transform 0.4s ease;
+  width: 90%;
+  max-width: 600px;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
   overflow-y: auto;
-  line-height: 1.9;
 }
+
 .show_container.active .showbox,
 .showform_container.active .form_container,
 .studentcontainer.active .studentshow {
   transform: scale(1);
 }
-.showbox h1 {
-  color: #ff8000;
-  line-height: 1.6;
-  font-size: 30px;
-}
-.showbox p {
-  margin: 10px 5px 10px 5px;
-}
-.close {
-  margin-bottom: 0;
-  width: 100%;
-  padding: 8px 10px;
-  font-weight: 600;
-  outline: none;
+
+/* Close Buttons */
+.close,
+.closeform,
+.closeform2,
+.close-top {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  background: none;
   border: none;
-  background-color: #ff8000;
+  font-size: 1.5rem;
+  color: #ff8000;
   cursor: pointer;
-  color: #fff;
-}
-/* .showbox .jobschedule ul {
-    float: left;
-    display: flex;
-    flex-direction: row;
-}
-.showbox .jobschedule li {
-    margin-right: 1.5rem;
-    list-style-type: circle;
-} */
-.info-groups-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  padding: 10px;
-  margin-right: -16%;
-  margin-bottom: 1rem;
-}
-.showbox .info-group {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-right: 5px;
-}
-.showbox .info-group h3 {
-  font-weight: 400;
-  margin-top: 0.1rem;
-  padding-left: 0.5rem;
-}
-.showbox .info-group img {
-  width: 1rem;
-  margin-top: 0.2rem;
-  display: block;
-}
-.clearfix {
-  clear: both;
-}
-button:hover {
-  background-color: #cc6600;
 }
 
-/* button para pa show sa form */
-.button-container {
-  right: -7%;
-  z-index: 1;
-  display: flex;
-  gap: 1rem;
+.close:hover,
+.closeform:hover,
+.closeform2:hover,
+.close-top:hover {
+  text-decoration: underline;
 }
-.showform2,
-.showform {
-  padding: 0.5rem 0.8rem;
-  font-weight: 600;
-  outline: none;
-  border: none;
-  background-color: #ff8000;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #fff;
-}
-/* CSS PARA SA FILL UP/ POP UP FORM MISMO */
+
+/* Form Styling */
 form {
   display: flex;
   flex-direction: column;
 }
+
 form label {
-  margin: 10px 0 5px;
+  font-weight: 600;
+  margin-top: 1rem;
 }
+
 form input[type="text"],
 form input[type="number"],
 form textarea,
-form input[type="submit"] {
-  padding: 10px;
-  margin: 5px 0 15px;
+form select {
+  padding: 0.6rem;
+  margin-top: 0.3rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 100%;
-  display: inline-block;
 }
+
 form input[type="submit"] {
-  padding: 0.5rem 0.8rem;
-  font-weight: 600;
-  outline: none;
-  border: none;
+  margin-top: 1.2rem;
   background-color: #ff8000;
+  color: #fff;
+  font-weight: 600;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
-  color: #fff;
+  padding: 0.6rem 1rem;
 }
-#myForm input[type="submit"] {
-  /* background-color: #FF8000;
-    color: white;
-    border: none;
-    cursor: pointer; */
+
+form input[type="submit"]:hover {
+  background-color: #cc6600;
+}
+
+/* Suggestion Lists */
+#company_suggestions,
+#assign_student_suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   position: absolute;
-  top: -30%;
-  right: -50%;
-  background: none;
-  border: none;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #ff8000;
-}
-#myForm input[type="submit"]:hover {
-  text-decoration: underline;
-}
-form select {
-  padding: 10px;
-  margin: 5px 0 20px;
-  outline: none;
+  background: white;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  z-index: 1000;
   width: 100%;
 }
 
-.studentshow #company_suggestions {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  width: 85%;
-  z-index: 1000;
-  background-color: #ffffff;
-  top: 23.5%;
-  cursor: pointer;
-}
-.studentshow #assign_student_suggestions {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  width: 85%;
-  z-index: 1000;
-  background-color: #ffffff;
-  top: 40%;
-  cursor: pointer;
-}
 #company_suggestions li,
 #assign_student_suggestions li {
-  background: #ffffff;
-  padding: 10px;
-  width: 100%;
-  border: 1px solid black;
-  border-top: 0;
-  border-bottom: 0;
-}
-#company_suggestions li:hover,
-#assign_student_suggestions li:hover {
-  background-color: #b9b9b9ae;
-  opacity: 1;
-}
-#company_suggestions li:last-child,
-#assign_student_suggestions li:last-child {
-  border-bottom: 1px solid black;
-  border-bottom-right-radius: 6px;
-  border-bottom-left-radius: 6px;
+  padding: 0.6rem;
+  cursor: pointer;
 }
 
 #company_suggestions li:hover,
 #assign_student_suggestions li:hover {
-  background-color: #b9b9b9ae;
-  opacity: 1;
-}
-
-#company_suggestions li:last-child,
-#assign_student_suggestions li:last-child {
-  border-bottom: 1px solid #000000;
-  border-bottom-right-radius: 4px;
-  border-bottom-left-radius: 4px;
+  background-color: #f0f0f0;
 }

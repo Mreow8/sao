@@ -1,116 +1,74 @@
-#dir-gray{
-    color: #636363;
+/* Base Container */
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
 }
-.container{
-    display: flex;
-    flex-direction: column;
-    width: 100%;;
-    padding: 20px;
-}
-#dir-orange{
-    color: #FF8000;
-}
-.form-container{
-    display: flex;
-    flex-direction: column;
-    background-color: #F9F9F9;
-    padding: 30px;
-    width: 100%;
-    border: 1px solid #e2e2e2;
-    border-radius: 10px;
-}
-.form-container form{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 10px;
-}
-#search_id{
-    display: flex;
-    gap: 40px;
-    align-items: center;
-}
-.success{
-    font-size: 18px;
-    font-weight: 400;
-    color: #FF8000;
-}
-.error{
-    font-size: 18px;
-    font-weight: 400;
-    color: #ff0000;
-}
-#search_id input{
-    background-color: #DDDFEE;
 
-    padding: 9.6px;
-    border: transparent;
-    border-radius: 10px;
-    box-sizing: border-box;
-    padding-left: 10px;
-    align-items: left;
-    color: black;
-    max-width: 200px;
+/* Form Container */
+.form-container h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
 }
-.OrangeButton{
-    background-color: #FF8000;
-    padding: 9.6px;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    width: 100px;
+
+.form-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+  margin-top: 16px;
 }
-#info_table {
-    border-collapse: collapse;
-    width: 100%; 
+
+/* Inputs from Django form */
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="date"],
+.form-container input[type="time"],
+.form-container select,
+.form-container textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }
-#info_table th {
-    padding: 9.6px;
-    margin: 0; 
-    text-align: left;
-    color: #FF8000;
+
+/* Submit Button */
+.OrangeButton {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background-color: #f97316;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
 }
-#info_table td{
-    padding: 9.6px;
-    margin: 0; 
-    text-align: left;
+
+.OrangeButton:hover {
+  background-color: #ea580c;
 }
-#info_table tr{
-    border-bottom: 1px solid #e2e2e2;
+
+/* Datetime Container */
+#datetimepicker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-#info_table_head{
-    background-color: #f1f1f1;
-}
-#requestScheduleContainer{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    padding: 9.6px;
-}
-#requestScheduleContainer input, select{
-    background-color: #DDDFEE;
-    padding: 9.6px;
-    border: transparent;
-    border-radius: 10px;
-    box-sizing: border-box;
-    padding-left: 10px;
-    align-items: left;
-    color: black;
-    max-width: 250px;
-}
-#requestForm{
-    display: flex;
-}
-#datetimepicker{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-}
-#datetimepicker input, #datetimepicker select{
-    max-width: 150px;
-}
-.hidden{
-    display: none !important;
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container,
+  .sub-title {
+    padding: 20px;
+  }
 }

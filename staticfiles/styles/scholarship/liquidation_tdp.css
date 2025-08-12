@@ -1,0 +1,206 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f7f9fc;
+  color: #1f2937;
+}
+
+/* Back button */
+#back {
+  width: 35px;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+}
+
+#back:hover {
+  transform: scale(1.1);
+}
+
+/* Container */
+.container {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  max-width: 1100px;
+  margin: auto;
+}
+
+.upper {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #2d3748;
+}
+
+/* Header (logo + address) */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo1,
+.logo2 {
+  width: 80px;
+  height: 80px;
+}
+
+.text-center {
+  text-align: center;
+  line-height: 1.5;
+}
+
+.text-center h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.text-center p {
+  font-size: 14px;
+  color: #4a5568;
+}
+
+/* Form input group */
+.taas {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.taas label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.taas input,
+.taas select {
+  padding: 8px 14px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Report title */
+#report-header {
+  margin-top: 30px;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 500;
+  color: #1a202c;
+}
+
+/* Table styling */
+#table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  font-size: 14px;
+}
+
+#table th,
+#table td {
+  padding: 12px;
+  border: 1px solid #cbd5e0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#table input[type="text"],
+#table input[type="date"],
+#table input[type="number"] {
+  width: 100%;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#table button {
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#table button:hover {
+  background-color: #c53030;
+}
+
+#add button {
+  background-color: #3182ce;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#add button:hover {
+  background-color: #2563eb;
+}
+
+/* Signature section */
+.signature-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+}
+
+.signature {
+  text-align: center;
+  width: 30%;
+}
+
+.signature p {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+/* Submit button */
+#printButton {
+  margin-top: 30px;
+  background-color: #38a169;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+  transition: background-color 0.2s ease;
+}
+
+#printButton:hover {
+  background-color: #2f855a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .signature-section {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .signature {
+    width: 100%;
+  }
+}

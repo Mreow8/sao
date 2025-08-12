@@ -1,171 +1,100 @@
-/* OA FullCalendar Theme */
-.fc {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: linear-gradient(135deg, #fff7e6 0%, #ffe0b2 100%);
-  border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(255, 128, 0, 0.25), 0 1.5px 8px rgba(0, 0, 0, 0.1);
-  padding: 32px;
-  margin-top: 32px;
-  animation: popOA 1s cubic-bezier(0.4, 2, 0.6, 1);
-}
-@keyframes popOA {
-  0% {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+/* Calendar box */
+#calendar {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  overflow-x: auto;
 }
 
-/* Toolbar (header) */
-.fc .fc-toolbar {
-  background: linear-gradient(90deg, #ff8000 0%, #ffb347 100%);
+/* SweetAlert2 Custom Styling */
+.swal2-popup {
+  border-radius: 1rem !important;
+  font-family: "Segoe UI", sans-serif !important;
+}
+
+.swal2-input,
+.swal2-textarea {
+  border-radius: 0.5rem;
+  border: 1px solid #dcdcdc;
+  padding: 0.75rem;
+  font-size: 1rem;
+  width: 100%;
+}
+
+/* Modal */
+.modal-content {
+  border-radius: 1rem;
+  border: none;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  background-color: #3498db;
   color: #fff;
-  border-radius: 18px 18px 0 0;
-  padding: 24px 24px 16px 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 16px rgba(255, 128, 0, 0.18);
-  text-shadow: 0 2px 8px #ffb34788;
+  border-bottom: none;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.modal-body dt {
+  font-weight: 600;
+}
+
+.modal-body dd {
+  margin-bottom: 1rem;
+}
+
+.modal-footer .btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+}
+
+.modal-footer .btn-primary {
+  background-color: #2980b9;
+  border: none;
+}
+
+.modal-footer .btn-danger {
+  background-color: #e74c3c;
+  border: none;
+}
+
+.modal-footer .btn-secondary {
+  background-color: #95a5a6;
+  border: none;
+}
+
+/* Responsive Calendar Container */
+@media (max-width: 768px) {
+  .container.py-3 {
+    padding: 1rem;
+  }
+
+  .sub-title h3 {
+    font-size: 1.5rem;
+  }
+
+  .col-md-9 {
+    width: 100%;
+  }
 }
 .fc .fc-toolbar-title {
-  color: #fff;
-  font-size: 2.5rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 8px #ffb34788;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
-/* Buttons */
-.fc .fc-button,
-.fc .fc-button-primary {
-  background: linear-gradient(90deg, #fff 0%, #ffe0b2 100%);
-  color: #ff8000;
-  border: 2.5px solid #ff8000;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 1.1em;
-  margin: 0 4px;
-  box-shadow: 0 2px 12px #ff800044;
-  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
-  text-shadow: 0 1px 4px #fffbe6;
-}
-.fc .fc-button:hover,
-.fc .fc-button-primary:hover,
-.fc .fc-button:focus,
-.fc .fc-button-primary:focus {
-  background: linear-gradient(90deg, #ff8000 0%, #ffb347 100%);
-  color: #fff;
-  border-color: #e06d00;
-  box-shadow: 0 4px 24px #ff800088;
-  outline: none;
+.fc-daygrid-day-number {
+  color: #2c3e50;
+  font-weight: bold;
 }
 
-/* Today's cell */
-.fc .fc-day-today {
-  background: linear-gradient(135deg, #fffbe6 60%, #ffe0b2 100%) !important;
-  border-radius: 12px;
-  box-shadow: 0 0 0 4px #ff800055;
-  border: 2.5px solid #ffb347 !important;
-  animation: glowOA 1.5s infinite alternate;
-}
-@keyframes glowOA {
-  from {
-    box-shadow: 0 0 0 4px #ff800055;
-  }
-  to {
-    box-shadow: 0 0 12px 8px #ffb34788;
-  }
-}
-
-/* Day numbers */
-.fc .fc-daygrid-day-number {
-  color: #ff8000;
-  font-weight: 900;
-  font-size: 1.3em;
-  padding: 8px 0 4px 10px;
-  text-shadow: 0 1px 4px #fffbe6;
-}
-
-/* Events */
-.fc .fc-event,
-.fc .fc-event-dot {
-  background: linear-gradient(90deg, #ff8000 0%, #ffb347 100%) !important;
+.fc-daygrid-event {
+  background-color: #89bbdd !important;
   border: none !important;
-  color: #fff !important;
-  border-radius: 10px !important;
-  font-weight: 700;
-  font-size: 1.1em;
-  box-shadow: 0 4px 16px #ff800088, 0 1.5px 8px #ffb34755;
-  transition: box-shadow 0.2s, background 0.2s;
-  padding: 6px 12px !important;
-  text-shadow: 0 1px 4px #ffb347;
-}
-.fc .fc-event:hover {
-  box-shadow: 0 8px 32px #ff8000cc, 0 2px 12px #ffb34799;
-  background: linear-gradient(90deg, #e06d00 0%, #ffb347 100%) !important;
-  filter: brightness(1.1);
-}
-
-/* More link */
-.fc .fc-daygrid-more-link {
-  color: #ff8000;
-  font-weight: 700;
-  font-size: 1em;
-  background: #fffbe6;
-  border-radius: 8px;
-  padding: 4px 12px;
-  box-shadow: 0 2px 8px #ffb34755;
-  transition: background 0.2s, color 0.2s;
-}
-.fc .fc-daygrid-more-link:hover {
-  background: #ff8000;
-  color: #fff;
-}
-
-/* Popover for more events */
-.fc .fc-popover {
-  border-radius: 16px;
-  box-shadow: 0 8px 32px #ff800088;
-  border: 2px solid #ff8000;
-}
-.fc .fc-popover-header {
-  background: linear-gradient(90deg, #ff8000 0%, #ffb347 100%);
-  color: #fff;
-  border-radius: 16px 16px 0 0;
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-/* Table cells and borders */
-.fc-theme-standard td,
-.fc-theme-standard th {
-  border: 1.5px solid #ffe0b2;
-  background: #fff;
-  transition: background 0.2s;
-}
-.fc .fc-daygrid-day:hover {
-  background: #fff8f2;
-  filter: brightness(1.05);
-}
-
-/* Add padding inside cells */
-.fc .fc-daygrid-day-frame {
-  padding: 10px;
-}
-
-/* Responsive tweaks */
-@media (max-width: 900px) {
-  .fc {
-    padding: 8px;
-    border-radius: 14px;
-  }
-  .fc .fc-toolbar {
-    padding: 10px 6px 8px 6px;
-    font-size: 1em;
-  }
-  .fc .fc-toolbar-title {
-    font-size: 1.3em;
-  }
+  color: white !important;
+  padding: 2px 6px !important;
+  border-radius: 5px !important;
+  font-size: 0.85rem;
 }
