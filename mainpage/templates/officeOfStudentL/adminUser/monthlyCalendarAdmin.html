@@ -35,8 +35,8 @@
 </style>
 <div class="container">
   <div class="sub-title">
-    <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
-    <p class="hometext">Admin</p>
+    <h3>OFFICE OF STUDENT LIFE {% if is_admin %} (Admin) {% endif %}</h3>
+    <p class="hometext">Home</p>
     <p class="certxt">> Monthly Calendar of Activities</p>
   </div>
 
@@ -85,7 +85,9 @@
         // Show modal
         $("#event-details-modal").modal("show");
       },
+          {% if is_admin %}
       select: function (info) {
+
         const endDate = new Date(info.end);
         endDate.setDate(endDate.getDate() - 1);
         const formattedEnd = endDate.toISOString().slice(0, 16);
@@ -148,6 +150,7 @@
           }
         });
       },
+          {% endif %}
     });
 
     calendar.render();

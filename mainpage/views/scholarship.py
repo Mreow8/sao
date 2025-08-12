@@ -110,7 +110,7 @@ def signinuser(request):
             if user.is_superuser:
                 return redirect('adminmain')
             elif user.role == 'student':  # Adjusted for your CustomUser model
-                return redirect('main')
+                return redirect('homepage')
             else:
                 return redirect('homepage')
         else:
