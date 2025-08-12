@@ -1,169 +1,247 @@
-.sub-title h3 {
-  color: black;
+/* Overall Layout */
+body {
+  background-color: #f4f6fa;
 
-  font-size: 20px;
+  color: #2c2c2c;
+}
+
+/* Page Title Section */
+.sub-title {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.sub-title h3 {
+  font-size: 24px;
   font-weight: 600;
-  margin-bottom: 15px;
+  color: #2b2b2b;
 }
 
 .sub-title p {
   display: inline;
+  font-size: 14px;
 }
 
 .hometext {
-  color: gray;
+  color: #666;
 }
+
 .certxt {
   margin-left: 5px;
   color: #ff8000;
+  font-weight: 500;
 }
 
-#comboBox {
-  height: 35px;
-  width: 200px;
-  background: #dddeee;
-  color: black;
-  border: 1px black;
-
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 0.5em;
-}
-
-#comboBox:focus {
-  outline: none;
-  border-color: transparent;
-}
-
-.success-message {
-  margin-bottom: 15px;
-  background-color: #1cbf19;
-  border-radius: 5px;
-  width: 400px;
-  align-items: center;
-  height: 30px;
-  padding-top: 5px;
-  padding-left: 5px;
-  color: white;
-}
-
-.error-message {
-  margin-bottom: 15px;
-  background-color: red;
-  border-radius: 5px;
-  width: 220px;
-  align-items: center;
-  height: 30px;
-  padding-top: 5px;
-  padding-left: 5px;
-  color: white;
-}
-
+/* Form Container */
 .gmc-form {
-  width: 1155px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  color: black;
-  margin-top: 40px;
+  max-width: 900px;
+  margin: 50px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
 .gmc-form h2 {
-  color: black;
-  margin-bottom: 20px;
+  text-align: center;
+  color: #1a1a1a;
+  font-size: 26px;
+  margin-bottom: 25px;
 }
 
 .gmc-form p {
-  color: black;
-  margin-bottom: 15px;
-  margin-left: 5px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #333;
 }
 
-.searchBtn {
-  margin-left: -2em;
-}
-
-.requestBtn {
-  margin-left: 0.5em;
-}
-
-.title-txt {
-  display: flex;
-  gap: 1em;
-  margin-top: 20px;
-}
-
-.printBtn {
-  color: white;
-  background-color: #ff8000;
-  height: 30px;
-  width: 60px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.searchBtn,
-.requestBtn {
-  color: white;
-  background-color: #ff8000;
-  height: 35px;
-  width: 120px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+/* Table Styling */
 table {
-  margin-top: 20px;
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 30px;
+  font-size: 14px;
 }
 
 table th,
 table td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 table th {
-  background-color: #f2f2f2;
+  background-color: #f7f7f7;
   color: #ff8000;
+  font-weight: 600;
+  text-align: left;
 }
 
 table td {
-  color: black;
+  color: #444;
 }
 
-#alert {
+/* Input Dropdown */
+#comboBox {
+  height: 40px;
+  width: 250px;
+  padding: 0 12px;
+  background: #f0f2f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+#comboBox:focus {
+  outline: none;
+  border-color: #ff8000;
+  background-color: #fff;
+}
+
+/* Button Styling */
+.requestBtn,
+.searchBtn,
+.printBtn {
+  background-color: #ff8000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.requestBtn:hover,
+.searchBtn:hover,
+.printBtn:hover {
+  background-color: #e67300;
+}
+
+/* Form Layout */
+.title-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  align-items: flex-start;
+}
+
+@media (min-width: 600px) {
+  .title-txt {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Alert Messages */
+.success-message,
+.error-message {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  width: fit-content;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.success-message {
+  background-color: #1cbf19;
   color: white;
 }
-.input-dropdown-container {
-  display: flex;
-  align-items: center;
-  gap: 2em; /* Adds space between input and dropdown */
+
+.error-message {
+  background-color: #e74c3c;
+  color: white;
 }
 
+/* Input fields */
 .searchID {
-  background-color: #dddeee;
-  color: black;
-  border: none;
-  padding: 0.5em;
-  flex-grow: 1; /* Allows the input to grow and fill available space */
-  min-width: 200px; /* Minimum width */
-  max-width: 200px; /* Maximum width, adjust as necessary */
+  background-color: #f0f2f5;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  width: 200px;
 }
 
 .searchID:focus {
   outline: none;
-  border-color: transparent;
+  border-color: #ff8000;
+  background-color: #fff;
 }
 
+/* OR Number Field */
 input[name="ornum"] {
-  border: 1px solid black;
-  width: 80px;
-  height: 28px;
-  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100px;
+  height: 35px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+/* Extra Spacing */
+.container {
+  padding: 0 20px;
+}
+#page-container {
+  max-width: 1000px; /* adjust width */
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+#calendar {
+  height: 700px; /* increase/decrease height */
+}
+/* Responsive Table Layout for Mobile */
+@media (max-width: 768px) {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none; /* hide table headers */
+  }
+
+  tbody tr {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #ffffff;
+  }
+
+  tbody td {
+    position: relative;
+    padding-left: 50%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #2c2c2c;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    font-weight: 600;
+    color: #ff8000;
+    white-space: nowrap;
+  }
+
+  tbody td:last-child {
+    border-bottom: none;
+  }
 }
