@@ -23,7 +23,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-wqcuti7mokhf)l@v3r0@@xo@(#ss02u8r8_xa6cw0xs96tpxd!'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["sao-b1fm.onrender.com", "localhost", "127.0.0.1"]
 
