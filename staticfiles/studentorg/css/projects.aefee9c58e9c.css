@@ -1,0 +1,111 @@
+/* Reset and base styles */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f6fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+input {
+  background: #f4f6fa;
+}
+form {
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  border-radius: 12px;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 30px 40px;
+}
+
+.maincontain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  box-shadow: none;
+}
+
+.form-column {
+  flex: 1;
+  min-width: 320px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+.hd {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="file"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Buttons */
+.buttons {
+  text-align: right;
+  margin-top: 30px;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .maincontain {
+    flex-direction: column;
+  }
+
+  .buttons {
+    text-align: center;
+  }
+}

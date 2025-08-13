@@ -1,0 +1,117 @@
+#dir-gray{
+    color: #636363;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;;
+    padding: 20px;
+}
+#dir-orange{
+    color: #FF8000;
+}
+.form-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #F9F9F9;
+    padding: 30px;
+    width: 100%;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+}
+.form-container form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+#search_id{
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+.success{
+    font-size: 18px;
+    font-weight: 400;
+    color: #FF8000;
+}
+.error{
+    font-size: 18px;
+    font-weight: 400;
+    color: #ff0000;
+}
+#search_id input{
+    background-color: #DDDFEE;
+
+    padding: 9.6px;
+    border: transparent;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding-left: 10px;
+    align-items: left;
+    color: black;
+    width: 200px;
+}
+.OrangeButton{
+    background-color: #FF8000;
+    padding: 9.6px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 100px;
+}
+#info_table {
+    border-collapse: collapse;
+    width: 100%; 
+}
+#info_table th {
+    padding: 9.6px;
+    margin: 0; 
+    text-align: left;
+    color: #FF8000;
+}
+#info_table td{
+    padding: 9.6px;
+    margin: 0; 
+    text-align: left;
+}
+#info_table tr{
+    border-bottom: 1px solid #e2e2e2;
+}
+#info_table_head{
+    background-color: #f1f1f1;
+}
+#requestForm{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 50%;
+    padding: 9.6px;
+}
+#requestForm label{
+    width: max-content;
+}
+#requestForm select, input{
+    background-color: #DDDFEE;
+
+    padding: 9.6px;
+    border: transparent;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding-left: 10px;
+    align-items: left;
+    color: black;
+    width: 200px;    background-color: #DDDFEE;
+
+    padding: 9.6px;
+    border: transparent;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding-left: 10px;
+    align-items: left;
+    color: black;
+    width: 200px;
+}
+.hidden{
+    display: none !important;
+}

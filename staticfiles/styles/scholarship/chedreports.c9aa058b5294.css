@@ -1,0 +1,120 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f5f9fc;
+  color: #2d3748;
+}
+
+.content {
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.form_div {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  width: 100%;
+  max-width: 1000px;
+}
+
+/* Title section */
+.title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.title img {
+  width: 60px;
+  height: 60px;
+}
+
+.title h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+/* Navigation grid */
+.logo-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.logo-nav > div {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Individual logo containers */
+.logo-container {
+  background: #f0f4f8;
+  border: 1px solid #d1dce5;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  width: 200px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logo-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 15px;
+  width: 300px;
+  object-fit: fill;
+}
+
+/* Buttons */
+.logo-container button {
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.logo-container button:hover {
+  background-color: #2b6cb0;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .logo-nav {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo-container {
+    width: 80%;
+  }
+
+  .title {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}

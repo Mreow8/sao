@@ -1,0 +1,68 @@
+.container {
+  text-align: center; 
+  margin: 0 auto;
+}
+
+.container img {
+  display: block; 
+  margin: 0 auto; 
+  max-width: 100%;
+  height: auto;
+}
+
+.container h1 {
+  font-size: 24px;
+  margin-top: 0;
+  text-align: center;
+}
+
+#tag_container {
+  display: block;
+  width: 100%;
+}
+
+#timetag {
+  margin: 0;
+  width: 100%;
+  text-align: right; /* Ensure the text is aligned to the right */
+}
+
+table {
+  margin: 0 auto;
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th, td {
+  white-space: pre-wrap;
+  border: 1px solid black;
+  text-align: center;
+}
+
+h1{
+  text-align: center;
+}
+
+p{
+  text-align: right;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+}
+
+th{
+  width:max-content;
+  background-color: #4CAF50;
+}
+
+td{
+  font-size: 12px;
+}
+
+/* table tr th:nth-child(1){
+  width: 50px;
+} */
+
+table tr th:nth-child(6){
+  width: 70px;
+}

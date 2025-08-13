@@ -1,0 +1,97 @@
+input[type="text"] {
+  padding: 9.6px;
+  border: transparent;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  align-items: left;
+  color: black;
+  width: 300px;
+}
+input[type="file"] {
+  padding: 5px 22px;
+}
+.content_box {
+  height: 100vh;
+  width: 100%;
+}
+.content {
+  display: flex;
+  justify-content: center;
+  height: 89.5vh;
+  overflow: auto;
+  padding: 50px 0px;
+  background-color: #fff;
+}
+.content h1 {
+  color: black;
+}
+.form_div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  background-color: #f5f5f5;
+  height: fit-content;
+  gap: 20px;
+  padding: 30px 0px;
+  color: black;
+  border-radius: 10px;
+}
+.form_div_2 {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 50px 190px;
+  height: fit-content;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+label {
+  color: black;
+}
+/* .search_id_container{
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 70px;
+    border: 1px solid green;
+    width: 80%;
+} */
+#display_search {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  gap: 20px;
+}
+#display_search div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+#display_search div select {
+  border: none;
+  padding: 7px;
+  width: 300px;
+  border-radius: 10px;
+}
+#display_search div input {
+  background-color: white;
+}
+button {
+  padding: 7px 35px;
+  width: fit-content;
+  background-color: #ff8000;
+  border: none;
+  color: white;
+  border-radius: 5px;
+}
+button:hover {
+  background-color: #ff8000;
+}

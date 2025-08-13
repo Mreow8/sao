@@ -1,0 +1,124 @@
+/* Case details section */
+.case-details {
+  align-items: flex-start;
+  display: flex;
+  gap: 20px; /* space between items */
+  margin: 20px 0;
+}
+
+.case-container {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  flex: 1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.case-container h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
+}
+
+.case-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.case-container li {
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.case-container strong {
+  color: #333;
+}
+
+/* Form styling */
+.case-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.case-container form p {
+  margin: 0;
+}
+
+.case-container input,
+.case-container select,
+.case-container textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.case-container input:focus,
+.case-container select:focus,
+.case-container textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.case-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.case-container button:hover {
+  background-color: #0056b3;
+}
+
+/* Hours rendered table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+thead {
+  background-color: #f4f6f8;
+}
+
+thead th {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+}
+
+tbody tr {
+  background-color: #fff;
+  transition: background-color 0.2s;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+tbody tr:hover {
+  background-color: #eef5ff;
+}
+
+tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+hr {
+  margin: 30px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}

@@ -1,0 +1,138 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* HEADER */
+.form_div h1 {
+  text-align: center;
+  font-size: 32px;
+  color: #ff8000;
+  margin-bottom: 30px;
+}
+
+/* SEARCH */
+.search_id_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+#search-box {
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  flex: 1 1 300px;
+}
+
+#search-btn,
+#back-btn {
+  background-color: #ff8000;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+#search-btn:hover,
+#back-btn:hover {
+  background-color: #e67300;
+}
+
+/* BACK BUTTON */
+#back-btn {
+  background-color: #ccc;
+  color: #333;
+  text-decoration: none;
+  padding: 10px 16px;
+}
+
+a:hover #back-btn {
+  background-color: #bbb;
+}
+
+/* FORM FIELDS */
+#display_search {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+#display_search div {
+  display: flex;
+  flex-direction: column;
+}
+
+#display_search label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+#display_search input,
+#display_search select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+#display_search input:disabled {
+  background-color: #eee;
+  cursor: not-allowed;
+}
+
+/* SELECT STYLING */
+#display_search select {
+  background-color: white;
+  cursor: pointer;
+}
+
+/* UPDATE BUTTON */
+#display_search button[type="submit"] {
+  grid-column: span 2;
+  margin-top: 20px;
+  background-color: #ff8000;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#display_search button[type="submit"]:hover {
+  background-color: #e67300;
+}
+
+/* ERROR MESSAGE */
+.error-message {
+  margin-top: 10px;
+  font-size: 14px;
+  color: red;
+  text-align: center;
+}

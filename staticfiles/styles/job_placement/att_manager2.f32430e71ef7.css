@@ -1,0 +1,192 @@
+/* manage.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+section {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 1250px;
+    width: 100%;
+    height: 100vh; 
+    box-sizing: border-box;
+    margin: auto; 
+}
+h4 {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    padding-bottom: 0.5rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+button {
+    padding: .5rem .8rem;
+    font-weight: 600;
+    outline: none;
+    border: none;
+    background-color: #FF8000;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #ffff;
+}
+
+button:hover {
+    background-color: #cc6600;
+}
+#saveAll {
+    padding: 0.6rem 1.2rem;
+    margin-bottom: 1%;
+    align-self: flex-end;
+    margin-left: 1000px;
+}
+
+#studentlist_container {
+    margin-top: 1rem;
+}
+
+table.studentTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-family: Arial, sans-serif;
+}
+
+table.studentTable thead {
+    background-color: #FF8000;
+    color: white;
+}
+
+table.studentTable th{
+    padding: 0.75rem;
+    text-align: left;
+}
+table.studentTable td {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+}
+
+table.studentTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2; 
+}
+
+table.studentTable tbody tr:hover {
+    background-color: #ddd; 
+}
+
+td form {
+    display: inline;
+}
+
+td form input[type="submit"] {
+    background-color: red;
+    padding: 0.25rem 0.5rem;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+td.cancelaction {
+    text-align: center;
+}
+
+.cancelaction form {
+    display: inline-block; 
+}
+
+.cancelaction input[type="submit"] {
+    background-color: #ff3333; 
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.cancelaction input[type="submit"]:hover {
+    background-color: #cc0000; 
+}
+
+@media (max-width: 800px) {
+    #saveAll {
+        align-self: center;
+        margin-top: 1rem;
+    }
+}
+
+#search_form {
+    display: inline; 
+    align-items: center; 
+}
+
+input[type="text"][name="student_id"] {
+    width: 45%;
+    box-sizing: border-box;
+    margin-right: 10px;
+    border-radius: 2px;
+}
+
+#attend_student_list {
+    background-color: #FF8000;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+#attend_student_list:hover{
+    background-color: #cc6600;
+}
+ #search_bar{ /*search bar ni */
+    background-color: rgba(231, 226, 226, 0.527);
+}
+
+#search_suggestions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 33.5%;
+    z-index: 1000;
+    background-color: #ffffff; 
+    top: 20.5%;
+    cursor: pointer;
+}
+#search_suggestions li {
+    background: #ffffff;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid black;
+    border-top: 0;
+    border-bottom: 0;
+}
+#search_suggestions li:hover {
+    background-color: #b9b9b9ae;
+}
+#search_suggestions li:last-child{
+    border-bottom: 1px solid black;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}

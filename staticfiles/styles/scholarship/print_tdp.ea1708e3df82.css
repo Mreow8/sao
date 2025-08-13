@@ -1,0 +1,410 @@
+@media print {
+
+    .side_nav_box,#scholarship_year,.search-container,.haha,
+    #back{
+        display:none !important;
+    }
+    .main-container{
+        position: absolute;
+        top: -45px;
+        left:-2px;
+        box-shadow: none !important;
+        border:none !important;
+    }
+    a img{
+        display: none;
+    }
+    .content::-webkit-scrollbar,#semesterForm {
+        display: none;
+    }
+ 
+}
+ @media print and (orientation: portrait) {
+    
+   .content table {
+       border-right:2px solid black !important;
+   }
+} 
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    list-style-type: none;
+}
+body{
+    display: flex;
+}
+#side_nav_box{
+    height: 91vh;
+    width: fit-content;
+}
+.side-nav
+{
+    width: 299px;
+    height: 91vh;
+    background: #4682B4;
+    overflow: auto;
+}
+.side-nav::-webkit-scrollbar{
+    display: none;
+}
+.orange-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    padding: 0px 18px;
+    background-color: #FF8000;
+    width: 299px;
+}
+
+.logo{
+    height: 55px;
+}
+.bars{
+    height: 25px;
+}
+.side-nav li
+{
+    line-height: 30px;
+}
+
+
+.side-nav ul li{
+    line-height: 50px;
+    border-bottom: 1px solid #2B40D1;
+}
+
+.side-nav ul ul{
+    position: static;
+    display: none;
+}
+
+.side-nav ul.studentlife.show{
+    display: block;
+}
+
+.side-nav ul.scholar-show.show2{
+    display: block;
+}
+
+.side-nav ul.jobplace-show.show3{
+    display: block;
+}
+
+.side-nav ul.student_disc-show.show4{
+    display: block;
+}
+
+.side-nav ul.guide-show.show5{
+    display: block;
+}
+
+.side-nav ul.alumni-show.show6{
+    display: block;
+}
+
+.side-nav ul.community-show.show7{
+    display: block;
+}
+
+.side-nav ul.student_org-show.show8{
+    display: block;
+}
+
+.side-nav ul.medical-show.show9{
+    display: block;
+}
+
+
+
+.side-nav ul ul li{
+    line-height: 40px;
+}
+
+.side-nav ul ul li a{
+    font-size: 15px;
+    padding-left: 60px;
+}
+
+.side-nav ul li a:hover{
+    background: #3e74a0;
+    border-left-color: white;
+}
+
+.side-nav ul li a
+{
+    position: relative;
+    color: white;
+    padding-left: 30px;
+    text-decoration: none;
+    font-size: 14px;  
+    display: block;
+    width: 100%;
+    border-left: 5px solid transparent;
+}
+
+.side-nav ul li a span{
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    transition: transform 0.4s;
+}
+
+.side-nav ul li a span.rotate{
+    transform:  translateY(-50%) rotate(-180deg);
+}
+.search-container {
+    width: 100%;
+    background-color: #f1f1f1; 
+    padding: 12.5px;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon i {
+    margin-right: 10px;
+    cursor: pointer;
+    color: black;
+    font-size: 20px;
+}
+
+input[type="text"] 
+{
+    padding: 9.6px;
+    border: transparent;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding-left: 10px;
+    align-items:left;
+    color: black;
+    width: 300px;
+    background-color: #fff;
+    
+}
+.content_box{
+    height: 100vh;
+    width: 100%;
+}
+.content{
+    display: flex;
+    height: 89.5vh;
+    background-color: #fff;
+    overflow: auto;
+}
+.content h1{
+    color: black;
+}
+
+.form_div{
+    display: flex;
+    flex-direction: column;
+    height: 700px;
+    width: 100%;
+    padding: 20px;
+}
+.form_div *{
+    color:black !important;
+    font-size: 12px;
+}
+.logo1, .logo2{
+    width:60px !important;
+    height:60px !important;
+}
+.logo1{
+    position:relative;
+    left:200px;
+}
+.logo2{
+    position:relative;
+    right:200px;
+}
+.upper{
+    text-align: right;
+}
+
+.main-container {
+    width: 100%;
+    margin: 0 auto;
+    border:1px solid black;
+    padding:15px;
+    box-shadow: 0 0 7px 5px rgba(0, 0, 0, 0.1) inset;
+
+}
+.main-container *{
+    color:black !important;
+}
+
+.header .text-center {
+    text-align: center;
+}
+
+.header .text-center h1,
+.header .text-center p {
+    margin: 5px 0;
+}
+.header, .sub-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+.header-center {
+    flex: 1;
+    text-align: center;
+}
+
+.sub-header p {
+    margin: 5px 0;
+}
+
+.total{
+    text-align: right;
+}
+
+table {
+    width: 100% !important;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 6px;
+    text-align: center;
+    vertical-align: middle;
+}
+thead th {
+    background-color: #f2f2f2;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.bold{
+    font-weight:bold ;
+}
+
+.footer-section {
+    text-align: center;
+}
+
+.footer-section p {
+    margin: 5px 0;
+}
+
+#semesterForm {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    color: black !important;
+    width: fit-content;
+    margin-left: 350px;
+}
+
+#semesterForm * {
+    color: black !important;
+}
+
+#semesterForm #semester {
+    margin-right: 50px;
+    padding: 5px;
+    background-color: #ff8000fb;
+    color: white !important;
+    text-align: center;
+    width: 100px;
+    border-radius: 50px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    appearance: none;
+}
+
+#semesterForm #semester option {
+    color: black;
+    background-color: white;
+}
+
+#semesterForm #semester::after {
+    content: '\25BC';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: white;
+}
+
+#semesterForm {
+    position: relative;
+}
+
+#scholarship_year {
+    padding: 5px;
+    border-radius: 50px;
+    border: none;
+    outline: none;
+    width: 150px;
+    text-indent: 6px;
+    padding: 7px;
+    border: 1px solid #ff8000fb;
+    color: white;
+    margin-right: 20px;
+}
+
+#scholarship_year::placeholder {
+    color: white;
+}
+
+#printButton {
+    padding: 10px 20px;
+    background-color: #1f73c2;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 160px;
+    color: white !important;
+}
+
+#allYearsButton {
+    padding: 10px 20px;
+    background-color: #FF8000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    color: white !important;
+}
+
+.form_div button:hover,
+#semester:hover {
+    box-shadow: 0px 0px 3px 2px rgba(8, 8, 163, 0.3);
+}
+
+
+#logOut{
+    padding: 10px 20px;
+    background-color: #FF8000; 
+    border-radius: 5px; 
+    border: none;
+}
+#back{
+    width:30px;
+    height:30px;
+}

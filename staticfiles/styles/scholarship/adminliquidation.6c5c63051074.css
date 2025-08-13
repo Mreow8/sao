@@ -1,0 +1,113 @@
+/* Reset some base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f8ff;
+}
+
+/* Content wrapper */
+.content {
+  padding: 40px 60px;
+  background: #f0f4fc;
+  min-height: 100vh;
+}
+
+/* Form container */
+.form_div {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Title area */
+.title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.title img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.title h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Logo button section */
+.logo-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+}
+
+.dual {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
+
+.logo-container {
+  background-color: #eef3ff;
+  padding: 25px;
+  border-radius: 16px;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 5px 15px rgba(31, 41, 55, 0.05);
+}
+
+.logo-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.1);
+}
+
+.logo-container img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.logo-container button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 12px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.logo-container button:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .logo-nav,
+  .dual {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo-container {
+    width: 90%;
+  }
+}

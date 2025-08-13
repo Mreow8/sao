@@ -1,0 +1,176 @@
+/* Base Styles */
+body {
+  background-color: #f4f6fa;
+  color: #2c2c2c;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Section Title */
+.container h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2b2b2b;
+  margin-bottom: 5px;
+}
+
+.container span label {
+  font-size: 14px;
+}
+
+#dir-gray {
+  color: #666;
+}
+
+#dir-orange {
+  color: #ff8000;
+  font-weight: 500;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 14px;
+}
+
+table th,
+table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+table th {
+  background-color: #f7f7f7;
+  color: #ff8000;
+  font-weight: 600;
+  text-align: left;
+}
+
+table td {
+  color: #444;
+}
+
+table input[type="text"],
+table input[type="date"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.field_container {
+  padding: 0;
+}
+
+/* Radio Button Layout */
+.side-way {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Button Styling */
+.OrangeButton {
+  background-color: #ff8000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.deleteRow {
+  background-color: #ef5350;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.OrangeButton:hover {
+  background-color: #e67300;
+}
+
+/* Centered Buttons */
+.center_object {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.deleteBox {
+  display: flex;
+  justify-content: center;
+}
+
+/* Labels */
+form label {
+  display: block;
+  font-weight: 600;
+  font-size: 16px;
+  margin: 30px 0 10px;
+  color: #2c2c2c;
+}
+
+/* Responsive Table Layout */
+@media (max-width: 768px) {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    padding: 12px;
+  }
+
+  tbody td {
+    position: relative;
+    padding-left: 50%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    font-weight: 600;
+    color: #ff8000;
+    white-space: nowrap;
+  }
+
+  tbody td:last-child {
+    border-bottom: none;
+  }
+}
