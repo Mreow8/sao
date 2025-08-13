@@ -11,10 +11,132 @@ body {
   background-color: #f4f6fa;
   min-height: 100vh;
 }
+
+.custom-search-wrapper .search-icon i {
+  font-size: 18px;
+  color: #444;
+}
+
+.custom-search-wrapper input[type="text"] {
+  flex-grow: 1;
+  max-width: 300px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Account info container */
+.custom-search-wrapper .account-info {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Profile summary (shown always) */
+.custom-search-wrapper .profile-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #333;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.custom-search-wrapper .profile-icon {
+  font-size: 28px;
+  color: #007bff;
+}
+
+/* Popup panel - hidden by default */
+.custom-search-wrapper .profile-popup {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  border-radius: 8px;
+  width: 220px;
+  z-index: 1000;
+  color: #333;
+}
+
+/* Show popup on hover of container */
+.custom-search-wrapper .account-info:hover .profile-popup,
+.custom-search-wrapper .account-info.active .profile-popup {
+  display: block;
+}
+
+/* Logout button */
+.custom-search-wrapper .logout-btn {
+  margin-top: 10px;
+  padding: 8px 0;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.5);
+}
+
+.custom-search-wrapper .logout-btn a {
+  color: white;
+  text-decoration: none;
+  display: block;
+}
+
+.custom-search-wrapper .logout-btn:hover {
+  background-color: #0056b3;
+  box-shadow: 0 4px 12px rgba(0, 86, 179, 0.7);
+}
+
+/* Responsive for small screens: stack */
+@media (max-width: 600px) {
+  .custom-search-wrapper input[type="text"] {
+    max-width: 100%;
+  }
+  .custom-search-wrapper .account-info {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+.custom-search-wrapper .search-container {
+  display: flex;
+  /* default vertical stack */
+  gap: 0.5rem;
+  padding: 10px 20px;
+  background-color: #f7f9fc;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+@media (max-width: 640px) {
+  .custom-search-wrapper .search-container {
+    flex-direction: row;
+    align-items: center; /* vertical center */
+    gap: 1rem;
+  }
+  .custom-search-wrapper .search-container input[type="text"] {
+    flex: 1;
+  }
+  .custom-search-wrapper .search-container .account-info {
+    white-space: nowrap;
+  }
+}
+
 body {
   display: flex;
   flex-direction: row;
 }
+
 .left-side {
   left: 0;
   top: 0;
@@ -90,43 +212,6 @@ body {
   margin-bottom: 13px;
 }
 
-.custom-search-wrapper .search-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-  background-color: #f7f9fc;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.custom-search-wrapper .search-icon i {
-  font-size: 18px;
-  color: #444;
-  margin-right: 10px;
-}
-
-.custom-search-wrapper input[type="text"] {
-  flex-grow: 1;
-  max-width: 300px;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.custom-search-wrapper .account-info {
-  margin-left: auto;
-  text-align: right;
-  font-size: 14px;
-}
-
-.custom-search-wrapper .student-account-info {
-  color: #333;
-}
-
 .custom-search-wrapper .student-account-info a {
   color: #007bff;
   text-decoration: none;
@@ -134,24 +219,6 @@ body {
 
 .custom-search-wrapper .student-account-info a:hover {
   text-decoration: underline;
-}
-
-.custom-search-wrapper .logout-btn {
-  margin-left: 10px;
-  padding: 6px 12px;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
-}
-
-.custom-search-wrapper .logout-btn a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.custom-search-wrapper .logout-btn:hover {
-  background-color: #0056b3;
 }
 
 input[type="text"] {

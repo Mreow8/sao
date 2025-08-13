@@ -3,6 +3,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Student Login - CTU</title>
     <style>
       * {
@@ -35,10 +37,12 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        padding: 20px;
       }
 
       .left-section img {
         width: 150px;
+        max-width: 100%;
         margin-bottom: 20px;
       }
 
@@ -50,6 +54,7 @@
           "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
         padding: 10px 20px;
         border-radius: 8px;
+        text-align: center;
       }
 
       .right-section {
@@ -72,10 +77,11 @@
         color: #333;
       }
 
-      .login-box h2 {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #ff9f43;
+      .login-box h3,
+      h5 {
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        margin-bottom: 20px;
       }
 
       .form-group {
@@ -126,6 +132,71 @@
         font-size: 0.9em;
         margin-bottom: 10px;
       }
+
+      /* Responsive Styles */
+      @media (max-width: 900px) {
+        .container {
+          position: relative;
+          height: 100vh;
+          width: 100vw;
+        }
+        .login-box {
+          background-color: #e0dedcd4;
+        }
+        .footer {
+          color: #4d4d4d;
+        }
+        .left-section {
+          width: 100vw;
+          height: 100vh;
+          padding: 0;
+          flex: none;
+        }
+
+        .right-section {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 90%;
+          max-width: 350px;
+          background-color: rgb(255 255 255 / 0%);
+          padding: 30px 20px;
+          border-radius: 12px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          z-index: 10;
+        }
+
+        .left-section img {
+          width: 120px;
+          margin-bottom: 15px;
+        }
+
+        .left-section p {
+          display: none; /* hide welcome text for less clutter */
+        }
+      }
+
+      @media (max-width: 480px) {
+        .left-section p {
+          font-size: 24px;
+          padding: 8px 12px;
+        }
+
+        .btn-login {
+          padding: 10px;
+          font-size: 16px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+          padding: 10px;
+          font-size: 16px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -136,10 +207,11 @@
         <p>WELCOME</p>
       </div>
 
-      <!-- Right login form with slanted cut -->
+      <!-- Right login form -->
       <div class="right-section">
         <div class="login-box">
-          <h2>Student Login</h2>
+          <h3>Cebu Technological University</h3>
+          <h5>Sign In</h5>
           <form method="POST" action="{% url 'signinuser' %}">
             {% csrf_token %} {% if form.errors %}
             <div class="error">Invalid email or password.</div>

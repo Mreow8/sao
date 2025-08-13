@@ -145,25 +145,32 @@
         </div>
        <div class="right-side">
   <div class="custom-search-wrapper">
+ 
   <div class="search-container">
     <div class="search-icon">
       <i class="fa-solid fa-magnifying-glass"></i>
     </div>
 
     <input type="text" placeholder="Search..." />
+
     <div class="account-info">
       {% if user.is_authenticated %}
-        <div class="student-account-info">
-          <strong>Student ID:</strong> {{ user.username }}<br />
-          <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}
-          <button class="logout-btn">
-            <a href="{% url 'logout' %}">Logout</a>
-          </button>
-        </div>
+      <div class="profile-summary">
+        <i class="fas fa-user-circle profile-icon"></i>
+        <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
+      </div>
+
+      <div class="profile-popup">
+        <strong>Student ID:</strong> {{ user.username }}<br />
+        <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br />
+        <button class="logout-btn">
+          <a href="{% url 'logout' %}">Logout</a>
+        </button>
+      </div>
       {% else %}
-        <div class="student-account-info">
-          <a href="{% url 'signinuser' %}">Sign in</a>
-        </div>
+      <div class="student-account-info">
+        <a href="{% url 'signinuser' %}">Sign in</a>
+      </div>
       {% endif %}
     </div>
   </div>
