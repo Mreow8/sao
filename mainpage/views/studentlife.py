@@ -237,7 +237,7 @@ def update_schedule(request, schedule_id):
 def delete_schedule(request, schedule_id):
     schedule = get_object_or_404(Schedule, pk=schedule_id)
     schedule.delete()
-    return redirect('officeOfStudentL_system:monthlyCalendarAdmin')
+    return redirect('monthlyCalendarAdmin')
 
 def equipmentTracker(request):
     # Get the logged-in user
@@ -326,7 +326,7 @@ def save_equipment_borrowing(request):
         else:
             messages.success(request, "Equipment returned successfully")
 
-    return redirect('officeOfStudentL_system:equipmentTrackerAdmin')
+    return redirect('equipmentTrackerAdmin')
 
 
 #Transaction Report
@@ -432,7 +432,7 @@ def update_serial_no(request, storage_id):
         form = UpdateSerialNoForm(request.POST, instance=storage_item)
         if form.is_valid():
             form.save()
-            return redirect('officeOfStudentL_system:display_storage_items')
+            return redirect('display_storage_items')
     else:
         form = UpdateSerialNoForm(instance=storage_item)
 
@@ -505,7 +505,7 @@ def update_excel_data(request, pk):
         form = ExcelDataForm(request.POST, instance=excel_data)
         if form.is_valid():
             form.save()
-            return redirect('officeOfStudentL_system:edit_excel_data')
+            return redirect('edit_excel_data')
     else:
         form = ExcelDataForm(instance=excel_data)
     return render(request, 'adminUser/ppmpTracker/update_excel_data.html', {'form': form})
