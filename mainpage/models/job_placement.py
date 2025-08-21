@@ -10,8 +10,8 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import Permission, Group
 
-from ..managers import AdminUserManager, StudentUserManager
-from ..models import studentInfo as StudentUser
+from ..managers import AdminUserManager
+from ..models import studentInfo
 # Create your models here.
  
 class JobPlacementAdminUser(AbstractBaseUser, PermissionsMixin):
@@ -73,7 +73,7 @@ class OJTCompany(models.Model):
     
 class OJTStudent(models.Model):
     ojt_id = models.AutoField(primary_key=True)
-    studID = models.OneToOneField(StudentUser, on_delete=models.PROTECT, unique=True)
+    studID = models.OneToOneField(studentInfo, on_delete=models.PROTECT, unique=True)
     company_id = models.ForeignKey(OJTCompany, on_delete=models.PROTECT)
     date_started = models.DateField(auto_now=True)
     duration = models.PositiveIntegerField(null=False, blank=False, default=100)
@@ -84,6 +84,7 @@ class OJTStudent(models.Model):
         ordering = ['date_started']
 
 class OJTRequirements(models.Model):
+    
     PENDING = 'Pending'
     ACCEPTED = 'Accepted'
     DECLINED = 'Declined'
@@ -97,7 +98,7 @@ class OJTRequirements(models.Model):
 
     ojt_requirement_id = models.AutoField(primary_key=True)
     company_id = models.ForeignKey(OJTCompany, on_delete=models.CASCADE, null=True, blank=True, default="")
-    student_id = models.ForeignKey(StudentUser, on_delete=models.CASCADE) # Change to Students Model
+    student_id = models.ForeignKey(studentInfo, on_delete=models.CASCADE) # Change to Students Model
     non_disclosure = models.FileField(blank=True, upload_to='upload/ojt_requirements/')
     biodata = models.FileField(blank=True, upload_to='upload/ojt_requirements/')
     parents_consent = models.FileField(blank=True, upload_to='upload/ojt_requirements/')
@@ -139,7 +140,10 @@ class OJTRequirements(models.Model):
         super(OJTRequirements, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.student_id.email}"
+        if self.student_id and self.student_id.user:
+            return self.student_id.user.email
+        return "OJT Requirements (No User)"
+
 
 class Seminar(models.Model):
     seminar_id = models.AutoField(primary_key=True)
@@ -153,7 +157,7 @@ class Seminar(models.Model):
 
 class SeminarAttendance(models.Model):
     sem_at_id = models.AutoField(primary_key=True)
-    student_id = models.ForeignKey(StudentUser, on_delete=models.CASCADE) # Change to studentModel
+    student_id = models.ForeignKey(studentInfo, on_delete=models.CASCADE) # Change to studentModel
     seminar_id = models.ForeignKey(Seminar, null=True, on_delete=models.SET_NULL)
     attended = models.BooleanField(default=False)
     ispending = models.BooleanField(default=False)
@@ -168,7 +172,7 @@ class TransactionReport(models.Model):
         (STUDENT, 'Student'),
         (ADMIN, 'Admin')
     ]
-    # Modify the user field to allow both StudentUser and JobPlacementAdminUser instances
+    # Modify the user field to allow both studentInfo and JobPlacementAdminUser instances
     report_id = models.AutoField(primary_key=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, default=1)
     object_id = models.CharField(max_length=30, null=False, blank=False, default="1")
@@ -186,7 +190,7 @@ class TransactionReport(models.Model):
     def __str__(self):
         return f"{self.user} - {self.action} at {self.date_created.strftime('%Y-%m-%d %H:%M:%S')}"
 
-# class StudentUser(AbstractBaseUser, PermissionsMixin):
+# class studentInfo(AbstractBaseUser, PermissionsMixin):
 #     BSIT = "Bachelor of Science Information and Technology"
 #     BEED = "Bachelor of Elementary Education"
 #     BSED = "Bachelor of Secondary Education"
@@ -234,7 +238,7 @@ class TransactionReport(models.Model):
 #     USERNAME_FIELD = 'email'
 #     REQUIRED_FIELDS = []
 
-#     objects = StudentUserManager()
+#     objects = studentInfoManager()
 
 #     groups = models.ManyToManyField(
 #         Group,

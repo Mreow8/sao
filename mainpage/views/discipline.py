@@ -13,7 +13,29 @@ from ..forms import CommunityServiceForm
 from ..models import CommunityServiceTracker
 from django.utils import timezone
 from django.contrib import messages
+from django.http import JsonResponse
 
+def get_student(request, studID):
+    try:
+        studID = int(studID)  # convert to integer
+        student = studentInfo.objects.get(studID=studID)
+        return JsonResponse({
+            'found': True,
+            'name': f"{student.firstname} {student.lastname}",
+            'course': student.degree,
+            'year': student.yearlvl,
+        })
+    except ValueError:
+        # studID was not a valid integer
+        return JsonResponse({'found': False, 'error': 'Invalid student ID'})
+    except studentInfo.DoesNotExist:
+        return JsonResponse({'found': False})
+    except Exception as e:
+        print(f"Error fetching student {studID}: {e}")
+        return JsonResponse({'found': False, 'error': str(e)})
+import logging
+
+logger = logging.getLogger(__name__)
 def student_hours_view(request, case_id):
     case = get_object_or_404(CaseProfile, pk=case_id)
     records = CommunityServiceTracker.objects.filter(case=case).order_by('-date')
@@ -59,11 +81,17 @@ def student_hours_view(request, case_id):
         'student': case.student,
     })
 
+
 def case_profile_view(request):
     user = request.user
     students = studentInfo.objects.all()
-    base_template = "adminmain.html" if user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard' else "main.html"
+    base_template = (
+        "adminmain.html" 
+        if user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'
+        else "main.html"
+    )
 
+    # Determine case list based on user role
     if user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'):
         case_list = CaseProfile.objects.all()
     elif user.is_authenticated and getattr(user, 'role', None) == 'student':
@@ -74,8 +102,49 @@ def case_profile_view(request):
     if request.method == 'POST':
         form = CaseProfileForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('case_profile')
+            student_id = request.POST.get('student')  # text input
+            if not student_id:
+                messages.error(request, "Student ID is required.")
+                return render(request, 'discipline/case_profile.html', {
+                    'form': form,
+                    'case_list': case_list,
+                    'students': students,
+                    'base_template': base_template,
+                })
+            
+            try:
+                student = studentInfo.objects.get(studID=student_id)
+            except studentInfo.DoesNotExist:
+                messages.error(request, f"Student with ID {student_id} not found.")
+                return render(request, 'discipline/case_profile.html', {
+                    'form': form,
+                    'case_list': case_list,
+                    'students': students,
+                    'base_template': base_template,
+                })
+            except Exception as e:
+                logger.error(f"Unexpected error fetching student {student_id}: {e}")
+                messages.error(request, "An unexpected error occurred while fetching the student.")
+                return render(request, 'discipline/case_profile.html', {
+                    'form': form,
+                    'case_list': case_list,
+                    'students': students,
+                    'base_template': base_template,
+                })
+            
+            try:
+                case = form.save(commit=False)
+                case.student = student
+                case.save()
+                messages.success(request, "Case profile saved successfully.")
+                return redirect('case_profile')
+            except Exception as e:
+                logger.error(f"Error saving case for student {student_id}: {e}")
+                messages.error(request, "An error occurred while saving the case profile.")
+        else:
+            # Form is invalid, log errors
+            logger.warning(f"Invalid form submission: {form.errors}")
+            messages.error(request, "Please correct the errors in the form.")
     else:
         form = CaseProfileForm()
 
@@ -85,7 +154,6 @@ def case_profile_view(request):
         'students': students,
         'base_template': base_template,
     })
-    
 from ..models import CommunityService
 from ..forms import CommunityServiceForm
 

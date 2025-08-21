@@ -11,7 +11,7 @@
         crossorigin="anonymous"
         referrerpolicy="no-referrer"
         />
-        <link rel="stylesheet" href="{% static 'studentlife/gmc.css' %}">
+        <link rel="stylesheet" href="{% static 'styles/studentlife/gmc.css' %}">
         
     </head>
     <body>
@@ -19,10 +19,10 @@
         <div class="certificate-container">
             <div class="upper-contents">
                 <div class="logo1-container">
-                    <img src="{% static 'studentlife/images/CTU_logo.png'%}" alt="School Logo" class="logo1">
+                    <img src="{% static 'imgs/CTU_logo.png'%}" alt="School Logo" class="logo1">
                 </div>
                 <div class="logo2-container">
-                    <img src="{% static 'studentlife/images/BagongPilipinaslogo.png' %}" alt="School Logo" class="logo2">
+                    <img src="{% static 'studentorg/css/BagongPilipinaslogo.png' %}" alt="School Logo" class="logo2">
                 </div>
                 <div class="content1">REPUBLIC OF THE PHILIPPINES</div>
                 <div class="content2">CEBU TECHNOLOGICAL UNIVERSITY</div>
@@ -50,7 +50,8 @@
                 <p>RHEA JANE L. CAYNILA, RPm, RGC</p>
                 <p id="campus-director">Guidance Services Coordinator</p>
 
-                <p id="lower-content">MELANIE R. ALBARRACIN</p>
+                <p id="lower-content">EVANGELINE RELLIN
+</p>
                 <p id="campus-director">Director, Student Life</p>
             </div>
             </div>
@@ -60,7 +61,7 @@
                 <p>Or with Erasure or Alteration</p>
             </div>    
             <div class="bottomline"></div>
-            <img class="footerImg" src="{% static 'studentlife/images/footer.png' %}">
+            <img class="footerImg" src="{% static 'studentorg/css/footer.png' %}">
         </div>
 
         <div class="print">
@@ -68,7 +69,23 @@
         </div>
         
           
-       <script src="{% static 'studentlife/gmc.js'%}"></script>
+       <script src="{% static 'studentlife/gmc.js'%}">
+
+
+
+
+       </script>
+     <script>
+    // Manual print
+    document.getElementById('print').addEventListener('click', function() {
+        window.print();
+    });
+
+    // Auto print when page loads
+    window.onload = function() {
+        // window.print(); // uncomment to auto-print
+    };
+</script>
        
     </body>
     

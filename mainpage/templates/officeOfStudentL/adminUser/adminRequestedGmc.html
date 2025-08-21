@@ -19,9 +19,11 @@
     <p class="certxt">> Good Moral Certificate Issuance</p>
   </div>
   <div class="gmc-form">
-    <form id="trackerForm" action="{% url 'adminRequestedGmc' %}" method="GET">
-      <h2>List of Request for Good Moral Certificate</h2>
-    </form>
+    <form
+      id="trackerForm"
+      action="{% url 'adminRequestedGmc' %}"
+      method="GET"
+    ></form>
 
     {% if messages %}
     <div class="messages">
@@ -60,6 +62,7 @@
               type="text"
               name="ornum"
               class="ornum-input"
+              id="ornum"
               data-request-id="{{ request.id }}"
               required
             />
@@ -94,7 +97,7 @@
         }
 
         const printWindow = window.open(
-          `/generate-gmc/${requestId}/?ornum=${orNum}`,
+          `/main/generate-gmc/${requestId}/?ornum=${orNum}`,
           "_blank"
         );
 

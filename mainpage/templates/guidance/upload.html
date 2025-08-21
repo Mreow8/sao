@@ -1,7 +1,7 @@
 {% extends 'adminmain.html' %}
 {% load static %}
+{% block bodycontent %}
 
-{% block extrahead %}
 <style>
   .upload-container {
     max-width: 600px;
@@ -39,33 +39,14 @@
     background-color: #0056b3;
   }
 
-  ul {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #ffe6e6;
-    border: 1px solid #ffb3b3;
-    border-radius: 5px;
-    color: #a94442;
-    list-style: none;
-  }
 
-  li.success {
-    background-color: #e6ffea;
-    border: 1px solid #b3ffcc;
-    color: #2d7a4d;
-  }
-
-  li.error {
-    background-color: #ffe6e6;
-    border: 1px solid #ffb3b3;
-    color: #a94442;
-  }
 </style>
-{% endblock %}
-
-{% block bodycontent %}
+ <div class="sub-title">
+    <h3>OFFICE OF STUDENT LIFE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Upload CSV</p>
+  </div>
 <div class="upload-container">
-  <h1>Upload CSV</h1>
 
   {% if messages %}
     <ul>

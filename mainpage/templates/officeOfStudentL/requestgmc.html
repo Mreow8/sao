@@ -12,7 +12,124 @@
   href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap"
   rel="stylesheet"
 />
+<style>
+  @media (min-width: 600px) {
+    .title-txt {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
 
+  /* Alert Messages */
+  .success-message,
+  .error-message {
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    width: fit-content;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+
+  .success-message {
+    background-color: #1cbf19;
+    color: white;
+  }
+
+  .error-message {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  /* Input fields */
+  .searchID {
+    background-color: #f0f2f5;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    width: 200px;
+  }
+
+  .searchID:focus {
+    outline: none;
+    border-color: #ff8000;
+    background-color: #fff;
+  }
+
+  /* OR Number Field */
+  input[name="ornum"] {
+    border: 1px solid #ccc;
+    width: 100px;
+    height: 35px;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+
+  /* Extra Spacing */
+  .container {
+    padding: 0 20px;
+  }
+  #page-container {
+    max-width: 1000px; /* adjust width */
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  #calendar {
+    height: 700px; /* increase/decrease height */
+  }
+  /* Responsive Table Layout for Mobile */
+  @media (max-width: 768px) {
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+      width: 100%;
+    }
+
+    thead {
+      display: none; /* hide table headers */
+    }
+
+    tbody tr {
+      margin-bottom: 20px;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      background-color: #ffffff;
+    }
+
+    tbody td {
+      position: relative;
+      padding-left: 50%;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+      color: #2c2c2c;
+    }
+
+    tbody td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 16px;
+      top: 12px;
+      font-weight: 600;
+      color: #ff8000;
+      white-space: nowrap;
+    }
+
+    tbody td:last-child {
+      border-bottom: none;
+    }
+  }
+</style>
 <!-- Page Content -->
 <div class="container">
   <div class="sub-title">
@@ -21,8 +138,6 @@
     <p class="certxt">&gt; Good Moral Certificate Issuance</p>
   </div>
   <div class="gmc-form">
-    <h2>Request Good Moral Certificate</h2>
-
     <div class="gmc-wrapper">
       <!-- Table -->
       <div class="gmc-table-wrapper">
@@ -49,8 +164,20 @@
           </tbody>
         </table>
       </div>
-
-      <!-- Form -->
+      {% if existing_request %}
+      <div class="pending-request-box">
+        <h4>Pending Request</h4>
+        <p><strong>Reason:</strong> {{ existing_request.reason }}</p>
+        <p>
+          <strong>Date Requested:</strong> {{ existing_request.request_date }}
+        </p>
+        <p class="alert-warning">
+          You already have a pending Good Moral Certificate request. Please wait
+          until it is processed.
+        </p>
+      </div>
+      {% else %}
+      <!-- Request Form -->
       <form id="requestForm" action="{% url 'requestgmc' %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="student_id" value="{{ student.studID }}" />
@@ -72,6 +199,7 @@
           </button>
         </div>
       </form>
+      {% endif %}
     </div>
   </div>
 

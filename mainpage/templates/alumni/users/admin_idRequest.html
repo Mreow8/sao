@@ -1,80 +1,77 @@
-{% extends 'adminmain.html' %} {% block bodycontent %}
+{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/studentlife/requestgmc.css' %}"
+/>
 <div class="sub-title">
   <h3>Alumni(Admin)</h3>
   <p class="hometext">Home</p>
   <p class="certxt">&gt; ID request</p>
 </div>
-<div class="container mx-auto py-10">
-  <div class="bg-white shadow-2xl rounded-2xl p-10">
-    <div
-      class="grid grid-cols-7 gap-4 text-sm font-semibold text-gray-700 border-b pb-4 mb-4 text-center"
-    >
-      <div>Alumni ID</div>
-      <div>Student ID</div>
-      <div>First Name</div>
-      <div>Last Name</div>
-      <div>Date Requested</div>
-      <div>Date Released</div>
-      <div>Confirmation</div>
-    </div>
 
-    <div class="space-y-4">
-      {% for alumni_request in alumni_requests %}
-      <div
-        class="grid grid-cols-7 gap-4 text-center items-center bg-indigo-50 rounded-xl p-4 shadow-sm hover:bg-indigo-100 transition"
-      >
-        <p class="font-medium">{{ alumni_request.alumniID }}</p>
-        <p class="font-medium">{{ alumni_request.student.studID }}</p>
-        <p class="font-medium">{{ alumni_request.student.firstname }}</p>
-        <p class="font-medium">{{ alumni_request.student.lastname }}</p>
-        <p class="font-medium">{{ alumni_request.alumnidate }}</p>
+<div class="container">
+  <div class="gmc-form">
+    <table>
+      <thead>
+        <tr>
+          <th>Alumni ID</th>
+          <th>Student ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Date Requested</th>
+          <th>Date Released</th>
+          <th>Confirmation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for alumni_request in alumni_requests %}
+        <tr>
+          <td data-label="Alumni ID">{{ alumni_request.alumniID }}</td>
+          <td data-label="Student ID">{{ alumni_request.student.studID }}</td>
+          <td data-label="First Name">
+            {{ alumni_request.student.firstname }}
+          </td>
+          <td data-label="Last Name">{{ alumni_request.student.lastname }}</td>
+          <td data-label="Date Requested">{{ alumni_request.alumnidate }}</td>
 
-        <!-- prettier-ignore -->
-        <p class="font-medium">
-          {% if alumni_request.claimed_date %}
+          <td data-label="Date Released">
+            {% if alumni_request.claimed_date %}
+            <!-- prettier-ignore -->
             {{ alumni_request.claimed_date|date:"Y-m-d" }}
-          {% else %}
-            --
-          {% endif %}
-        </p>
+      {% else %}
+        --
+      {% endif %}
+          </td>
 
-        <div>
-          {% if alumni_request.claimed_date %}
-          <span
-            class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold"
-            >Claimed</span
-          >
-          {% else %} {% if alumni_request.approved %}
-          <form
-            action="{% url 'claim_alumni_id' alumni_request.alumniID %}"
-            method="post"
-          >
-            {% csrf_token %}
-            <button
-              type="submit"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-xs font-semibold transition"
+          <td data-label="Confirmation">
+            {% if alumni_request.claimed_date %}
+            <span class="success-message">Claimed</span>
+            {% else %} {% if alumni_request.approved %}
+            <form
+              action="{% url 'claim_alumni_id' alumni_request.alumniID %}"
+              method="post"
             >
-              Mark as Claimed
-            </button>
-          </form>
-          {% else %}
-          <form
-            action="{% url 'approve_alumni_request' alumni_request.alumniID %}"
-            method="post"
-          >
-            {% csrf_token %}
-            <button
-              type="submit"
-              class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full text-xs font-semibold transition"
+              {% csrf_token %}
+              <button type="submit" class="requestBtn">Mark as Claimed</button>
+            </form>
+            {% else %}
+            <form
+              action="{% url 'approve_alumni_request' alumni_request.alumniID %}"
+              method="post"
             >
-              Approve
-            </button>
-          </form>
-          {% endif %} {% endif %}
-        </div>
-      </div>
-      {% endfor %}
-    </div>
+              {% csrf_token %}
+              <button type="submit" class="requestBtn">Approve</button>
+            </form>
+            {% endif %} {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center">No applicants found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 

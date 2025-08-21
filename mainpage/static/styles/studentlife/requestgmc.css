@@ -41,7 +41,12 @@ body {
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
-
+#ornum {
+  all: unset;
+  border: 1px solid #e6a585;
+  border-radius: 10px;
+  padding: 10px 10px;
+}
 .gmc-form h2 {
   text-align: center;
   color: #1a1a1a;
@@ -60,7 +65,6 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 30px;
   font-size: 14px;
 }
 
@@ -127,121 +131,4 @@ table td {
   gap: 10px;
   margin-top: 20px;
   align-items: flex-start;
-}
-
-@media (min-width: 600px) {
-  .title-txt {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-/* Alert Messages */
-.success-message,
-.error-message {
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  width: fit-content;
-  margin-bottom: 20px;
-  display: inline-block;
-}
-
-.success-message {
-  background-color: #1cbf19;
-  color: white;
-}
-
-.error-message {
-  background-color: #e74c3c;
-  color: white;
-}
-
-/* Input fields */
-.searchID {
-  background-color: #f0f2f5;
-  color: #333;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
-  width: 200px;
-}
-
-.searchID:focus {
-  outline: none;
-  border-color: #ff8000;
-  background-color: #fff;
-}
-
-/* OR Number Field */
-input[name="ornum"] {
-  border: 1px solid #ccc;
-  width: 100px;
-  height: 35px;
-  border-radius: 8px;
-  padding: 5px 10px;
-  font-size: 14px;
-}
-
-/* Extra Spacing */
-.container {
-  padding: 0 20px;
-}
-#page-container {
-  max-width: 1000px; /* adjust width */
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-#calendar {
-  height: 700px; /* increase/decrease height */
-}
-/* Responsive Table Layout for Mobile */
-@media (max-width: 768px) {
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
-    display: block;
-    width: 100%;
-  }
-
-  thead {
-    display: none; /* hide table headers */
-  }
-
-  tbody tr {
-    margin-bottom: 20px;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #ffffff;
-  }
-
-  tbody td {
-    position: relative;
-    padding-left: 50%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
-    color: #2c2c2c;
-  }
-
-  tbody td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 16px;
-    top: 12px;
-    font-weight: 600;
-    color: #ff8000;
-    white-space: nowrap;
-  }
-
-  tbody td:last-child {
-    border-bottom: none;
-  }
 }

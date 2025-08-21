@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ..models import ( JobPlacementAdminUser, StudentUser, SeminarAttendance,
+from ..models import ( JobPlacementAdminUser, SeminarAttendance,
                         Seminar, TransactionReport, OJTCompany, OJTStudent,
                         OJTRequirements
                      )

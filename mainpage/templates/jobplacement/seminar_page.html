@@ -8,18 +8,16 @@
 />
 {% endblock headcontent %} {% block bodycontent %}
 <div class="container">
-  <div class="header-bar">
-    <div class="sub-title">
-      <h3>JOB PLACEMENT</h3>
-      <p class="hometext">Home</p>
-      <p class="certxt">&gt; Career Guidance Tracker</p>
-    </div>
-    {% if request.user.is_staff %}
-    <div class="button-container">
-      <button class="showform">Add Event</button>
-    </div>
-    {% endif %}
+  <div class="sub-title">
+    <h3>JOB PLACEMENT</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Career Guidance Tracker</p>
   </div>
+  {% if request.user.is_staff %}
+  <div class="button-container">
+    <button class="showform">Add Event</button>
+  </div>
+  {% endif %}
   <hr id="demo" />
 
   {% for seminar in seminars %}
@@ -30,24 +28,33 @@
         action="{% url 'jobplacement:seminar_delete' seminar.seminar_id %}"
         method="POST"
         id="myForm"
+        class="delete-form"
       >
         {% csrf_token %}
-        <input type="submit" value="Delete" />
+        <button type="submit" class="delete-btn" title="Delete">
+          <i class="fas fa-trash"></i>
+        </button>
       </form>
       {% endif %}
+
       <div class="info-group">
         <h3>Title:</h3>
+        {% if request.user.is_staff %}
+
         <a href="{% url 'jobplacement:manage_att' seminar.seminar_id %}"
           >{{ seminar.title }}</a
         >
+        {% else %}
+        <h3 class="hiring">{{ seminar.title }}</h3>
+        {% endif %}
       </div>
       <div class="info-group">
         <h3>Theme:</h3>
         <h3 class="hiring">{{ seminar.theme }}</h3>
       </div>
       <div class="info-group">
-        <h3>Date of Event:</h3>
-        <h3 class="hiring">{{ seminar.date_of_event }}</h3>
+        <h2 style="color: rgb(128, 128, 128)">Date of Event: &nbsp;</h2>
+        <h2 style="color: gray" class="hiring">{{ seminar.date_of_event }}</h2>
       </div>
       {% if seminar.image %}
       <img src="{{ seminar.image.url }}" alt="{{ seminar.title }}" />

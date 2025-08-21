@@ -63,7 +63,33 @@ def adviser_form(request, slug):
         'organization': organization,
         'slug': slug,
     })
+
+def officer_forms(request):
+    organizations = Organization.objects.all()  # list of all orgs
+
+    if request.method == 'POST':
+        form = OfficerForm(request.POST, request.FILES)
+        if form.is_valid():
+            officer = form.save(commit=False)
+            
+            # get org_id from dropdown
+            org_id = request.POST.get("organization")
+            organization = get_object_or_404(Organization, pk=org_id)
+
+            officer.organization = organization
+            officer.save()
+            return redirect('admin_manageofficer')  # go back after save
+
+    else:
+        form = OfficerForm()
+
+    return render(request, 'studentorg/Main/officer_formcopy.html', {
+        'form': form,
+        'organizations': organizations,
+    })
 def officer_form(request, slug):
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
     organization = get_object_or_404(Organization, slug=slug)
 
     if request.method == 'POST':
@@ -74,7 +100,7 @@ def officer_form(request, slug):
             officer.save()
             return redirect('officer_form', slug=slug)
 
-    return render(request, 'studentorg/Main/officer_form.html', {'organization': organization})
+    return render(request, 'studentorg/Main/officer_form.html', {'organization': organization,   'base_template': base_template,})
 
 def view_officers(request, slug):
     org = get_object_or_404(Organization, slug=slug)
@@ -354,9 +380,9 @@ def officer_login(request):
         form = LoginForm()
     return render(request, 'studentorg/ADMIN/officer_login.html', {'form': form})
 
-# admin
 def admin_manageofficer(request):
     officers = Officer.objects.all()
+    org = Organization.objects.first()  # or filter based on user/session
     if request.method == 'POST':
         officer_id = request.POST.get('officer_id')
         action = request.POST.get('action')
@@ -367,7 +393,11 @@ def admin_manageofficer(request):
             officer.status = 'declined'
         officer.save()
         return redirect('admin_manageofficer')
-    return render(request, 'studentorg/ADMIN/admin_manageofficer.html', {'officers': officers})
+    return render(request, 'studentorg/ADMIN/admin_manageofficer.html', {
+        'officers': officers,
+        'org': org,   # ✅ now org.slug is available
+    })
+
 
 def admin_manageadviser(request):
     advisers = Adviser.objects.all()

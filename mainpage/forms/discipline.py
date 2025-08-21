@@ -9,6 +9,8 @@ class RoleAssignForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['role']
+from django import forms
+from ..models import CaseProfile
 
 class CaseProfileForm(forms.ModelForm):
     class Meta:
@@ -17,19 +19,14 @@ class CaseProfileForm(forms.ModelForm):
         widgets = {
             'student': forms.TextInput(attrs={
                 'list': 'student-options',
-                'placeholder': 'Enter Student ID or Name',
+                'placeholder': 'Enter Student ID',
             }),
-            'date_of_incident': forms.DateInput(attrs={'type': 'date'}),
+            'date_reported': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'border border-gray-300 rounded-md px-3 py-2 shadow-sm',
+            }),
         }
 
-    def clean_student(self):
-        studID = self.cleaned_data['student']
-        try:
-            return studentInfo.objects.get(studID=studID)
-        except studentInfo.DoesNotExist:
-            raise forms.ValidationError("Student not found.")
-
-        # forms.py
 from django import forms
 from ..models import CommunityServiceTracker
 

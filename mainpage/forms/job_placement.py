@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
-from ..models import ( JobPlacementAdminUser, StudentUser, Seminar,
+from ..models import ( JobPlacementAdminUser,  Seminar,
                      SeminarAttendance, TransactionReport, OJTCompany, OJTStudent, OJTRequirements
                     )
 from django.forms import ModelForm

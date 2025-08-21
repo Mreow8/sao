@@ -49,7 +49,7 @@
                             <td>{{ req.company_id }}</td>
 
                                 <!-- STUDENT NAME -->
-                            <td>{{ req.student_id.fullname }}</td>
+                            <td>{{ req.student_id.firstname }} {{req.student_id.lastname}}</td>
                             
                                 <!-- Non-Disclosure Agreement -->
                             <td>
@@ -156,11 +156,13 @@
         <!--    STUDENT VIEW -->
         <!-- AKO GI GROUP INTO DIVS
         GI TANG2 NAKO ANG P CLASS = FILE_STATUS -->
-        <div class="intro">
-            <p>OJT Requirements/Documents Submission</p>
-        </div>
+       <div class="sub-title">
+    <h3>JOB PLACEMENT</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; OJT Requirements/Documents Submission</p>
+  </div>
         <hr id ="demo">
-        <div id="balo">
+        <div id="balo" style="text-align: center;">
             <p>Please double check all documents before submission. </p>
             <p>Submit requirements in PDF or Image format</p>
         </div>

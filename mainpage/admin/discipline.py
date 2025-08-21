@@ -5,12 +5,20 @@ from ..models.discipline import (
     CommunityServiceTracker,
     DisciplinarySanction,
 )
-
 @admin.register(CaseProfile)
 class CaseProfileAdmin(admin.ModelAdmin):
-    list_display = ('student', 'course_year', 'date_of_incident', 'offense_type', 'status')
-    search_fields = ('student__firstname', 'student__lastname', 'offense_type', 'status')
-    list_filter = ('status', 'course_year', 'date_of_incident')
+    list_display = ('student', 'get_yearlvl', 'date_reported', 'offense_type', 'action_taken')
+    search_fields = ('student__firstname', 'student__lastname', 'offense_type')
+    list_filter = ('offense_type', 'action_taken', 'date_reported', 'student__yearlvl')
+
+    def get_yearlvl(self, obj):
+        return obj.student.yearlvl
+    get_yearlvl.short_description = 'Year Level'
+
+    def get_status(self, obj):
+        # If you have no status field yet, just return something placeholder
+        return "Pending"  
+    get_status.short_description = 'Status'
 
 @admin.register(CommunityService)
 class CommunityServiceAdmin(admin.ModelAdmin):

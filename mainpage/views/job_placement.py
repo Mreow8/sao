@@ -11,7 +11,7 @@ from datetime import datetime
 from django.utils import timezone
 
 from django.views.decorators.csrf import csrf_exempt
-from ..models import ( SeminarAttendance, TransactionReport, StudentUser, 
+from ..models import ( SeminarAttendance, TransactionReport, studentInfo, 
                      JobPlacementAdminUser, Seminar, OJTCompany, OJTStudent,
                      OJTRequirements,
                     )
@@ -47,8 +47,8 @@ from mainpage.decorators.decorators import sao_admin_required
 def get_user_backend(user):
     if isinstance(user, JobPlacementAdminUser):
         return 'jobplacement.auth_backends.AdminUserBackend'
-    elif isinstance(user, StudentUser):
-        return 'jobplacement.auth_backends.StudentUserBackend'
+    elif isinstance(user, studentInfo):
+        return 'jobplacement.auth_backends.studentInfoBackend'
     return None
 #deleteable
 from django.contrib.auth.hashers import check_password
@@ -85,7 +85,7 @@ from django.contrib.auth.hashers import check_password
 #             email = form.cleaned_data.get('username')
 #             password = form.cleaned_data.get('password')
 #             user = authenticate(request, username=email, password=password)
-#             if user is not None and isinstance(user, StudentUser):
+#             if user is not None and isinstance(user, studentInfo):
 #                 login(request, user)
 #                 return redirect('jobplacement:home')  # Student dashboard URL
 #             else:
@@ -101,8 +101,8 @@ from django.contrib.auth.hashers import check_password
 def get_user_backend(user):
     if isinstance(user, JobPlacementAdminUser):
         return 'jobplacement.auth_backends.AdminUserBackend'
-    elif isinstance(user, StudentUser):
-        return 'jobplacement.auth_backends.StudentUserBackend'
+    elif isinstance(user, studentInfo):
+        return 'jobplacement.auth_backends.studentInfoBackend'
     return None
 
 @login_required(login_url='jobplacement:admin_login')
@@ -234,7 +234,7 @@ def ojt_assign_student(request): # handle assigning student to company
 
         # get student and company instance
         try:
-            student = StudentUser.objects.get(studID = student_id)
+            student = studentInfo.objects.get(studID = student_id)
             company = OJTCompany.objects.get(company_id = company_id)
         except ObjException as e:
             messages.error(request, f"{e}")
@@ -311,7 +311,7 @@ def ojt_hiring_info(request, id):   # ojt company page
     if request.method == 'POST':
         stud_id = request.POST.get('stud_id')
 
-        student_obj = StudentUser.objects.get(studID = stud_id)
+        student_obj = studentInfo.objects.get(studID = stud_id)
         existing_ojt = OJTStudent.objects.filter(student__studID=stud_id).last()
         if existing_ojt is None:
             form = OJTStudentForm(request.POST)
@@ -328,63 +328,82 @@ def ojt_hiring_info(request, id):   # ojt company page
     return render(request, 'jobplacement/ojthiring_info.html', context)
 
 # @login_required(login_url='jobplacement:admin_student')
-def ojtRequirements_tracker(request): # ojt requirement tracker page
-    req_records = OJTRequirements.objects.all() # show all requirement tracker for admin view
+
+from ..models import OJTRequirements, studentInfo
+def ojtRequirements_tracker(request):
+    req_records = OJTRequirements.objects.all()
     existing_requirement = None
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html" 
-    # handles search 
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
+    # handles search (lookup by studID in studentInfo)
     if request.method == 'POST':
         id = request.POST.get('student_id')
-        req_records = OJTRequirements.objects.filter(student_id = id)
+        req_records = OJTRequirements.objects.filter(student_id__studID=id)
 
-    # get requirement instance for logged in student    
     try:
-        existing_requirement = OJTRequirements.objects.get(student_id=request.user)
-        _reqform = OJTRequirementsForm(instance=existing_requirement) # send form for this instance
-        stat_widgets = StatusWidget(instance=existing_requirement) # handles form design for requirement status
-    except:
+        # first get the studentInfo that belongs to the logged in user
+        student_info = studentInfo.objects.get(user=request.user)
+
+        existing_requirement = OJTRequirements.objects.get(student_id=student_info)
+        _reqform = OJTRequirementsForm(instance=existing_requirement)
+        stat_widgets = StatusWidget(instance=existing_requirement)
+    except (studentInfo.DoesNotExist, OJTRequirements.DoesNotExist):
         _reqform = OJTRequirementsForm()
         stat_widgets = StatusWidget()
+        existing_requirement = None
 
-    context = {'form': _reqform, 
-               'existing_form':existing_requirement, 
+    context = {
+        'form': _reqform,
+        'existing_form': existing_requirement,
         'base_template': base_template,
-               'status':stat_widgets, 
-               'req_records':req_records} #
+        'status': stat_widgets,
+        'req_records': req_records
+    }
     return render(request, 'jobplacement/ojt_requirements.html', context)
-
-# login_required(login_url='jobplacement:student_login')
-
 def ojt_requirements_submit(request):
     if request.method == 'POST':
-        if not request.user.is_authenticated or not isinstance(request.user, StudentUser):
+        if not request.user.is_authenticated:
             messages.error(request, "You must be logged in as a student to submit requirements.")
+            print("❌ User is not authenticated.")
             return redirect('jobplacement:ojt_requirements_tracker')
 
         try:
-            # Try to get existing valid OJT requirement for the student
-            existing_requirement = OJTRequirements.objects.get(student_id=request.user, is_valid=True)
+            # ✅ Link logged-in user to student profile
+            student_info = studentInfo.objects.get(user=request.user)
+        except studentInfo.DoesNotExist:
+            messages.error(request, "No student profile found for your account.")
+            print(f"❌ No studentInfo found for user: {request.user}")
+            return redirect('jobplacement:ojt_requirements_tracker')
+
+        # ✅ Get latest submitted requirements (if already exists)
+        existing_requirement = OJTRequirements.objects.filter(student_id=student_info).last()
+        if existing_requirement:
+            print(f"ℹ️ Updating existing requirement for {student_info}")
             form = OJTRequirementsForm(request.POST, request.FILES, instance=existing_requirement)
-        except OJTRequirements.DoesNotExist:
-            # Create new requirement if none exists
+        else:
+            print(f"ℹ️ Creating new requirement for {student_info}")
             form = OJTRequirementsForm(request.POST, request.FILES)
 
         if form.is_valid():
             requirement = form.save(commit=False)
-            requirement.student_id = request.user
+            requirement.student_id = student_info  # ✅ ensure linked to student
             requirement.save()
             log_activity(request.user, "Submitted OJT requirements")
             messages.success(request, "Form submitted successfully.")
-            print("Form submitted successfully.")
+            print(f"✅ Requirement saved successfully for student {student_info}")
         else:
             messages.error(request, "Form submission unsuccessful. Please check your input.")
-            print("Form submission unsuccessful. Please check your input.")
+            print("❌ Form submission failed.")
+            print("📝 POST Data:", request.POST)
+            print("📂 FILES Data:", request.FILES)
+            print("⚠️ Form Errors:", form.errors)
+
         return redirect('jobplacement:ojt_requirements_tracker')
 
-    # For GET or other non-POST methods
+    # If GET request, just redirect
+    print("⚠️ GET request received, only POST is allowed here.")
     return redirect('jobplacement:ojt_requirements_tracker')
 
-    
 
 @login_required(login_url='jobplacement:admin_login')
 def ojt_requirements_accept(request):
@@ -623,8 +642,8 @@ def pend_attendance(request):
         except SeminarAttendance.DoesNotExist:
             # If the attendance record does not exist, create a new one
             try:
-                student_obj = StudentUser.objects.get(studID=stud_id)
-            except StudentUser.DoesNotExist:
+                student_obj = studentInfo.objects.get(studID=stud_id)
+            except studentInfo.DoesNotExist:
                 messages.error(request, "Student does not exist.")
                 return redirect('jobplacement:manage_att', id=sem_id)
             try:
@@ -737,7 +756,7 @@ def non_acad_page(request):
     if request.method == 'POST':
         try:
             student_id = request.POST.get('student_id')
-            student = StudentUser.objects.get(studID = student_id)
+            student = studentInfo.objects.get(studID = student_id)
             date_issued_str = request.POST.get('date_issued')
         except: 
             messages.error(request, "failed to get inputs")
@@ -1361,7 +1380,7 @@ class search_suggestions(View):
         query = request.GET.get('query', '') # query comes from ajax
         suggestions = []
         if query:
-            suggestions = list(StudentUser.objects.filter(
+            suggestions = list(studentInfo.objects.filter(
                 Q(studID__icontains=query) |
                 Q(firstname__icontains = query) |
                 Q(lastname__icontains = query)
@@ -1429,7 +1448,7 @@ def view_pdf(request, id):
 
 # generate application letter document
 def gen_application_letter(template_path, output_path, student_id, company_id):
-    student = StudentUser.objects.get(studID = student_id)
+    student = studentInfo.objects.get(studID = student_id)
     company = OJTCompany.objects.get(company_id = company_id)
     current_date = datetime.now().strftime("%B %d, %Y")
 
@@ -1475,7 +1494,7 @@ def gen_application_letter(template_path, output_path, student_id, company_id):
 # generate biodata document
 def gen_biodata(template_path, output_path, student_id, company_id):
     print("generating biodata")
-    student = StudentUser.objects.get(studID = student_id)
+    student = studentInfo.objects.get(studID = student_id)
     company = OJTCompany.objects.get(company_id = company_id)
     print(student)
     print(company)
@@ -1494,7 +1513,7 @@ def gen_biodata(template_path, output_path, student_id, company_id):
 # generate endorsement letter document
 def gen_endorsement_letter(template_path, output_path, student_id, company_id, duration, **params):
     print("generating endorsement")
-    student = StudentUser.objects.get(studID = student_id)
+    student = studentInfo.objects.get(studID = student_id)
     company = OJTCompany.objects.get(company_id = company_id)
     current_date = datetime.now().strftime("%B %d, %Y")
 
@@ -1534,7 +1553,7 @@ def gen_endorsement_letter(template_path, output_path, student_id, company_id, d
 # generate medical document
 def gen_medical(template_path, output_path, student_id):
     print('Generating Medical')
-    student = StudentUser.objects.get(studID = student_id)
+    student = studentInfo.objects.get(studID = student_id)
     print(student)
     current_date = datetime.now().strftime("%B %d, %Y")
 
@@ -1551,7 +1570,7 @@ def gen_medical(template_path, output_path, student_id):
 # generate moa document
 def gen_moa(template_path, output_path, student_id, duration, **params):
     print('generating MOA')
-    student = StudentUser.objects.get(studID = student_id)
+    student = studentInfo.objects.get(studID = student_id)
     current_date = datetime.now()
     day = current_date.strftime("%d")
     month = current_date.strftime("%B")
@@ -1646,7 +1665,7 @@ def file_scrapper(request):
             reader = csv.DictReader(decoded_file)
 
             for row in reader:
-                StudentUser.objects.create(
+                studentInfo.objects.create(
                     studID=row['studID'],
                     lrn = row['lrn'],
                     firstname=row['firstname'],

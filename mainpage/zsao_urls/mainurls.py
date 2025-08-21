@@ -11,6 +11,7 @@ urlpatterns = [
     # ... your other direct paths ...
     # urls.py
 path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
+path('officerforms/', views.officer_forms, name='officer_forms'),
    path('Gen_Home', views.Gen_Home, name="Gen_Home"),
     path('add-organization/', add_organization, name='add_organization'),
     path('org/<slug:slug>/', org_profile, name='org_profile'),
@@ -32,6 +33,8 @@ path('<slug:slug>_financial/', views.view_financial, name='financial_statements'
     # path('slife', include('mainpage.slife_url')),
 path('student-hours/<int:case_id>/', views.student_hours_view, name='student_hours'),
     path('case-profile/', views.case_profile_view, name='case_profile'),
+      path('get-student/<str:studID>/', views.get_student, name='get_student'),
+
     path("equipmenttracker", views.equipmentTracker, name="equipmentTracker"),
     path("requestgmc", views.requestedgmc, name="requestgmc"),
     path("equipmenttracker/", views.equipmentTracker, name="equipmentTracker"),
@@ -49,7 +52,7 @@ path('student-hours/<int:case_id>/', views.student_hours_view, name='student_hou
     
     path("adminmain", views.adminhome, name="adminmain"),
     # path("gmc-form", views.gmcform, name="gmcform"),
-    # path("generate-gmc/<int:request_id>/", views.generateGmc, name="generateGmc"),
+    path("generate-gmc/<int:request_id>/", views.generateGmc, name="generateGmc"),
     # path(
     #     "transactionreport",
     #     views.processed_gmc_transactions,

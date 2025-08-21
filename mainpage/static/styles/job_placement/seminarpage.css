@@ -14,9 +14,24 @@ section {
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d9534f; /* red for delete */
+  font-size: 18px;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.delete-btn:hover {
+  color: #c9302c;
+}
+
 .button-container {
   right: -7%;
   z-index: 1;
+  justify-content: flex-end;
   display: flex;
   gap: 1rem;
 }
@@ -164,7 +179,8 @@ form label {
 form input[type="text"],
 form input[type="image"],
 form input[type="date"],
-form input[type="submit"] {
+form input[type="submit"],
+.delete-btn {
   padding: 10px;
   margin: 5px 0 15px;
   border: 1px solid #ccc;
@@ -180,7 +196,7 @@ form input[type="submit"] {
   color: #ffffff;
   background-color: #ff8000;
 }
-#myForm input[type="submit"] {
+.delete-btn {
   position: absolute;
   top: 2%;
   right: -40%;

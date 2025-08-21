@@ -1,4 +1,6 @@
-{% extends "main.html" %} {% load static %} {% block title %}Student
+{% extends base_template|default:"main.html" %} {% load static %} 
+
+{% block title %}Student
 Organization (FSTLP){% endblock %} {% block headcontent %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}">
@@ -8,24 +10,170 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{% endblock %} {% block bodycontent %}
+{% endblock %}
 
+
+{% block bodycontent %}<style>/* ================================
+   Overlay background
+================================ */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* darker transparent layer */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* ================================
+   Floating form card
+================================ */
+.form-card {
+    position: relative;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 95%;
+    max-width: 950px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* ================================
+   Close button (X)
+================================ */
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #444;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.close-btn:hover {
+    color: #ff3b3b;
+}
+
+/* ================================
+   Form layout
+================================ */
+.maincontain {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.subcontain {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.form-column {
+    flex: 1;
+    min-width: 280px;
+}
+
+/* ================================
+   Headings
+================================ */
+.hd {
+    font-size: 1.4rem;
+    margin: 1rem 0 0.5rem;
+    color: #ff8000;
+    font-weight: bold;
+    border-left: 4px solid #ff8000;
+    padding-left: 8px;
+}
+
+.stop {
+    margin-top: 1rem;
+}
+
+/* ================================
+   Labels & Inputs
+================================ */
+label {
+    display: block;
+    font-weight: 600;
+    margin-top: 10px;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    margin-top: 4px;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: #ff8000;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255,128,0,0.2);
+}
+
+/* ================================
+   Submit Button
+================================ */
+.button {
+    background-color: #ff8000;
+    color: white;
+    font-weight: bold;
+    padding: 0.8rem 1.4rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.button:hover {
+    background-color: #e67000;
+    transform: translateY(-2px);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+/* ================================
+   Animations
+================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+<div class="overlay" id="overlay">
+    <div class="form-card">
     <div class="container"
     >
-        <div class="headert">
-       <h1>{{ organization.name }}</h1>
+      <button class="close-btn"  onclick="closeForm()">&times;</button>
+         <div class="sub-title">
+
+       <h3>{{ organization.name }}</h3>
 
         </div>
-        <p class="pages"> <a href="{% url 'TECHNOCRATS_profile' %}">Profiles</a>
-            > <a href="{% url 'TECHNOCRATS_officerdata' %}">Register Officer</a></p>
-
-        <div class="tabs">
-            <a href="/TECHNOCRATS_profile" class="tab">Profiles</a>
-            <a href="/TECHNOCRATS_projects" class="tab">Projects</a>
-            <a href="/TECHNOCRATS_financial" class="tab">Financial Statements</a>
-            <a href="/TECHNOCRATS_accreditation" class="tab">Accreditation Application</a>
-         </div>
-
+       
          <form method="post" enctype="multipart/form-data">
             <div class="maincontain">
                 <div class="subcontain">
@@ -312,4 +460,15 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
             </div>
         </form>
     </div>
+        </div>
+     <script>
+function closeForm() {
+  document.getElementById("overlay").style.display = "none";
+}
+</script>
+
 {% endblock %}
+
+</div>
+
+

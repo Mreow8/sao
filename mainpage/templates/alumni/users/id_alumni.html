@@ -1,17 +1,23 @@
-{% extends 'main.html' %} {% block bodycontent %}
+{% extends 'main.html' %} {% block bodycontent %} {% load static %}
+
+<style>
+  .header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+</style>
 <div class="container">
   <div class="sub-title">
-    <h3>OFFICE OF STUDENT LIFE</h3>
+    <h3>ALUMNI</h3>
     <p class="hometext">Home</p>
-    <p class="certxt">&gt; Good Moral Certificate Issuance</p>
+    <p class="certxt">&gt; Id Request</p>
   </div>
-
-  <div class="w-full max-w-3xl">
-    <div class="bg-white shadow-2xl rounded-2xl p-10 flex flex-col gap-10">
-      <h1 class="text-4xl font-bold text-center text-indigo-800 tracking-wide">
-        Alumni ID Request Form
-      </h1>
-
+  <div class="header-bar"></div>
+  <div class="w-full max-w-3xl mx-auto">
+    <div class="bg-white rounded-2xl p-10 flex flex-col gap-10">
       {% if messages %}
       <div class="space-y-2">
         {% for message in messages %}
@@ -23,7 +29,10 @@
         {% endfor %}
       </div>
       {% endif %} {% if student %}
-      <div class="bg-indigo-50 rounded-xl p-6 shadow-inner space-y-4">
+      <div
+        style="background-color: hsla(23, 74%, 91%, 0.678)"
+        class="rounded-xl p-6 shadow-inner space-y-4"
+      >
         <h2 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">
           Student Information
         </h2>

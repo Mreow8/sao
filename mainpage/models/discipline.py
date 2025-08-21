@@ -3,20 +3,38 @@ from django.db import models
 from datetime import date
 from ..models import studentInfo
 from datetime import datetime
+
 class CaseProfile(models.Model):
-    student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)  # <-- ForeignKey
-    course_year = models.CharField(max_length=50)
-    date_of_incident = models.DateField()
-    offense_type = models.CharField(max_length=100)
-    description = models.TextField()
-    action_taken = models.TextField()
-    reported_by = models.CharField(max_length=100)
-    witnesses = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=50, default='Pending')
-    remarks = models.TextField(blank=True, null=True)
+    student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
+
+    OFFENSE_CHOICES = [
+        ('Bullying', 'Bullying'),
+        ('Cheating', 'Cheating'),
+        ('Vandalism', 'Vandalism'),
+        ('Others', 'Others'),
+    ]
+
+    ACTION_CHOICES = [
+        ('Community Service', 'Community Service'),
+        ('Suspension', 'Suspension'),
+        ('Warning', 'Warning'),
+        ('Others', 'Others'),
+    ]
+
+    offense_type = models.CharField(max_length=50, choices=OFFENSE_CHOICES)
+    custom_offense = models.CharField(max_length=255, blank=True, null=True)
+
+    action_taken = models.CharField(max_length=50, choices=ACTION_CHOICES)
+    community_service_hours = models.IntegerField(blank=True, null=True)
+    suspension_duration = models.CharField(max_length=50, blank=True, null=True)
+    custom_action = models.CharField(max_length=255, blank=True, null=True)
+
+    date_reported = models.DateField(default=date.today)    
+
 
     def __str__(self):
-        return f"{self.student.firstname} {self.student.lastname} - {self.offense_type}"
+        return f"{self.student} - {self.offense_type}"
+
 
 # ...existing code...
 # from ..models import studentInfo  # Add this import at the top

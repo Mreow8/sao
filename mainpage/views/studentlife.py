@@ -27,6 +27,50 @@ import logging
 
 logger = logging.getLogger(__name__)
 import calendar
+# views.py
+import io
+import os
+import win32api
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from django.http import HttpResponse
+
+def print_gmc(request):
+    # 1️⃣ Create PDF in memory
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+    
+    # Example content
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 750, "CERTIFICATION OF GOOD MORAL CHARACTER")
+    p.drawString(100, 730, f"Student Name: John Doe")
+    p.drawString(100, 710, f"Course: Bachelor of Science in IT")
+    p.drawString(100, 690, f"Date: 2025-08-20")
+    p.showPage()
+    p.save()
+
+    buffer.seek(0)
+
+    # 2️⃣ Write to temporary file (needed for printer)
+    temp_file = "temp_print.pdf"
+    with open(temp_file, "wb") as f:
+        f.write(buffer.read())
+
+    # 3️⃣ Send PDF to Epson L3210
+    printer_name = "EPSON L3210 Series"
+    win32api.ShellExecute(
+        0,
+        "printto",
+        temp_file,
+        f'"{printer_name}"',
+        ".",
+        0
+    )
+
+    # 4️⃣ Optional: delete temp file after sending
+    os.remove(temp_file)
+
+    return HttpResponse("PDF sent to Epson L3210 printer!")
 
 # logger = logging.getLogger(__name__)
 @sao_admin_required
@@ -55,27 +99,34 @@ def update_return_status(request):
 # Request for GoodMoral Certificate Student Side
 def requestedgmc(request):
     student = None
+    existing_request = None
     user = request.user
 
     if request.user.is_authenticated:
         try:
             student = studentInfo.objects.get(studID=int(user.username))
+            # Check for unprocessed request
+            existing_request = RequestedGMC.objects.filter(
+                student=student, processed=False
+            ).first()
         except studentInfo.DoesNotExist:
-            student = None
             messages.error(request, "Student not found")
 
     if request.method == "POST":
+        if existing_request:
+            messages.error(request, "You already have a pending Good Moral Certificate request.")
+            return redirect('requestgmc')
+
         reason = request.POST.get("reason")
         if reason:
-            try:
-                student = studentInfo.objects.get(studID=int(request.user.username))
-                RequestedGMC.objects.create(student=student, reason=reason)
-                messages.success(request, "Good Moral Certificate request submitted successfully")
-                return redirect('requestgmc')
-            except studentInfo.DoesNotExist:
-                messages.error(request, "Student not found")
+            RequestedGMC.objects.create(student=student, reason=reason)
+            messages.success(request, "Good Moral Certificate request submitted successfully")
+            return redirect('requestgmc')
 
-    context = {"student": student}
+    context = {
+        "student": student,
+        "existing_request": existing_request
+    }
     return render(request, "officeOfStudentL/requestgmc.html", context)
 
 # @sao_admin_required
@@ -87,6 +138,7 @@ def adminRequestedGmc(request):
     return render(request, "officeOfStudentL/adminUser/adminRequestedGmc.html", context)
 
 # Making of Goodmoral Certificate
+
 def generateGmc(request, request_id):
     try:
         gmc_request = RequestedGMC.objects.get(id=request_id)

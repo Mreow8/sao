@@ -58,7 +58,12 @@
     class="headert"
     style="margin-left: 100px; text-align: center; justify-content: center"
   >
-    <h1 class="pf2" style="color: black">CTU-AC STUDENT ORGS</h1>
+    <div class="sub-title">
+      <h3>STUDENT ORGANIZATION</h3>
+      <p class="hometext">Home</p>
+      <p class="certxt">&gt; CTU-AC STUDENT ORGS</p>
+    </div>
+
     {% if user.is_authenticated and user.role == 'superadmin'%}
 
     <p class="pages" style="font-size: 20px; color: black; padding-top: 10px">

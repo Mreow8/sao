@@ -51,7 +51,6 @@ def studenthome(request):
 def logoutuser(request):
     logout(request)
     return redirect('signinuser')
-
 def signupuser(request):
     error_message = None
 
@@ -78,13 +77,18 @@ def signupuser(request):
         elif User.objects.filter(email=email).exists():
             error_message = 'Email already exists.'
         else:
+            # ✅ Create user
             user = User.objects.create_user(username=studentID, email=email, password=password)
             user.save()
+
+            # ✅ Link studentInfo to this new user
+            student.user = user
+            student.save()
+
             messages.success(request, 'Account created successfully. Please log in.')
             return redirect('signinuser')
 
     return render(request, 'scholarship/register.html', {'error_message': error_message})
-
 
 
 def signinuser(request):
