@@ -214,7 +214,8 @@ td {
   font-size: 1rem;
 }
 .showform .accept-button {
-  background-color: rgb(70, 251, 63);
+  background-color: rgb(50 170 45);
+  border-radius: 10px;
 }
 .showform .decline-button {
   background-color: rgb(255, 0, 51);
@@ -266,7 +267,6 @@ td {
   max-width: 800px;
   background: #f2f2f2;
   border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   padding: 2em;
   margin: 2rem auto;
 }
@@ -281,9 +281,7 @@ td {
 }
 label {
   display: block;
-  font-weight: bold;
   line-height: 1.6;
-  font-size: 20px;
   color: #ff8000;
 }
 .file-input {
@@ -307,27 +305,27 @@ label {
   width: fit-content;
 }
 .pending {
-  background-color: rgb(255, 239, 65);
+  background-color: rgba(245, 231, 86, 0.859);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
   padding: 0.3em;
   color: #000000;
-  font-weight: bold;
   width: fit-content;
 }
 .accepted {
-  background-color: rgb(70, 251, 63);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  background-color: rgb(50 170 45);
+  border-radius: 7px;
   padding: 0.3em;
   color: #ffffff;
-  font-weight: bold;
+
   width: fit-content;
 }
 .declined {
-  background-color: rgb(255, 0, 51);
+  background-color: rgba(247, 25, 25, 0.81);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   padding: 0.3em;
   color: #ffffff;
-  font-weight: bold;
+  border-radius: 8px;
   width: fit-content;
 }
 .submit-button,

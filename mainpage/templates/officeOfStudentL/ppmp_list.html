@@ -1,0 +1,122 @@
+{% extends base_template|default:"main.html" %} {% load static %}
+<!-- prettier-ignore -->
+{% load static %}
+{% block bodycontent %}
+
+<link
+  rel="stylesheet"
+  href="{% static 'styles/studentlife/requestgmc.css' %}"
+/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="sub-title">
+  <h3>OFFICE OF STUDENT LIFE</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; PPMP Documents</p>
+</div>
+{% if not user.is_staff %}
+<button id="uploadBtn">➕ Upload PPMP</button>
+{% endif %}
+
+<table border="1">
+  <tr>
+    <th>Title</th>
+    <th>File</th>
+    <th>Uploaded By</th>
+    <th>Status</th>
+    <th>Date</th>
+    {% if user.is_staff %}
+    <th>Actions</th>
+    {% endif %}
+  </tr>
+  {% for doc in documents %}
+  <tr>
+    <td>{{ doc.title }}</td>
+    <td><a href="{{ doc.document.url }}" target="_blank">📂 View</a></td>
+    <td>{{ doc.uploaded_by }}</td>
+    <td>{{ doc.status }}</td>
+    <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
+    {% if user.is_staff %}
+    <td>
+      {% if doc.status == "Pending" %}
+      <button class="approveBtn" data-id="{{ doc.id }}">✅ Approve</button>
+      {% endif %}
+      <button class="deleteBtn" data-id="{{ doc.id }}">🗑 Delete</button>
+    </td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
+
+<script>
+  // SAO Upload
+  document.getElementById("uploadBtn")?.addEventListener("click", function () {
+    Swal.fire({
+      title: "Upload PPMP Document",
+      html: `
+          <form id="uploadForm" enctype="multipart/form-data">
+              <input type="text" name="title" placeholder="Enter Title" class="swal2-input" required>
+              <select name="year" class="swal2-select">
+                  <option value="">Select Year</option>
+                  <option value="2023">2023</option>
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+              </select>
+              {% if user.is_staff %}
+              <select name="status" class="swal2-select">
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+              </select>
+              {% endif %}
+              <input type="file" name="document" accept=".pdf,.doc,.docx,.xls,.xlsx" required>
+              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+          </form>
+      `,
+      showCancelButton: true,
+      confirmButtonText: "Upload",
+      preConfirm: () => {
+        let formData = new FormData(document.getElementById("uploadForm"));
+        return fetch("{% url 'ppmp_upload' %}", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .catch((err) => Swal.showValidationMessage(`Request failed: ${err}`));
+      },
+    });
+  });
+  // Admin Approve
+  $(".approveBtn").click(function () {
+    let docId = $(this).data("id");
+    Swal.fire({
+      title: "Approve this PPMP?",
+      showCancelButton: true,
+      confirmButtonText: "Approve",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/ppmp/approve/${docId}/`)
+          .then((res) => res.json())
+          .then((data) => location.reload());
+      }
+    });
+  });
+
+  // Admin Delete
+  $(".deleteBtn").click(function () {
+    let docId = $(this).data("id");
+    Swal.fire({
+      title: "Delete this PPMP?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/ppmp/delete/${docId}/`)
+          .then((res) => res.json())
+          .then((data) => location.reload());
+      }
+    });
+  });
+</script>
+{% endblock bodycontent %}

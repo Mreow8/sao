@@ -12,8 +12,19 @@ class ScheduleForm(forms.ModelForm):
         }
 
 # PPMP TRACKER FORMS
-
-# form for my ppmp tracker
+from django import forms
+from ..models import PPMPDocument
+class PPMPDocumentForm(forms.ModelForm):
+    class Meta:
+        model = PPMPDocument
+        fields = ['title', 'document', 'status']
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # pass user when creating form
+        super().__init__(*args, **kwargs)
+        if not (user and user.is_staff):  # hide status if not admin
+            self.fields['status'].widget = forms.HiddenInput()
+            self.fields['status'].initial = 'Pending'
 class UploadFileForm(forms.Form):
     file = forms.FileField()
 

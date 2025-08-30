@@ -34,7 +34,52 @@ import win32api
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from django.http import HttpResponse
+# views.py
+from django.shortcuts import render, redirect
+from ..models import PPMPDocument
+from ..forms import PPMPDocumentForm
 
+
+@login_required
+def ppmp_list(request):
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
+    if request.user.is_staff:  # Admin
+        documents = PPMPDocument.objects.all().order_by('-uploaded_at')
+    else:  # SAO user
+        documents = PPMPDocument.objects.filter(uploaded_by=request.user).order_by('-uploaded_at')
+    return render(request, 'officeOfStudentL/ppmp_list.html', {'documents': documents ,   'base_template': base_template,})
+
+# views.py
+@login_required
+def ppmp_upload(request):
+    if request.method == 'POST':
+        form = PPMPDocumentForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            ppmp = form.save(commit=False)
+            ppmp.uploaded_by = request.user
+            ppmp.save()
+            return JsonResponse({"success": True})
+        return JsonResponse({"success": False, "errors": form.errors}, status=400)
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+@login_required
+def ppmp_approve(request, pk):
+    if not request.user.is_staff:
+        return JsonResponse({"success": False, "error": "Permission denied"}, status=403)
+    doc = get_object_or_404(PPMPDocument, pk=pk)
+    doc.status = 'Approved'
+    doc.save()
+    return JsonResponse({"success": True})
+
+@login_required
+def ppmp_delete(request, pk):
+    if not request.user.is_staff:
+        return JsonResponse({"success": False, "error": "Permission denied"}, status=403)
+    doc = get_object_or_404(PPMPDocument, pk=pk)
+    doc.document.delete()  # delete file from storage
+    doc.delete()
+    return JsonResponse({"success": True})
 def print_gmc(request):
     # 1️⃣ Create PDF in memory
     buffer = io.BytesIO()

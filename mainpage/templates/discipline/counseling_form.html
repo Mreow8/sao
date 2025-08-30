@@ -1,0 +1,25 @@
+{% extends "adminmain.html" %} {% load static %} {% block title %}Counseling App
+With Scheduler{% endblock %} {% block bodycontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/counseling_app.css'%}"
+/>
+<div class="sub-title">
+  <h3>Admin Counseling Request</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Counseling Form</p>
+</div>
+
+<div class="container">
+  <h2>
+    Create Counseling Schedule for {{ student.firstname }} {{ student.lastname
+    }}
+  </h2>
+
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save Schedule</button>
+  </form>
+</div>
+{% endblock %}

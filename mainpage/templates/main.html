@@ -41,6 +41,8 @@
                          <ul class="studentlife">
                         <li><a href="{% url 'requestgmc' %}">Good Moral Certificate Issuance</a></li>
 <li><a href="{% url 'equipmentTracker' %}">Equipment Tracker</a></li>
+<li><a href="{% url 'ppmp_list' %}">PPMP Tracker</a></li>
+
 <li><a href="{% url 'monthlyCalendarAdmin' %}">Monthly Calendar of Activities</a></li>
 
                     </ul>
@@ -49,10 +51,12 @@
                         <span class="fas fa-caret-down second"></span>
                     </a>
                     <ul class="scholar-show">
-                       
-                               <li><a href="{% url "student_req" %}">Submission of Requirements</a></li>
-                 
+                         {% if is_scholar %}
+                        <li><a href="{% url "student_req" %}">Submission of Requirements</a></li>
+                        {% else %}
+                             
                         <li><a href="{% url "studentapplication" %}">Application form</a></li>
+                        {% endif %}
                         
                         <li><a href="{% url "profile_student" %}">Scholars Profile</a></li>
                         <li><a href="{% url "mentor" %}">Mentorship Program</a></li>
@@ -83,7 +87,6 @@
                     </a>
                     <ul class="guide-show">
                         <li><a href="{% url 'Individual Profile'%}">Individual Profile with Guidance Concern</a></li>
-                        <li><a href="{% url 'Counseling App With Scheduler'%}">Counseling App with Scheduler</a></li>
                         <li><a href="{% url 'Intake Interview' %}">Intake Interview</a></li>
                         <li><a href="{% url 'Exit Interview'%}">Exit Interview</a></li>
                         <li><a href="{% url 'OJT Assessment'%}">OJT Assessments/Psychological Issuance</a></li>

@@ -168,23 +168,35 @@
               {{ case.status }}
             </span>
           </td>
-
           <td class="px-4 py-2 border-b">
-            {% if user.is_authenticated %}
             <!-- prettier-ignore -->
-            {% if user.role == 'superadmin' or user.role == 'guard' %}
+            {% if user.is_authenticated %} {% if user.role == 'superadmin' or user.role == 'guard' %} {% if case.action_taken == 'Counseling' %}
+            <a
+              href="{% url 'counseling_form' case.id %}"
+              class="text-blue-600 hover:underline font-medium"
+            >
+              {{ case.action_taken }}
+            </a>
+
+            {% elif case.action_taken == 'Suspension' %}
+            <button
+              class="suspensionBtn text-red-600 hover:underline font-medium"
+              data-id="{{ case.id }}"
+              data-duration="{{ case.suspension_duration }}"
+            >
+              Suspension
+            </button>
+
+            {% else %}
             <a
               href="{% url 'student_hours' case.id %}"
               class="text-blue-600 hover:underline font-medium"
-              >{{ case.action_taken }}
+            >
+              {{ case.action_taken }}
             </a>
-            {% else %} {{ case.action_taken }} {% endif %} {% endif %}
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5" class="text-center py-6 text-gray-500">
-            No cases found.
+            {% endif %} {% else %} {{ case.action_taken }} {% endif %}
+            <!-- prettier-ignore -->
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -192,6 +204,67 @@
     </table>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Handle Suspension SweetAlert
+    document.querySelectorAll(".suspensionBtn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const caseId = this.dataset.id;
+        const currentDuration = this.dataset.duration || "";
+
+        Swal.fire({
+          title: "Set Suspension Duration",
+          html: `
+          <select id="suspensionType" class="swal2-select">
+            <option value="days">Days</option>
+            <option value="semester">Semester</option>
+          </select>
+          <input type="number" id="suspensionValue" 
+                 class="swal2-input" 
+                 placeholder="Enter value" 
+                 value="${currentDuration}">
+        `,
+          confirmButtonText: "Save",
+          showCancelButton: true,
+          preConfirm: () => {
+            const type = document.getElementById("suspensionType").value;
+            const value = document.getElementById("suspensionValue").value;
+
+            if (!value) {
+              Swal.showValidationMessage("Please enter a value");
+              return false;
+            }
+
+            return { type, value };
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/main/update-suspension/${caseId}/`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+              },
+              body: JSON.stringify(result.value),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                Swal.fire(
+                  "Updated!",
+                  "Suspension updated successfully",
+                  "success"
+                ).then(() => location.reload());
+              })
+              .catch((err) =>
+                Swal.fire("Error", "Something went wrong", "error")
+              );
+          }
+        });
+      });
+    });
+  });
+</script>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {

@@ -10,7 +10,6 @@
   </div>
         <div class="container">
        <form class="form_div" method="GET">
-    <h1>Scholar's profile and Validation</h1>
     <div class="search_id_container">
       <input type="text" id="search-box" name="search" placeholder="Search by ApplicationID" value="{{ request.GET.search }}">
 
@@ -28,8 +27,7 @@
             <option style="color: black;" value="NGU - Nature's Spring Foundation Inc">NATURE'S SPRING FOUNDATION INC</option>
             <option style="color: black;" value="NGU - Lifebank Foundation">LIFE BANK FOUNDATION</option>
         </select>
-        <!-- Make sure this is not using the same ID -->
-        <!-- <a href="{% url 'scholarupdate' %}"><div class="update-btn">UPDATE</div></a> -->
+         <a href="{% url 'scholarupdate' %}"><div id="search-btn">UPDATE</div></a>
     </div>
 </form>
 
@@ -43,11 +41,14 @@
             <form method="POST">
                 {% csrf_token %}
                 {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li style="color: red;"{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
+  <ul class="messages">
+    {% for message in messages %}
+        <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>
+            {{ message }}
+        </li>
+    {% endfor %}
+</ul>
+
 {% endif %}
 
 {% if applicant_data %}

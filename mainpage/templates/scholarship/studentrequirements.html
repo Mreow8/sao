@@ -22,37 +22,43 @@
     <div class="form_div_2">
       <h3 style="color: #c66604">
         Your requirements for this {{ active_request.semester }} year {{
-        active_request.year }} is still on process.
+        active_request.year }} are still being processed.
       </h3>
-      <a href="{% url 'profile_student' %}">
-        <button class="checkbtn">CHECK PROFILE</button>
-      </a>
+      <a href="{% url 'profile_student' %}"
+        ><button class="checkbtn">CHECK PROFILE</button></a
+      >
     </div>
     {% elif passed_accepted_new %}
     <div class="form_div_2">
       <center>
         <h3 style="color: #c66604">
           Your requirements for this {{ active_request.semester }} year {{
-          active_request.year }} is already accepted.
+          active_request.year }} have already been accepted.
         </h3>
       </center>
-      <a href="{% url 'profile_student' %}">
-        <button class="checkbtn">CHECK PROFILE</button>
-      </a>
+      <a href="{% url 'profile_student' %}"
+        ><button class="checkbtn">CHECK PROFILE</button></a
+      >
     </div>
     {% else %}
     <div class="form_div">
-      <h1>Submit Scholarship Requirements</h1>
+      <div class="sub-title">
+        <h3>SCHOLARSHIP</h3>
+        <p class="hometext">Home</p>
+        <p class="certxt">&gt; Submit Scholarship Requirements</p>
+      </div>
+
       <form id="requirementsForm" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
           <label for="semester">Semester and SY:</label>
           <input
             type="text"
-            value="{{ active_request.semester }} {{ active_request.year }} "
+            value="{{ active_request.semester }} {{ active_request.year }}"
             readonly
           />
         </div>
+
         <div class="form-group">
           <label for="scholarID">Scholar ID:</label>
           <input
@@ -62,20 +68,18 @@
             value="{{ scholar.scholar_ID }}"
             readonly
           />
-          <input
-            type="hidden"
-            name="scholarID"
-            value="{{ scholar.scholar_ID }}"
-          />
         </div>
+
         <div class="form-group">
           <label for="gpa">GPA:</label>
           <input type="text" id="gpa" name="gpa" value="{{ gpa }}" />
         </div>
+
         <div class="form-group">
           <label for="units">UNITS:</label>
           <input type="text" id="units" name="units" value="{{ units }}" />
         </div>
+
         <div class="form-group">
           <label for="gradeFile">Upload Image for Grade:</label>
           <input
@@ -86,8 +90,9 @@
             required
           />
         </div>
+
         <div class="form-group">
-          <label for="corFile">Upload Image of School ID:</label>
+          <label for="schoolidFile">Upload Image of School ID:</label>
           <input
             style="color: black"
             type="file"
@@ -95,6 +100,7 @@
             name="schoolid_file"
           />
         </div>
+
         <div class="form-group">
           <label for="corFile">Upload Certificate of Registration (COR):</label>
           <input
@@ -104,12 +110,23 @@
             name="cor_file"
           />
         </div>
+
         {% if note %}
         <p style="color: black; margin-bottom: 20px">
           Last submitted requirement note:
           <span style="color: red">{{ note.note }}</span>
         </p>
         {% endif %}
+
+        <!-- GPA extraction preview -->
+        <div
+          id="gpa-result"
+          style="display: none; margin-top: 15px; color: black"
+        >
+          <p>Extracted GPA: <span id="extracted-gpa"></span></p>
+          <p>Total Units: <span id="total-units"></span></p>
+        </div>
+
         <button class="submitbtn" type="submit">Submit</button>
       </form>
     </div>
@@ -118,7 +135,7 @@
 </div>
 
 <script>
-  document.getElementById("gradeFile").addEventListener("change", function () {
+  document.getElementById("gradeFile")?.addEventListener("change", function () {
     var formData = new FormData();
     formData.append("gradeFile", this.files[0]);
     formData.append("csrfmiddlewaretoken", "{{ csrf_token }}");
@@ -132,7 +149,9 @@
         if (data.success) {
           document.getElementById("gpa").value = data.gpa;
           document.getElementById("units").value = data.total_units;
-          // Optionally show extracted GPA/units somewhere
+          document.getElementById("gpa-result").style.display = "block";
+          document.getElementById("extracted-gpa").textContent = data.gpa;
+          document.getElementById("total-units").textContent = data.total_units;
         }
       })
       .catch((error) => console.error("Error:", error));

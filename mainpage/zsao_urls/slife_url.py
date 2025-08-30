@@ -4,6 +4,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('ppmp/', views.ppmp_list, name='ppmp_list'),
+    path('ppmp/upload/', views.ppmp_upload, name='ppmp_upload'),
+    path('ppmp/approve/<int:pk>/', views.ppmp_approve, name='ppmp_approve'),
+    path('ppmp/delete/<int:pk>/', views.ppmp_delete, name='ppmp_delete'),
     path("equipmenttrackerAdmin/", views.equipmentTrackerAdmin, name="equipmentTrackerAdmin"),
     path("save_equipment_borrowing/", views.save_equipment_borrowing, name="save_equipment_borrowing"),
     path("update_return_status/", views.update_return_status, name="update_return_status"),

@@ -12,6 +12,25 @@ class RequestedGMC(models.Model):
     def __str__(self):
         return f"GMC Request for {self.student} - {self.reason}"
 
+# models.py
+from django.db import models
+
+from django.conf import settings
+
+
+class PPMPDocument(models.Model):
+    title = models.CharField(max_length=255)
+    document = models.FileField(upload_to='ppmp_documents/')
+    uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20, 
+        choices=[('Pending','Pending'),('Approved','Approved'),('Rejected','Rejected')],
+        default='Pending'
+    )
+
+    def __str__(self):
+        return self.title
 
 # MONTHLY CALENDAR OF ACTIVITIES
 class Schedule(models.Model):

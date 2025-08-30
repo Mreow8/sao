@@ -14,6 +14,79 @@ from ..models import CommunityServiceTracker
 from django.utils import timezone
 from django.contrib import messages
 from django.http import JsonResponse
+from ..models import studentInfo, counseling_schedule, CaseProfile  # adjust model name
+from ..forms import CounselingSchedulerForm  # adjust form name
+
+# views.py
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
+def update_suspension(request, case_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        suspension_type = data.get("type")
+        value = data.get("value")
+
+        try:
+            case = CaseProfile.objects.get(id=case_id)
+            case.suspension_duration = f"{value} {suspension_type}"
+            case.save()
+            return JsonResponse({"success": True})
+        except CaseProfile.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Case not found"})
+
+def counseling_form_view(request, case_id):
+    # Get the case record first
+    case = get_object_or_404(CaseProfile, id=case_id)
+
+    # Then get the student from the case
+    student = case.student  # assuming ForeignKey to studentInfo
+
+    if request.method == "POST":
+        form = CounselingSchedulerForm(request.POST)
+        if form.is_valid():
+            current_datetime = timezone.now()
+
+            ongoing_schedule = counseling_schedule.objects.filter(
+                studentID=student,
+                scheduled_date__gte=current_datetime.date()
+            ).exclude(status__in=["Declined", "Expired"]).first()
+
+            if ongoing_schedule:
+                time = {
+                    '8-9': '8:00 AM - 9:00 AM',
+                    '9-10': '9:00 AM - 10:00 AM',
+                    '10-11': '10:00 AM - 11:00 AM',
+                    '11-12': '11:00 AM - 12:00 PM',
+                    '1-2': '1:00 PM - 2:00 PM',
+                    '2-3': '2:00 PM - 3:00 PM',
+                    '3-4': '3:00 PM - 4:00 PM',
+                    '4-5': '4:00 PM - 5:00 PM'
+                }
+
+                scheduled_date = ongoing_schedule.scheduled_date.strftime('%B %d, %Y')
+                scheduled_time = time.get(ongoing_schedule.scheduled_time, ongoing_schedule.scheduled_time)
+                messages.error(request, f"Student already has a counseling schedule on {scheduled_date} at {scheduled_time}.")
+                return redirect("counseling_form", case_id=case.id)
+
+            counseling = form.save(commit=False)
+            counseling.dateRecieved = current_datetime.strftime('%Y-%m-%d')
+            counseling.studentID = student
+            counseling.save()
+
+            messages.success(request, f"Counseling request for {student.firstname} {student.lastname} has been created.")
+            return redirect("counseling_form", case_id=case.id)
+    else:
+        form = CounselingSchedulerForm()
+
+    context = {
+        "form": form,
+        "student": student,
+        "case": case
+    }
+    return render(request, "discipline/counseling_form.html", context)
 
 def get_student(request, studID):
     try:

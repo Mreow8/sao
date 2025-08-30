@@ -7,6 +7,8 @@ from ..views import org_profile, add_organization
 urlpatterns = [
      
            path('assign-role/', views.assign_role, name='assign_role'),
+# urls.py
+path("update-suspension/<int:case_id>/", views.update_suspension, name="update_suspension"),
 
     # ... your other direct paths ...
     # urls.py
@@ -26,13 +28,19 @@ path('<slug:slug>_financial/', views.view_financial, name='financial_statements'
     path('login/', views.signinuser, name='signinuser'), 
     
  path('post', views.post , name='post'),
+    # Community Service Tracker
+
  path('community-service/', views.community_service_list, name='community_service_list'),
 
  
     path('community-service/add/', views.add_community_service, name='add_community_service'), 
     # path('slife', include('mainpage.slife_url')),
 path('student-hours/<int:case_id>/', views.student_hours_view, name='student_hours'),
+path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_form"),
+
     path('case-profile/', views.case_profile_view, name='case_profile'),
+
+    # Community Service Tracker
       path('get-student/<str:studID>/', views.get_student, name='get_student'),
 
     path("equipmenttracker", views.equipmentTracker, name="equipmentTracker"),

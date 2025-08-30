@@ -444,9 +444,9 @@ def claim_alumni_id(request, alumni_id):
         alumni = get_object_or_404(Alumni, pk=alumni_id)
         alumni.claimed_date = timezone.now()
         alumni.save()
-        return redirect(' admin_idRequest')
+        return redirect('admin_idRequest')
 
-    return redirect(' admin_idRequest')
+    return redirect('admin_idRequest')
 # @sao_admin_required
 def admin_gradTracer(request):
     graduate_requests = graduateForm.objects.select_related('alumniID').all()

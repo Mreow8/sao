@@ -23,7 +23,8 @@ class CounselingSchedulerForm(forms.ModelForm):
                 'min': date.today().isoformat(),
                 'placeholder': 'Select a date'
             }),
-            'scheduled_time': forms.Select(attrs={'disabled': 'disabled'})
+           'scheduled_time': forms.Select()
+
         }
 class OjtAssessmentForm(forms.ModelForm):
     class Meta:
@@ -90,6 +91,7 @@ class ExitInterviewForm(forms.ModelForm):
         self.fields['majorEvent'].required = False
 
 
+from datetime import date
 
 class IndividualProfileForm(forms.ModelForm):
     schoolTypeChoices = [
@@ -105,18 +107,36 @@ class IndividualProfileForm(forms.ModelForm):
     schoolLeaver = forms.ChoiceField(choices=yes_no, widget=forms.RadioSelect)
     fatherCTU = forms.ChoiceField(choices=yes_no, widget=forms.RadioSelect)
     motherCTU = forms.ChoiceField(choices=yes_no, widget=forms.RadioSelect)
-    doYouPlanToWork =forms.ChoiceField(choices=yes_no, widget=forms.RadioSelect)
+    doYouPlanToWork = forms.ChoiceField(choices=yes_no, widget=forms.RadioSelect)
 
     class Meta:
         model = IndividualProfileBasicInfo
-        exclude = ['age','dateFilled','studentId','siblingsName','siblingsAge','siblingsSchoolWork','nameOfOrganization','inOutSchool','positionTitle','inclusiveYears','describeYouBest']
-        widgets ={
+        exclude = [
+            'age','dateFilled','studentId','siblingsName','siblingsAge','siblingsSchoolWork',
+            'nameOfOrganization','inOutSchool','positionTitle','inclusiveYears','describeYouBest'
+        ]
+        widgets = {
             'dateOfBirth': forms.DateInput(attrs={'type':'date'}),
             'fatherDateOfBirth': forms.DateInput(attrs={'type':'date'}),
             'motherDateOfBirth': forms.DateInput(attrs={'type':'date'}),
         }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # ========================
+        # Birthday validation rule
+        # ========================
+        today = date.today()
+        max_date = today.replace(year=today.year - 10)   # must be at least 10 years old
+        min_date = date(1900, 1, 1)  # or any earliest DOB you allow
+
+        self.fields['dateOfBirth'].widget.attrs.update({
+            'max': max_date.strftime('%Y-%m-%d'),
+            'min': min_date.strftime('%Y-%m-%d'),
+        })
+
+        # Mark some fields optional
         self.fields['personInCaseofEmergencyLandline'].required = False
         self.fields['curriculumtype'].required = False
         self.fields['fatherMobilePhone'].required = False
@@ -146,7 +166,6 @@ class IndividualProfileForm(forms.ModelForm):
         self.fields['lastEducationAttainment'].required = False
         self.fields['specifyTheDecision'].required = False
         self.fields['describeYouBestOther'].required = False
-
 
 class FileUpload(forms.ModelForm):
     class Meta:

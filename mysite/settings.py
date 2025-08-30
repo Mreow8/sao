@@ -12,7 +12,12 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'mainpage' / 'static',
 ]
-
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:8001",
+    "http://localhost:8000",
+    "http://localhost:8001",
+]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # For production or collectstatic command:
 STATIC_ROOT = BASE_DIR / 'staticfiles'

@@ -124,7 +124,13 @@ def signinuser(request):
     return render(request, 'login.html')
 
 def studentapplicationform(request):
-    studID = request.user.username
+    studID_str = request.user.username
+    if studID_str.isdigit():   # make sure it’s numeric
+        studID = int(studID_str)
+        student = get_object_or_404(studentInfo, studID=studID)
+    else:
+        student = None
+
     student = get_object_or_404(studentInfo, studID=studID)
     passed = applicants.objects.filter(studID_id=studID).exists()
     note = applicants.objects.filter(studID_id=studID).filter(~Q(note=""), note__isnull=False).first()
@@ -195,7 +201,9 @@ def studentapplicationform(request):
     return render(request, 'scholarship/studentapplicationform.html', context)
 
 
+    
 def adminapplication(request):
+
     scholar_type = request.GET.get('scholar_type')
     context = {}
 
@@ -204,11 +212,9 @@ def adminapplication(request):
             if key.startswith('action'):
                 action, applicant_id = value.split('_')
                 note = request.POST.get(f'note_{applicant_id}')
-                print(action, applicant_id, note)
                 
                 try:
                     application_data = applicants.objects.get(application_id=applicant_id)
-
                     if action == 'UPDATE' and note:
                         application_data.note = note
                         application_data.save()
@@ -236,7 +242,16 @@ def adminapplication(request):
     return render(request, 'scholarship/adminapplication.html', context)
 
 
-# @login_required
+
+import re
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from ..models import Requirement, AdminRequest
+
+
+
+
+
 def adminreqsubmission(request):
     studID = request.user.username
     scholar_type = request.GET.get('scholar_type')
@@ -337,30 +352,38 @@ def adminreqsubmission(request):
         'active_request': active_request,
         'req_data': req_data
     }
-    return render(request, 'scholarship/adminrequirements.html', context)
 
+    return render(request, 'scholarship/adminrequirements.html', context)
 
 def studentreqsubmission(request):
     studID = request.user.username
+
+    # Check if any admin request is currently active
     is_requesting = AdminRequest.objects.filter(requesting=True).exists()
     active_request = AdminRequest.objects.filter(requesting=True).first()
+
+    # Fetch first "ACCEPTED" requirement with record="NEW"
     passed_accepted_new = Requirement.objects.filter(studID=studID, status="ACCEPTED", record="NEW").first()
-    note = Requirement.objects.filter(studID_id=studID, status="PENDING").filter(~Q(note=""), note__isnull=False).first()
-    requirement_data = Requirement.objects.filter(studID__studID=studID, status="PENDING", record="NEW").first()
-    
-    user = request.user
 
-    # Always define these before the try block!
-    student = None
-    scholar = None
-    passed = None
-    is_scholar = False
+    # Fetch first pending note (non-empty)
+    note = Requirement.objects.filter(
+        studID_id=studID,
+        status="PENDING"
+    ).filter(~Q(note=""), note__isnull=False).first()
 
+    # Fetch first pending requirement for this student
+    requirement_data = Requirement.objects.filter(
+        studID__studID=studID,
+        status="PENDING",
+        record="NEW"
+    ).first()
+
+    # Fetch student and scholar info
     try:
-        student = studentInfo.objects.get(studID=user.username)
+        student = studentInfo.objects.get(studID=studID)
         scholar = scholars.objects.get(studID=student)
         passed = Requirement.objects.filter(studID=studID, status="PENDING", record="NEW").first()
-        is_scholar = scholars.objects.filter(studID=student).exists()
+        is_scholar = True
     except studentInfo.DoesNotExist:
         student = None
         scholar = None
@@ -369,55 +392,33 @@ def studentreqsubmission(request):
     except scholars.DoesNotExist:
         scholar = None
         is_scholar = False
-        
-    print("about to enter in the condition")
+
+    # Handle POST request (submission)
     if request.method == 'POST':
-        print("Entered in the condition")
         gpa = request.POST.get('gpa')
         units = request.POST.get('units')
         cor_file = request.FILES.get('cor_file')
         grade_file = request.FILES.get('grade_file')
         schoolid_file = request.FILES.get('schoolid_file')
-        print(gpa)
-        print(units)
-        print(cor_file)
-        print(grade_file)
-        print(schoolid_file)
 
         if is_scholar and active_request:
-            print("3")
-            if note:
-                cor_file2 = request.FILES.get('cor_file')
-                grade_file2 = request.FILES.get('grade_file')
-                schoolid_file2 = request.FILES.get('schoolid_file')
-                gpa2 = request.POST.get('gpa')
-                units2 = request.POST.get('units')
-            
-                if cor_file2:
-                    print("6")
-                    requirement_data.cor_file = cor_file2
-                    print("7")
-                    if grade_file2:
-                        print("8")
-                        requirement_data.grade_file = grade_file2
-                    print("9")
-                    if schoolid_file2:
-                        print("10")
-                        requirement_data.schoolid_file = schoolid_file2
-                    print("11")
-                    if gpa2:
-                        print("14")
-                        requirement_data.gpa = gpa2
-                    if units2:
-                        print("14")
-                        requirement_data.units = units2
-                    print("15")
-                    print("haha")
-                    requirement_data.note = ""
-                    requirement_data.save()
-                    return redirect('student_req')
+            if note and requirement_data:
+                # Update existing requirement
+                if cor_file:
+                    requirement_data.cor_file = cor_file
+                if grade_file:
+                    requirement_data.grade_file = grade_file
+                if schoolid_file:
+                    requirement_data.schoolid_file = schoolid_file
+                if gpa:
+                    requirement_data.gpa = gpa
+                if units:
+                    requirement_data.units = units
+                requirement_data.note = ""
+                requirement_data.save()
             else:
-                requirement = Requirement(
+                # Create new requirement
+                Requirement.objects.create(
                     studID=student,
                     scholar_ID=scholar,
                     year=active_request.year,
@@ -429,15 +430,9 @@ def studentreqsubmission(request):
                     schoolid_file=schoolid_file,
                     units=units
                 )
-                print("4")
-                requirement.save()
-                print("5")
-                return redirect('student_req')
-        else:
-            print("Did not enter in the condition")
-        
-        
-    
+            return redirect('student_req')
+
+    # Context to display first objects by default
     context = {
         'is_requesting': is_requesting,
         'active_request': active_request,
@@ -446,7 +441,8 @@ def studentreqsubmission(request):
         'scholar': scholar,
         'passed': passed,
         'passed_accepted_new': passed_accepted_new,
-        'note': note
+        'note': note,
+        'requirement_data': requirement_data  # Add this so template can display first default
     }
     return render(request, 'scholarship/studentrequirements.html', context)
 
@@ -580,6 +576,7 @@ def process_grade_image(request):
         return JsonResponse({'success': True, 'gpa': gpa, 'total_units': total_units})
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
+
 def scholars_profile_admin(request):
     scholar_type = request.GET.get('scholar_type', '').strip()
     search_query = request.GET.get('search', '').strip()
@@ -613,7 +610,8 @@ def scholars_profile_admin(request):
 
                 if not scholars.objects.filter(scholar_ID=scholar_id).exists():
                     try:
-                        applicant = applicants.objects.get(id=applicant_id)
+                        applicant = applicants.objects.get(application_id=applicant_id)
+
                         student = applicant.studID
 
                         new_scholar = scholars(

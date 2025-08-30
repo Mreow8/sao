@@ -39,7 +39,7 @@ class Officer(models.Model):
         ('BIT-DRAFTING', 'BIT-DRAFTING'),
         ('BIT-ELECTRONICS', 'BIT-ELECTRONICS'),
         ('BEED','BEED'),
-        ('BSED-MATH','BSED-MATH'),
+        ('BSED-MATH','BSED-MATH'),  ('BSED-ENGLISH','BSED-ENGLISH'),
         ('BTLED','BTLED'),
         ('BSF','BSF'),
         ('BSA','BSA'),
@@ -61,14 +61,11 @@ class Officer(models.Model):
     mobile_number = models.CharField(max_length=15)
     position = models.CharField(max_length=100)
 
-    organization = models.CharField(max_length=30, choices=[
-        ('SSG', 'SSG'),
-        ('FSTLP', 'FSTLP'),
-        ('SI++', 'SI++'),
-        ('THE EQUATIONERS', 'THE EQUATIONERS'),
-        ('TECHNOCRATS', 'TECHNOCRATS'),
-    ])
-    
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name="officers"
+    )
     town_address = models.CharField(max_length=200)
     home_address = models.CharField(max_length=200)
     age = models.PositiveIntegerField()

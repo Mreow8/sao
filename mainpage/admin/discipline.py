@@ -5,6 +5,7 @@ from ..models.discipline import (
     CommunityServiceTracker,
     DisciplinarySanction,
 )
+
 @admin.register(CaseProfile)
 class CaseProfileAdmin(admin.ModelAdmin):
     list_display = ('student', 'get_yearlvl', 'date_reported', 'offense_type', 'action_taken')

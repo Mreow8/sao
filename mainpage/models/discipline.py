@@ -10,14 +10,14 @@ class CaseProfile(models.Model):
     OFFENSE_CHOICES = [
         ('Bullying', 'Bullying'),
         ('Cheating', 'Cheating'),
-        ('Vandalism', 'Vandalism'),
+  
         ('Others', 'Others'),
     ]
 
     ACTION_CHOICES = [
         ('Community Service', 'Community Service'),
         ('Suspension', 'Suspension'),
-        ('Warning', 'Warning'),
+        ('Counseling', 'Counseling'),
         ('Others', 'Others'),
     ]
 
