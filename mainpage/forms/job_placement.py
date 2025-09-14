@@ -7,7 +7,25 @@ from django.forms import ModelForm
 from django import forms
 from django.contrib.auth import authenticate
 from django.utils.safestring import mark_safe
+class OJTAssignForm(forms.ModelForm):
+    company = forms.ModelChoiceField(
+        queryset=OJTCompany.objects.all(),
+        empty_label="Select a company",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
 
+    class Meta:
+        model = OJTCompany
+        fields = ['company']
+class StudentSearchForm(forms.Form):
+    student_id = forms.CharField(
+        label="Student ID",
+        widget=forms.TextInput(attrs={
+            'list': 'student-options',
+            'placeholder': 'Enter Student ID',
+            'class': 'border border-gray-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring focus:ring-blue-300'
+        })
+    )
 class EmailAuthenticationForm(AuthenticationForm):
     username = forms.EmailField(widget=forms.EmailInput(attrs={'autofocus': True}))
 
@@ -93,8 +111,8 @@ class AdminSignUpForm(UserCreationForm):
     #     return user    
     
     # LOGIN FORMS
-class AdminLoginForm(AuthenticationForm):
-    pass
+# class AdminLoginForm(AuthenticationForm):
+#     pass
 
 # class StudentLoginForm(AuthenticationForm):
 #     pass

@@ -59,6 +59,10 @@ Organization ({{ org.name }}) {% endblock %} {% block headcontent %}
             <td>{{ officer.position }}</td>
             <td>{{ officer.organization }}</td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6">No approved officers found.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>

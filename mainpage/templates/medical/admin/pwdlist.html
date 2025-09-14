@@ -1,87 +1,308 @@
-{% extends 'adminmain.html' %} {% load static %} {% block title %}Medical{%
-endblock %} {% block extra_css %}
+{% extends 'adminmain.html' %}
+<!-- prettier-ignore -->
+{% load static %}
+
+{% block title %}Medical{% endblock %}
+
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'styles/viewrequest.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/medicalrequirements.css' %}" />
 <link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}" />
 {% endblock %} {% block bodycontent %}
-
-<div class="container">
-  {% if messages %}
-  <div class="message-container">
-    {% for message in messages %}
-    <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
-      {{ message }}
-    </p>
-    {% endfor %}
+<div
+  class="w-full h-screen rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-2"
+>
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="font-bold text-[1.5rem] text-black tracking-tight">
+      List of PWD
+    </h2>
+    <form method="POST" class="flex gap-4">
+      {% csrf_token %}
+      <input
+        type="text"
+        name="student_id"
+        placeholder="Search by ID Number"
+        class="w-full p-2 border rounded-md"
+      />
+      <button
+        type="submit"
+        class="bg-[#3b82f6] text-white py-2 px-8 rounded-md hover:bg-[#2563eb] transition-colors"
+      >
+        Search
+      </button>
+    </form>
   </div>
-  {% endif %}
-  <h2>List of PWD</h2>
-  <br /><br />
-  <form method="POST" class="search-form">
-    {% csrf_token %}
-    <input type="text" name="student_id" placeholder="Search student" />
-    <button type="submit">Search</button>
-  </form>
-  <div class="request">
-    <table>
-      <thead>
-        <tr class="tr-header">
-          <th>Student ID</th>
-          <th>Lastname</th>
-          <th>Firstname</th>
-          <th>Age</th>
-          <th>Sex</th>
-          <th>Type of Disability</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for pwd in pwds %}
-        <tr class="tr-td">
-          <td>
-            <a
-              href="{% url 'medical:pwd_detail' pwd.patient.student.student_id %}"
-              >{{ pwd.patient.student.student_id }}</a
-            >
-          </td>
-          <td>
-            <a
-              href="{% url 'medical:pwd_detail' pwd.patient.student.student_id %}"
-              >{{ pwd.patient.student.lastname|title }}</a
-            >
-          </td>
-          <td>
-            <a
-              href="{% url 'medical:pwd_detail' pwd.patient.student.student_id %}"
-              >{{ pwd.patient.student.firstname|title }}</a
-            >
-          </td>
-          <td>
-            <a
-              href="{% url 'medical:pwd_detail' pwd.patient.student.student_id %}"
-              >{{ pwd.patient.age }}</a
-            >
-          </td>
-          <td>
-            <a
-              href="{% url 'medical:pwd_detail' pwd.patient.student.student_id %}"
-              >{{ pwd.patient.student.sex }}</a
-            >
-          </td>
-          <td>
-            <a
-              href="{% url 'medical:pwd_detail' pwd.patient.student.student_id %}"
-              >{{ pwd.riskassessment.disability }}</a
-            >
-          </td>
-        </tr>
-        {% empty %}
-        <tr class="tr-td">
-          <td colspan="6">No patients found</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="bg-[#f8fafc] rounded-lg p-4 border border-gray-200">
+    <div class="overflow-x-auto">
+      <table
+        class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow text-base"
+      >
+        <thead class="bg-[#e6e6e6]">
+          <tr>
+            <th class="p-2 text-left text-lg font-semibold text-gray-700">
+              ID Number
+            </th>
+            <th class="p-2 text-left text-lg font-semibold text-gray-700">
+              Lastname
+            </th>
+            <th class="p-2 text-left text-lg font-semibold text-gray-700">
+              Firstname
+            </th>
+            <th class="p-2 text-left text-lg font-semibold text-gray-700">
+              Age
+            </th>
+            <th class="p-2 text-left text-lg font-semibold text-gray-700">
+              Sex
+            </th>
+            <th class="p-2 text-left text-lg font-semibold text-gray-700">
+              File
+            </th>
+            <th class="p-2 text-center text-lg font-semibold text-gray-700">
+              Verification Status
+            </th>
+            <th class="p-2 text-center text-lg font-semibold text-gray-700">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for patient in pwds %}
+          <tr class="bg-white border-b hover:bg-gray-50">
+            <td class="p-2">
+              <a
+                href="{% url 'pwd_detail' patient.user_id_display %}"
+                class="text-blue-600 hover:underline"
+                >{{ patient.user_id_display }}</a
+              >
+            </td>
+            {% if patient.related_student %}
+            <td class="p-2">
+              <a
+                href="{% url 'pwd_detail' patient.user_id_display %}"
+                class="text-blue-600 hover:underline"
+                >{{ patient.related_student.lastname|title|default:"N/A" }}</a
+              >
+            </td>
+            <td class="p-2">
+              <a
+                href="{% url 'pwd_detail' patient.user_id_display %}"
+                class="text-blue-600 hover:underline"
+                >{{ patient.related_student.firstname|title|default:"N/A" }}</a
+              >
+            </td>
+            {% elif patient.related_faculty %}
+            <td class="p-2">
+              <!-- prettier-ignore -->
+              <a
+                href="{% url 'pwd_detail' patient.user_id_display %}"
+                class="text-blue-600 hover:underline"
+                >{{ patient.related_faculty.user.last_name|title|default:"N/A" }}</a
+              >
+            </td>
+            <td class="p-2">
+              <!-- prettier-ignore -->
+              <a
+                href="{% url 'pwd_detail' patient.user_id_display %}"
+                class="text-blue-600 hover:underline"
+                >{{ patient.related_faculty.user.first_name|title|default:"N/A"    }}</a
+              >
+            </td>
+            {% else %}
+            <td class="p-2">N/A</td>
+            <td class="p-2">N/A</td>
+            {% endif %}
+            <td class="p-2">
+              <a
+                href="{% url 'pwd_detail' patient.user_id_display %}"
+                class="text-blue-600 hover:underline"
+                >{{ patient.age }}</a
+              >
+            </td>
+            <!-- prettier-ignore -->
+
+            <td class="p-2">
+              <a
+                href="{% url 'pwd_detail' patient.user_id_display %}"
+                class="text-blue-600 hover:underline"
+                >{% if patient.related_student %}{{ patient.related_student.sex  }}{% else %}N/A{% endif %}</a
+              >
+            </td>
+            <td class="p-2">
+              {% if patient.pwd_file %}
+              <button
+                type="button"
+                onclick="previewFile('{{ patient.pwd_file.url }}', '{% if patient.related_student %}{{ patient.related_student.firstname }} {{ patient.related_student.lastname }}{% elif patient.related_faculty %}{{ patient.related_faculty.user.get_full_name }}{% else %}{{ patient.user.username }}{% endif %}', 'PWD Card')"
+                class="text-blue-600 hover:underline"
+              >
+                Preview
+              </button>
+              {% else %} N/A {% endif %}
+            </td>
+            <td class="p-2 text-center">
+              {% if patient.medicalclearance.riskassessment.pwd_verified %}
+              <span
+                class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                >Verified</span
+              >
+              {% else %}
+              <span
+                class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
+                >Pending</span
+              >
+              {% endif %}
+            </td>
+            <td class="p-2 text-center">
+              <!-- prettier-ignore -->
+
+              {% if patient.user_id_display != "N/A" %} {% if not   patient.medicalclearance.riskassessment.pwd_verified %}
+              <form
+                method="POST"
+                action="{% url 'verify_pwd' patient.user_id_display %}"
+                class="inline"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
+                >
+                  Verify
+                </button>
+              </form>
+              {% else %}
+              <form
+                method="POST"
+                action="{% url 'unverify_pwd' patient.user_id_display %}"
+                class="inline"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+                >
+                  Unverify
+                </button>
+              </form>
+              {% endif %} {% else %} N/A {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr class="bg-white border-b hover:bg-gray-50">
+            <td colspan="8" class="p-2 text-center text-gray-500">
+              No patients found
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Modal for File Preview -->
+<div id="previewModal" class="modal" style="display: none">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modalTitle">File Preview</h5>
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+    </div>
+    <div id="previewContainer"></div>
+    <div class="zoom-controls">
+      <button onclick="zoomOut()">-</button>
+      <button onclick="zoomIn()">+</button>
+    </div>
   </div>
 </div>
 {% endblock %} {% block extra_js %}
-<script></script>
+<script>
+  // Modal JavaScript (copied from medupload.html)
+  var modal = document.getElementById("previewModal");
+  var previewContainer = document.getElementById("previewContainer");
+  var modalTitle = document.getElementById("modalTitle");
+  var currentZoom = 1;
+  var zoomStep = 0.1;
+  var minZoom = 0.5;
+  var maxZoom = 3;
+
+  function previewFile(fileUrl, patientName, documentType) {
+    modalTitle.textContent = `Preview: ${patientName} - ${documentType}`;
+    previewContainer.innerHTML = ""; // Clear previous content
+    currentZoom = 1; // Reset zoom level
+
+    // Determine file type
+    var fileExtension = fileUrl.split(".").pop().toLowerCase();
+
+    if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
+      var img = document.createElement("img");
+      img.src = fileUrl;
+      img.style.transform = `scale(${currentZoom})`;
+      img.style.transformOrigin = "top left"; // Set transform origin
+      previewContainer.appendChild(img);
+      modal.style.display = "block";
+    } else if (fileExtension === "pdf") {
+      var obj = document.createElement("object");
+      obj.data = fileUrl;
+      obj.type = "application/pdf";
+      obj.style.width = "100%";
+      obj.style.height = "100%";
+      previewContainer.appendChild(obj);
+      // Hide zoom controls for PDF
+      document.querySelector(".zoom-controls").style.display = "none";
+      modal.style.display = "block";
+    } else {
+      previewContainer.innerHTML =
+        "<p>Preview not available for this file type.</p>";
+      // Hide zoom controls for unsupported types
+      document.querySelector(".zoom-controls").style.display = "none";
+    }
+
+    // Show zoom controls only if it's an image
+    if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
+      document.querySelector(".zoom-controls").style.display = "flex";
+    } else {
+      document.querySelector(".zoom-controls").style.display = "none";
+    }
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+    previewContainer.innerHTML = ""; // Clear content when closing
+    document.querySelector(".zoom-controls").style.display = "none"; // Hide controls on close
+  }
+
+  // Close modal when clicking outside the modal-content
+  window.onclick = function (event) {
+    const modal = document.getElementById("previewModal");
+    const modalContent = document.querySelector(".modal-content");
+    // Check if the clicked area is outside the modal-content but inside the modal
+    if (event.target === modal) {
+      closeModal();
+    }
+  };
+
+  function zoomIn() {
+    currentZoom += zoomStep;
+    applyZoom();
+  }
+
+  function zoomOut() {
+    currentZoom = Math.max(minZoom, currentZoom - zoomStep); // Prevent zooming out below minZoom
+    applyZoom();
+  }
+
+  function applyZoom() {
+    const imageElement = previewContainer.querySelector("img");
+    const objectElement = previewContainer.querySelector("object");
+
+    if (imageElement) {
+      imageElement.style.transform = `scale(${currentZoom})`;
+      // Adjust transform origin if needed, currently set to top left in CSS
+    } else if (objectElement) {
+      // Applying transform to object element (for PDFs) - behavior may vary across browsers
+      // Consider alternative PDF viewers for reliable zoom
+      objectElement.style.transform = `scale(${currentZoom})`;
+      // You might need to adjust the container's overflow and dimensions if zooming causes content to exceed boundaries
+    }
+    // You might also want to update a visual indicator of the current zoom level
+  }
+</script>
 {% endblock %}

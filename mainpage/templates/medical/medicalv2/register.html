@@ -1,0 +1,868 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthHub Connect | Register</title>
+    <link
+      rel="shortcut icon"
+      href="../static/images/CTU_logo.png"
+      type="image/x-icon"
+    />
+    {% tailwind_css %}
+    <link rel="stylesheet" href="{% static 'styles/base.css' %}" />
+  </head>
+  <body>
+    <div class="flex w-full h-auto overflow-hidden">
+      <div
+        class="xs:w-full flex items-center justify-center xs:p-4 md:p-14 lg:px-[24rem] overflow-auto"
+      >
+        <div class="w-full flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <div class="self-center">
+              <img
+                class="size-[7rem]"
+                src="../static/images/CTU_logo.png"
+                alt="CTU Logo"
+              />
+            </div>
+            <div class="flex flex-col items-center">
+              <h1 class="text-[1.5rem] font-bold">HealthHub Connect</h1>
+              <p class="font-normal w-[70%] text-center">
+                An Integrated Kahimsug Clinic Management System in CTU Argao
+              </p>
+            </div>
+          </div>
+          <h2 class="font-bold text-[1.3rem]">Account Registration</h2>
+
+          <form
+            id="registrationForm"
+            class="flex flex-col w-full gap-2"
+            method="POST"
+          >
+            {% csrf_token %}
+            <input
+              type="hidden"
+              name="role"
+              value="{% if request.GET.role == 'faculty' %}Faculty{% else %}Student{% endif %}"
+              id="roleInput"
+            />
+
+            {% if request.GET.role == 'faculty' %}
+            <div
+              class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4"
+              role="alert"
+            >
+              <p class="font-bold">Faculty Registration</p>
+              <p>
+                You are registering as a faculty member. Please fill in all
+                required information.
+              </p>
+            </div>
+            {% endif %}
+
+            <div class="flex w-full gap-2">
+              <div class="w-full flex flex-col">
+                <label for="firstName" class="w-fit">First Name</label>
+                <input
+                  type="text"
+                  class="w-full rounded-md"
+                  id="firstName"
+                  name="firstName"
+                  placeholder="Enter your first name"
+                  required
+                />
+              </div>
+              <div class="w-full flex flex-col">
+                <label for="middleInitial" class="w-fit">M.I</label>
+                <input
+                  type="text"
+                  class="w-full rounded-md"
+                  id="middleInitial"
+                  name="middleInitial"
+                  maxlength="1"
+                  placeholder="Enter your middle initial"
+                  required
+                />
+              </div>
+              <div class="w-full flex flex-col">
+                <label for="lastName" class="w-fit">Last Name</label>
+                <input
+                  class="w-full rounded-md"
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Enter your last name"
+                  required
+                />
+              </div>
+            </div>
+            <!-- Student Fields Section -->
+            <div
+              id="studentFields"
+              class="{% if request.GET.role == 'faculty' %}hidden{% endif %} flex-col w-full gap-2"
+            >
+              <div class="flex w-full gap-2">
+                <div class="flex flex-col w-full">
+                  <label for="sex">Sex</label>
+                  <select class="w-full rounded-md" name="sex" id="sex">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                  </select>
+                </div>
+                <div class="flex flex-col w-full">
+                  <label for="yrLevel">Year Level</label>
+                  <select class="w-full rounded-md" name="yrLevel" id="yrLevel">
+                    <option value="1">First Year</option>
+                    <option value="2">Second Year</option>
+                    <option value="3">Third Year</option>
+                    <option value="4">Fourth Year</option>
+                  </select>
+                </div>
+              </div>
+              <div class="flex w-full gap-2">
+                <div class="flex flex-col w-full">
+                  <label for="studentIdNumber">Student ID Number</label>
+                  <input
+                    class="w-full rounded-md"
+                    type="text"
+                    id="studentIdNumber"
+                    name="idNumber"
+                    maxlength="7"
+                    placeholder="Enter your Student ID number"
+                    pattern="[0-9]{7}"
+                    title="Please enter a valid 7-digit Student ID number"
+                  />
+                </div>
+                <div class="flex flex-col w-full">
+                  <label for="lrn">LRN</label>
+                  <input
+                    class="w-full rounded-md"
+                    type="text"
+                    id="lrn"
+                    name="lrn"
+                    maxlength="12"
+                    placeholder="Enter your LRN"
+                    pattern="[0-9]{12}"
+                    title="Please enter a valid 12-digit LRN"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-col w-full">
+                <label for="course">Course</label>
+                <select class="w-full rounded-md" id="course" name="course">
+                  <optgroup label="College of Education">
+                    <option value="Bachelor of Elementary Education">
+                      Bachelor of Elementary Education
+                    </option>
+                    <option
+                      value="Bachelor of Secondary Education Major in Math"
+                    >
+                      Bachelor of Secondary Education Major in Math
+                    </option>
+                    <option
+                      value="Bachelor of Technology and Livelihood Education Major in Home Economics"
+                    >
+                      Bachelor of Technology and Livelihood Education Major in
+                      Home Economics
+                    </option>
+                  </optgroup>
+                  <optgroup label="College of Arts and Science">
+                    <option
+                      value="Bachelor of Arts in English Language Studies"
+                    >
+                      Bachelor of Arts in English Language Studies
+                    </option>
+                    <option value="Bachelor of Arts in Literature">
+                      Bachelor of Arts in Literature
+                    </option>
+                  </optgroup>
+                  <optgroup label="College of Technology and Engineering">
+                    <option
+                      value="Bachelor of Science in Industrial Engineering"
+                    >
+                      Bachelor of Science in Industrial Engineering
+                    </option>
+                    <option
+                      value="Bachelor of Science in Information Technology"
+                    >
+                      Bachelor of Science in Information Technology
+                    </option>
+                    <option
+                      value="Bachelor in Industrial Technology Major in Drafting Technology"
+                    >
+                      Bachelor in Industrial Technology Major in Drafting
+                      Technology
+                    </option>
+                    <option
+                      value="Bachelor in Industrial Technology Major in Electronics Technology"
+                    >
+                      Bachelor in Industrial Technology Major in Electronics
+                      Technology
+                    </option>
+                    <option
+                      value="Bachelor in Industrial Technology Major in Computer Technology"
+                    >
+                      Bachelor in Industrial Technology Major in Computer
+                      Technology
+                    </option>
+                    <option
+                      value="Bachelor in Industrial Technology Major in Garments Technology"
+                    >
+                      Bachelor in Industrial Technology Major in Garments
+                      Technology
+                    </option>
+                    <option
+                      value="Bachelor in Industrial Technology Major in Automotive Technology"
+                    >
+                      Bachelor in Industrial Technology Major in Automotive
+                      Technology
+                    </option>
+                  </optgroup>
+                  <optgroup label="College of Forestry">
+                    <option value="Bachelor of Science in Forestry">
+                      Bachelor of Science in Forestry
+                    </option>
+                  </optgroup>
+                  <optgroup label="College of Agriculture">
+                    <option
+                      value="Bachelor of Science in Agriculture Major in Animal Science"
+                    >
+                      Bachelor of Science in Agriculture Major in Animal Science
+                    </option>
+                    <option
+                      value="Bachelor of Science in Agriculture Major in Horticulture"
+                    >
+                      Bachelor of Science in Agriculture Major in Horticulture
+                    </option>
+                    <option
+                      value="Bachelor of Science in Agriculture Major in Agronomy"
+                    >
+                      Bachelor of Science in Agriculture Major in Agronomy
+                    </option>
+                    <option
+                      value="Bachelor of Science in Agriculture Major in Crop Protection"
+                    >
+                      Bachelor of Science in Agriculture Major in Crop
+                      Protection
+                    </option>
+                    <option
+                      value="Bachelor of Science in Agriculture Major in Agricultural Economics"
+                    >
+                      Bachelor of Science in Agriculture Major in Agricultural
+                      Economics
+                    </option>
+                  </optgroup>
+                  <optgroup
+                    label="College of Hospitality Management and Tourism"
+                  >
+                    <option
+                      value="Bachelor of Science in Hospitality Management"
+                    >
+                      Bachelor of Science in Hospitality Management
+                    </option>
+                    <option value="Bachelor of Science in Tourism">
+                      Bachelor of Science in Tourism
+                    </option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <!-- Faculty Fields Section -->
+            <div
+              id="facultyFields"
+              class="{% if request.GET.role != 'faculty' %}hidden{% endif %} flex-col w-full gap-2"
+            >
+              <div class="flex w-full gap-2">
+                <div class="flex flex-col w-full">
+                  <label for="department">Department</label>
+                  <input
+                    type="text"
+                    class="w-full rounded-md"
+                    id="department"
+                    name="department"
+                    placeholder="Enter your department"
+                  />
+                </div>
+                <div class="flex flex-col w-full">
+                  <label for="position">Position</label>
+                  <input
+                    type="text"
+                    class="w-full rounded-md"
+                    id="position"
+                    name="position"
+                    placeholder="Enter your position"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-col w-full">
+                <label for="facultyIdNumber">Faculty ID Number</label>
+                <input
+                  class="w-full rounded-md"
+                  type="text"
+                  id="facultyIdNumber"
+                  name="idNumber"
+                  maxlength="7"
+                  placeholder="Enter your Faculty ID number"
+                  pattern="[0-9]{7}"
+                  title="Please enter a valid 7-digit Faculty ID number"
+                />
+              </div>
+            </div>
+
+            <div class="flex flex-col w-full">
+              <label for="email">Email</label>
+              <input
+                class="w-full rounded-md"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div class="flex flex-col w-full">
+              <label for="password" class="label">Password</label>
+              <div class="w-full flex relative">
+                <input
+                  class="w-full"
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  class="absolute right-[10px] top-[12px]"
+                  type="button"
+                  id="togglePassword"
+                >
+                  <svg
+                    id="showIcon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                  </svg>
+                  <svg
+                    id="hideIcon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5"
+                    style="display: none"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395m6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <!-- Password Strength Indicator -->
+            <div class="w-full mt-2 flex flex-col gap-1">
+              <p class="text-sm font-semibold">Password must contain:</p>
+              <ul class="text-xs text-gray-600 flex flex-col gap-2">
+                <li id="length" class="flex items-center gap-1">
+                  <svg
+                    id="check"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 block"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  <svg
+                    id="wrong"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 hidden"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  At least 8 characters
+                </li>
+                <li id="uppercase" class="flex items-center gap-1">
+                  <svg
+                    id="check"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 block"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  <svg
+                    id="wrong"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 hidden"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  At least one uppercase letter
+                </li>
+                <li id="lowercase" class="flex items-center gap-1">
+                  <svg
+                    id="check"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 block"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  <svg
+                    id="wrong"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 hidden"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  At least one lowercase letter
+                </li>
+                <li id="number" class="flex items-center gap-1">
+                  <svg
+                    id="check"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 block"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  <svg
+                    id="wrong"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 hidden"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  At least one number
+                </li>
+                <li id="special" class="flex items-center gap-1">
+                  <svg
+                    id="check"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 block"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  <svg
+                    id="wrong"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 hidden"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  At least one special character (!@#$%^&*(),.?":{}|&lt;&gt;)
+                </li>
+              </ul>
+            </div>
+            <div class="flex flex-col w-full">
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="w-full flex relative">
+                <input
+                  class="w-full"
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Confirm your password"
+                  required
+                />
+                <button
+                  class="absolute right-[10px] top-[12px]"
+                  type="button"
+                  id="toggleConfirmPassword"
+                >
+                  <svg
+                    id="showConfirmIcon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                  </svg>
+                  <svg
+                    id="hideConfirmIcon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5"
+                    style="display: none"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395m6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <!-- Password Match Indicator -->
+            <div class="w-full mt-2">
+              <p
+                id="match"
+                class="flex items-center font-semibold text-red-500"
+              >
+                <svg
+                  id="check"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5 mr-2 hidden"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+                <svg
+                  id="wrong"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5 mr-2 block"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+                Passwords do not match
+              </p>
+            </div>
+            <input
+              type="submit"
+              value="Register"
+              class="bg-[#3b82f6] text-white text-[14px] p-2 rounded-md w-fit px-5 cursor-pointer mt-4"
+            />
+          </form>
+          <p class="text-[14px]">
+            Already have an account?
+            <a href="{% url 'login' %}" class="text-blue-500 underline"
+              >Login</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+    {% load static %}
+    <script src="{% static 'scripts/register.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Remove role switching event listeners since we're using URL parameters
+        const roleInput = document.getElementById("roleInput");
+        const studentFieldsDiv = document.getElementById("studentFields");
+        const facultyFieldsDiv = document.getElementById("facultyFields");
+
+        // Set initial visibility based on role
+        if (roleInput.value === "Faculty") {
+          studentFieldsDiv.classList.add("hidden");
+          facultyFieldsDiv.classList.remove("hidden");
+          setRequiredFields(facultyFieldsDiv, true);
+          setRequiredFields(studentFieldsDiv, false);
+        } else {
+          studentFieldsDiv.classList.remove("hidden");
+          facultyFieldsDiv.classList.add("hidden");
+          setRequiredFields(studentFieldsDiv, true);
+          setRequiredFields(facultyFieldsDiv, false);
+        }
+
+        // Function to set/remove required attribute for fields within a div
+        function setRequiredFields(container, isRequired) {
+          container.querySelectorAll("input, select").forEach((field) => {
+            if (isRequired) {
+              field.setAttribute("required", "");
+            } else {
+              field.removeAttribute("required");
+            }
+          });
+        }
+
+        // Handle form submission with SweetAlert2
+        const registrationForm = document.getElementById("registrationForm");
+        registrationForm.addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent default form submission
+
+          const formData = new FormData(registrationForm);
+
+          fetch("", {
+            method: "POST",
+            body: formData,
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === "success") {
+                Swal.fire({
+                  icon: "success",
+                  title: "Success!",
+                  text: data.message,
+                }).then(() => {
+                  window.location.href = data.redirect_url; // Use dynamic redirect URL
+                });
+              } else {
+                let errorMessage = data.message || "An error occurred.";
+                if (data.errors) {
+                  errorMessage += "<br>" + data.errors.join("<br>");
+                }
+                Swal.fire({
+                  icon: "error",
+                  title: "Error!",
+                  html: errorMessage,
+                });
+              }
+            })
+            .catch((error) => {
+              Swal.fire({
+                icon: "error",
+                title: "Error!",
+                text: "An unexpected error occurred.",
+              });
+            });
+        });
+
+        // Password Validation and Visibility Toggle
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
+        const lengthIndicator = document.getElementById("length");
+        const uppercaseIndicator = document.getElementById("uppercase");
+        const lowercaseIndicator = document.getElementById("lowercase");
+        const numberIndicator = document.getElementById("number");
+        const specialIndicator = document.getElementById("special");
+        const matchIndicator = document.getElementById("match");
+
+        const togglePasswordButton = document.getElementById("togglePassword");
+        const showPasswordIcon = document.getElementById("showIcon");
+        const hidePasswordIcon = document.getElementById("hideIcon");
+
+        const toggleConfirmPasswordButton = document.getElementById(
+          "toggleConfirmPassword"
+        );
+        const showConfirmIcon = document.getElementById("showConfirmIcon");
+        const hideConfirmIcon = document.getElementById("hideConfirmIcon");
+
+        function updateIndicator(element, isValid) {
+          const checkIcon = element.querySelector("#check");
+          const wrongIcon = element.querySelector("#wrong");
+          if (isValid) {
+            element.classList.remove("text-red-500", "text-gray-600");
+            element.classList.add("text-green-500");
+            checkIcon.classList.replace("hidden", "block");
+            wrongIcon.classList.replace("block", "hidden");
+          } else {
+            element.classList.remove("text-green-500", "text-gray-600");
+            element.classList.add("text-red-500");
+            checkIcon.classList.replace("block", "hidden");
+            wrongIcon.classList.replace("hidden", "block");
+          }
+        }
+
+        // Function to set indicator to neutral state
+        function setIndicatorNeutral(element) {
+          const checkIcon = element.querySelector("#check");
+          const wrongIcon = element.querySelector("#wrong");
+          element.classList.remove("text-red-500", "text-green-500");
+          element.classList.add("text-gray-600"); // Set to gray
+          checkIcon.classList.replace("block", "hidden"); // Hide both icons
+          wrongIcon.classList.replace("block", "hidden");
+        }
+
+        function validatePassword() {
+          const password = passwordInput.value;
+
+          if (password === "") {
+            setIndicatorNeutral(lengthIndicator);
+            setIndicatorNeutral(uppercaseIndicator);
+            setIndicatorNeutral(lowercaseIndicator);
+            setIndicatorNeutral(numberIndicator);
+            setIndicatorNeutral(specialIndicator);
+          } else {
+            const hasLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password); // Ensure correct special characters
+
+            updateIndicator(lengthIndicator, hasLength);
+            updateIndicator(uppercaseIndicator, hasUppercase);
+            updateIndicator(lowercaseIndicator, hasLowercase);
+            updateIndicator(numberIndicator, hasNumber);
+            updateIndicator(specialIndicator, hasSpecial);
+          }
+
+          checkPasswordMatch(); // Also check match when password changes
+        }
+
+        function checkPasswordMatch() {
+          const password = passwordInput.value;
+          const confirmPassword = confirmPasswordInput.value;
+
+          // Find the text node within the match indicator p element
+          const matchTextNode =
+            matchIndicator.childNodes[matchIndicator.childNodes.length - 1];
+
+          if (password === "" && confirmPassword === "") {
+            setIndicatorNeutral(matchIndicator);
+            // Reset text content to default for neutral state
+            matchTextNode.nodeValue = "Passwords do not match";
+          } else {
+            const isMatch =
+              password === confirmPassword && confirmPassword !== "";
+            updateIndicator(matchIndicator, isMatch);
+            // Update text content based on match status
+            matchTextNode.nodeValue = isMatch
+              ? "Passwords match"
+              : "Passwords do not match";
+          }
+        }
+
+        function togglePasswordVisibility(passwordField, showIcon, hideIcon) {
+          if (passwordField.type === "password") {
+            passwordField.type = "text";
+            showIcon.style.display = "none";
+            hideIcon.style.display = "inline-block";
+          } else {
+            passwordField.type = "password";
+            showIcon.style.display = "inline-block";
+            hideIcon.style.display = "none";
+          }
+        }
+
+        passwordInput.addEventListener("input", validatePassword);
+        confirmPasswordInput.addEventListener("input", checkPasswordMatch);
+
+        togglePasswordButton.addEventListener("click", function () {
+          togglePasswordVisibility(
+            passwordInput,
+            showPasswordIcon,
+            hidePasswordIcon
+          );
+        });
+
+        toggleConfirmPasswordButton.addEventListener("click", function () {
+          togglePasswordVisibility(
+            confirmPasswordInput,
+            showConfirmIcon,
+            hideConfirmIcon
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

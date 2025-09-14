@@ -86,7 +86,7 @@
     </table>
   </div>
 
-  <form action="{% url 'jobplacement:rep_print' %}" method="POST" class="mt-6">
+  <form action="{% url 'rep_print' %}" method="POST" class="mt-6">
     {% csrf_token %}
     <input type="hidden" name="date_filter" value="{{ date_time }}" />
     <input type="hidden" name="period_filter" value="{{ prev_period }}" />

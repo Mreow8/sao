@@ -1,491 +1,294 @@
-{% extends "adminmain.html" %} {% load static %} 
-
-{% block title %}Student
+{% extends "adminmain.html" %} {% load static %} {% block title %}Student
 Organization (FSTLP){% endblock %} {% block headcontent %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}">
-    <link rel="stylesheet" href="{% static 'studentorg/css/general.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{% endblock %}
-
-
-{% block bodycontent %}<style>/* ================================
-   Overlay background
-================================ */
-.overlay {
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+/>
+<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/general.css' %}" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %} {% block bodycontent %}
+<style>
+  /* Overlay */
+  .overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* darker transparent layer */
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 999;
-}
+    padding: 1rem;
+  }
 
-/* ================================
-   Floating form card
-================================ */
-.form-card {
+  /* Form card */
+  .form-card {
     position: relative;
-    background: #ffffff;
-    padding: 2rem;
-    border-radius: 12px;
-    width: 95%;
-    max-width: 950px;
+    background: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 900px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    animation: fadeInUp 0.3s ease-out;
-}
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    animation: fadeInScale 0.35s ease-out;
+    font-family: "Segoe UI", sans-serif;
+  }
 
-/* ================================
-   Close button (X)
-================================ */
-.close-btn {
+  /* Close button */
+  .close-btn {
     position: absolute;
-    top: 12px;
-    right: 16px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #444;
-    background: none;
-    border: none;
+    top: 14px;
+    right: 18px;
+    font-size: 26px;
+    color: #888;
+    background: #f1f1f1;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    transition: color 0.2s;
-}
-.close-btn:hover {
-    color: #ff3b3b;
-}
+    transition: 0.3s;
+  }
 
-/* ================================
-   Form layout
-================================ */
-.maincontain {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
+  .close-btn:hover {
+    color: #fff;
+    background: #ff4d4d;
+  }
 
-.subcontain {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-}
-
-.form-column {
-    flex: 1;
-    min-width: 280px;
-}
-
-/* ================================
-   Headings
-================================ */
-.hd {
-    font-size: 1.4rem;
-    margin: 1rem 0 0.5rem;
-    color: #ff8000;
-    font-weight: bold;
-    border-left: 4px solid #ff8000;
-    padding-left: 8px;
-}
-
-.stop {
-    margin-top: 1rem;
-}
-
-/* ================================
-   Labels & Inputs
-================================ */
-label {
-    display: block;
+  /* Section Headings */
+  .section-title {
+    font-size: 1.25rem;
+    margin: 1.5rem 0 0.75rem;
+    color: #222;
     font-weight: 600;
-    margin-top: 10px;
-    color: #333;
-}
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-input, select {
+  .section-title i {
+    color: #ff8000;
+  }
+
+  /* Labels & Inputs */
+  label {
+    font-weight: 600;
+    margin-top: 12px;
+    display: block;
+    color: #444;
+  }
+
+  input,
+  select {
     width: 100%;
-    padding: 0.6rem 0.8rem;
+    padding: 0.7rem 0.9rem;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 8px;
+    margin-top: 6px;
     font-size: 0.95rem;
-    margin-top: 4px;
-    transition: border-color 0.2s;
-}
+    transition: 0.2s;
+  }
 
-input:focus, select:focus {
+  input:focus,
+  select:focus {
     border-color: #ff8000;
+    box-shadow: 0 0 0 3px rgba(255, 128, 0, 0.2);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(255,128,0,0.2);
-}
+  }
 
-/* ================================
-   Submit Button
-================================ */
-.button {
-    background-color: #ff8000;
-    color: white;
-    font-weight: bold;
-    padding: 0.8rem 1.4rem;
+  /* Buttons */
+  .button,
+  button[type="submit"] {
+    display: inline-block;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, #ff8000, #e66a00);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.8rem 1.6rem;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
+    transition: 0.25s ease;
+    font-size: 0.95rem;
+  }
 
-.button:hover {
-    background-color: #e67000;
+  .button:hover,
+  button[type="submit"]:hover {
+    background: linear-gradient(135deg, #e66a00, #cc5900);
     transform: translateY(-2px);
-}
+  }
 
-.button:active {
+  .button:active {
     transform: translateY(0);
-}
+  }
+  .popup-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    color: #fff;
+    z-index: 2000;
+    animation: fadeIn 0.5s ease, fadeOut 0.5s ease 3.5s forwards;
+  }
+  .popup-message.success {
+    background: #28a745;
+  } /* green */
+  .popup-message.error {
+    background: #dc3545;
+  } /* red */
+  .popup-message.warning {
+    background: #ffc107;
+    color: #222;
+  }
+  .popup-message.info {
+    background: #17a2b8;
+  }
 
-/* ================================
-   Animations
-================================ */
-@keyframes fadeInUp {
+  @keyframes fadeIn {
     from {
-        opacity: 0;
-        transform: translateY(20px);
+      opacity: 0;
+      transform: translateY(-20px);
     }
     to {
-        opacity: 1;
-        transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
-}
+  }
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  }
+
+  /* Animation */
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 </style>
-<div class="overlay" id="overlay">
-    <div class="form-card">
-    <div class="container"
-    >
-    <a href="{% url 'admin_manageofficer' %}" class="close-btn">&times;</a>
-
-         <div class="sub-title">
-
-       <h3>{{ organization.name }}</h3>
-
-        </div>
-       
-         <form method="post" enctype="multipart/form-data">
-            <div class="maincontain">
-                <div class="subcontain">
-                    <div class="form-column">
-                        <h1 class="hd">Officer form</h1>
-                        {% csrf_token %}
-                        <label for="Officer_profile_picture">Profile Picture:</label>
-                        <input type="file" id="Officer_profile_picture" name="Officer_profile_picture" accept="image/*">
-                        {% if uploaded_files.Officer_profile_picture %}
-                            <a href="{{ uploaded_files.Officer_profile_picture.url }}" target="_blank">View Uploaded Profile Picture</a>
-                        {% endif %}
-
-                        <label for="surname">Surname:</label>
-                        <input type="text" id="surname" name="surname" required>
-
-                        <label for="firstname">First Name:</label>
-                        <input type="text" id="firstname" name="firstname" required>
-
-                        <label for="middlename">Middle Initial:</label>
-                        <input type="text" id="middlename" name="middlename" required>
-
-                        <label for="course">Course:</label>
-                        <select id="course" name="course" required>
-                            <option value="BIT-CT">BIT-COMPTECH</option>
-<option value="BIT-GARMENTS">BIT-GARMENTS</option>
-<option value="BIT-AUTOMOTIVE">BIT-AUTOMOTIVE</option>
-<option value="BIT-DRAFTING">BIT-DRAFTING</option>
-<option value="BIT-ELECTRONICS">BIT-ELECTRONICS</option>
-<option value="BIT-COMPTECH">BIT-COMPTECH</option>
-
-<option value="BSIT">BSIT</option>
-<option value="BAEL">BAEL</option>
-<option value="BALIT">BALIT</option>
-<option value="TOURISM">Tourism</option>
-<option value="HM">Hospitality Management</option>
-<option value="ENVISCI">Environmental Science</option>
-<option value="FORESTRY">Forestry</option>
-<option value="AGRI">Agriculture</option>
-<option value="PSYCH">Psychology</option>
-<option value="BEED">BEED</option>
-<option value="BED-MATH">BSED Mathematics</option>
-<option value="BSED-ENGLISH">BSED English</option>
-
-                        </select>
-                    
-                        <label for="year">Year:</label>
-                        <select id="year" name="year" required>
-                            <option value=""></option>
-                            <option value="1st">1st</option>
-                            <option value="2nd">2nd</option>
-                            <option value="3rd">3rd</option>
-                            <option value="4th">4th</option>
-                            <option value="Irregular">Irregular</option>
-                        </select>
-
-                        <label for="mobile_number">Mobile Number:</label>
-                        <input type="number" id="mobile_number" name="mobile_number" required>
-
-                        <label for="position">Position:</label>
-                        <input type="text" id="position" name="position" required>
-
-                        <label for="organization">Organization:</label>
-<select id="organization" name="organization" required>
-  <option value="">-- Select Organization --</option>
-  {% for org in organizations %}
-    <option value="{{ org.org_id }}">{{ org.name }}</option>
+{% if messages %}
+<div id="popup-messages">
+  {% for message in messages %}
+  <div class="popup-message {{ message.tags }}">{{ message }}</div>
   {% endfor %}
-</select>
-
-
-                        <label for="town_address">Town Address:</label>
-                        <input type="text" id="town_address" name="town_address" required>
-
-                        <label for="home_address">Home Address:</label>
-                        <input type="text" id="home_address" name="home_address" required>
-
-                        <label for="age">Age:</label>
-                        <input type="number" id="age" name="age" required>
-
-                        <label for="place_of_birth">Place of Birth:</label>
-                        <input type="text" id="place_of_birth" name="place_of_birth" required>
-
-                        <label for="date_of_birth">Date of Birth:</label>
-                        <input type="date" id="date_of_birth" name="date_of_birth" required>
-
-                        <label for="nationality">Nationality:</label>
-                        <input type="text" id="nationality" name="nationality" required>
-
-                        <label for="civil_status">Civil Status:</label>
-                        <select id="civil_status" name="civil_status" required>
-                            <option value=""></option>
-                            <option value="Single">Single</option>
-                            <option value="Married">Married</option>
-                            <option value="Widowed">Widowed</option>
-                            <option value="Separated">Separated</option>
-                            <option value="Divorced">Divorced</option>
-                        </select>
-
-                        <label for="sex">Sex:</label>
-                        <select id="sex" name="sex" required>
-                            <option value=""></option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-
-                        <label for="height">Height:</label>
-                        <input type="number" id="height" name="height" required>
-
-                        <label for="distinguishing_mark">Distinguishing Mark:</label>
-                        <input type="text" id="distinguishing_mark" name="distinguishing_mark">
-
-                        <label for="weight">Weight:</label>
-                        <input type="number" id="weight" name="weight" required>
-
-                        <label for="hobbies">Hobbies:</label>
-                        <input type="text" id="hobbies" name="hobbies">
-
-                        <label for="special_talent">Special Talent:</label>
-                        <input type="text" id="special_talent" name="special_talent">
-
-
-                        <h1 class="hd stop">Parents:</h3>
-                            <!--Father-->
-                            <h2 class="stop">Father</h2>
-                            <label for="father_name">Father Name:</label>
-                            <input type="text" id="father_name" name="father_name">
-
-                            <label for="father_occupation">Father Occupation:</label>
-                            <input type="text" id="father_occupation" name="father_occupation">
-
-                            <label for="father_address">Father Address:</label>
-                            <input type="text" id="father_address" name="father_address">
-
-                            <label for="father_mobile_number">Father Mobile Number:</label>
-                            <input type="number" id="father_mobile_number" name="father_mobile_number">
-
-                            <!--Mother-->
-                            <h2>Mother</h2>
-                            <label for="mother_name">Mother Name:</label>
-                            <input type="text" id="mother_name" name="mother_name">
-
-                            <label for="mother_occupation">Mother Occupation:</label>
-                            <input type="text" id="mother_occupation" name="mother_occupation">
-
-                            <label for="mother_address">Mother Address:</label>
-                            <input type="text" id="mother_address" name="mother_address">
-
-                            <label for="mother_number">Mother Mobile Number:</label>
-                            <input type="number" id="mother_number" name="mother_number">
-
-                            <!--Guardian-->
-                            <h2>Guardian</h2>
-                            <label for="guardian_name">Guardian Name:</label>
-                            <input type="text" id="guardian_name" name="guardian_name">
-
-                            <label for="guardian_occupation">Guardian Occupation:</label>
-                            <input type="text" id="guardian_occupation" name="guardian_occupation">
-
-                            <label for="guardian_address">Guardian Address:</label>
-                            <input type="text" id="guardian_address" name="guardian_address">
-
-                            <label for="guardian_number">Guardian Mobile Number:</label>
-                            <input type="number" id="guardian_number" name="guardian_number">
-
-                            <!--Tertiary-->
-                            <h1 class="hd stop">Education:</h1>
-                            <h2 class="stop">Tertiary</h2>
-                            <label for="tertiary_institution">Institution:</label>
-                            <input type="text" id="tertiary_institution" name="tertiary_institution">
-
-                            <label for="tertiary_address">Address:</label>
-                            <input type="text" id="tertiary_address" name="tertiary_address">
-
-                            <label for="tertiary_degree_level">Degree Level:</label>
-                            <input type="text" id="tertiary_degree_level" name="tertiary_degree_level">
-
-                            <label for="tertiary_date">Date:</label>
-                            <input type="date" id="tertiary_date" name="tertiary_date">
-                    </div>
-                    <div class="form-column">
-                        <!--Secondary-->
-                        <h2>Secondary</h2>
-                        <label for="secondary_institution">Institution:</label>
-                        <input type="text" id="secondary_institution" name="secondary_institution">
-
-                        <label for="secondary_address">Address:</label>
-                        <input type="text" id="secondary_address" name="secondary_address">
-
-                        <label for="secondary_degree_level">Degree Level:</label>
-                        <input type="text" id="secondary_degree_level" name="secondary_degree_level">
-
-                        <label for="secondary_date">Date:</label>
-                        <input type="date" id="secondary_date" name="secondary_date">
-
-                        <!--Elementary-->
-                        <h2>Elementary</h2>
-                        <label for="elementary_institution">Institution:</label>
-                        <input type="text" id="elementary_institution" name="elementary_institution">
-
-                        <label for="elementary_address">Address:</label>
-                        <input type="text" id="elementary_address" name="elementary_address">
-
-                        <label for="elementary_degree_level">Degree Level:</label>
-                        <input type="text" id="elementary_degree_level" name="elementary_degree_level">
-
-                        <label for="elementary_date">Date:</label>
-                        <input type="date" id="elementary_date" name="elementary_date">
-
-                        <!--Membership in other organizations-->
-                        <h1 class="hd stop">Membership in other organizations:</h1>
-                        <h2>First Organization</h2>
-                        <label for="membership_position1">Position:</label>
-                        <input type="text" id="membership_position1" name="membership_position1">
-
-                        <label for="membership_organization1">Organization:</label>
-                        <input type="text" id="membership_organization1" name="membership_organization1">
-
-                        <label for="membership_date1">Date:</label>
-                        <input type="date" id="membership_date1" name="membership_date1">
-
-                        <h2>Second Organization</h2>
-                        <label for="membership_position2">Position:</label>
-                        <input type="text" id="membership_position2" name="membership_position2">
-
-                        <label for="membership_organization2">Organization:</label>
-                        <input type="text" id="membership_organization2" name="membership_organization2">
-
-                        <label for="membership_date2">Date:</label>
-                        <input type="date" id="membership_date2" name="membership_date2">
-
-                        <h2>Third Organization</h2>
-                        <label for="membership_position3">Position:</label>
-                        <input type="text" id="membership_position3" name="membership_position3">
-
-                        <label for="membership_organization3">Organization:</label>
-                        <input type="text" id="membership_organization3" name="membership_organization3">
-
-                        <label for="membership_date3">Date:</label>
-                        <input type="date" id="membership_date3" name="membership_date3">
-
-                        <h2>Fourth Organization</h2>
-                        <label for="membership_position4">Position:</label>
-                        <input type="text" id="membership_position4" name="membership_position4">
-
-                        <label for="membership_organization4">Organization:</label>
-                        <input type="text" id="membership_organization4" name="membership_organization4">
-
-                        <label for="membership_date4">Date:</label>
-                        <input type="date" id="membership_date4" name="membership_date4">
-
-                        <h2>Fifth Organization</h2>
-                        <label for="membership_position5">Position:</label>
-                        <input type="text" id="membership_position5" name="membership_position5">
-
-                        <label for="membership_organization5">Organization:</label>
-                        <input type="text" id="membership_organization5" name="membership_organization5">
-
-                        <label for="membership_date5">Date:</label>
-                        <input type="date" id="membership_date5" name="membership_date5">
-
-                        <h1 class="hd stop">Seminars:</h1>
-                        <h2 class="stop">Seminar 1</h2>
-                        <label for="seminar_title1">Title:</label>
-                        <input type="text" id="seminar_title1" name="seminar_title1">
-
-                        <label for="seminar_date1">Date:</label>
-                        <input type="date" id="seminar_date1" name="seminar_date1">
-
-                        <h2>Seminar 2</h2>
-                        <label for="seminar_title2">Title:</label>
-                        <input type="text" id="seminar_title2" name="seminar_title2">
-
-                        <label for="seminar_date2">Date:</label>
-                        <input type="date" id="seminar_date2" name="seminar_date2">
-
-                        <h2>Seminar 3</h2>
-                        <label for="seminar_title3">Title:</label>
-                        <input type="text" id="seminar_title3" name="seminar_title3">
-
-                        <label for="seminar_date3">Date:</label>
-                        <input type="date" id="seminar_date3" name="seminar_date3">
-
-                        <h2>Seminar 4</h2>
-                        <label for="seminar_title4">Title:</label>
-                        <input type="text" id="seminar_title4" name="seminar_title4">
-
-                        <label for="seminar_date4">Date:</label>
-                        <input type="date" id="seminar_date4" name="seminar_date4">
-
-                        <h2>Seminar 5</h2>
-                        <label for="seminar_title5">Title:</label>
-                        <input type="text" id="seminar_title5" name="seminar_title5">
-
-                        <label for="seminar_date5">Date:</label>
-                        <input type="date" id="seminar_date5" name="seminar_date5">
-
-                        <button type="submit" style="margin-top:10px;" class="button">Submit</button>
-                    </div>
-                </div>
-            </div>
-        </form>
+</div>
+{% endif %}
+
+<div class="overlay" id="overlay">
+  <div class="form-card">
+    <a href="{% url 'org_profile' slug=organization.slug %}" class="close-btn"
+      >&times;</a
+    >
+
+    <div class="sub-title">
+      <h1>{{ organization.name }}</h1>
     </div>
-        </div>
-     <script>
-function closeForm() {
-  document.getElementById("overlay").style.display = "none";
-}
+
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- Officer -->
+      <h3 class="section-title">
+        <i class="fas fa-user-tie"></i> Officer Info
+      </h3>
+      {{ officer_form.as_p }}
+
+      <!-- Membership -->
+      <h3 class="section-title"><i class="fas fa-users"></i> Membership</h3>
+      <p>If none, leave the form blank</p>
+      <div id="membership-container">{{ membership_form.as_p }}</div>
+      <button type="button" id="add-membership" class="button">
+        + Add Membership
+      </button>
+
+      <!-- Seminar -->
+      <h3 class="section-title">
+        <i class="fas fa-chalkboard-teacher"></i> Seminar
+      </h3>
+      <div id="seminar-container">{{ seminar_form.as_p }}</div>
+      <button type="button" id="add-seminar" class="button">
+        + Add Seminar
+      </button>
+
+      <!-- Save -->
+      <button type="submit" class="button">💾 Save</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Membership clone
+  document
+    .getElementById("add-membership")
+    .addEventListener("click", function () {
+      let container = document.getElementById("membership-container");
+      let newMembership = container.cloneNode(true);
+      newMembership.querySelectorAll("input, select").forEach((el) => {
+        el.value = "";
+      });
+      container.parentNode.insertBefore(newMembership, this);
+    });
+
+  // Seminar clone
+  document.getElementById("add-seminar").addEventListener("click", function () {
+    let container = document.getElementById("seminar-container");
+    let newSeminar = container.cloneNode(true);
+    newSeminar.querySelectorAll("input, select").forEach((el) => {
+      el.value = "";
+    });
+    container.parentNode.insertBefore(newSeminar, this);
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const dobInput = document.getElementById("id_date_of_birth");
+    const ageInput = document.getElementById("id_age");
+
+    function calculateAge(birthdate) {
+      const today = new Date();
+      const dob = new Date(birthdate);
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      const dayDiff = today.getDate() - dob.getDate();
+
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+      return age;
+    }
+
+    dobInput?.addEventListener("change", function () {
+      if (this.value) {
+        ageInput.value = calculateAge(this.value);
+      } else {
+        ageInput.value = "";
+      }
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const messages = document.querySelectorAll(".popup-message");
+    messages.forEach((msg) => {
+      setTimeout(() => {
+        msg.remove();
+      }, 4000); // auto remove after 4s
+    });
+  });
 </script>
 
 {% endblock %}
-
-</div>
-
-

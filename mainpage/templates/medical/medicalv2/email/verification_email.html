@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center; /* Center content */
+        }
+        .top-logo {
+            margin-bottom: 20px;
+        }
+        .top-logo img {
+            max-width: 50px;
+        }
+        .container {
+            max-width: 500px; /* Adjusted max-width */
+            margin: 0 auto; /* Center the container */
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left; /* Align text within container to left */
+        }
+        .title {
+            text-align: center;
+            font-size: 24px; /* Adjusted font size */
+            color: #333; /* Adjusted color */
+            margin-bottom: 20px;
+            padding-bottom: 15px; /* Adjusted padding */
+            border-bottom: 1px solid #eee;
+        }
+        .otp-code {
+            display: block;
+            width: 100%;
+            padding: 20px 0;
+            background-color: #f8f9fa;
+            color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+            text-align: center;
+            font-size: 32px;
+            letter-spacing: 5px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            font-size: 12px;
+            color: #999; /* Adjusted color */
+            text-align: center;
+        }
+        .footer a {
+             color: #999; /* Adjusted color */
+             text-decoration: none;
+        }
+        .footer a:hover {
+             text-decoration: underline;
+        }
+         p {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-logo">
+        <img src="https://i.ibb.co/0jZQZ9L/CTU-logo.png" alt="CTU Logo" style="max-width: 100px;">
+    </div>
+
+    <div class="container">
+        <div class="title">Welcome to HealthHub Connect!</div>
+
+        <p>Hello {{ user.first_name }},</p>
+
+        <p>Thank you for registering with HealthHub Connect. To complete your registration and access all features, please use the following verification code:</p>
+
+        <div class="otp-code">{{ otp }}</div>
+
+        <p>This verification code will expire in 5 minutes.</p>
+
+        <p>If you did not create an account with HealthHub Connect, please ignore this email.</p>
+    </div>
+
+    <div class="footer">
+        <p>This is an automated message, please do not reply to this email.</p>
+        <p>&copy; 2024 HealthHub Connect. All rights reserved.</p>
+        <p>Don't like these emails? <a href="#">Unsubscribe</a></p> <!-- Placeholder for unsubscribe -->
+    </div>
+</body>
+</html> 

@@ -131,7 +131,7 @@
                     <iframe id="pdf-iframe" src="" width="100%" height="800"></iframe>
                     
                     <div class="button-container">
-                        <form action="{% url 'jobplacement:ojt_requirement_update' %}" method="POST">
+                        <form action="{% url 'ojt_requirement_update' %}" method="POST">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="accept">
                             <input type="hidden" name="req_id" value="">
@@ -139,7 +139,7 @@
                             <input type="submit" value="Accept" class="accept-button">
                         </form>
                 
-                        <form action="{% url 'jobplacement:ojt_requirement_update' %}" method="POST">
+                        <form action="{% url 'ojt_requirement_update' %}" method="POST">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="declined">
                             <input type="hidden" name="req_id" value="">
@@ -167,7 +167,7 @@
             <p>Submit requirements in PDF or Image format</p>
         </div>
         <div class="showbox">
-            <form action="{% url 'jobplacement:ojt_requirements_submit' %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'ojt_requirements_submit' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="">Non-Disclosure:</label>

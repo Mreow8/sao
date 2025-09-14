@@ -194,3 +194,158 @@ input[name="dateborrowed"]:focus {
   padding-left: 5px;
   color: white;
 }
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .equipmentContents {
+    width: 90%;
+    padding: 15px;
+  }
+
+  input[name="borrowername"],
+  input[name="courseprogram"],
+  input[name="dateborrowed"],
+  #equipmentName {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .button-container a,
+  .button-container .saveBtn {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  table th,
+  table td {
+    padding: 6px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sub-title h3 {
+    font-size: 16px;
+  }
+
+  .sub-title p {
+    font-size: 12px;
+  }
+
+  .equipmentContents h2 {
+    font-size: 18px;
+  }
+
+  /* Stack search inputs vertically */
+  form.search {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  input[name="search"] {
+    max-width: 100%;
+  }
+
+  .equipmentTable,
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .button-container {
+    margin-top: 10px;
+  }
+
+  .returnBtn {
+    width: 100%;
+    max-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .equipmentContents {
+    width: 95%;
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  table th,
+  table td {
+    padding: 5px;
+    font-size: 12px;
+  }
+
+  .button-container a,
+  .button-container .saveBtn {
+    font-size: 14px;
+    height: 35px;
+    margin-right: 0 !important;
+  }
+
+  .success-message,
+  .error-message {
+    width: 100%;
+    text-align: center;
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+.button-container {
+  display: flex;
+  flex-direction: column; /* vertical stack */
+  gap: 10px; /* spacing between buttons */
+  align-items: center;
+}
+
+/* Small screens: side by side */
+@media (max-width: 600px) {
+  .button-container {
+    flex-direction: row; /* horizontal layout */
+    justify-content: center; /* center horizontally */
+    gap: 10px; /* spacing between buttons */
+  }
+
+  .button-container a,
+  .button-container .saveBtn {
+    margin-right: 0; /* cancel any old margins */
+  }
+}
+/* Default: keep table layout for larger screens */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* On screens ≤768px, stack fields vertically */
+@media (max-width: 768px) {
+  table,
+  tbody,
+  tr,
+  td {
+    display: block;
+    width: 100%;
+  }
+
+  td {
+    margin-bottom: 10px; /* spacing between stacked inputs */
+  }
+
+  input[type="text"],
+  input[type="date"],
+  select {
+    width: 100%; /* full-width inputs on small screens */
+    box-sizing: border-box;
+  }
+}

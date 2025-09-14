@@ -1,45 +1,143 @@
-{% extends 'adminmain.html' %}{% block headcontent %} {% load static %}
+{% extends 'adminmain.html' %}
+<!-- prettier-ignore -->
 
-<link
-  rel="stylesheet"
-  href="{% static 'styles/medical/admin/prescription.css' %}"
-/>
-{% endblock headcontent %} {% block bodycontent %} {% load static %}
-<div class="container">
-  {% if messages %} {% for message in messages %}
-  <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
-    {{ message }}
-  </p>
-  {% endfor %} {% endif %}
-  <h2>Emergency Health Assistance</h2>
+{% load static tailwind_tags %}
+{% block title %}HealthHub Connect | Emergency Health Assistance{% endblock %}
+
+{% tailwind_css %}
+
+
+{% block bodycontent %}
+<style>
+  input[type="text"],
+  input[type="date"] {
+    border: 2px solid #b3b3b3c7;
+    padding: 9.6px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding-left: 10px;
+    align-items: left;
+    color: black;
+    width: 300px;
+  }
+  .saved {
+    background-color: #ff8000;
+    color: rgb(255, 255, 255);
+  }
+</style>
+<div
+  class="w-full xs:h-fit lg:h-full xs:p-4 md:p-8 bg-white rounded-[18px] flex flex-col items-center xs:gap-2 md:gap-4"
+>
+  <h2 class="font-bold xs:text-[1.3rem] sm:text-[1.5rem] text-center mb-4">
+    Emergency Health Assistance
+  </h2>
   <br />
-  <form method="POST" class="prescription-form">
+  <form
+    method="POST"
+    class="flex flex-col xs:gap-2 md:gap-4 xs:w-full md:w-[60%]"
+  >
     {% csrf_token %}
-    <div class="form-group">
-      <label for="student_id">Student ID:</label>
-      <input type="text" id="student_id" name="student_id" required />
-    </div>
-    <div class="form-group">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required />
-    </div>
-    <div class="form-group">
-      <label for="problem">Reason:</label>
-      <input type="text" id="problem" name="problem" required />
-    </div>
-    <div class="form-group">
-      <label for="date">Date:</label>
-      <input type="date" id="date" name="date_assisted" required />
-    </div>
-    <div style="display: flex">
-      <button type="submit" class="action-button">Save</button>
-      <a
-        class="schedule-button"
-        href="{% url 'medical:emergency_health_records' %}"
-        >View Records</a
+    <div class="flex flex-col">
+      <label for="student_id" class="xs:text-[14px] sm:text-base"
+        >ID Number</label
       >
-      <!-- <button type="submit" class="action-button" onclick="this.value='view';" name="view">View Records</button> -->
+      <div class="flex gap-2">
+        <input
+          class="w-full h-full p-2 xs:text-[14px] sm:text-base"
+          type="text"
+          id="student_id"
+          name="student_id"
+          required
+        />
+        <button
+          class="bg-[#3b82f6] text-white text-[14px] py-2 px-4 w-[30%] xs:h-[2.6rem] md:h-full cursor-pointer"
+          type="button"
+          id="btn-get"
+        >
+          Get
+        </button>
+      </div>
     </div>
+    <div class="flex flex-col">
+      <label for="name" class="xs:text-[14px] sm:text-base">Name</label>
+      <input
+        class="xs:text-[14px] sm:text-base"
+        type="text"
+        id="name"
+        name="name"
+        required
+      />
+    </div>
+    <div class="flex flex-col">
+      <label class="xs:text-[14px] sm:text-base" for="problem">Reason</label>
+      <input
+        class="xs:text-[14px] sm:text-base"
+        type="text"
+        id="problem"
+        name="problem"
+        required
+      />
+    </div>
+    <div class="flex flex-col">
+      <label class="xs:text-[14px] sm:text-base" for="date">Date</label>
+      <input
+        class="xs:text-[14px] sm:text-base"
+        type="date"
+        id="date"
+        name="date_assisted"
+        required
+      />
+    </div>
+    <div class="flex gap-2 xs:w-full md:w-1/2 mt-4">
+      <button type="submit" class="w-full rounded-md text-[14px] saved">
+        Save
+      </button>
+      <button class="">
+        <a class="p-3 w-full" href="{% url 'emergency_health_records' %}"
+          >View Records</a
+        >
+      </button>
+    </div>
+    {% if messages %} {% for message in messages %}
+    <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+      {{ message }}
+    </p>
+    {% endfor %} {% endif %}
   </form>
 </div>
+{% endblock %} {% block extra_js %}
+<script>
+  const csrf_token = "{{ csrf_token }}";
+  var btn = document.getElementById("btn-get");
+
+  btn.addEventListener("click", function () {
+    var id = document.getElementById("student_id").value;
+    console.log(id);
+    const data = {
+      student_id: id,
+    };
+
+    fetch("/medical/getusernamebyid/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf_token,
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.user_name) {
+          document.getElementById("name").value = data.user_name;
+        } else if (data.error) {
+          alert(data.error);
+        } else {
+          console.error("Unexpected response:", data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching student name:", error);
+      });
+  });
+</script>
 {% endblock %}

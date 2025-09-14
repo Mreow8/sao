@@ -1,59 +1,84 @@
-{% extends 'main.html' %}{% block bodycontent %}
-<div class="max-w-3xl w-full mx-auto bg-white mt-10 p-8 rounded-lg shadow-md">
-  {% if messages %} {% for message in messages %}
-  <p
-    class="px-4 py-2 rounded text-sm my-2 {% if message.tags == 'info' %} bg-blue-100 text-blue-800 border border-blue-300 {% elif message.tags == 'success' %} bg-green-100 text-green-800 border border-green-300 {% elif message.tags == 'error' %} bg-red-100 text-red-800 border border-red-300 {% else %} bg-gray-100 text-gray-800 border border-gray-300 {% endif %}"
-  >
-    {{ message }}
-  </p>
-  {% endfor %} {% endif %}
+{% extends 'main.html' %} {% load static tailwind_tags %} {% block title %}
+HealthHub Connect | Documentary Request {% endblock %} {% block extra_css %}
+<!-- prettier-ignore -->
+{%tailwind_css %} {% endblock %} {% block bodycontent %}
+<style>
+  .upload {
+    background-color: #ff8000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+</style>
+<div class="sub-title">
+  <h3>Medical</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Documentary Request</p>
+</div>
 
-  <h2 class="text-2xl font-semibold text-gray-800 text-center">
-    Submit a Request
-  </h2>
-  <form method="POST" class="mt-8">
-    <!-- Remove Student ID input -->
-<form method="POST" class="mt-8">
-  {% csrf_token %}
-  <div class="overflow-x-auto">
-    <table class="w-full border border-gray-300 text-sm">
-      <thead>
-        <tr class="bg-gray-100 text-left">
-          <th class="p-3 border">Request Type:</th>
-          <th class="p-3 border">Action:</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="p-3 border">
-            <select
-              id="requestType"
-              name="request_type"
-              required
-              class="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-            >
-              <option value="">Select Request Type</option>
-              <option value="Eligibility Form">Eligibility Form</option>
-              <option value="Medical Certificate for Intramurals">
-                Medical Certificate for Intramurals
-              </option>
-              <option value="Medical Clearance for OJT/Practicum">
-                Medical Clearance for OJT/Practicum
-              </option>
-            </select>
-          </td>
-          <td class="p-3 border text-center">
-            <button
-              type="submit"
-              class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded"
-            >
-              Submit
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</form>
+<div
+  class="bg-white h-[80vh] xs:p-4 lg:p-8 flex flex-col gap-2 rounded-[18px] w-[40%]"
+>
+  <form method="POST" class="flex flex-col justify-between">
+    {% csrf_token %}
+    <div class="flex flex-col">
+      <div class="flex bg-[#e6e6e6] p-2">
+        <label
+          class="w-full text-center font-bold xs:text-[14px] md:text-base"
+          for="idNumber"
+          >ID Number</label
+        >
+        <label
+          class="w-full text-center font-bold xs:text-[14px] md:text-base"
+          for="requestType"
+          >Request Type</label
+        >
+      </div>
+      <div class="flex gap-2 py-2">
+        <input
+          class="w-full xs:text-[14px] md:text-base"
+          type="text"
+          id="student_id"
+          name="student_id"
+          value="{{ id_number }}"
+          readonly
+        />
+        <select
+          class="w-full xs:text-[14px] md:text-base"
+          id="requestType"
+          name="request_type"
+          required
+        >
+          <option value="">Select Request Type</option>
+          {% if not faculty %}
+          <option value="Eligibility Form">Eligibility Form</option>
+
+          {% endif %}
+          <option value="Medical Certificate for Intramurals">
+            Medical Certificate for Intramurals
+          </option>
+        </select>
+      </div>
+    </div>
+
+    {% if messages %}
+    <script>
+      {% for message in messages %}
+      Swal.fire({
+          icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% elif "warning" in message.tags %}warning{% elif "info" in message.tags %}info{% else %}info{% endif %}',
+          title: '',
+          text: "{{ message|escapejs }}",
+          timer: 2500,
+          showConfirmButton: false
+      });
+      {% endfor %}
+    </script>
+    {% endif %}
+    <input class="upload" type="submit" value="Submit" />
+  </form>
 </div>
 {% endblock %}

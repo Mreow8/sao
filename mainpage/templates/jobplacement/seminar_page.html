@@ -25,7 +25,7 @@
     <div class="card">
       {% if request.user.is_staff %}
       <form
-        action="{% url 'jobplacement:seminar_delete' seminar.seminar_id %}"
+        action="{% url 'seminar_delete' seminar.seminar_id %}"
         method="POST"
         id="myForm"
         class="delete-form"
@@ -41,7 +41,7 @@
         <h3>Title:</h3>
         {% if request.user.is_staff %}
 
-        <a href="{% url 'jobplacement:manage_att' seminar.seminar_id %}"
+        <a href="{% url 'manage_att' seminar.seminar_id %}"
           >{{ seminar.title }}</a
         >
         {% else %}

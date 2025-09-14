@@ -8,11 +8,7 @@
 <section>
   <input id="sem_id" type="hidden" value="{{ sem_id }}" />
   <!-- current seminar id, gi gamit sa js para redirect-->
-  <form
-    action="{% url 'jobplacement:pending_attendance' %}"
-    method="POST"
-    id="search_form"
-  >
+  <form action="{% url 'pending_attendance' %}" method="POST" id="search_form">
     {% csrf_token %}
     <input type="hidden" name="seminar_id" value="{{ sem_id }}" />
     <input
@@ -52,7 +48,7 @@
           <td>{{ att.student_id.lastname }}</td>
           <td class="cancelaction">
             <form
-              action="{% url 'jobplacement:cancel_pending' att.sem_at_id %}"
+              action="{% url 'cancel_pending' att.sem_at_id %}"
               method="POST"
             >
               {% csrf_token %}

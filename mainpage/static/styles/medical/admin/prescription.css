@@ -143,7 +143,9 @@ h2 {
     background-color: #45a049;
 }
 
-
+#student_id {
+    width: 92%;
+}
 
 #btn-get {
     width: 8%;

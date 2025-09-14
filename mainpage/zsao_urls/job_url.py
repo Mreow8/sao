@@ -4,11 +4,12 @@ from mainpage import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-app_name = 'jobplacement'
+
 
 urlpatterns = [
     path('jobplacement/', views.mainpage, name="home"),
     # OJT HIRING THINGS
+     path('student-suggestions/', views.student_suggestions, name='student_suggestions'),
     path('jobplacement/ojthiring/admin', views.ojt_hiring, name="ojt_hiring"),
     path('jobplacement/ojthiring/admin/assign', views.ojt_assign_student, name='ojthiring_assign'),
     path('jobplacement/ojthiring/more/<str:id>', views.ojt_hiring_info, name='ojthiring_info'),
@@ -44,13 +45,9 @@ urlpatterns = [
     # DELETABLE PATHS
     # path('jobplacement/login/', cu_index, name="student_login"),
     # path('jobplacement/signup/', views.student_signup_view, name="student_signup"),
-    path('jobplacement/login/admin/', views.admin_login, name="admin_login"),
-    path('jobplacement/signup/admin', views.admin_signup_view, name="admin_signup"),
-    path('jobplacement/logout', views.logout_user, name="logout_user"),
 
     # ---------------------- STUDENTS PATHS ----------------------------------
     # homescreen sa login og admin    
-    path('jobplacement/homepage/admin_student', views.admin_student, name='admin_student'),
 
     path('jobplacement/ojt/requirements/tracker/view/iframe/<int:id>', views.view_pdf, name='view_pdf'),
     path('jobplacement/upload/', views.file_scrapper, name='scrapper'),

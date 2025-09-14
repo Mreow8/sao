@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'mainpage',
     'widget_tweaks',
-
+   "tailwind",
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',

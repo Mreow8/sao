@@ -1,46 +1,42 @@
-{% extends 'adminmain.html' %} {% block headcontent %} {% load static %}
-<link
-  rel="stylesheet"
-  href="{% static 'styles/medical/admin/patientlist.css' %}"
-/>
-<link
-  rel="stylesheet"
-  media="print"
-  href="{% static 'styles/medical/print.css' %}"
-/>
-{% endblock headcontent %} {% block bodycontent %} {% load static %}
-<div class="container">
-  <h2>Emergency Health Assistance Records</h2>
-  <br /><br />
-  <div class="request">
-    <table>
-      <thead>
-        <tr class="tr-header">
-          <th>Student ID</th>
-          <th>Name</th>
-          <th>Reason</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for record in emrgncy_record %}
-        <tr class="tr-td">
-          <td>{{ record.patient.student.student_id }}</td>
-          <td>{{ record.name }}</td>
-          <td>{{ record.reason }}</td>
-          <td>{{ record.date_assisted }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <br /><br />
-  <div style="display: flex">
-    <a class="schedule-button" href="{% url 'medical:emergency_asst' %}"
-      >Back</a
-    >
-  </div>
+{% extends 'mainv2.html' %}
+{% load static tailwind_tags %}
+{% block title %}HealthHub Connect | Emergency Health Assistance{% endblock %}
+{% block extra_css %}
+{% tailwind_css %}
+{% endblock %}
+
+{% block content %}
+<div class="w-full xs:p-4 md:p-8 h-screen bg-white rounded-[18px] flex flex-col items-center gap-2">
+    <h2 class="font-bold xs:text-[1.3rem] sm:text-[1.5rem] text-center mb-4">Emergency Health Assistance Records</h2>
+    <div class="w-full h-full">
+        <table class="w-full h-full">
+            <thead class="bg-[#e6e6e6] w-full">
+                <tr class="tr-header">
+                    <th class="text-center p-2 xs:text-[14px] sm:text-base">ID Number</th>
+                    <th class="text-center p-2 xs:text-[14px] sm:text-base">Name</th>
+                    <th class="text-center p-2 xs:text-[14px] sm:text-base">Reason</th>
+                    <th class="text-center p-2 xs:text-[14px] sm:text-base">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in emrgncy_record %}
+                    <tr class="tr-td">
+                        <td class="text-center">{{ record.user_id_display }}</td>
+                        <td class="text-center">{{ record.name }}</td>
+                        <td class="text-center">{{ record.reason }}</td>
+                        <td class="text-center">{{ record.date_assisted }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <button class="border border-[#cccccc] flex self-start  w-[8rem] rounded-md">
+        <a class="xs:p-2 md:p-3 text-[14px] h-full w-full" href="{% url 'medical:emergency_asst' %}">Back</a>
+    </button>
 </div>
-{% endblock %} {% block extra_js %}
-<script></script>
+{% endblock %}
+{% block extra_js %}
+<script>
+
+</script>
 {% endblock %}

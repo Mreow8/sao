@@ -68,9 +68,9 @@
                     <ul class="jobplace-show">
 
                         
-                        <li><a href="{% url 'jobplacement:ojt_hiring' %}">OJT Hiring</a></li>
-                            <li><a href="{% url 'jobplacement:seminar_page' %}">Career Guidance Tracker</a></li>
-                            <li><a href="{% url 'jobplacement:ojt_requirements_tracker' %}">OJT Requirements Tracker</a></li>
+                        <li><a href="{% url 'ojt_hiring' %}">OJT Hiring</a></li>
+                            <li><a href="{% url 'seminar_page' %}">Career Guidance Tracker</a></li>
+                            <li><a href="{% url 'ojt_requirements_tracker' %}">OJT Requirements Tracker</a></li>
                            
                     </ul>
                     </li>
@@ -123,24 +123,26 @@
                             
                         </ul>
                     </li>
-                    <li><a href="#" class="medical-btn">MEDICAL
-                        <span class="fas fa-caret-down ninth"></span>
-                        </a>
-                        <ul class="medical-show">
-                               <li><a href="{% url 'medical:upload_requirements' %}">Student Medical Requirements Tracker</a>
-                        </li>
-                        <li><a href="{% url 'medical:request' %}">Medical Form Request</a></li>
-                        <li><a href="{% url 'medical:dentalservice' %}">Dental Services</a></li>
-                              <!-- <li><a href="{% url 'medical:patient_profile' %}">Patient Profile</a></li>
-                            <li><a href="{% url 'medical:viewrequest' %}">View Requests</a></li>
-                            <li><a href="{% url 'medical:medtracker' %}">Student Medical Requirements Tracker</a></li>
-                            <li><a href="{% url 'medical:emergency_asst' %}">Emergency Health Assistance</a></li>
-                            <li><a href="{% url 'medical:pwdlist' %}">PWD Profile</a></li>
-                            <li><a href="{% url 'medical:dentalrequest' %}">Dental Services</a></li>
-                            <li><a href="{% url 'medical:prescription' %}">Prescription Issuance</a></li>
-                            <li><a href="{% url 'medical:transactions' %}">Transaction Reports</a></li> -->
-                        </ul>
-                    </li>
+                    <li>
+  <a href="#" class="medical-btn">MEDICAL
+    <span class="fas fa-caret-down ninth"></span>
+  </a>
+  <ul class="medical-show">
+   
+    <li><a href="{% url 'student_dashboard' %}"
+          >Dashboard</a
+        ></li>
+        <li><a href="{% url 'request' %}"
+          >Documentary Request</a
+        ></li>
+   <li><a href="{% url 'upload_requirements' %}"
+          >Medical Requirements Upload</a
+        ></li>
+    <li><a href="{% url 'dentalservice' %}"
+            >Dental Services Availment</a></li>
+  </ul>
+</li>
+
                 </ul>
             </nav>
             </div>
@@ -184,7 +186,11 @@
     </main>
 </div>
 
-       <script src="{% static 'scripts/main.js'%}"></script><script>
+       <script src="{% static 'scripts/main.js'%}">
+
+       </script>
+       <script src="{% static 'studentlife/newmain.js' %}"></script>
+       <script>
   // Sidebar toggle logic (single instance)
   const sidebarToggle = document.getElementById('sidebar-toggle');
   const leftSide = document.querySelector('.left-side');

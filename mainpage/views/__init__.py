@@ -4,5 +4,6 @@ from .views import *
 from .scholarship import *
 from .job_placement import *
 from .medical import *
+from .medical2 import *
 from .studentlife import *
 from .discipline import *

@@ -3,10 +3,10 @@ from django.http import HttpResponse
 from django.contrib import messages
 from ..forms import OfficerForm
 from ..forms import ProjectForm
-from ..forms import FinancialStatementForm, AdminLoginForm, LoginForm
+from ..forms import FinancialStatementForm
 from ..forms import AccreditationForm, AdviserForm, OrganizationForm
-from ..models import Project, Accreditation, Adviser, OfficerLogin
-from ..models import FinancialStatement, Officer, AdminLogin
+from ..models import Project, Accreditation, Adviser
+from ..models import FinancialStatement, Officer
 from ..models import Organization
 import base64, uuid
 from django.core.files.base import ContentFile
@@ -63,48 +63,174 @@ def adviser_form(request, slug):
         'organization': organization,
         'slug': slug,
     })
+from django.shortcuts import render, redirect
+from ..forms import OfficerForm, OfficerMembershipForm, OfficerSeminarForm
+from django.contrib import messages
+from django.shortcuts import render, redirect
 
-def officer_forms(request):
-    organizations = Organization.objects.all()  # list of all orgs
+def officer_create(request):
+    if request.method == "POST":
+        officer_form = OfficerForm(request.POST)
+        membership_form = OfficerMembershipForm(request.POST)
+        seminar_form = OfficerSeminarForm(request.POST)
 
-    if request.method == 'POST':
-        form = OfficerForm(request.POST, request.FILES)
-        if form.is_valid():
-            officer = form.save(commit=False)
-            
-            # get org_id from dropdown
-            org_id = request.POST.get("organization")
-            organization = get_object_or_404(Organization, pk=org_id)
+        if (officer_form.is_valid() and membership_form.is_valid() and seminar_form.is_valid()):
+            officer = officer_form.save()  # Save Officer first
 
-            officer.organization = organization
-            officer.save()
-            return redirect('admin_manageofficer')  # go back after save
+            # Link related models
+            membership = membership_form.save(commit=False)
+            membership.officer = officer
+            membership.save()
+
+            seminar = seminar_form.save(commit=False)
+            seminar.officer = officer
+            seminar.save()
+
+            # ✅ Success popup
+            messages.success(request, "Officer record was successfully created 🎉")
+            return redirect("officer_list")
+
+        else:
+            # ❌ Error popup
+            messages.error(request, "There was an error saving the officer. Please check the form.")
 
     else:
-        form = OfficerForm()
+        officer_form = OfficerForm()
+        membership_form = OfficerMembershipForm()
+        seminar_form = OfficerSeminarForm()
 
-    return render(request, 'studentorg/Main/officer_formcopy.html', {
-        'form': form,
-        'organizations': organizations,
+    return render(request, "studentorg/Main/officer_formcopy.html", {
+        "officer_form": officer_form,
+        "membership_form": membership_form,
+        "seminar_form": seminar_form,
     })
-def officer_form(request, slug):
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
-    organization = get_object_or_404(Organization, slug=slug)
+from django.shortcuts import render, redirect, get_object_or_404
+from ..forms import OfficerForm, OfficerMembershipForm, OfficerSeminarForm
+from ..models import Organization,studentInfo
 
-    if request.method == 'POST':
-        form = OfficerForm(request.POST, request.FILES)
-        if form.is_valid():
-            officer = form.save(commit=False)
-            officer.organization = organization
+def officer_form(request, slug=None):
+    base_template = (
+        "adminmain.html"
+        if request.user.is_staff or request.user.is_superuser
+        else "main.html"
+    )
+
+    organization = None
+    if slug:
+        organization = get_object_or_404(Organization, slug=slug)
+
+    student = None
+    if request.user.is_authenticated:
+        try:
+            student = studentInfo.objects.get(studID=int(request.user.username))
+        except studentInfo.DoesNotExist:
+            messages.error(request, "Student record not found. Please contact admin.")
+            student = None
+
+    if request.method == "POST":
+        officer_form = OfficerForm(request.POST, request.FILES)
+        membership_form = OfficerMembershipForm(request.POST)
+        seminar_form = OfficerSeminarForm(request.POST)
+
+        if officer_form.is_valid():
+            officer = officer_form.save(commit=False)
+
+            # ✅ Set organization
+            if organization:
+                officer.organization = organization
+
+            # ✅ Link logged-in student
+            if student:
+                officer.student = student
+            else:
+                messages.error(request, "No student record linked to your account.")
+                return redirect("officer_form", slug=organization.slug if organization else None)
+
             officer.save()
-            return redirect('officer_form', slug=slug)
 
-    return render(request, 'studentorg/Main/officer_form.html', {'organization': organization,   'base_template': base_template,})
+            # ✅ Membership
+            if membership_form.is_valid() and membership_form.cleaned_data:
+                membership = membership_form.save(commit=False)
+                membership.officer = officer
+                membership.save()
+
+            # ✅ Seminar
+            if seminar_form.is_valid() and seminar_form.cleaned_data:
+                seminar = seminar_form.save(commit=False)
+                seminar.officer = officer
+                seminar.save()
+
+            messages.success(request, "Officer has been successfully added!")
+
+            if organization:
+                return redirect("officer_form", slug=organization.slug)
+            else:
+                return redirect("org_profile", slug=organization.slug)
+
+        else:
+            print(officer_form.errors)
+            messages.error(request, "There was an error. Please check the form fields.")
+
+    else:
+        officer_form = OfficerForm()
+        membership_form = OfficerMembershipForm()
+        seminar_form = OfficerSeminarForm()
+
+    return render(
+        request,
+        "studentorg/Main/officer_formcopy.html",
+        {
+            "officer_form": officer_form,
+            "membership_form": membership_form,
+            "seminar_form": seminar_form,
+            "organization": organization,
+            "base_template": base_template,
+        },
+    )
+
+# def officer_forms(request):
+#     organizations = Organization.objects.all()  # list of all orgs
+
+#     if request.method == 'POST':
+#         form = OfficerForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             officer = form.save(commit=False)
+            
+#             # get org_id from dropdown
+#             org_id = request.POST.get("organization")
+#             organization = get_object_or_404(Organization, pk=org_id)
+
+#             officer.organization = organization
+#             officer.save()
+#             return redirect('admin_manageofficer')  # go back after save
+
+#     else:
+#         form = OfficerForm()
+
+#     return render(request, 'studentorg/Main/officer_formcopy.html', {
+#         'form': form,
+#         'organizations': organizations,
+#     })
+# def officer_form(request, slug):
+#     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
+#     organization = get_object_or_404(Organization, slug=slug)
+
+#     if request.method == 'POST':
+#         form = OfficerForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             officer = form.save(commit=False)
+#             officer.organization = organization
+#             officer.save()
+#             return redirect('officer_form', slug=slug)
+
+#     return render(request, 'studentorg/Main/officer_form.html', {'organization': organization,   'base_template': base_template,})
 
 def view_officers(request, slug):
     org = get_object_or_404(Organization, slug=slug)
-    statements = Officer.objects.filter(organization=org)
+    statements = Officer.objects.filter(organization=org, status="approved")
+
     return render(request, 'studentorg/Main/view_officer.html', {
         'org': org,
         'statements': statements
@@ -131,6 +257,7 @@ def view_project_by_slug(request, slug):
     })
 
 @login_required
+
 def org_profile(request, slug):
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
     org = get_object_or_404(Organization, slug=slug)
@@ -272,113 +399,99 @@ def admin_transactionreport(request):
         'total_amount_financial_statements': total_amount_financial_statements,
     })
 
-def admin_login(request):
-    if request.method == 'POST':
-        form = AdminLoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['admin_username']
-            password = form.cleaned_data['admin_password']
-            try:
-                admin = AdminLogin.objects.get(admin_username=username, admin_password=password)
-                return redirect('admin_manageofficer')
-            except AdminLogin.DoesNotExist:
-                messages.error(request, "Invalid username or password")
-    else:
-        form = AdminLoginForm()
-    return render(request, 'studentorg/ADMIN/admin_login.html', {'form': form})
-def register_officer(request):
-    if request.method == 'POST':
-        student_id = request.POST['student_id']
-        student_lname = request.POST['student_lname']
-        student_fname = request.POST['student_fname']
-        student_mname = request.POST['student_mname']
-        course = request.POST['course']
-        year_lvl = request.POST['year_lvl']
-        officer_position = request.POST['officer_position']
-        organization = request.POST['organization']
-        username = request.POST['username']
-        password = request.POST['password']
+# def register_officer(request):
+#     if request.method == 'POST':
+#         student_id = request.POST['student_id']
+#         student_lname = request.POST['student_lname']
+#         student_fname = request.POST['student_fname']
+#         student_mname = request.POST['student_mname']
+#         course = request.POST['course']
+#         year_lvl = request.POST['year_lvl']
+#         officer_position = request.POST['officer_position']
+#         organization = request.POST['organization']
+#         username = request.POST['username']
+#         password = request.POST['password']
 
-        try:
-            officer = Officer.objects.get(surname=student_lname, firstname=student_fname)
-        except Officer.DoesNotExist:
-            messages.error(request, 'Officer with the provided last name and first name does not exist.')
-            return render(request, 'studentorg/ADMIN/registerofficer.html')
+#         try:
+#             officer = Officer.objects.get(surname=student_lname, firstname=student_fname)
+#         except Officer.DoesNotExist:
+#             messages.error(request, 'Officer with the provided last name and first name does not exist.')
+#             return render(request, 'studentorg/ADMIN/registerofficer.html')
 
-        # ✅ Check if student_id matches the officer’s ID in the Officer table
-        if str(officer.student_id) != str(student_id):
-            messages.error(request, 'Student ID does not match the officer\'s record.')
-            return render(request, 'studentorg/ADMIN/registerofficer.html')
+#         # ✅ Check if student_id matches the officer’s ID in the Officer table
+#         if str(officer.student_id) != str(student_id):
+#             messages.error(request, 'Student ID does not match the officer\'s record.')
+#             return render(request, 'studentorg/ADMIN/registerofficer.html')
 
-        # Check if the officer's organization matches
-        if officer.organization != organization:
-            messages.error(request, 'The provided organization does not match the officer\'s organization.')
-            return render(request, 'studentorg/ADMIN/registerofficer.html')
+#         # Check if the officer's organization matches
+#         if officer.organization != organization:
+#             messages.error(request, 'The provided organization does not match the officer\'s organization.')
+#             return render(request, 'studentorg/ADMIN/registerofficer.html')
         
-        if officer.status != 'approved':
-            messages.error(request, 'Officer status must be approved to create an account.')
-            return render(request, 'studentorg/ADMIN/registerofficer.html')
+#         if officer.status != 'approved':
+#             messages.error(request, 'Officer status must be approved to create an account.')
+#             return render(request, 'studentorg/ADMIN/registerofficer.html')
 
-        # Check if student_id already exists in OfficerLogin
-        if OfficerLogin.objects.filter(student_id=student_id).exists():
-            messages.error(request, 'An officer with this student ID already exists.')
-            return render(request, 'studentorg/ADMIN/registerofficer.html')
+#         # Check if student_id already exists in OfficerLogin
+#         if OfficerLogin.objects.filter(student_id=student_id).exists():
+#             messages.error(request, 'An officer with this student ID already exists.')
+#             return render(request, 'studentorg/ADMIN/registerofficer.html')
 
-        officer_login = OfficerLogin(
-            student_id=student_id,
-            student_lname=student_lname,
-            student_fname=student_fname,
-            student_mname=student_mname,
-            course=course,
-            officer_position=officer_position,
-            year_lvl=year_lvl,
-            organization=organization,
-            username=username,
-            password=password
-        )
-        officer_login.save()
-        messages.success(request, 'You have successfully created an officer account.')
-        return redirect('officer_login')
+#         officer_login = OfficerLogin(
+#             student_id=student_id,
+#             student_lname=student_lname,
+#             student_fname=student_fname,
+#             student_mname=student_mname,
+#             course=course,
+#             officer_position=officer_position,
+#             year_lvl=year_lvl,
+#             organization=organization,
+#             username=username,
+#             password=password
+#         )
+#         officer_login.save()
+#         messages.success(request, 'You have successfully created an officer account.')
+#         return redirect('officer_login')
     
-    return render(request, 'studentorg/ADMIN/registerofficer.html')
+#     return render(request, 'studentorg/ADMIN/registerofficer.html')
 
 
-def officer_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+# def officer_login(request):
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data['username']
+#             password = form.cleaned_data['password']
            
-            try:
-                officer = OfficerLogin.objects.get(username=username, password=password)
+#             try:
+#                 officer = OfficerLogin.objects.get(username=username, password=password)
                 
-                # Store officer details in session
-                request.session['officer_id'] = officer.student_id
-                request.session['organization'] = officer.organization
+#                 # Store officer details in session
+#                 request.session['officer_id'] = officer.student_id
+#                 request.session['organization'] = officer.organization
                 
-                # Success message
-                messages.success(request, 'You have successfully logged in.')
+#                 # Success message
+#                 messages.success(request, 'You have successfully logged in.')
                 
-                # Redirect based on organization
-                if officer.organization == 'FSTLP':
-                    return redirect('FSTLP_profile')
-                elif officer.organization == 'SI++':
-                    return redirect('SI_profile')
-                elif officer.organization == 'THE EQUATIONERS':
-                    return redirect('THEEQUATIONERS_profile')
-                elif officer.organization == 'SSG':
-                    return redirect('SSG_profile')
-                elif officer.organization == 'TECHNOCRATS':
-                    return redirect('TECHNOCRATS_profile')
-                else:
-                    messages.error(request, 'Invalid organization.')
-                    return redirect('home')  # Fallback redirect to home if organization is invalid
-            except OfficerLogin.DoesNotExist:
-                messages.error(request, 'Invalid username or password.')
-    else:
-        form = LoginForm()
-    return render(request, 'studentorg/ADMIN/officer_login.html', {'form': form})
+#                 # Redirect based on organization
+#                 if officer.organization == 'FSTLP':
+#                     return redirect('FSTLP_profile')
+#                 elif officer.organization == 'SI++':
+#                     return redirect('SI_profile')
+#                 elif officer.organization == 'THE EQUATIONERS':
+#                     return redirect('THEEQUATIONERS_profile')
+#                 elif officer.organization == 'SSG':
+#                     return redirect('SSG_profile')
+#                 elif officer.organization == 'TECHNOCRATS':
+#                     return redirect('TECHNOCRATS_profile')
+#                 else:
+#                     messages.error(request, 'Invalid organization.')
+#                     return redirect('home')  # Fallback redirect to home if organization is invalid
+#             except OfficerLogin.DoesNotExist:
+#                 messages.error(request, 'Invalid username or password.')
+#     else:
+#         form = LoginForm()
+#     return render(request, 'studentorg/ADMIN/officer_login.html', {'form': form})
 
 def admin_manageofficer(request):
     officers = Officer.objects.all()

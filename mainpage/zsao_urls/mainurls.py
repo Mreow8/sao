@@ -13,7 +13,7 @@ path("update-suspension/<int:case_id>/", views.update_suspension, name="update_s
     # ... your other direct paths ...
     # urls.py
 path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
-path('officerforms/', views.officer_forms, name='officer_forms'),
+# path('officerforms/', views.officer_forms, name='officer_forms'),
    path('Gen_Home', views.Gen_Home, name="Gen_Home"),
     path('add-organization/', add_organization, name='add_organization'),
     path('org/<slug:slug>/', org_profile, name='org_profile'),
@@ -103,8 +103,6 @@ path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_f
     ),
 
 
-   path('register_officer/', views.register_officer, name='register_officer'),
-   path('officer_login/', views.officer_login, name="officer_login"),
 
    # ADMIN
    path('admin_manageofficer/', views.admin_manageofficer, name="admin_manageofficer"),
@@ -135,11 +133,17 @@ path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_f
    path('FSTLP_viewadviser', views.FSTLP_viewadviser, name="FSTLP_viewadviser"),
    path('FSTLP_accreditation', views.FSTLP_accreditation, name="FSTLP_accreditation"),
 
+   path('ssg_CBL', views.SSG_CBL, name="SSG_CBL"),
+
+
+
+   path('si_CBL', views.SI_CBL, name="SI_CBL"),
+   path('the-equationers_CBL', views.THEEQUATIONERS_CBL, name="THEEQUATIONERS_CBL"),
+
    # SI++
    path('SI_profile', views.SI_profile, name="SI_profile"),
    path('SI_projects', views.SI_projects, name="SI_projects"),
    path('SI_financial', views.SI_financial, name="SI_financial"),
-   path('si_CBL', views.SI_CBL, name="SI_CBL"),
    path('SI_officerdata', views.SI_officerdata, name="SI_officerdata"),
    path('SI_adviserdata', views.SI_adviserdata, name='SI_adviserdata'),
    path('SI_viewproject', views.SI_viewproject, name="SI_viewproject"),
@@ -153,7 +157,6 @@ path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_f
    path('THEEQUATIONERS_projects', views.THEEQUATIONERS_projects, name="THEEQUATIONERS_projects"),
    path('THEEQUATIONERS_financial', views.THEEQUATIONERS_financial, name="THEEQUATIONERS_financial"),
    path('THEEQUATIONERS_accreditation', views.THEEQUATIONERS_accreditation, name="THEEQUATIONERS_accreditation"),
-   path('the-equationers_CBL', views.THEEQUATIONERS_CBL, name="THEEQUATIONERS_CBL"),
    path('THEEQUATIONERS_officerdata', views.THEEQUATIONERS_officerdata, name="THEEQUATIONERS_officerdata"),
    path('THEEQUATIONERS_adviserdata', views.THEEQUATIONERS_adviserdata, name='THEEQUATIONERS_adviserdata'),
    path('THEEQUATIONERS_viewproject', views.THEEQUATIONERS_viewproject, name="THEEQUATIONERS_viewproject"),
@@ -166,7 +169,6 @@ path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_f
    path('SSG_projects', views.SSG_projects, name="SSG_projects"),
    path('SSG_financial', views.SSG_financial, name="SSG_financial"),
    path('SSG_accreditation', views.SSG_accreditation, name="SSG_accreditation"),
-   path('ssg_CBL', views.SSG_CBL, name="SSG_CBL"),
    path('SSG_officerdata', views.SSG_officerdata, name="SSG_officerdata"),
    path('ssg_adviserdata', views.SSG_adviserdata, name='SSG_adviserdata'),
    path('SSG_viewproject', views.SSG_viewproject, name="SSG_viewproject"),

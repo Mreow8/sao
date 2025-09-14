@@ -41,7 +41,7 @@
   <div class="showform_container">
     <div class="form_container">
       <button class="closeform">×</button>
-      <form action="{% url 'jobplacement:ojt_hiring' %}" method="POST">
+      <form action="{% url 'ojt_hiring' %}" method="POST">
         {% csrf_token %}
         <div>
           <!-- <label for="{{ form.student.name }}">Student ID:</label>
@@ -91,27 +91,52 @@
       <button class="closeform2">×</button>
 
       <!-- STUDENT ASSIGNING FORM -->
-      <form action="{% url 'jobplacement:ojthiring_assign' %}" method="POST">
+      <form action="{% url 'ojthiring_assign' %}" method="POST">
         {% csrf_token %}
         <label for="company">Company:</label>
         <input
-          id="company_id_holder"
+          type="text"
+          id="company_name_input"
+          list="company_list"
+          placeholder="Type to search..."
+          autocomplete="off"
+        />
+
+        <input
           type="hidden"
-          name="{{ assign_form.company_id.name}}"
+          id="company_id_holder"
+          name="{{ assign_form.company_id.name }}"
           value=""
         />
-        <input id="assign_company_id" type="text" name="company_holder" />
-        <ul id="company_suggestions"></ul>
+
+        <!-- Inline error label (initially hidden) -->
+        <span
+          id="company_error"
+          style="color: red; display: none; font-size: 0.9em"
+        >
+          No company present. Please select a valid company.
+        </span>
+
+        <datalist id="company_list">
+          {% for company in ojt_list %}
+          <option
+            data-id="{{ company.company_id }}"
+            value="{{ company.company_name }}"
+          ></option>
+          {% endfor %}
+        </datalist>
 
         <label for="student">Student:</label>
+        <!-- Hidden input for the actual ID -->
         <input
-          id="student_id_holder"
-          type="hidden"
-          name="{{ assign_form.studID.name }}"
-          value=""
+          type="text"
+          id="id_student"
+          list="student-options"
+          placeholder="Enter Student ID or Name"
+          autocomplete="off"
         />
-        <input id="assign_student_id" type="text" name="student_holder" />
-        <ul id="assign_student_suggestions"></ul>
+        <input type="hidden" name="studID" id="studID_hidden" />
+        <datalist id="student-options"></datalist>
 
         <label for="duration">Duration of OJT (hours):</label>
         <input type="number" name="{{ assign_form.duration.name}}" />
@@ -204,7 +229,7 @@
       <!-- Make card a relative container -->
       {% if request.user.is_staff %}
       <form
-        action="{% url 'jobplacement:ojt_hiring_delete' hiring.company_id %}"
+        action="{% url 'ojt_hiring_delete' hiring.company_id %}"
         method="post"
         class="absolute top-2 right-2"
       >
@@ -251,9 +276,7 @@
       <div class="button-bar">
         <button class="btnshow">Read More</button>
         {% if request.user.is_staff %}
-        <a
-          class="showtable"
-          href="{% url 'jobplacement:ojthiring_info' hiring.company_id %}"
+        <a class="showtable" href="{% url 'ojthiring_info' hiring.company_id %}"
           >View</a
         >
 
@@ -262,9 +285,69 @@
     </div>
   </div>
   {% endfor %}
-
-  <!-- </div> -->
 </div>
 
+<!-- </div> -->
 <script src="{% static 'scripts/job_placement/ojthiring_show.js' %}?321"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const companyInput = document.getElementById("company_name_input");
+    const hidden = document.getElementById("company_id_holder");
+    const datalist = document.getElementById("company_list");
+    const form = companyInput.closest("form");
+    const errorLabel = document.getElementById("company_error");
+
+    // Update hidden field and show/hide label
+    companyInput.addEventListener("input", function () {
+      const val = companyInput.value;
+      const option = Array.from(datalist.options).find((o) => o.value === val);
+      hidden.value = option ? option.dataset.id : "";
+
+      if (!hidden.value && val.trim() !== "") {
+        errorLabel.style.display = "inline";
+      } else {
+        errorLabel.style.display = "none";
+      }
+    });
+
+    // Prevent submission if no valid company
+    form.addEventListener("submit", function (e) {
+      if (!hidden.value) {
+        e.preventDefault();
+        errorLabel.style.display = "inline";
+      }
+    });
+  });
+</script>
+<script>
+  const studentInput = document.getElementById("id_student");
+  const studIDHidden = document.getElementById("studID_hidden");
+  const datalist = document.getElementById("student-options");
+
+  studentInput.addEventListener("input", async function () {
+    const query = this.value.trim();
+    if (!query) return;
+
+    const response = await fetch(
+      `/jobplacement/student-suggestions/?q=${encodeURIComponent(query)}`
+    );
+    const students = await response.json();
+
+    datalist.innerHTML = "";
+    students.forEach((student) => {
+      // ID goes to value, full name is label
+      const option = document.createElement("option");
+      option.value = student.id;
+      option.label = student.name;
+      datalist.appendChild(option);
+    });
+  });
+
+  // Copy ID to hidden field on change
+  studentInput.addEventListener("change", function () {
+    studIDHidden.value = this.value.trim();
+    console.log("Hidden student ID set to:", studIDHidden.value);
+  });
+</script>
 {% endblock bodycontent %}

@@ -9,8 +9,12 @@
 
 {% block bodycontent %}
 
-<div class="content_box">
-    
+<div class="container">
+     <div class="sub-title">
+    <h3>SCHOLARSHIP</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Application Form</p>
+  </div>
     <div class="content">
         {% if passed and not note %}
         <div class="form_div_2">
@@ -19,7 +23,7 @@
         </div>
         {% else %}
         <div class="form_div">
-            <h1>Application form</h1>
+        
             <form id="display_search" enctype="multipart/form-data" method="POST">
                 {% csrf_token %}
                 <div>

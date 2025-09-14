@@ -1,65 +1,106 @@
-{% extends 'adminmain.html' %} {% load static %} {% block title %}Student
-Detail{% endblock %} {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/admin/pwd_details.css' %}" />
-<style>
-  .student-id img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto 20px; /* Add some bottom margin */
-  }
-</style>
-{% endblock %} {% block bodycontent %}
-<div class="container">
-  {% if messages %}
-  <div class="message-container">
-    {% for message in messages %}
-    <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
-      {{ message }}
-    </p>
-    {% endfor %}
-  </div>
-  {% endif %}
-  <h2>Student Detail</h2>
-  <br /><br />
-  {% if md.pwd_card.url %}
-  <div class="student-id">
-    <img class="pwd-card" src="{{ md.pwd_card.url }}" alt="PWD ID Card" />
-  </div>
-  {% else %}
-  <div class="student-id">
-    <img class="pwd-card" src="#" alt="PWD ID Card" />
-  </div>
-  {% endif %}
-  <div class="student-detail">
-    <div class="detail-row">
-      <span class="detail-title">Lastname:</span>
-      <span class="detail-content"
-        >{{ pwd.patient.student.lastname|title }}</span
-      >
-    </div>
-    <div class="detail-row">
-      <span class="detail-title">Firstname:</span>
-      <span class="detail-content"
-        >{{ pwd.patient.student.firstname|title }}</span
-      >
-    </div>
-    <div class="detail-row">
-      <span class="detail-title">Age:</span>
-      <span class="detail-content">{{ pwd.patient.age }}</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-title">Sex:</span>
-      <span class="detail-content">{{ pwd.patient.student.sex }}</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-title">Type of Disability:</span>
-      <span class="detail-content">{{ pwd.riskassessment.disability }}</span>
-    </div>
-  </div>
+{% extends 'mainv2.html' %}
+{% load static %}
 
-  <div style="display: flex">
-    <a class="schedule-button" href="{% url 'medical:pwdlist' %}">Back</a>
-  </div>
+{% block title %}
+{% if student %}
+    Student Detail
+{% elif faculty %}
+    Faculty Detail
+{% else %}
+    PWD Detail
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'styles/admin/pwd_details.css' %}">
+    <style>
+        .student-id img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px; /* Add some bottom margin */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="w-full h-screen rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-2">
+    <div class="flex self-center items-center gap-8">
+        {% if messages %}
+        
+        {% endif %}
+        <h2>
+            {% if student %}
+                Student Detail
+            {% elif faculty %}
+                Faculty Detail
+            {% else %}
+                PWD Detail
+            {% endif %}
+        </h2><br><br>
+        {% if md.pwd_card %}
+            <div class="student-id">
+                <img class="pwd-card" src="{{ md.pwd_card.url }}" alt="PWD ID Card">
+            </div>
+        {% else %}
+            <div class="student-id">
+                <img class="pwd-card" src="#" alt="PWD ID Card">
+            </div>
+        {% endif %}
+        <div class="student-detail">
+            <div class="detail-row">
+                <span class="detail-title">ID Number:</span>
+                <span class="detail-content">
+                    {% if student %}{{ student.student_id }}
+                    {% elif faculty %}{{ faculty.faculty_id }}
+                    {% else %}N/A{% endif %}
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-title">Name:</span>
+                <span class="detail-content">
+                    {% if student %}{{ student.firstname|title }} {{ student.lastname|title }}
+                    {% elif faculty %}{{ faculty.user.first_name|title }} {{ faculty.user.last_name|title }}
+                    {% else %}N/A{% endif %}
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-title">Age:</span>
+                <span class="detail-content">{{ patient.age|default:"N/A" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-title">Sex:</span>
+                <span class="detail-content">{% if student %}{{ student.sex }}{% else %}N/A{% endif %}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-title">Type of Disability:</span>
+                <span class="detail-content">{{ patient.riskassessment.disability|default:"N/A" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-title">Verification Status:</span>
+                <span class="detail-content">
+                    {% if patient.riskassessment.pwd_verified %}
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Verified</span>
+                    {% else %}
+                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Pending</span>
+                    {% endif %}
+                </span>
+            </div>
+            {% if patient.riskassessment.pwd_verified %}
+            <div class="detail-row">
+                <span class="detail-title">Verified By:</span>
+                <span class="detail-content">{{ patient.riskassessment.pwd_verified_by.get_full_name|default:patient.riskassessment.pwd_verified_by.username|default:"N/A" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-title">Verification Date:</span>
+                <span class="detail-content">{{ patient.riskassessment.pwd_verification_date|date:"F d, Y"|default:"N/A" }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="display: flex;">
+            <a class="schedule-button" href="{% url 'medical:pwdlist' %}">Back</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

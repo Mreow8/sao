@@ -1,0 +1,39 @@
+from django.urls import path
+from . import views
+
+app_name = 'medical'
+
+urlpatterns = [
+    path('patientbasicinfo/<str:student_id>/', views.patient_basic_info, name='patient_basicinfo'),
+    path('medicalclearance/<str:student_id>/', views.medicalclearance_view, name='medicalclearance'),
+    path('eligibilityform/<str:student_id>/', views.eligibilty_form, name='eligibility_form'),
+    path('medicalcertificate/<str:student_id>/', views.med_cert, name='med_cert_for_intrams'),
+    path('viewrequest/', views.view_request, name='viewrequest'),
+    path('request/', views.submit_request, name="request"),
+    path('patient/profile/', views.patient_profile, name='patient_profile'),
+    path('physicalexam/<str:id>/', views.physical_examination, name='physical_exam'),
+    path('medicalrequirementstracker/', views.student_medical_requirements_tracker, name='medtracker'),
+    path('uploadrequirements/', views.upload_requirements, name='upload_requirements'),
+    path('dentalservices/', views.dental_services, name='dentalservice'),
+    path('dentalrequest/', views.dental_request, name='dentalrequest'),
+    path('dentalschedule/', views.dental_schedule, name='dentalschedule'),
+    path('listofpwd/', views.pwd_list, name='pwdlist'),
+    path('pwd/<str:id>/', views.pwd_detail, name='pwd_detail'),
+    path('prescriptions/', views.prescription, name='prescription'),
+    path('prescriptionrecords/', views.view_prescription_records, name='prescription_records'),
+    path('getusernamebyid/', views.get_user_name_by_id, name='get_user_name_by_id'),
+  
+    path('insuranceeligibility/', views.check_insurance_availability, name='insurance_eligibility'),
+    # URL for the main transactions view
+    path('transactions/', views.transactions_view, name='transactions'),
+    path('monthly_transactions/', views.monthly_transactions_view, name='monthly_transactions'),
+    path('daily_transactions/', views.daily_transactions_view, name='daily_transactions'),
+    # path('yearly/', views.yearly_transactions, name='yearly_transactions'),
+    path('upload/', views.upload_file, name='upload'),
+    path('mental-health/', views.mental_health_view, name='mental_health'),
+    path('update_mental_health_choice/', views.update_mental_health_choice, name='update_mental_health_choice'),
+    # PWD verification URLs
+    path('pwd/verify/<str:id>/', views.verify_pwd, name='verify_pwd'),
+    path('pwd/unverify/<str:id>/', views.unverify_pwd, name='unverify_pwd'),
+    path('mental-health/update-status/<int:pk>/', views.update_mental_health_status, name='update_mental_health_status'),
+]

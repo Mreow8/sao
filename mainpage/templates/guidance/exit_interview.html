@@ -28,14 +28,14 @@
 </div>
 <div class="container">
   {{form.errors}}
-  <h3>GUIDANCE</h3>
-  <span
-    ><label id="dir-gray">Home</label
-    ><label id="dir-orange"> > Exit Interview</label></span
-  >
+  <div class="sub-title">
+    <h3>GUIDANCE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Exit Interview</p>
+  </div>
+
   <div class="form-container">
     {% csrf_token %}
-    <h2>Request Exit Interview</h2>
 
     <table id="info_table" class="hidden">
       <tr id="info_table_head">

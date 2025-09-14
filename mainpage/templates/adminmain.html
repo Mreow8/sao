@@ -89,8 +89,8 @@
                   >Monthly Calendar of Activites(Admin)</a
                 >
               </li>
-               <li><a href="{% url 'jobplacement:non_acad' %}">Non-Academic Award Issuance</a></li>
-                            <li><a href="{% url 'jobplacement:job_trans_rep' %}">Transaction Reports</a></li>
+               <li><a href="{% url 'non_acad' %}">Non-Academic Award Issuance</a></li>
+                            <li><a href="{% url 'job_trans_rep' %}">Transaction Reports</a></li>
             </ul>
           </li>
 
@@ -126,21 +126,21 @@
             </a>
             <ul class="jobplace-show">
               <li>
-                <a href="{% url 'jobplacement:ojt_hiring' %}">OJT Hiring</a>
+                <a href="{% url 'ojt_hiring' %}">OJT Hiring</a>
               </li>
               <li>
-                <a href="{% url 'jobplacement:seminar_page' %}"
+                <a href="{% url 'seminar_page' %}"
                   >Career Guidance Tracker</a
                 >
               </li>
               <li>
-                <a href="{% url 'jobplacement:ojt_requirements_tracker' %}"
+                <a href="{% url 'ojt_requirements_tracker' %}"
                   >OJT Requirements Tracker</a
                 >
               </li>
              
               <li>
-                <a href="{% url 'jobplacement:job_trans_rep' %}"
+                <a href="{% url 'job_trans_rep' %}"
                   >Transaction Reports</a
                 >
               </li>
@@ -273,38 +273,39 @@
             </a>
             <ul class="medical-show">
               <li>
-                <a href="{% url 'medical:patient_profile' %}"
-                  >Patient Profile(Admin)</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'medical:viewrequest' %}"
-                  >View Requests(Admin)</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'medical:emergency_asst' %}"
-                  >Emergency Health Assistance(Admin)</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'medical:pwdlist' %}">PWD Profile(Admin)</a>
-              </li>
-              <li>
-                <a href="{% url 'medical:dentalrequest' %}"
-                  >Dental Services(Admin)</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'medical:prescription' %}"
-                  >Prescription Issuance(Admin)</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'medical:transactions' %}"
-                  >Transaction Reports(Admin)</a
-                >
-              </li>
+  <a href="{%url 'admin_dashboard'%}">Patient Profile (Admin)</a>
+</li>
+<li>
+  <a href="{% url 'viewrequest' %}">View Requests (Admin)</a>
+</li>
+<li>
+  <a href="{% url 'medtracker' %}"
+            >Medical Requirements Tracker</a
+          >
+</li>
+<li>
+  <a   href="{% url 'emergency_asst' %}"
+            >Emergency Health Assistance</a
+          >
+</li>
+<li>
+  <a href="{% url 'pwdlist' %}"
+            >PWD Profile</a
+          >
+</li>
+<li>
+  <a  href="{% url 'dentalrequest' %}"
+            >Dental Services</a
+          >
+</li>
+<li>
+  <a href="{% url 'prescription' %}"
+            >Prescription Issuance</a
+          >
+</li>
+<li><a href="{% url 'mental_health' %}"
+            >Mental Health Services</a
+          ></li>
               <br /><br /><br />
             </ul>
           </li>

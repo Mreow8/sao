@@ -86,7 +86,7 @@
 <section>
   <!-- STUDENT LOGIN PAGE -->
   {% if page == 'student_login' %} {% if form %}
-  <form action="{% url 'jobplacement:student_login' %}" method="POST">
+  <form action="{% url 'student_login' %}" method="POST">
     {% csrf_token %} {{ form.as_p }}
     <!-- <label for="email">Email:</label>
                 <input type="email" name="email">
@@ -97,10 +97,10 @@
   </form>
   {% endif %}
 
-  <a href="{% url 'jobplacement:student_signup' %}">Student Signup</a>
+  <a href="{% url 'student_signup' %}">Student Signup</a>
   {% else %} {% if form %}
   <form
-    action="{% url 'jobplacement:student_signup' %}"
+    action="{% url 'student_signup' %}"
     method="POST"
     id="admin_signup_form"
   >

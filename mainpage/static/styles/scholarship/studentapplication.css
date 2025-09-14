@@ -18,15 +18,13 @@ input[type="file"] {
 .content {
   display: flex;
   justify-content: center;
-  height: 89.5vh;
-  overflow: auto;
-  padding: 50px 0px;
-  background-color: #fff;
+  margin: 20px;
 }
 .content h1 {
   color: black;
 }
 .form_div {
+  border-color: #3f3e3d;
   display: flex;
   flex-direction: column;
   justify-content: center;
