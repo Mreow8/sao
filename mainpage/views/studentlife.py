@@ -36,7 +36,6 @@ import calendar
 # views.py
 import io
 import os
-import win32api
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from django.http import HttpResponse
