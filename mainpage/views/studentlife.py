@@ -1,6 +1,12 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.utils import timezone
+import io
+import os
+import platform
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 import time
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -80,44 +86,47 @@ def ppmp_delete(request, pk):
     doc.document.delete()  # delete file from storage
     doc.delete()
     return JsonResponse({"success": True})
+
+
 def print_gmc(request):
-    # 1️⃣ Create PDF in memory
     buffer = io.BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
-    
-    # Example content
+
     p.setFont("Helvetica", 12)
     p.drawString(100, 750, "CERTIFICATION OF GOOD MORAL CHARACTER")
-    p.drawString(100, 730, f"Student Name: John Doe")
-    p.drawString(100, 710, f"Course: Bachelor of Science in IT")
-    p.drawString(100, 690, f"Date: 2025-08-20")
+    p.drawString(100, 730, "Student Name: John Doe")
+    p.drawString(100, 710, "Course: Bachelor of Science in IT")
+    p.drawString(100, 690, "Date: 2025-08-20")
     p.showPage()
     p.save()
 
     buffer.seek(0)
 
-    # 2️⃣ Write to temporary file (needed for printer)
-    temp_file = "temp_print.pdf"
-    with open(temp_file, "wb") as f:
-        f.write(buffer.read())
+    # ✅ If running on Windows, send directly to printer
+    if platform.system() == "Windows":
+        import tempfile
+        import win32api
 
-    # 3️⃣ Send PDF to Epson L3210
-    printer_name = "EPSON L3210 Series"
-    win32api.ShellExecute(
-        0,
-        "printto",
-        temp_file,
-        f'"{printer_name}"',
-        ".",
-        0
-    )
+        temp_file = tempfile.mktemp(".pdf")
+        with open(temp_file, "wb") as f:
+            f.write(buffer.read())
 
-    # 4️⃣ Optional: delete temp file after sending
-    os.remove(temp_file)
+        printer_name = "EPSON L3210 Series"
+        win32api.ShellExecute(
+            0,
+            "printto",
+            temp_file,
+            f'"{printer_name}"',
+            ".",
+            0
+        )
 
-    return HttpResponse("PDF sent to Epson L3210 printer!")
+        return HttpResponse("PDF sent to Epson printer!")
 
-# logger = logging.getLogger(__name__)
+    # ✅ On Linux/Render: just return the PDF
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = "inline; filename=gmc.pdf"
+    return response
 @sao_admin_required
 def gmcform(request):
     return render(request, "adminUser/gmcform.html")
