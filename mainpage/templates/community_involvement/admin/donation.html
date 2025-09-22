@@ -1,0 +1,178 @@
+{% extends 'adminmain.html' %} {% block css %} {% load static %}
+<!-- prettier-ignore -->
+{% endblock %} {% block bodycontent %}
+
+<style>
+  .header {
+    text-align: center;
+    margin: 40px 0 30px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+
+  .buttons a {
+    display: block;
+    text-align: center;
+    background-color: #e46323;
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  .buttons a:hover {
+    background-color: #c94f18;
+    transform: translateY(-3px);
+  }
+
+  .section {
+    display: none;
+    max-width: 900px;
+    padding: 25px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .section.active {
+    display: block;
+  }
+  /* Header Section */
+  .header {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #2b2b2b;
+  }
+
+  /* Back Button */
+  .back {
+    margin: 20px 40px;
+  }
+
+  .back a {
+    text-decoration: none;
+    font-size: 14px;
+    color: #ff8000;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.3s ease;
+  }
+
+  .back a:hover {
+    color: #e67300;
+  }
+
+  /* Data Table Wrapper */
+  .data {
+    max-width: 1000px;
+    margin: 30px auto;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Table Styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  table th,
+  table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  table th {
+    background-color: #f7f7f7;
+    color: #ff8000;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  table td {
+    color: #444;
+  }
+
+  /* View Button */
+  .view a {
+    display: inline-block;
+    background-color: #ff8000;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .view a:hover {
+    background-color: #e67300;
+  }
+</style>
+<div class="sub-title">
+  <h3>COMMUNITY INVOLVEMENT</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Select Donation</p>
+</div>
+
+<div class="buttons">
+  <a onclick="showSection('gcash')">GCash</a>
+  <a onclick="showSection('banks')">Banks</a>
+  <a onclick="showSection('volunteer')">Volunteer</a>
+</div>
+
+<!-- Sections -->
+<!-- prettier-ignore -->
+
+<div id="gcash" class="section active">
+  {% include "community_involvement/admin/gcash-dashboard.html" with loadGcashDonations=loadGcashDonations %}
+</div>
+<!-- prettier-ignore -->
+
+<div id="banks" class="section">
+  {% include "community_involvement/admin/banks-dashboard.html" with loadBankDonations=loadBankDonations %}
+</div>
+<!-- prettier-ignore -->
+
+<div id="volunteer" class="section">
+  {% include "community_involvement/admin/volunteer-dashboard.html" with loadVolunteer=loadVolunteer %}
+</div>
+
+<script>
+  function showSection(id) {
+    // Hide all sections
+    document
+      .querySelectorAll(".section")
+      .forEach((s) => s.classList.remove("active"));
+    // Show selected one
+    document.getElementById(id).classList.add("active");
+  }
+</script>
+{% endblock %}

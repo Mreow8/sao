@@ -1,0 +1,248 @@
+{% extends "main.html" %} {% block bodycontent %} {% load static %}
+<link rel="stylesheet" href="{% static 'styles/community/program.css' %}" />
+<div class="container">
+  <div class="sub-title">
+    <h3>COMMUNITY INVOLVEMENT</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Events</p>
+  </div>
+  {% if user.is_staff %}
+
+  <div class="post-box">
+    <!-- Collapsed view -->
+    <div class="collapsed" id="collapsedBox">Add Events...</div>
+
+    <!-- Expanded form -->
+    <form
+      method="post"
+      id="expandedBox"
+      class="expanded"
+      enctype="multipart/form-data"
+    >
+      {% csrf_token %}
+      <textarea
+        id="postText"
+        name="description"
+        rows="3"
+        placeholder="Add Events..."
+      ></textarea>
+
+      <!-- hidden inputs -->
+      <input type="hidden" name="title" value="Community Event" />
+      <input type="hidden" name="caption" value="Auto-caption" />
+
+      <div class="actions">
+        <!-- Upload button -->
+        <label class="action-btn" for="imageUpload">📷 Photo/Video</label>
+        <input
+          type="file"
+          id="imageUpload"
+          name="images"
+          accept="image/*,video/*"
+          multiple
+          style="display: none"
+        />
+      </div>
+
+      <!-- Preview thumbnails -->
+      <div id="preview"></div>
+
+      <button type="submit" class="submit" id="submitBtn" disabled>Post</button>
+    </form>
+    <!-- Popup -->
+    <div
+      id="popup"
+      style="
+        display: none;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4bb543;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      "
+    >
+      ✅ Event added successfully!
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="programs-section flex justify-center">
+    {% if loadPrograms %}
+    <div class="program-list max-w-3xl mb-10">
+      {% for program in loadPrograms %}
+      <div class="program-card">
+        <h3>{{ program.title }}</h3>
+        <p>{{ program.caption }}</p>
+        <p>{{ program.description }}</p>
+
+        <div class="fb-gallery count-{{ program.images.count }}">
+          {% for img in program.images.all %} {% if forloop.counter <= 5 %}
+          <div
+            class="gallery-item {% if forloop.last and program.images.count > 5 %}more{% endif %}"
+          >
+            <img src="{{ img.image.url }}" alt="" />
+            {% if forloop.last and program.images.count > 5 %}
+            <span class="more-overlay"
+              >+{{ program.images.count|add:"-5" }}</span
+            >
+            {% endif %}
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+      </div>
+
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>No programs available.</p>
+    {% endif %} {% if user %}
+    <div class="admin-controls">
+      <a href="{% url 'add_program' %}" class="btn btn-primary">Add Program</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  const collapsedBox = document.getElementById("collapsedBox");
+  const expandedBox = document.getElementById("expandedBox");
+  const postText = document.getElementById("postText");
+  const submitBtn = document.getElementById("submitBtn");
+  const postForm = document.getElementById("expandedBox");
+  const popup = document.getElementById("popup");
+  const imageUpload = document.getElementById("imageUpload");
+  const preview = document.getElementById("preview");
+
+  collapsedBox.addEventListener("click", () => {
+    collapsedBox.style.display = "none";
+    expandedBox.style.display = "flex";
+    postText.focus();
+  });
+
+  postText.addEventListener("input", () => {
+    submitBtn.disabled = postText.value.trim() === "";
+  });
+
+  // Show previews
+  imageUpload.addEventListener("change", () => {
+    preview.innerHTML = "";
+    const files = Array.from(imageUpload.files);
+
+    files.forEach((file) => {
+      if (file.type.startsWith("image/")) {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        preview.appendChild(img);
+      } else if (file.type.startsWith("video/")) {
+        const video = document.createElement("video");
+        video.src = URL.createObjectURL(file);
+        video.controls = true;
+        preview.appendChild(video);
+      }
+    });
+  });
+
+  // AJAX submit
+  postForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(postForm);
+    fetch("{% url 'add_program' %}", {
+      method: "POST",
+      body: formData,
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          popup.style.display = "block";
+          popup.textContent = "✅ Event added successfully!";
+          setTimeout(() => (popup.style.display = "none"), 3000);
+
+          // reset form
+          postText.value = "";
+          submitBtn.disabled = true;
+          imageUpload.value = "";
+          preview.innerHTML = "";
+
+          const programList = document.querySelector(".program-list");
+          if (programList) {
+            const newPost = document.createElement("div");
+            newPost.classList.add("program-card");
+
+            // build gallery (images + videos)
+            let gallery = "";
+            if (data.program.images && data.program.images.length > 0) {
+              data.program.images.forEach((src) => {
+                if (/\.(mp4|webm|ogg)$/i.test(src)) {
+                  gallery += `<video src="${src}" controls class="gallery-img"></video>`;
+                } else {
+                  gallery += `<img src="${src}" alt="Program Image" class="gallery-img" />`;
+                }
+              });
+            }
+
+            newPost.innerHTML = `
+        <h3>${data.program.title}</h3>
+        <p>${data.program.caption}</p>
+        <p>${data.program.description}</p>
+        <div class="image-gallery">${gallery}</div>
+      `;
+
+            programList.prepend(newPost);
+          }
+        }
+      })
+
+      .catch((err) => {
+        popup.style.display = "block";
+        popup.textContent = "Error: " + err.message;
+        setTimeout(() => (popup.style.display = "none"), 3000);
+      });
+  }); // Show previews with remove button
+  imageUpload.addEventListener("change", () => {
+    preview.innerHTML = "";
+    const files = Array.from(imageUpload.files);
+
+    files.forEach((file, index) => {
+      const wrapper = document.createElement("div");
+      wrapper.classList.add("preview-item");
+
+      // media element
+      let media;
+      if (file.type.startsWith("image/")) {
+        media = document.createElement("img");
+        media.src = URL.createObjectURL(file);
+      } else if (file.type.startsWith("video/")) {
+        media = document.createElement("video");
+        media.src = URL.createObjectURL(file);
+        media.controls = true;
+      }
+      wrapper.appendChild(media);
+
+      // remove button
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "×";
+      removeBtn.classList.add("remove-btn");
+      removeBtn.addEventListener("click", () => {
+        files.splice(index, 1); // remove from files array
+        updateFileList(files); // update input.files
+        wrapper.remove(); // remove from preview
+      });
+      wrapper.appendChild(removeBtn);
+
+      preview.appendChild(wrapper);
+    });
+  });
+
+  // helper to update the file input after removing
+  function updateFileList(files) {
+    const dt = new DataTransfer();
+    files.forEach((f) => dt.items.add(f));
+    imageUpload.files = dt.files;
+  }
+</script>
+{% endblock %}

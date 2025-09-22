@@ -1,0 +1,67 @@
+.content {
+    margin: 1rem 15rem 3rem 15rem;
+    display: grid;
+}
+
+.header {
+    text-align: center;
+    margin-top: 8rem;
+    margin-bottom: 2rem;
+}
+
+.caption {
+    margin-top: 1rem;
+}
+
+.image img {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.project {
+    border-top: 4px solid gray;
+}
+
+.header-content-main {
+    box-shadow: 0 0 5px gray;
+    padding: 1rem;
+}
+
+.project .ctu-logo {
+    width: 3rem;
+}
+
+.project .content {
+    /* position: relative; */
+    margin-top: 3rem;
+}
+
+
+.project .header-content {
+    display: grid;
+    grid-template-columns: .5fr 7fr 5fr;
+    gap: 1rem;
+    align-items: center;
+}
+
+.project .header-content a {
+    justify-self: end;
+}
+
+.project .header-content a img {
+    width: 2rem;
+}
+
+.back a {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    gap: .5rem;
+    text-decoration: none;
+    margin-bottom: -1.7rem;
+    margin-left: 7.7rem;
+}
+
+.back a:hover {
+    text-shadow: 0px 1px 5px rgba(119, 119, 119, 0.47);
+}

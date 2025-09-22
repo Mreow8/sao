@@ -15,6 +15,7 @@ urlpatterns = [
     path('alum/', include('mainpage.zsao_urls.alum_url')),
     path('main/', include('mainpage.zsao_urls.mainurls')),
     path('med/', include('mainpage.zsao_urls.med_urls')),
+    path('community/', include('mainpage.zsao_urls.com_url')),
 ]
 
 # Serve static and media files in development

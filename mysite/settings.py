@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 AUTH_USER_MODEL = 'mainpage.CustomUser'
 # Redirects to this URL if @login_required is used without a specific `login_url`
 LOGIN_URL = '/login/'  # or the correct path or name
-
+X_FRAME_OPTIONS = "SAMEORIGIN"
 STATIC_URL = '/static/'
 
 # This will now work because BASE_DIR is a Path object

@@ -7,3 +7,4 @@ from .medical import *
 from .medical2 import *
 from .studentlife import *
 from .discipline import *
+from .community import *

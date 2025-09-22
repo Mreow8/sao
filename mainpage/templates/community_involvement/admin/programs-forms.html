@@ -1,0 +1,54 @@
+{% extends 'adminmain.html' %} {% block css %}
+<link rel="stylesheet" href="/static/community_involvement/program-form.css" />
+{% endblock%} {% block bodycontent %}
+<div class="header">
+  <h1>Events</h1>
+</div>
+<div class="project">
+  <div class="content">
+    <div class="form">
+      <div class="proj">
+        <h1>Event Upload Form</h1>
+      </div>
+      <form
+        action="{% url 'add_program' %}"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+
+        <div class="image-upload">
+          <label for="file-input">
+            <img src="/static/community_involvement/img/upload.png" />
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            name="images"
+            id="file-input"
+            onchange="loadFile(event)"
+            style="display: none"
+          />
+        </div>
+        <div>
+          <center><img id="output" width="200" /></center>
+        </div>
+        <input name="title" type="text" placeholder="Title" required />
+        <textarea
+          rows="4"
+          name="caption"
+          type="text"
+          placeholder="Caption"
+          required
+        ></textarea>
+
+        <input type="submit" value="Submit" class="button" />
+        <a style="text-decoration: none" href="{% url 'programs' %}"
+          ><i class="bx bx-arrow-back"></i>Back</a
+        >
+      </form>
+      <script src="/static/community_involvement/showimg.js"></script>
+    </div>
+  </div>
+</div>
+{% endblock %}

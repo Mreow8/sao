@@ -1,0 +1,56 @@
+<div class="data">
+  <div class="table">
+    <table>
+      <thead>
+        <tr>
+          <th>Donated</th>
+          <th>Name</th>
+          <th>Contact Number</th>
+          <th>Kind of Donation</th>
+          <th>Date Schedule</th>
+          <th>Recepient</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for donates in loadVolunteerDonations %}
+        <tr>
+          <td>{{ donates.donated }}</td>
+          <td>{{ donates.name }}</td>
+          <td>{{ donates.contact_number }}</td>
+          <td>{{ donates.what_kind }}</td>
+
+          {% if donates.what_kind == "SERVICE" %}
+          <td>{{ donates.date_sched }}</td>
+          {% else %}
+          <td></td>
+          {% endif %} {% if donates.what_kind == "RELIEF GOODS" %}
+          <td>{{ donates.recepient_things}}</td>
+          {% elif donates.what_kind == "BELONGINGS" %}
+          <td>{{ donates.recepient_things}}</td>
+          {% elif donates.what_kind == "EQUIPMENTS" %}
+          <td>{{ donates.recepient_things}}</td>
+          {% elif donates.what_kind == "MONEY" %}
+          <td>{{ donates.recepient }}</td>
+          {% elif donates.what_kind == "SERVICE" %}
+          <td></td>
+          {% endif %} {% if donates.what_kind == "MONEY" %}
+          <td>{{ donates.amount }}</td>
+          {% else %}
+          <td></td>
+          {% endif %}
+
+          <td>{{ donates.date }}</td>
+          <td class="view">
+            <a target="_blank" href="/media/{{ donates.image_details }}"
+              >View</a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+.buttons {
+    /* background-color: red; */
+
+    width: 20rem;
+    height: 40vh;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin: 6rem auto;
+}
+
+.buttons div {
+    display: grid;
+    text-align: center;
+}
+
+.buttons div a {
+    border-radius: 10px;
+    font-weight: bold;
+    border: 2px solid black;
+    font-size: large;
+    text-decoration: none;
+    background-color: white;
+    padding: 1rem 4rem;
+    color: rgb(0, 0, 0);
+}
+
+.buttons a:hover {
+    background: var(--secondary-color);
+    border: 5%;
+    border-color: black;
+    color: rgb(255, 255, 255);
+}

@@ -1,0 +1,125 @@
+.form {
+    /* background-color: red; */
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+}
+
+.data {
+    margin: 2rem auto;
+    box-shadow: 0 0 5px gray;
+    padding: 1rem;
+    width: 80%;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr 3fr;
+    /* justify-content: center; */
+}
+
+
+
+.data .table {
+    align-self: start;
+}
+
+.data table {
+    width: 100%;
+    text-align: center;
+    border: 1px solid black;
+    margin: 0 auto;
+}
+
+.data td,
+.data th {
+    border: 1px solid black;
+}
+
+.data thead {
+    background-color: var(--secondary-color);
+    color: rgb(0, 0, 0);
+}
+
+.data button {
+    justify-self: center;
+}
+
+.data,
+.table .options a {
+    text-decoration: none;
+}
+
+
+.options {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.options a:nth-child(1):hover {
+    text-shadow: 0px 1px 5px rgba(41, 142, 41, 1);
+}
+
+.options a:nth-child(2):hover {
+    text-shadow: 0px 1px 5px rgb(227, 62, 62);
+}
+
+.table .view a:hover {
+    text-shadow: 0px 1px 5px rgb(43, 0, 255);
+}
+
+form {
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+form a {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    border-radius: 10px;
+    border-color: white;
+    height: 1.7rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+
+form a:hover {
+    text-shadow: 0px 1px 5px rgba(119, 119, 119, 0.47);
+}
+
+select {
+    font-weight: bold;
+    width: 13%;
+    border-radius: 5px;
+    border: 1px solid gray;
+    cursor: pointer;
+}
+
+select option {
+    text-align: center;
+    font-weight: bold;
+}
+
+form button {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    width: 10%;
+    border-radius: 10px;
+    border-color: white;
+    height: 1.7rem;
+    cursor: pointer;
+}
+
+
+button:hover {
+    box-shadow: 0px 5px 10px 0px rgba(60, 60, 60, 0.2);
+}

@@ -1,6 +1,7 @@
 {% extends 'main.html' %}
+{% block bodycontent %}
+
 {% load static tailwind_tags %}
-{% block title %} HealthHub Connect | Student Dashboard {% endblock %}
 
 {% block extra_css %} 
 {% tailwind_css %}
@@ -17,21 +18,7 @@
     .tab-content.active {
         display: block;
     }
-    .profile-icon {
-        font-size: 6rem;
-        width: 12rem;
-        height: 12rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #E5F2FF;
-        color: #3B82F6;
-        border-radius: 9999px;
-        cursor: pointer;
-    }
-    .profile-icon img {
-        cursor: pointer;
-    }
+
     /* Hide scrollbar but maintain functionality */
     .custom-scrollbar {
         scrollbar-width: none; /* Firefox */
@@ -81,84 +68,20 @@
     .calendar-grid {
         background-color: white;
         border-radius: 0.5rem;
+            width: 25vw;
     }
 </style>
 {% endblock %}
-
-{% block bodycontent %}
-<div class="w-full h-full flex  justify-start">
+  <div class="sub-title">
+    <h3>MEDICAL</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Student Dashboard</p>
+  </div>
+<div class="w-full flex  justify-start">
     <div class="w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex ml-4">
     {% if patient %}
         <!-- Left: Profile Section -->
-        <div class="w-[260px] p-6 bg-white border-r flex flex-col items-start text-left">
-            <form id="profile-picture-form" method="post" action="{% url 'upload_profile_picture' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% if patient.profile_picture %}
-                    <div class="profile-icon mb-6">
-                        <img src="{{ patient.profile_picture.url }}" alt="Profile Picture" class="rounded-full w-full h-full object-cover">
-                    </div>
-                {% else %}
-            <div class="profile-icon mb-6">
-                <i class="fas fa-user-circle"></i>
-            </div>
-                {% endif %}
-            <h2 class="text-xl font-bold text-gray-800 mb-2">{{ student.firstname }} {{ student.middlename }} {{ student.lastname }}</h2>
-            <p class="text-gray-600 mb-2">ID Number: {{ student.studID }}</p>
-                <p class="text-gray-600 mb-2">{{ student.degree }}, Year {{ student.year_level }}</p>
-                
-                <p class="text-gray-600 mb-2">Sex: {{ student.sex }}</p>
-                {% if patient.birth_date %}
-                    <p class="text-gray-600 mb-2">Birth Date: {{ patient.birth_date }}</p>
-                {% endif %}
-                {% if patient.age %}
-                     <p class="text-gray-600 mb-2">Age: {{ patient.age }}</p>
-                {% endif %}
-                {% if patient.civil_status %}
-                    <p class="text-gray-600 mb-2">Civil Status: {{ patient.civil_status }}</p>
-                {% endif %}
-                 {% if patient.nationality %}
-                    <p class="text-gray-600 mb-2">Nationality: {{ patient.nationality }}</p>
-                {% endif %}
-                 {% if patient.religion %}
-                    <p class="text-gray-600 mb-2">Religion: {{ patient.religion }}</p>
-                {% endif %}
-                <!-- Profile Picture Upload (Hidden Input) -->
-                <!-- <input type="file" id="profile-picture-upload" name="profile_picture" class="hidden" accept="image/*">
-
-                <button type="button" id="editProfileBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">Upload Profile Picture</button> -->
-            </form>
-
-            <!-- Edit Profile Modal -->
-            <div id="editProfileModal" class="hidden fixed inset-0 bg-black bg-opacity-40 items-center justify-center z-50">
-                <div class="bg-white rounded-lg p-8 w-[350px] shadow-xl relative">
-                    <button id="closeEditProfile" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700">&times;</button>
-                    <h3 class="text-lg font-bold mb-4">Edit Profile (Mockup)</h3>
-                    <form>
-                        <div class="mb-2">
-                            <label class="block text-sm font-medium">First Name</label>
-                            <input type="text" class="w-full border rounded px-2 py-1" value="{{ student.firstname }}" />
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-sm font-medium">Middle Name</label>
-                            <input type="text" class="w-full border rounded px-2 py-1" value="{{ student.middlename }}" />
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-sm font-medium">Last Name</label>
-                            <input type="text" class="w-full border rounded px-2 py-1" value="{{ student.lastname }}" />
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-sm font-medium">Degree</label>
-                            <input type="text" class="w-full border rounded px-2 py-1" value="{{ student.degree }}" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium">Year Level</label>
-                            <input type="text" class="w-full border rounded px-2 py-1" value="{{ student.year_level }}" />
-            </div>
-                        <button type="button" class="w-full bg-blue-500 text-white rounded py-2 font-semibold">Save Changes</button>
-                    </form>
-            </div>
-            </div>
-        </div>
+       
         <!-- Center: Tabbed Information -->
         <div class="flex-1 h-full flex flex-col overflow-x-auto p-8">
             <div class="border-b sticky top-0 bg-white z-10 mb-4">
@@ -358,6 +281,7 @@
         </div>
         <!-- Right: Requests Tracker -->
         <div class="w-[350px] p-6 bg-gray-50 border-l flex flex-col">
+            <div>
             <h2 class="text-lg font-bold text-gray-800 mb-4">My Requests</h2>
             <div class="flex-1 rounded-lg mb-6 custom-scrollbar max-h-48 overflow-y-auto">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -392,6 +316,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
             </div>
             <!-- Calendar Section -->
             <div class="bg-white rounded-lg p-4 shadow-sm">

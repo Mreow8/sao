@@ -1,0 +1,65 @@
+.form {
+    width: 30rem;
+    display: grid;
+    box-shadow: 0 0 5px gray;
+    margin: 3rem auto;
+}
+
+h1 {
+    text-align: center;
+
+}
+
+.form form {
+    display: grid;
+    padding: 2rem;
+
+}
+
+.header {
+    text-align: center;
+    margin-top: 5rem;
+    margin-bottom: 15px;
+}
+
+.project {
+    border-top: 4px solid gray;
+}
+
+.container {
+    padding: 15% 9%;
+    padding-bottom: 100px;
+    width: 100%;
+}
+
+.container .heading {
+    text-align: center;
+    padding-bottom: 15px;
+    color: #fff;
+    text-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    font-size: 50px;
+}
+
+.container .box-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 2fr));
+    gap: 15px;
+}
+
+.container .box-container .box .btn {
+    text-decoration: none;
+    color: #000000;
+    font-size: 20px;
+    border-radius: 5px;
+    padding: 30px 55px;
+    box-shadow: 0 5px 10px rgba(24, 6, 6, 0.2);
+    border-radius: 5px;
+    background: #fff;
+    text-align: center;
+}
+
+.container .box-container .btn:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, .3);
+    transform: scale(1.03);
+}
+
