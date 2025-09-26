@@ -76,7 +76,9 @@
     margin: 0 auto;
     padding: 1.5rem;
   }
-
+  .gmc-form {
+    padding: 20px;
+  }
   #calendar {
     height: 700px; /* increase/decrease height */
   }
@@ -127,6 +129,7 @@
 
     tbody td:last-child {
       border-bottom: none;
+      word-wrap: break-word;
     }
   }
 </style>
@@ -215,6 +218,5 @@
         document.getElementById("reason").value = selectedReason;
       });
   </script>
-
-  {% endblock bodycontent %}
 </div>
+{% endblock bodycontent %}

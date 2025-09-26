@@ -1,8 +1,95 @@
-/* Overall Layout */
-body {
-  background-color: #f4f6fa;
+/* For tablets and smaller (<= 768px) */
+@media (max-width: 768px) {
+  .sub-title h3 {
+    font-size: 18px;
+    text-align: center;
+  }
 
-  color: #2c2c2c;
+  .sub-title p {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .gmc-wrapper {
+    padding: 10px;
+  }
+
+  .title-txt {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  #comboBox {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+
+  .requestBtn {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    background-color: #ff8000;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .pending-request-box {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    background: #fff7e6;
+    border: 1px solid #ffd699;
+  }
+
+  /* Table already handled, but tweak spacing */
+  tbody tr {
+    padding: 10px;
+  }
+
+  tbody td {
+    font-size: 13px;
+    padding-left: 45%;
+  }
+
+  tbody td::before {
+    font-size: 12px;
+  }
+}
+
+/* For very small phones (<= 480px) */
+@media (max-width: 480px) {
+  .sub-title h3 {
+    font-size: 16px;
+  }
+
+  .title-txt p {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  #comboBox {
+    font-size: 13px;
+  }
+
+  .requestBtn {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  tbody td {
+    font-size: 12px;
+    padding-left: 40%;
+  }
+
+  tbody td::before {
+    font-size: 11px;
+  }
 }
 
 /* Page Title Section */

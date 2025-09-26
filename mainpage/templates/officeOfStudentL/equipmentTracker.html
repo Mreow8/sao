@@ -13,7 +13,29 @@
   href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap"
   rel="stylesheet"
 />
+<style>
+  /* 📱 Small screen responsive table */
+  @media (max-width: 768px) {
+    .equipmentContents {
+      width: 100%;
+      overflow-x: auto; /* Enables horizontal scroll */
+    }
 
+    .equipmentTable {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px; /* Prevents columns from squishing too much */
+    }
+
+    .equipmentTable th,
+    .equipmentTable td {
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+      white-space: nowrap; /* Keeps text in one line */
+    }
+  }
+</style>
 <div class="container">
   <div class="sub-title">
     <h3>OFFICE OF STUDENT LIFE</h3>

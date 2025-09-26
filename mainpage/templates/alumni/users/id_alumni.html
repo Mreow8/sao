@@ -95,6 +95,7 @@
               name="alumnidate"
               class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
               required
+              min="{{ today|date:'Y-m-d' }}"
             />
           </div>
           <div>
@@ -106,6 +107,7 @@
               name="alumnibirthday"
               class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
               required
+              max="{{ sixteen_years_ago|date:'Y-m-d' }}"
             />
           </div>
           <div>

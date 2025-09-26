@@ -8,6 +8,8 @@ from mainpage.models import studentInfo
 from mainpage.models.alumni import Alumni, graduateForm, Event, JobFair, Yearbook
 
 from mainpage.decorators import sao_admin_required  # Adjust path if your decorator is elsewhere
+from datetime import date
+
 def idRequest(request):
     user = request.user
     student = None
@@ -20,11 +22,18 @@ def idRequest(request):
         except studentInfo.DoesNotExist:
             student = None
 
+    # Calculate today and 16 years ago
+    today = date.today()
+    sixteen_years_ago = date(today.year - 16, today.month, today.day)
+
     context = {
         'student': student,
-        'alumni': alumni  # Pass alumni object to template
+        'alumni': alumni,  # Pass alumni object to template
+        'today': today,
+        'sixteen_years_ago': sixteen_years_ago,
     }
     return render(request, 'alumni/users/id_alumni.html', context)
+
 
 def search_id(request):
     if request.method == 'GET':
