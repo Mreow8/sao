@@ -2,6 +2,67 @@
 * {
   margin: 0;
 }
+/* Tabs Container */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  margin: 20px 0;
+  gap: 10px;
+  flex-wrap: wrap; /* allow wrapping if space is small */
+}
+
+/* Each Tab */
+.tab {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  white-space: nowrap; /* prevent breaking text */
+}
+
+/* Hover Effect */
+.tab:hover {
+  color: #111827;
+  border-bottom: 2px solid #9ca3af;
+}
+
+/* Active Tab */
+.tab.active {
+  color: #ff8000;
+  font-weight: 600;
+  border-bottom: 2px solid #ff8000;
+}
+
+/* 📱 Small screens */
+@media (max-width: 640px) {
+  .tabs {
+    flex-direction: column; /* stack vertically */
+    border-bottom: none;
+    gap: 5px;
+  }
+
+  .tab {
+    display: block;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .tab.active {
+    background-color: #ff8000;
+    color: #ffffff;
+    border: 1px solid #ff8000;
+  }
+
+  .tab:hover {
+    border-color: #9ca3af;
+  }
+}
+
 body {
   background-color: #f4f6fa;
 
@@ -19,38 +80,10 @@ body {
   width: 100%;
 }
 /* Tabs Section */
-.tabs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 10px;
-  gap: 10px;
-}
-
-.tab {
-  text-decoration: none;
-  padding: 10px 20px;
-  background-color: #fff;
-  border: 1px solid #ff8000;
-  border-radius: 8px;
-  color: #ff8000;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.tab:hover {
-  background-color: #ff8000;
-  color: white;
-}
-
-.tab.active {
-  background-color: #ff8000;
-  color: white;
-}
 
 /* Table Container */
 .maincontain {
-  background-color: #eee;
+  background-color: #ffffff;
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);

@@ -23,6 +23,7 @@ class CustomUser(AbstractUser):
         ('superadmin', 'Superadmin'),
         ('guard', 'Guard'),
         ('org_member', 'Org Member'),
+        ('guidance', 'Guidance'),
         ('student', 'Student'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)

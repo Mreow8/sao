@@ -1,28 +1,202 @@
 {% extends base_template|default:"main.html" %} {% block title %}Case Profile
-{%endblock %} {% load static %} {% load widget_tweaks %}
 
+<!-- prettier-ignore -->
+{%endblock %}  {% load widget_tweaks %}
+{% load static %}
+{% block bodycontent %}
 <style>
+  /* GMC Base Layout */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .sub-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .sub-title h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f2937; /* gray-800 */
+  }
+
+  .sub-title .hometext,
+  .sub-title .certxt {
+    display: inline-block;
+    font-size: 0.875rem;
+    color: #6b7280; /* gray-500 */
+    margin-right: 0.5rem;
+  }
+
+  /* GMC Form */
+  form {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+  }
+
+  form label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151; /* gray-700 */
+    margin-bottom: 0.25rem;
+  }
+
   input[type="text"],
   input[type="date"],
   input[type="email"],
   input[type="number"],
+  input[type="file"],
   textarea,
   select {
-    @apply w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500;
+    width: 100%;
+    border: 1px solid #d1d5db; /* gray-300 */
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    color: #111827;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #4b5563; /* gray-600 */
+    box-shadow: 0 0 0 2px rgba(75, 85, 99, 0.3);
+  }
+
+  /* GMC Buttons */
+  button,
+  a.button-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  button:hover,
+  a.button-link:hover {
+    transform: translateY(-1px);
+  }
+
+  .bg-gray-600 {
+    background: #4b5563;
+    color: #fff;
+  }
+  .bg-gray-600:hover {
+    background: #374151;
+  }
+
+  .bg-gray-400 {
+    background: #9ca3af;
+    color: #fff;
+  }
+  .bg-gray-400:hover {
+    background: #6b7280;
+  }
+
+  /* GMC Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  thead {
+    background: #f3f4f6; /* gray-100 */
+  }
+
+  thead th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151; /* gray-700 */
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  tbody td {
+    padding: 0.75rem 1rem;
+    color: #374151; /* gray-700 */
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  tbody tr:hover {
+    background: #f9fafb; /* lighter gray hover */
+  }
+
+  /* GMC Status Badges */
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .status-pending {
+    background: #fef3c7; /* yellow-100 */
+    color: #92400e; /* yellow-800 */
+  }
+
+  .status-resolved {
+    background: #d1fae5; /* green-100 */
+    color: #065f46; /* green-800 */
+  }
+
+  .status-default {
+    background: #f3f4f6; /* gray-100 */
+    color: #1f2937; /* gray-800 */
+  }
+
+  /* GMC Modal */
+  #editModal .modal-box {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 600px;
+    padding: 1.5rem;
+  }
+
+  /* Responsive GMC */
+  @media (max-width: 640px) {
+    .sub-title h3 {
+      font-size: 1.25rem;
+    }
+
+    table {
+      font-size: 0.875rem;
+    }
+
+    button {
+      font-size: 0.875rem;
+      padding: 0.4rem 0.75rem;
+    }
   }
 </style>
 
-{% block bodycontent %}
 <div class="container">
   <div class="sub-title">
     <h3>STUDENT DISCIPLINE</h3>
     <p class="hometext">Home</p>
     <p class="certxt">&gt; Student Case Profile</p>
   </div>
+
   <!-- prettier-ignore -->
   {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
 
-  <form method="post" class="bg-white shadow-md rounded-lg p-6 mb-8 space-y-4">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <!-- Student Search -->
@@ -32,7 +206,6 @@
         name="student"
         id="id_student"
         list="student-options"
-        class="border border-gray-300 rounded-md px-3 py-2 shadow-sm"
         placeholder="Enter Student ID"
       />
       <datalist id="student-options">
@@ -45,7 +218,7 @@
     </div>
 
     <!-- Student Details Display -->
-    <div id="student_details">
+    <div id="student_details" class="hidden">
       <p><strong>Name:</strong> <span id="student_name"></span></p>
       <p><strong>Course:</strong> <span id="student_course"></span></p>
       <p><strong>Year:</strong> <span id="student_year"></span></p>
@@ -53,115 +226,99 @@
 
     <!-- Date of Incident -->
     <div>
-      <label
-        for="id_date_reported"
-        class="block text-sm font-medium text-gray-700 mb-1"
-      >
-        Date Reported
-      </label>
+      <label for="id_date_reported"> Date Reported </label>
+
       <!-- prettier-ignore -->
       {{ form.date_reported|add_class:"border border-gray-300 rounded-md px-3 py-2 shadow-sm" }}
     </div>
 
     <!-- Offense Type -->
     <div>
-      <label
-        class="block text-sm font-medium text-gray-700 mb-1"
-        for="id_offense_type"
-        >Offense Type</label
-      >
-      <select
-        id="id_offense_type"
-        name="offense_type"
-        class="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm"
-      >
+      <label for="id_offense_type">Offense Type</label>
+      <select id="id_offense_type" name="offense_type">
         <option value="">Select Offense</option>
         <option value="Cheating">Cheating</option>
         <option value="Bullying">Bullying</option>
         <option value="Others">Others</option>
       </select>
+      <input type="text" id="other_offense" name="other_offense"
+      placeholder="Specify offense" hidden" />
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label for="id_description">Description</label>
+      <textarea id="id_description" name="description" rows="3"></textarea>
+    </div>
+
+    <!-- Reported By -->
+    <div>
+      <label for="id_reported_by">Reported By</label>
       <input
         type="text"
-        id="other_offense"
-        name="other_offense"
-        placeholder="Specify offense"
-        class="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm hidden"
+        id="id_reported_by"
+        name="reported_by"
+        value="{{ user.username }}"
+        readonly
       />
     </div>
 
     <!-- Action Taken -->
     <div>
-      <label
-        class="block text-sm font-medium text-gray-700 mb-1"
-        for="id_action_taken"
-        >Action Taken</label
-      >
-      <select
-        id="id_action_taken"
-        name="action_taken"
-        class="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm"
-      >
+      <label for="id_action_taken">Action Taken</label>
+      <select id="id_action_taken" name="action_taken">
         <option value="">Select Action</option>
         <option value="Community Service">Community Service</option>
         <option value="Suspension">Suspension</option>
         <option value="Counseling">Counseling</option>
       </select>
 
-      <input
-        type="number"
-        id="community_hours"
-        name="community_hours"
-        placeholder="Number of Hours"
-        class="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm hidden"
-      />
+      <input type="number" id="community_hours" name="community_hours"
+      placeholder="Number of Hours" hidden" /> <input type="text"
+      id="suspension_duration" name="suspension_duration" placeholder="Number of
+      Days/Semester" hidden" />
+    </div>
 
-      <input
-        type="text"
-        id="suspension_duration"
-        name="suspension_duration"
-        placeholder="Number of Days/Semester"
-        class="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm hidden"
-      />
+    <!-- Case Status -->
+    <div>
+      <label for="id_status">Status</label>
+      <select id="id_status" name="status">
+        <option value="Pending">Pending</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+    </div>
+
+    <!-- Evidence Attachment -->
+    <div>
+      <label>Attachment (optional)</label>
+      <input type="file" name="evidence" />
     </div>
 
     <div class="flex justify-end">
-      <button
-        type="submit"
-        class="bg-blue-600 hover:bg-blue-700 transition-colors px-6 py-2 rounded text-white font-semibold shadow"
-      >
-        Submit
-      </button>
+      <button type="submit">Submit</button>
     </div>
   </form>
   {% endif %}
 
-  <!-- Table -->
+  <!-- Case Table -->
   <div class="overflow-x-auto">
-    <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow">
-      <thead class="bg-blue-100">
+    <table>
+      <thead>
         <tr>
-          <th class="px-4 py-2 border-b font-semibold text-blue-800">
-            Student
-          </th>
-          <th class="px-4 py-2 border-b font-semibold text-blue-800">
-            Offense
-          </th>
-          <th class="px-4 py-2 border-b font-semibold text-blue-800">Date</th>
-          <th class="px-4 py-2 border-b font-semibold text-blue-800">Status</th>
-          <th class="px-4 py-2 border-b font-semibold text-blue-800">
-            Actions
-          </th>
+          <th>Student</th>
+          <th>Offense</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for case in case_list %}
-        <tr class="hover:bg-blue-50 transition">
-          <td class="px-4 py-2 border-b">
-            {{ case.student.firstname }} {{ case.student.lastname }}
-          </td>
-          <td class="px-4 py-2 border-b">{{ case.offense_type }}</td>
-          <td class="px-4 py-2 border-b">{{ case.date_reported }}</td>
-          <td class="px-4 py-2 border-b">
+        <tr>
+          <td>{{ case.student.firstname }} {{ case.student.lastname }}</td>
+          <td>{{ case.offense_type }}</td>
+          <td>{{ case.date_reported }}</td>
+          <td>
             <span
               class="inline-block px-2 py-1 rounded-full {% if case.status == 'Pending' %}bg-yellow-100 text-yellow-800{% elif case.status == 'Resolved' %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-800{% endif %}"
             >
@@ -169,15 +326,17 @@
             </span>
           </td>
           <td class="px-4 py-2 border-b">
+            {% if user.is_authenticated %}
+
             <!-- prettier-ignore -->
-            {% if user.is_authenticated %} {% if user.role == 'superadmin' or user.role == 'guard' %} {% if case.action_taken == 'Counseling' %}
+            {% if user.role == 'superadmin' or user.role == 'guard' %}
+                {% if case.action_taken == 'Counseling' %}
             <a
               href="{% url 'counseling_form' case.id %}"
               class="text-blue-600 hover:underline font-medium"
             >
               {{ case.action_taken }}
             </a>
-
             {% elif case.action_taken == 'Suspension' %}
             <button
               class="suspensionBtn text-red-600 hover:underline font-medium"
@@ -186,7 +345,6 @@
             >
               Suspension
             </button>
-
             {% else %}
             <a
               href="{% url 'student_hours' case.id %}"
@@ -194,9 +352,24 @@
             >
               {{ case.action_taken }}
             </a>
-            {% endif %} {% else %} {{ case.action_taken }} {% endif %}
-            <!-- prettier-ignore -->
             {% endif %}
+            <!-- Edit / Delete Buttons -->
+            <a
+              href="#"
+              class="editBtn text-green-600 hover:underline font-medium ml-2"
+              data-id="{{ case.id }}"
+            >
+              Edit
+            </a>
+            <a
+              href="#"
+              class="deleteBtn text-red-600 hover:underline font-medium ml-2"
+              data-id="{{ case.id }}"
+            >
+              Delete
+            </a>
+
+            {% else %} {{ case.action_taken }} {% endif %} {% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -204,10 +377,59 @@
     </table>
   </div>
 </div>
+<div
+  id="editModal"
+  class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+>
+  <div class="bg-white rounded-lg shadow-lg w-1/2 p-6">
+    <h2 class="text-xl font-semibold mb-4">Edit Case</h2>
+    <form id="editForm" method="post">
+      {% csrf_token %}
+      <div id="editFormFields"><!-- AJAX injected form here --></div>
+      <div class="flex justify-end mt-4">
+        <button
+          type="button"
+          id="closeEdit"
+          class="px-4 py-2 bg-gray-400 text-white rounded mr-2"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Suspension Modal Script -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+  const editModal = document.getElementById("editModal");
+  const editForm = document.getElementById("editForm");
+  const editFormFields = document.getElementById("editFormFields");
+
+  document.querySelectorAll(".editBtn").forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      const caseId = this.dataset.id;
+
+      // Load form via AJAX
+      fetch(`/main/cases/edit/${caseId}/`)
+        .then((res) => res.text())
+        .then((html) => {
+          editFormFields.innerHTML = html;
+          editForm.action = `/main/cases/edit/${caseId}/`;
+          editModal.classList.remove("hidden");
+        });
+    });
+  });
+
+  document.getElementById("closeEdit").addEventListener("click", () => {
+    editModal.classList.add("hidden");
+  });
+
   document.addEventListener("DOMContentLoaded", function () {
-    // Handle Suspension SweetAlert
     document.querySelectorAll(".suspensionBtn").forEach((btn) => {
       btn.addEventListener("click", function () {
         const caseId = this.dataset.id;
@@ -216,26 +438,24 @@
         Swal.fire({
           title: "Set Suspension Duration",
           html: `
-          <select id="suspensionType" class="swal2-select">
-            <option value="days">Days</option>
-            <option value="semester">Semester</option>
-          </select>
-          <input type="number" id="suspensionValue" 
-                 class="swal2-input" 
-                 placeholder="Enter value" 
-                 value="${currentDuration}">
-        `,
+            <select id="suspensionType" class="swal2-select">
+              <option value="days">Days</option>
+              <option value="semester">Semester</option>
+            </select>
+            <input type="number" id="suspensionValue" 
+                   class="swal2-input" 
+                   placeholder="Enter value" 
+                   value="${currentDuration}">
+          `,
           confirmButtonText: "Save",
           showCancelButton: true,
           preConfirm: () => {
             const type = document.getElementById("suspensionType").value;
             const value = document.getElementById("suspensionValue").value;
-
             if (!value) {
               Swal.showValidationMessage("Please enter a value");
               return false;
             }
-
             return { type, value };
           },
         }).then((result) => {
@@ -263,14 +483,8 @@
         });
       });
     });
-  });
-</script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // =======================
-    // Offense Type toggle
-    // =======================
+    // Toggle Offense "Others"
     document
       .getElementById("id_offense_type")
       .addEventListener("change", function () {
@@ -279,9 +493,7 @@
           .classList.toggle("hidden", this.value !== "Others");
       });
 
-    // =======================
-    // Action Taken toggle
-    // =======================
+    // Toggle Action Taken
     document
       .getElementById("id_action_taken")
       .addEventListener("change", function () {
@@ -293,42 +505,7 @@
           .classList.toggle("hidden", this.value !== "Suspension");
       });
 
-    // =======================
-    // Student Search with AJAX
-    // =======================
-  });
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Offense Type toggle
-    const offenseSelect = document.getElementById("id_offense_type");
-    const otherOffense = document.getElementById("other_offense");
-
-    offenseSelect.addEventListener("change", function () {
-      otherOffense.classList.toggle("hidden", this.value !== "Others");
-    });
-
-    // Action Taken toggle
-    const actionSelect = document.getElementById("id_action_taken");
-    const communityHours = document.getElementById("community_hours");
-    const suspensionDuration = document.getElementById("suspension_duration");
-
-    actionSelect.addEventListener("change", function () {
-      communityHours.classList.toggle(
-        "hidden",
-        this.value !== "Community Service"
-      );
-      suspensionDuration.classList.toggle(
-        "hidden",
-        this.value !== "Suspension"
-      );
-      if (this.value === "Counseling" || this.value === "") {
-        communityHours.classList.add("hidden");
-        suspensionDuration.classList.add("hidden");
-      }
-    });
-
-    // Student Search with AJAX
+    // Student Search AJAX
     const studentInput = document.getElementById("id_student");
     const studentDetails = document.getElementById("student_details");
 
@@ -337,7 +514,6 @@
         studentDetails.classList.add("hidden");
         return;
       }
-
       fetch(`/main/get-student/${studentID}/`)
         .then((response) => response.json())
         .then((data) => {
@@ -345,19 +521,53 @@
             document.getElementById("student_name").textContent = data.name;
             document.getElementById("student_course").textContent = data.course;
             document.getElementById("student_year").textContent = data.year;
+            studentDetails.classList.remove("hidden");
           } else {
             studentDetails.classList.add("hidden");
           }
         });
     }
 
-    // Always fetch on input or change
     studentInput.addEventListener("input", function () {
       fetchStudentDetails(this.value.trim());
     });
-
     studentInput.addEventListener("change", function () {
       fetchStudentDetails(this.value.trim());
+    });
+  });
+  document.querySelectorAll(".deleteBtn").forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      const caseId = this.dataset.id;
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/main/cases/delete/${caseId}/`, {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+          }).then((res) => {
+            if (res.ok) {
+              Swal.fire(
+                "Deleted!",
+                "The case has been deleted.",
+                "success"
+              ).then(() => location.reload());
+            } else {
+              Swal.fire("Error", "Could not delete case.", "error");
+            }
+          });
+        }
+      });
     });
   });
 </script>

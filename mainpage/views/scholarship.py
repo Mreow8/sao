@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from ..models import LiquidationTDP, studentInfo, scholars, Requirement, applicants,SemesterDetails, AdminRequest,tesDisbursement,tdpDisbursement
+from ..models import LiquidationTDP, studentInfo, scholars, Requirement, applicants,SemesterDetails, AdminRequest, staffInfo, tesDisbursement,tdpDisbursement
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 import pytesseract
@@ -51,45 +51,51 @@ def studenthome(request):
 def logoutuser(request):
     logout(request)
     return redirect('signinuser')
+
+User = get_user_model()
 def signupuser(request):
     error_message = None
 
     if request.method == 'POST':
-        studentID = request.POST.get('studID')
-        email = request.POST.get('email')
+        user_id = request.POST.get('studID').strip()  # could be studentID or staffID
+        email = request.POST.get('email').strip()
         password = request.POST.get('password')
         cpassword = request.POST.get('cpassword')
 
-        # Check if student ID exists in studentInfo
-        try:
-            student = studentInfo.objects.get(studID=studentID)
-        except studentInfo.DoesNotExist:
-            error_message = 'Invalid student ID.'
-            return render(request, 'scholarship/register.html', {'error_message': error_message})
-
-        # Password and user checks
         if cpassword != password:
-            error_message = 'Passwords do not match.'
+            error_message = "Passwords do not match."
         elif len(password) < 8:
-            error_message = 'Password must be at least 8 characters.'
-        elif User.objects.filter(username=studentID).exists():
-            error_message = 'Student ID already exists.'
+            error_message = "Password must be at least 8 characters."
         elif User.objects.filter(email=email).exists():
-            error_message = 'Email already exists.'
+            error_message = "Email already exists."
         else:
-            # ✅ Create user
-            user = User.objects.create_user(username=studentID, email=email, password=password)
-            user.save()
-
-            # ✅ Link studentInfo to this new user
-            student.user = user
-            student.save()
-
-            messages.success(request, 'Account created successfully. Please log in.')
-            return redirect('signinuser')
+            # Try student first
+            try:
+                student_obj = studentInfo.objects.get(studID=user_id)
+                if User.objects.filter(username=user_id).exists():
+                    error_message = "Student ID already exists."
+                else:
+                    user = User.objects.create_user(username=user_id, email=email, password=password)
+                    student_obj.user = user
+                    student_obj.save()
+                    messages.success(request, "Student account created successfully. Please log in.")
+                    return redirect('signinuser')
+            except studentInfo.DoesNotExist:
+                # Try staff
+                try:
+                    staff_obj = staffInfo.objects.get(staffID=user_id)
+                    if User.objects.filter(username=user_id).exists():
+                        error_message = "Staff ID already exists."
+                    else:
+                        user = User.objects.create_user(username=user_id, email=email, password=password)
+                        staff_obj.user = user
+                        staff_obj.save()
+                        messages.success(request, "Staff account created successfully. Please log in.")
+                        return redirect('signinuser')
+                except staffInfo.DoesNotExist:
+                    error_message = "Invalid ID. No matching student or staff found."
 
     return render(request, 'scholarship/register.html', {'error_message': error_message})
-
 
 def signinuser(request):
     if request.method == 'POST':
@@ -103,18 +109,21 @@ def signinuser(request):
             return render(request, 'login.html')
 
         if not user_obj.is_active:
-            messages.error(request, "This account is inactive. Please contact admin.")
+            messages.error(request, "This account is inactive. Contact admin.")
             return render(request, 'login.html')
 
-        # Authenticate using username, since Django's default auth uses username
         user = authenticate(request, username=user_obj.username, password=password)
 
-        if user is not None:
+        if user:
             login(request, user)
+            
+            # Redirect based on user type
             if user.is_superuser:
                 return redirect('adminmain')
-            elif user.role == 'student':  # Adjusted for your CustomUser model
-                return redirect('homepage')
+            elif hasattr(user, 'studentinfo'):
+                return redirect('student_homepage')
+            elif hasattr(user, 'staffinfo'):
+                return redirect('staff_homepage')
             else:
                 return redirect('homepage')
         else:

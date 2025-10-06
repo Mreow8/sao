@@ -1,0 +1,211 @@
+{% extends base_template|default:"adminmain.html" %} {% load static %}
+<!-- prettier-ignore -->
+{% block  title %}Student Organization ({{ organization.name|default:"TECHNOCRATS" }}){% endblock  %}
+<!-- prettier- -->
+{%block bodycontent%}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+
+<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/profiles.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/general.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/sub-title.css' %}" />
+
+<link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  input[type="file"],
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  button {
+    background-color: #ff8000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    height: 60px;
+    width: 90px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #ff8000;
+  }
+</style>
+
+<div class="container">
+  <div class="sub-title">
+    <h3>STUDENT ORGANIZATION</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
+  </div>
+  <div class="tabs">
+    <a href="" class="tab active">Profiles</a>
+    <a
+      href="{% url 'view_project_by_slug' slug=organization.slug %}"
+      class="tab"
+      >Projects</a
+    >
+    <a
+      href="{% url 'view_financial_by_slug' slug=organization.slug %}"
+      class="tab"
+      >Financial Statements</a
+    >
+  </div>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <input
+      type="hidden"
+      name="organization"
+      value="{{ organization.org_id }}"
+    />
+    <p><strong>Organization:</strong> {{ organization.name }}</p>
+
+    <label for="letter_of_intent">Letter of Intent:</label>
+    {{ form.letter_of_intent }} {% if uploaded_files.letter_of_intent %}
+    <a href="{{ uploaded_files.letter_of_intent.url }}" target="_blank"
+      >View Uploaded Letter of Intent</a
+    >
+    {% endif %}
+
+    <label for="list_of_officers">List of Officers:</label>
+    {{ form.list_of_officers }} {% if uploaded_files.list_of_officers %}
+    <a href="{{ uploaded_files.list_of_officers.url }}" target="_blank"
+      >View Uploaded List of Officers</a
+    >
+    {% endif %}
+
+    <label for="certificate_of_registration"
+      >Certificate of Registration:</label
+    >
+    {{ form.certificate_of_registration }}
+    <!-- prettier-ignore -->
+    {% if  uploaded_files.certificate_of_registration %}
+    <a
+      href="{{ uploaded_files.certificate_of_registration.url }}"
+      target="_blank"
+      >View Uploaded Certificate of Registration</a
+    >
+    {% endif %}
+
+    <label for="list_of_members">List of Members:</label>
+    {{ form.list_of_members }} {% if uploaded_files.list_of_members %}
+    <a href="{{ uploaded_files.list_of_members.url }}" target="_blank"
+      >View Uploaded List of Members</a
+    >
+    {% endif %}
+
+    <label for="accomplishment_report">Accomplishment Report:</label>
+    {{ form.accomplishment_report }}
+    <!-- prettier-ignore -->
+
+    {% if   uploaded_files.accomplishment_report %}
+    <a href="{{ uploaded_files.accomplishment_report.url }}" target="_blank"
+      >View Uploaded Accomplishment Report</a
+    >
+    {% endif %}
+
+    <label for="calendar_of_activities">Calendar of Activities:</label>
+    {{ form.calendar_of_activities }}
+    <!-- prettier-ignore -->
+
+    {% if    uploaded_files.calendar_of_activities %}
+    <a href="{{ uploaded_files.calendar_of_activities.url }}" target="_blank"
+      >View Uploaded Calendar of Activities</a
+    >
+    {% endif %}
+
+    <label for="financial_statement">Financial Statement:</label>
+    <!-- prettier-ignore -->
+
+    {{ form.financial_statement }} {% if uploaded_files.financial_statement     %}
+    <a href="{{ uploaded_files.financial_statement.url }}" target="_blank"
+      >View Uploaded Financial Statement</a
+    >
+    {% endif %}
+
+    <label for="bank_passbook">Bank Passbook:</label>
+    {{ form.bank_passbook }} {% if uploaded_files.bank_passbook %}
+    <a href="{{ uploaded_files.bank_passbook.url }}" target="_blank"
+      >View Uploaded Bank Passbook</a
+    >
+    {% endif %}
+
+    <label for="inventory_of_properties">Inventory of Properties:</label>
+    <!-- prettier-ignore -->
+
+    {{ form.inventory_of_properties }} {% if  uploaded_files.inventory_of_properties %}
+    <a href="{{ uploaded_files.inventory_of_properties.url }}" target="_blank"
+      >View Uploaded Inventory of Properties</a
+    >
+    {% endif %}
+
+    <label for="organization_bylaws">Organization Bylaws:</label>
+    <!-- prettier-ignore -->
+
+    {{ form.organization_bylaws }} {% if uploaded_files.organization_bylaws  %}
+    <a href="{{ uploaded_files.organization_bylaws.url }}" target="_blank"
+      >View Uploaded Organization Bylaws</a
+    >
+    {% endif %}
+
+    <label for="faculty_adviser_appointment"
+      >Faculty Adviser Appointment:</label
+    >
+    <!-- prettier-ignore -->
+
+    {{ form.faculty_adviser_appointment }} {% if   uploaded_files.faculty_adviser_appointment %}
+    <a
+      href="{{ uploaded_files.faculty_adviser_appointment.url }}"
+      target="_blank"
+      >View Uploaded Faculty Adviser Appointment</a
+    >
+    {% endif %}
+
+    <label for="other_documents">Other Documents:</label>
+    {{ form.other_documents }} {% if uploaded_files.other_documents %}
+    <a href="{{ uploaded_files.other_documents.url }}" target="_blank"
+      >View Uploaded Other Documents</a
+    >
+    {% endif %}
+
+    <button type="submit">Submit</button>
+  </form>
+</div>
+{%endblock%}

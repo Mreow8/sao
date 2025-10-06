@@ -1,3 +1,83 @@
+/* 📱 Responsive Styles for Student Organization Page */
+@media (max-width: 768px) {
+  /* Sub-title */
+  .sub-title h3 {
+    font-size: 18px;
+    text-align: center;
+  }
+  .sub-title p {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  /* Tabs */
+
+  /* Containers */
+  .maincontain {
+    padding: 10px;
+  }
+  .subcontain {
+    padding: 10px;
+  }
+  .text-content h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* Logo */
+  .logoimg {
+    max-width: 180px;
+    height: auto;
+    display: block;
+    margin: 10px auto;
+  }
+
+  /* Buttons */
+  .button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    font-size: 14px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  /* Key elements list */
+  .pf2 ul {
+    padding-left: 20px;
+    font-size: 14px;
+  }
+  .pf2 li {
+    margin-bottom: 5px;
+  }
+
+  /* Form input fields */
+  .key-input {
+    width: 100%;
+    margin-bottom: 8px;
+    font-size: 14px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub-title h3 {
+    font-size: 16px;
+  }
+  .sub-title p {
+    font-size: 12px;
+  }
+
+  .button {
+    font-size: 13px;
+    padding: 8px;
+  }
+  .key-input {
+    font-size: 13px;
+    padding: 6px;
+  }
+}
+
 .pcontainer {
   margin-left: 210px;
   padding: 20px;
@@ -19,36 +99,6 @@
   height: 200px;
   margin-right: 20px;
   border-radius: 10px;
-}
-
-.tabs {
-  display: flex;
-  margin-top: 10px;
-}
-
-.tab {
-  padding: 10px 20px;
-  text-decoration: none;
-  background-color: #f1f1f1;
-  color: black;
-  border: 1px solid #ccc;
-  border-bottom: none;
-  border-radius: 5px 5px 0 0;
-  margin-bottom: -3px;
-  margin-right: 2px;
-  transition: transform 0.3s, border-radius 0.3s;
-}
-
-.tab:hover {
-  background-color: #e0e0e0;
-  transform: translateY(-3px);
-  border-radius: 5px 5px 0 0;
-  text-decoration: none;
-}
-
-.tab.active {
-  background-color: white;
-  border-bottom: 2px solid white;
 }
 
 .maincontain {
@@ -74,7 +124,6 @@ textarea {
   display: flex;
   align-items: flex-start;
   overflow: auto;
-  height: 450px;
 }
 
 .left-image {
@@ -150,10 +199,6 @@ textarea {
   border: 1px solid #ccc;
   width: 100%;
   box-sizing: border-box;
-}
-
-table {
-  border-collapse: collapse;
 }
 
 .pages a,

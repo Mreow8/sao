@@ -1,0 +1,3 @@
+signup and signin view =is located in scholarship.py
+studentinfo model and staff = is in guidance.py
+upload student view= inde the guidance.py

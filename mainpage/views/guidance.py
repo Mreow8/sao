@@ -3,8 +3,8 @@ from datetime import datetime
 import json
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from ..forms import CounselingSchedulerForm, IndividualProfileForm, FileUpload, UploadFileForm, ExitInterviewForm, OjtAssessmentForm
-from ..models import TestArray, studentInfo, counseling_schedule, exit_interview_db, OjtAssessment, IndividualProfileBasicInfo, IntakeInverView
+from ..forms import CounselingSchedulerForm, IndividualProfileForm, FileUpload, UploadFileForm, ExitInterviewForm, OjtAssessmentForm, StaffForm
+from ..models import TestArray, studentInfo, counseling_schedule, exit_interview_db, OjtAssessment, IndividualProfileBasicInfo, IntakeInverView, staffInfo
 from django.utils import timezone
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
@@ -12,7 +12,54 @@ from django.template.defaulttags import register
 from django.core.mail import send_mail
 from django.http import HttpResponse
 
+# def upload_files(request):
+#     if request.method == 'POST':
+#         form = UploadFileForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             csv_file = request.FILES['file']
+#             decoded_file = csv_file.read().decode('utf-8').splitlines()
+#             reader = csv.DictReader(decoded_file)
+            
+#             for row in reader:
+#                 studentInfo.objects.create(
+#                     studID=row['studID'],
+#                     lrn=row['lrn'],
+#                     lastname=row['lastname'],
+#                     firstname=row['firstname'],
+#                     middlename=row['middlename'],
+#                     degree=row['degree'],
+#                     yearlvl=row['yearlvl'],
+#                     sex=row['sex'],
+#                     emailadd=row['emailadd'],
+#                     contact=row['contact']
+#                 )
+            
+#             messages.success(request, 'File uploaded and data imported successfully')
+#             return redirect('upload_file')
+#     else:
+#         form = UploadFileForm()
+#     return render(request, 'upload.html', {'form': form})
 def upload_files(request):
+    student_form = UploadFileForm()
+    staff_form = UploadFileForm()
+    staff_manual_form = StaffForm()
+
+    return render(request, 'upload.html', {
+        'form': student_form,   # for students
+        'staff_form': staff_form,   # for staff CSV
+        'staff_manual_form': staff_manual_form  # for manual staff
+    })
+
+def staff_input(request):
+    if request.method == "POST":
+        form = StaffForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("staff_input")  # reload page after save
+    else:
+        form = StaffForm()
+    return render(request, "staff_input.html", {"form": form})
+def staff_upload(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -21,14 +68,12 @@ def upload_files(request):
             reader = csv.DictReader(decoded_file)
             
             for row in reader:
-                studentInfo.objects.create(
-                    studID=row['studID'],
+                staffInfo.objects.create(
+                    staffID=row['staffID'],
                     lrn=row['lrn'],
                     lastname=row['lastname'],
                     firstname=row['firstname'],
                     middlename=row['middlename'],
-                    degree=row['degree'],
-                    yearlvl=row['yearlvl'],
                     sex=row['sex'],
                     emailadd=row['emailadd'],
                     contact=row['contact']
@@ -38,7 +83,7 @@ def upload_files(request):
             return redirect('upload_file')
     else:
         form = UploadFileForm()
-    return render(request, 'guidance/upload.html', {'form': form})
+    return render(request, 'upload.html', {'form': form})
 
 #Page View
 def home(request):

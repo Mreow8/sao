@@ -1,62 +1,49 @@
-section {
-    display: flex;
-    flex-direction: column;
-    margin: 1rem;
-}
-h1, h4{
-    margin: .2rem;
-}
-h1{
-    color: #FF8000;
-}
-hr {
-    margin: 20px 0;
-    width: 100%;
-}
-.admintable{
-    width: 100%;
-    overflow-x: auto; 
-}
-table{
-    font-size: 15px;
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
-    margin: .2rem;
-    table-layout: fixed; 
-    border-radius: 6px;
-}
-thead{
-    background-color: #FF8000;
-    color: #ffffff;
-    border-radius: 6px;
-
+/* Container styling */
+.admintable {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  font-family: "Arial", sans-serif;
 }
 
-th, td{
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 15px;
-    word-wrap: break-word;
-    white-space: normal;
+/* Table styling */
+.admintable table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
-th{
-    border: none;
+
+/* Table header */
+.admintable th {
+  background-color: #4caf50; /* GMC green-ish */
+  color: white;
+  font-weight: 600;
+  padding: 12px 15px;
+  text-align: left;
+  text-transform: none; /* normal capitalization */
+  font-size: 14px;
+  border-bottom: 2px solid #ddd;
 }
-td{
-    border: none;
+
+/* Table rows */
+.admintable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
 }
-button {
-    padding: 5px 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+
+/* Hover effect for rows */
+.admintable tbody tr:hover {
+  background-color: #f1f8f5; /* light green background on hover */
 }
-button:hover {
-    background-color: #0056b3;
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .admintable th,
+  .admintable td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
 }

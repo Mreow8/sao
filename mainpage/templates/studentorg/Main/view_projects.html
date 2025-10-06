@@ -29,10 +29,11 @@
   <div class="tabs">
     <a href="{% url 'org_profile' slug=org.slug %}" class="tab">Profiles</a>
     <a href="" class="tab active">Projects</a>
-    <a href="{% url 'financial_statements' slug=org.slug %}" class="tab">
-      Financial Statements</a
+    <a href="{% url 'view_financial_by_slug' slug=org.slug %}" class="tab"
+      >Financial Statements</a
     >
-    <a href="/{{ org.slug|default:'TECHNOCRATS' }}_accreditation" class="tab"
+
+    <a href="{% url 'view_accreditation_by_slug' slug=org.slug %}" class="tab"
       >Accreditation Application</a
     >
   </div>
@@ -125,7 +126,6 @@
   <!-- Project Table View -->
   <div class="maincontain" style="margin-top: 40px">
     <div class="subcontain">
-      <h2>Submitted Projects</h2>
       <table>
         <thead>
           <tr>

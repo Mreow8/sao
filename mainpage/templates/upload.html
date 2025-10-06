@@ -1,0 +1,38 @@
+{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/upload.css' %}"
+/>
+<div class="sub-title">
+  <h3>OFFICE OF STUDENT LIFE</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Upload CSV / Manual Input</p>
+</div>
+
+<div class="main-wrapper">
+  <!-- Left side: Uploads -->
+  <div class="upload-section">
+    <!-- Student Upload -->
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit" name="student_upload">Upload Students</button>
+    </form>
+
+    <!-- Staff Upload -->
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %} {{ staff_form.as_p }}
+      <button type="submit" name="staff_upload">Upload Staff</button>
+    </form>
+  </div>
+
+  <!-- Right side: Manual Input -->
+  <div class="manual-section">
+    <form method="post">
+      {% csrf_token %} {{ staff_manual_form.as_p }}
+      <button type="submit" name="staff_manual">Save Staff</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

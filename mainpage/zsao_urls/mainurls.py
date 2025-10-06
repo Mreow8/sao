@@ -5,11 +5,13 @@ from .. import views
 from ..views import org_profile, add_organization
 
 urlpatterns = [
-     
-           path('assign-role/', views.assign_role, name='assign_role'),
+ path("cases/edit/<int:case_id>/", views.edit_case, name="edit_case"),
+    path("cases/delete/<int:case_id>/", views.delete_case, name="delete_case"),
+           path('assign-role/', views.assign_role, name='assign_role'), 
+           path('staff_upload/', views.staff_upload, name='staff_upload'),
 # urls.py
 path("update-suspension/<int:case_id>/", views.update_suspension, name="update_suspension"),
-
+  path("organizations/<slug:slug>/accreditations/upload/", views.upload_accreditation, name="view_accreditation_by_slug"),
     # ... your other direct paths ...
     # urls.py
 path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
@@ -17,8 +19,8 @@ path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
    path('Gen_Home', views.Gen_Home, name="Gen_Home"),
     path('add-organization/', add_organization, name='add_organization'),
     path('org/<slug:slug>/', org_profile, name='org_profile'),
-path('<slug:slug>_financial/', views.view_financial, name='financial_statements'),
-
+  path('<slug:slug>_financial/', views.view_financial, name='view_financial_by_slug'),
+    path('<slug:org_slug>/advisers/', views.view_adviser, name='view_adviser'),
 
       path('officer/<slug:slug>/', views.view_officers, name='view_officers'),
         path('projects/<slug:slug>/', views.view_project_by_slug, name='view_project_by_slug'),

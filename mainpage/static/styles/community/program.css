@@ -118,14 +118,14 @@
 }
 
 /* Post caption */
-.program-card p:first-of-type {
+.program-card p:last-of-type {
   margin: 6px 0 4px;
   color: #65676b;
   font-size: 14px;
 }
 
 /* Post description */
-.program-card p:last-of-type {
+.program-card p:first-of-type {
   margin: 0 0 10px;
   font-size: 15px;
   color: #050505;

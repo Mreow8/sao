@@ -27,6 +27,23 @@ class studentInfo(models.Model):
         
     def __str__(self):
         return f"{self.studID}"
+
+class staffInfo(models.Model):
+
+    from django.conf import settings
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    staffID = models.IntegerField(primary_key=True)
+    lastname = models.CharField(max_length=100)
+    firstname = models.CharField(max_length=100)
+    middlename = models.CharField(max_length=50)
+    sex = models.CharField(max_length=10)
+    emailadd = models.EmailField(default='N/A')
+    contact = models.CharField(max_length=11, default='N/A')
+    extension = models.CharField(max_length=10, default='N/A')
+        
+    def __str__(self):
+        return f"{self.staffID}"
 # class studentInfo(models.Model):
 #     studID = models.IntegerField(primary_key=True)
 #     lrn = models.CharField(max_length=12)

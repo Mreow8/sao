@@ -17,6 +17,49 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
+  /* 🔹 SweetAlert2 custom styles for small screens */
+  @media (max-width: 768px) {
+    .swal2-popup {
+      width: 90% !important; /* fit screen width */
+      font-size: 14px !important;
+      padding: 1rem !important;
+    }
+
+    .swal2-title {
+      font-size: 18px !important;
+    }
+
+    .swal2-input,
+    .swal2-file {
+      font-size: 14px !important;
+      padding: 10px !important;
+      width: 100% !important;
+    }
+
+    .swal2-actions {
+      flex-direction: column !important;
+      gap: 8px;
+    }
+
+    .swal2-confirm,
+    .swal2-cancel {
+      width: 100% !important;
+      font-size: 14px !important;
+      padding: 10px !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .swal2-popup {
+      width: 95% !important;
+      font-size: 13px !important;
+    }
+
+    .swal2-title {
+      font-size: 16px !important;
+    }
+  }
+
   .pages a,
   .pages {
     color: black;
@@ -54,102 +97,91 @@
 </style>
 {% endblock %} {% block bodycontent %}
 <div class="container">
-  <div
-    class="headert"
-    style="margin-left: 100px; text-align: center; justify-content: center"
-  >
-    <div class="sub-title">
-      <h3>STUDENT ORGANIZATION</h3>
-      <p class="hometext">Home</p>
-      <p class="certxt">&gt; CTU-AC STUDENT ORGS</p>
-    </div>
-
-    {% if user.is_authenticated and user.role == 'superadmin'%}
-
-    <button class="add-org-btn" id="addOrgBtn">
-      <i class="fa fa-plus"></i> Add Organization
-    </button>
-    {% endif %}
-
-    <div class="row" id="orgImagesRow1">
-      {% for org in orgs %}
-      <a href="{% url 'org_profile' slug=org.slug %}" class="image">
-        <img src="{{ org.logo.url }}" alt="{{ org.name }}" />
-      </a>
-      {% endfor %}
-    </div>
-
-    <script>
-      document
-        .getElementById("addOrgBtn")
-        .addEventListener("click", function () {
-          Swal.fire({
-            title: "Add New Organization",
-            html:
-              '<input id="orgName" class="swal2-input" placeholder="Organization Name">' +
-              '<input id="orgImg" type="file" accept="image/*" class="swal2-file">',
-            focusConfirm: false,
-            preConfirm: () => {
-              const name = document.getElementById("orgName").value.trim();
-              const imgInput = document.getElementById("orgImg");
-              const file = imgInput.files[0];
-              if (!name || !file) {
-                Swal.showValidationMessage(
-                  "Please fill out all fields and select an image"
-                );
-                return false;
-              }
-              return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                  resolve({ name, imgData: e.target.result });
-                };
-                reader.readAsDataURL(file);
-              });
-            },
-            showCancelButton: true,
-            confirmButtonText: "Add",
-          }).then((result) => {
-            if (result.isConfirmed && result.value) {
-              const formData = new FormData();
-              formData.append("name", result.value.name);
-              formData.append("imgData", result.value.imgData);
-
-              fetch("{% url 'add_organization' %}", {
-                method: "POST",
-                headers: {
-                  "X-CSRFToken": "{{ csrf_token }}",
-                },
-                body: formData,
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.success) {
-                    const orgLinks = document.getElementById("orgLinks");
-                    orgLinks.innerHTML += ` - <a href="/org/${data.slug}/">${data.name}</a>`;
-
-                    const orgImagesRow2 =
-                      document.getElementById("orgImagesRow2");
-                    const a = document.createElement("a");
-                    a.href = `/org/${data.slug}/`;
-                    a.className = "image";
-                    a.innerHTML = `<img src="${data.image_url}" alt="${data.name}"/><div style="text-align:center;">${data.name}</div>`;
-                    orgImagesRow2.appendChild(a);
-
-                    Swal.fire(
-                      "Added!",
-                      `${data.name} has been saved.`,
-                      "success"
-                    );
-                  } else {
-                    Swal.fire("Error", data.error, "error");
-                  }
-                });
-            }
-          });
-        });
-    </script>
-    <script src="{% static 'guidance/scripts/main.js' %}"></script>
-    {% endblock %}
+  <div class="sub-title">
+    <h3>STUDENT ORGANIZATION</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; CTU-AC STUDENT ORGS</p>
   </div>
+
+  {% if user.is_authenticated and user.role == 'superadmin'%}
+
+  <button class="add-org-btn" id="addOrgBtn">
+    <i class="fa fa-plus"></i> Add Organization
+  </button>
+  {% endif %}
+
+  <div class="row" id="orgImagesRow1">
+    {% for org in orgs %}
+    <a href="{% url 'org_profile' slug=org.slug %}" class="image">
+      <img src="{{ org.logo.url }}" alt="{{ org.name }}" />
+    </a>
+    {% endfor %}
+  </div>
+
+  <script>
+    document.getElementById("addOrgBtn").addEventListener("click", function () {
+      Swal.fire({
+        title: "Add New Organization",
+        html:
+          '<input id="orgName" class="swal2-input" placeholder="Organization Name">' +
+          '<input id="orgImg" type="file" accept="image/*" class="swal2-file">',
+        focusConfirm: false,
+        preConfirm: () => {
+          const name = document.getElementById("orgName").value.trim();
+          const imgInput = document.getElementById("orgImg");
+          const file = imgInput.files[0];
+          if (!name || !file) {
+            Swal.showValidationMessage(
+              "Please fill out all fields and select an image"
+            );
+            return false;
+          }
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              resolve({ name, imgData: e.target.result });
+            };
+            reader.readAsDataURL(file);
+          });
+        },
+        showCancelButton: true,
+        confirmButtonText: "Add",
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          const formData = new FormData();
+          formData.append("name", result.value.name);
+          formData.append("imgData", result.value.imgData);
+
+          fetch("{% url 'add_organization' %}", {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                const orgLinks = document.getElementById("orgLinks");
+                orgLinks.innerHTML += ` - <a href="/org/${data.slug}/">${data.name}</a>`;
+
+                const orgImagesRow2 = document.getElementById("orgImagesRow2");
+                const a = document.createElement("a");
+                a.href = `/org/${data.slug}/`;
+                a.className = "image";
+                a.innerHTML = `<img src="${data.image_url}" alt="${data.name}"/><div style="text-align:center;">${data.name}</div>`;
+                orgImagesRow2.appendChild(a);
+
+                Swal.fire("Added!", `${data.name} has been saved.`, "success");
+              } else {
+                Swal.fire("Error", data.error, "error");
+              }
+            });
+        }
+      });
+    });
+  </script>
+  <script src="{% static 'guidance/scripts/main.js' %}"></script>
 </div>
+
+{% endblock %}

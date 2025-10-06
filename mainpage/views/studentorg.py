@@ -19,30 +19,100 @@ from django.shortcuts import render, get_object_or_404
 # views.py
 def is_superadmin(user):
     return user.is_authenticated and user.role == 'superadmin'
+from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
+from ..models import Organization, Accreditation, Adviser
+from ..forms import AccreditationForm
+
+def view_adviser(request, org_slug):
+    # Get the organization by slug
+    organization = get_object_or_404(Organization, slug=org_slug)
+
+    # Filter advisers for this organization
+    approved_advisers = Adviser.objects.filter(status='approved', organization=organization)
+
+    return render(request, 'studentorg/main/view_adviser.html', {
+        'advisers': approved_advisers,
+        'organization': organization
+    })
+def upload_accreditation(request, slug):
+    org = get_object_or_404(Organization, slug=slug)
+
+    # Get the latest uploaded accreditation (if any) for showing links
+    uploaded_files = Accreditation.objects.filter(organization=org).last()
+
+    if request.method == "POST":
+        form = AccreditationForm(request.POST, request.FILES)
+        if form.is_valid():
+            accreditation = form.save(commit=False)
+            accreditation.organization = org
+            accreditation.save()
+            return redirect("organization_accreditations", slug=org.slug)
+    else:
+        form = AccreditationForm()
+
+    return render(request, "studentorg/main/accreditation_form.html", {
+        "form": form,
+        "organization": org,
+        "uploaded_files": uploaded_files,
+    })
 
 
+# 2. Show details of a single accreditation
+def accreditation_detail(request, accreditation_id):
+    accreditation = get_object_or_404(Accreditation, pk=accreditation_id)
+
+    return render(request, "main/accreditation_detail.html", {
+        "accreditation": accreditation,
+    })
+from django.contrib import messages
 
 def view_financial(request, slug):
-    org_obj = Organization.objects.get(slug=slug)
-    approved_statements = FinancialStatement.objects.filter(status='approved', org=org_obj)
+    print("🔍 view_financial called with slug:", slug)
+
+    try:
+        org_obj = Organization.objects.get(slug=slug)
+        print("✅ Organization found:", org_obj.name)
+    except Organization.DoesNotExist:
+        print("❌ Organization not found for slug:", slug)
+        messages.error(request, "Organization not found.")
+        return redirect('home')  # or wherever you want to redirect
+
+    # Determine which statements to show
+    if request.user.is_superuser:
+        print("👑 User is superadmin – showing all financial statements.")
+        statements = FinancialStatement.objects.all()
+    else:
+        print(f"👤 Regular user – showing statements for org: {org_obj.name}")
+        statements = FinancialStatement.objects.filter(org=org_obj)
 
     if request.method == 'POST':
+        print("📩 POST request received.")
         form = FinancialStatementForm(request.POST)
         if form.is_valid():
+            print("✅ Form is valid. Saving statement...")
             instance = form.save(commit=False)
             instance.organization_slug = slug
-            instance.org = org_obj  # assuming your model has a ForeignKey to Organization
+            instance.org = org_obj
             instance.save()
+            print("💾 Financial statement saved successfully.")
+            messages.success(request, "Financial statement submitted successfully!")
             return redirect('financial_statements', slug=slug)
+        else:
+            print("❌ Form is invalid. Errors:", form.errors)
+            messages.error(request, "There was an error submitting the form.")
     else:
+        print("📄 GET request – displaying form.")
         form = FinancialStatementForm()
 
+    print("➡️ Rendering template with", statements.count(), "statements.")
     return render(request, 'studentorg/MAIN/view_financial.html', {
         'form': form,
-        'statements': approved_statements,
+        'statements': statements,
         'org': org_obj,
         'slug': slug
     })
+
 
 
 def adviser_form(request, slug):

@@ -153,31 +153,37 @@ class AdviserAdvisoryForm(forms.ModelForm):
 
 
 from django import forms
-from ..models import Accreditation, AccreditationDocument, AccreditationOfficer, AccreditationMember
+from ..models import Accreditation,AccreditationOfficer, AccreditationMember
 
 
 class AccreditationForm(forms.ModelForm):
     class Meta:
         model = Accreditation
         fields = ['organization', 'status']  # ✅ only real fields in Accreditation
+from django import forms
+from ..models import Accreditation
 
-
-class AccreditationDocumentForm(forms.ModelForm):
+class AccreditationForm(forms.ModelForm):
     class Meta:
-        model = AccreditationDocument
+        model = Accreditation
         fields = [
-            'letter_of_intent',
-            'certificate_of_registration',
-            'accomplishment_report',
-            'calendar_of_activities',
-            'financial_statement',
-            'bank_passbook',
-            'inventory_of_properties',
-            'organization_bylaws',
-            'faculty_adviser_appointment',
-            'other_documents',
+            "organization",
+            "letter_of_intent",
+            "list_of_officers",
+            "certificate_of_registration",
+            "list_of_members",
+            "accomplishment_report",
+            "calendar_of_activities",
+            "financial_statement",
+            "bank_passbook",
+            "inventory_of_properties",
+            "organization_bylaws",
+            "faculty_adviser_appointment",
+            "other_documents",
         ]
-
+        widgets = {
+            "organization": forms.Select(attrs={"class": "form-control"}),
+        }
 
 class AccreditationOfficerForm(forms.ModelForm):
     class Meta:

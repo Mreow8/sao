@@ -304,3 +304,30 @@ from django.shortcuts import get_object_or_404
 #         'student': student
 #     }
 #     return render(request, 'main.html', context)
+def delete_case(request, case_id):
+    case = get_object_or_404(CaseProfile, id=case_id)
+
+    if request.method == "POST":
+        case.delete()
+        messages.success(request, "Case deleted successfully.")
+        return redirect("case_profile")  # back to case list
+
+    return render(request, "discipline/delete_case.html", {
+        "case": case,
+    })
+def edit_case(request, case_id):
+    case = get_object_or_404(CaseProfile, id=case_id)
+
+    if request.method == "POST":
+        form = CaseProfileForm(request.POST, request.FILES, instance=case)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Case updated successfully.")
+            return redirect("case_profile")  # redirect to your case list page
+    else:
+        form = CaseProfileForm(instance=case)
+
+    return render(request, "discipline/edit_case.html", {
+        "form": form,
+        "case": case,
+    })

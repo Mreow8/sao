@@ -8,6 +8,7 @@ def validate_file_extension(value):
     valid_extensions = ('.pdf', '.docx', '.jpg', '.jpeg', '.png', '.gif')
     if not value.name.lower().endswith(valid_extensions):
         raise ValidationError('Only .pdf, .docx, .jpg, .jpeg, .png, and .gif files are allowed.')
+    
 class Organization(models.Model):
     id = None  # remoe default 'id'
     org_id = models.AutoField(primary_key=True)
@@ -414,34 +415,40 @@ class FinancialStatement(models.Model):
         return f"{self.date} - {self.purpose}"
 
  
+
+from django.db import models
+
 class Accreditation(models.Model):
     accreditation_id = models.AutoField(primary_key=True)
-    organization = models.CharField(max_length=255)
-    status = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.organization} ({self.status})"
-
-
-class AccreditationDocument(models.Model):
-    document_id = models.AutoField(primary_key=True)
-    accreditation = models.ForeignKey(
-        Accreditation, on_delete=models.CASCADE, related_name="documents"
+    organization = models.ForeignKey(
+        'Organization',  # links to your Organization model
+        on_delete=models.CASCADE,
+        related_name='accreditations'
     )
-    letter_of_intent = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    certificate_of_registration = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    accomplishment_report = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    calendar_of_activities = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    financial_statement = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    bank_passbook = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    inventory_of_properties = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    organization_bylaws = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    faculty_adviser_appointment = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
-    other_documents = models.FileField(upload_to="accreditation_documents/", blank=True, null=True)
+
+    letter_of_intent = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    list_of_officers = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    certificate_of_registration = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    
+    list_of_members = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    accomplishment_report = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    calendar_of_activities = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    financial_statement = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    bank_passbook = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    inventory_of_properties = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    organization_bylaws = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    faculty_adviser_appointment = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+    other_documents = models.FileField(upload_to='accreditation/', validators=[validate_file_extension])
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('declined', 'Declined'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
-        return f"Documents for {self.accreditation.organization}"
-
+        return f"{self.organization.name} Accreditation"
 
 class AccreditationOfficer(models.Model):
     officer_id = models.AutoField(primary_key=True)

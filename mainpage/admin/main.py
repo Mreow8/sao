@@ -34,3 +34,20 @@ class CustomUserAdmin(BaseUserAdmin):
     list_filter = ('role', 'is_staff', 'is_superuser', 'is_active')
     search_fields = ('username', 'email')
     ordering = ('username',)
+from ..models import staffInfo
+
+@admin.register(staffInfo)
+class StaffInfoAdmin(admin.ModelAdmin):
+    list_display = (
+        'staffID',
+        'lastname',
+        'firstname',
+        'middlename',
+        'sex',
+        'emailadd',
+        'contact',
+        'extension',
+    )
+    search_fields = ('lastname', 'firstname', 'staffID')
+    list_filter = ('sex',)
+    ordering = ('staffID',)

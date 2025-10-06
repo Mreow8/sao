@@ -163,26 +163,28 @@
               </form>
             </div>
             <!-- ✅ Donate Button -->
-            <div class="mt-4">
-              <!-- ✅ Donate Button -->
-              <!-- ✅ Donate Button -->
-              <div class="mt-4">
-                <button
-                  type="button"
-                  class="show-donate inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                  data-project-id="{{ project.id }}"
-                >
-                  💰 Donate
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
         <!-- Description -->
-        <p class="mt-2 text-gray-600">{{ project.description }}</p>
-        <p class="text-sm text-gray-400">{{ project.date_time }}</p>
+        <div class="mt-4 flex items-center justify-between">
+          <!-- Left side: description + date -->
+          <div>
+            <p class="text-sm text-gray-400">{{ project.description }}</p>
+            <p class="mt-2 text-gray-600">{{ project.date_time }}</p>
+          </div>
 
+          <!-- Right side: donate button -->
+          <div>
+            <button
+              type="button"
+              class="show-donate inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              data-project-id="{{ project.id }}"
+            >
+              Donate
+            </button>
+          </div>
+        </div>
         <!-- Gallery -->
         <div class="fb-gallery count-{{ project.channels.count }} mt-2">
           {% for channel in project.channels.all %}

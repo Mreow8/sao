@@ -5,6 +5,62 @@
   font-family: "Poppins", sans-serif;
   list-style-type: none;
 }
+/* 📱 Small screens (phones, tablets) */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  .sub-title h3 {
+    font-size: 16px;
+  }
+
+  .sub-title p,
+  nav.side-nav a,
+  .profile-name,
+  .student-account-info a {
+    font-size: 13px;
+  }
+
+  table th,
+  table td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .search-container input {
+    font-size: 13px;
+  }
+}
+
+/* 📱 Extra small (<=480px) */
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+
+  .sub-title h3 {
+    font-size: 14px;
+  }
+
+  .sub-title p,
+  nav.side-nav a,
+  .profile-name,
+  .student-account-info a {
+    font-size: 12px;
+  }
+
+  table th,
+  table td {
+    font-size: 11px;
+    padding: 4px;
+  }
+
+  .search-container input {
+    font-size: 12px;
+  }
+}
+
 html,
 body {
   height: 100%;
@@ -141,7 +197,6 @@ body {
   left: 0;
   top: 0;
   height: 100vh;
-  z-index: 2000;
   width: 299px;
   transform: translateX(0);
   transition: transform 0.3s;
@@ -345,9 +400,8 @@ input[type="text"] {
     left: 0;
     top: 0;
     height: 100vh;
-    z-index: 2000;
     width: 299px;
-    transform: translateX(-95%);
+    transform: translateX(-98%);
     transition: transform 0.3s ease-in-out;
     box-shadow: none;
     display: flex;

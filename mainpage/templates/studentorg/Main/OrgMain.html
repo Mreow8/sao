@@ -10,6 +10,7 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
+
 <link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
 <link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
 <link rel="stylesheet" href="{% static 'studentorg/css/profiles.css' %}" />
@@ -31,7 +32,9 @@
     <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="tab"
       >Projects</a
     >
-    <a href="/Gen_FSTLP_viewfinancial" class="tab">Financial Statements</a>
+    <a href="{% url 'view_financial_by_slug' slug=org.slug %}" class="tab"
+      >Financial Statements</a
+    >
   </div>
 
   <div class="maincontain">
@@ -95,11 +98,10 @@
             >Register Officer</a
           >
 
-          <a href="{% url 'view_officers' org.slug %}" class="button"
-            >View Officers</a
+          <a href="{% url 'view_adviser' org.slug %}" class="button"
+            >List Advisers</a
           >
 
-          <a href="/Gen_FSTLP_viewadviser" class="button">List Adviser</a>
           <a href="/main/{{ org.slug }}_adviserdata" class="button"
             >Register Adviser</a
           >

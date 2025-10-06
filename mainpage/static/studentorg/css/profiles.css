@@ -48,3 +48,108 @@ h1 {
   margin-bottom: 20px;
   color: black;
 }
+/* ✅ Default layout (desktop) */
+.maincontain {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.subcontain {
+  flex: 1;
+  max-width: 900px;
+}
+
+/* ✅ Responsive for small screens */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .sub-title h3 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .sub-title p {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .tabs .tab {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .maincontain {
+    flex-direction: column; /* Stack instead of side by side */
+    align-items: center;
+  }
+
+  .text-content h1 {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .logoimg {
+    display: block;
+    max-width: 180px;
+    margin: 10px auto;
+  }
+
+  .con.bot {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .con.bot .button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .pf2 ul {
+    padding-left: 15px;
+    font-size: 14px;
+  }
+
+  .pf {
+    font-size: 16px;
+    text-align: center;
+  }
+}
+/* ✅ Desktop default: logo + text side by side (if using flex) */
+.f1 {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ✅ Small screens: stack image on top, text below */
+@media (max-width: 768px) {
+  .f1 {
+    flex-direction: column; /* stack */
+    text-align: center;
+  }
+
+  .logoimg {
+    order: -1; /* move picture above text */
+    max-width: 200px;
+    margin-bottom: 15px;
+  }
+
+  .text-content h1 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+}

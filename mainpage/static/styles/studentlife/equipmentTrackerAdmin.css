@@ -1,351 +1,183 @@
-/* .sub-title h3 {
-  color: black;
-   
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 15px;
+/* Container & Titles */
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  font-family: "Roboto Mono", monospace;
+  color: #333;
 }
 
-.sub-title p {
-  display: inline;
+.sub-title h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
 }
 
-.title-txt p {
-  color: black;
-  margin-top: 30px;
+.sub-title .hometext,
+.sub-title .certxt {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Headings */
+.equipmentContents h2 {
+  margin-top: 1rem;
+  font-weight: 700;
+  color: #1f2937; /* Dark text */
+  margin-bottom: 1rem;
+}
+
+/* Messages */
+.messages {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.success-message {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Forms */
+form.search {
+  display: flex;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.hometext {
-  color: gray;
-}
-
-.certxt {
-  margin-left: 5px;
-  color: #ff8000;
-} */
-
-.equipmentContents {
-  width: 1155px;
-  margin: 0 auto;
-  padding: 20px;
+form.search input[type="text"] {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  color: black;
-  margin-top: 40px;
 }
 
-.equipmentContents h2 {
-  color: black;
-}
-
-input[name="search"] {
-  background-color: #dddeee;
-  color: black;
+form.search input.searchBtn {
+  padding: 8px 16px;
   border: none;
-  padding: 0.5em;
-  height: 35px;
-  flex-grow: 1;
-  min-width: 150px;
-  max-width: 150px;
+  border-radius: 6px;
+  background-color: #ff8000;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-input[name="search"]:focus {
-  outline: none;
-  border-color: transparent;
+form.search input.searchBtn:hover {
+  background-color: #d0cac3;
 }
 
-.equipmentform td {
-  font-weight: bold;
+form input[type="text"],
+form select,
+form input[type="date"] {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
+/* Tables */
 table {
-  margin-top: 20px;
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 
 table th,
 table td {
-  padding: 8px;
-  text-align: left;
-}
-
-.equipmentTable td {
-  padding: 8px;
+  padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
 table th {
-  background-color: #f2f2f2;
-  color: #ff8000;
+  background-color: #f3f4f6;
+  font-weight: 600;
 }
 
-table td {
-  color: black;
+table tr:nth-child(even) {
+  background-color: #f9fafb;
 }
 
-.searchBtn {
+/* Buttons */
+button,
+.button,
+.saveBtn {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.button,
+.saveBtn {
+  background-color: #ff8000;
   color: white;
-  background-color: #ff8000;
-  height: 35px;
-  width: 100px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-input[name="borrowername"],
-input[name="courseprogram"],
-input[name="dateborrowed"] {
-  background-color: #dddeee;
-  color: black;
-  border: none;
-  padding: 0.5em;
-  height: 35px;
-  flex-grow: 1;
-  min-width: 400px;
-  max-width: 400px;
-}
-
-input[name="borrowername"],
-input[name="courseprogram"],
-input[name="dateborrowed"]:focus {
-  border-color: transparent;
-  outline: none;
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-}
-
-.button-container a,
-.button-container .saveBtn {
-  background-color: #ff8000;
-  height: 40px;
-  width: 150px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
   text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 15px;
-  margin-right: 150px;
+  text-align: center;
 }
 
-.button-container a:first-child {
-  margin-right: 20px;
-}
-
-#equipmentName {
-  background-color: #dddeee;
-  color: black;
-  border: none;
-  padding: 0.5em;
-  height: 35px;
-  flex-grow: 1;
-  min-width: 400px;
-  max-width: 400px;
-  border-radius: 8px;
-}
-
-#equipmentName:focus {
-  border-color: transparent;
-  outline: none;
+.button:hover,
+.saveBtn:hover {
+  background-color: #3e8e41;
 }
 
 .returnBtn {
+  background-color: #f59e0b;
   color: white;
-  background-color: #ff8000;
-  height: 30px;
-  width: 60px;
+  border-radius: 6px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
 }
 
-.success-message {
-  margin-top: 10px;
-  background-color: #1cbf19;
-  border-radius: 5px;
-  width: 360px;
-  align-items: center;
-  height: 30px;
-  padding-top: 5px;
-  padding-left: 5px;
-  color: white;
+.returnBtn:hover {
+  background-color: #d97706;
 }
 
-.error-message {
-  margin-top: 10px;
-  background-color: red;
-  border-radius: 5px;
-  width: 150px;
-  align-items: center;
-  height: 30px;
-  padding-top: 5px;
-  padding-left: 5px;
-  color: white;
-}
-/* Responsive Styles */
-@media (max-width: 1024px) {
-  .equipmentContents {
-    width: 90%;
-    padding: 15px;
-  }
-
-  input[name="borrowername"],
-  input[name="courseprogram"],
-  input[name="dateborrowed"],
-  #equipmentName {
-    min-width: 100%;
-    max-width: 100%;
-  }
-
-  .button-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .button-container a,
-  .button-container .saveBtn {
-    width: 100%;
-    margin-right: 0;
-  }
-
-  table th,
-  table td {
-    padding: 6px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 768px) {
-  .sub-title h3 {
-    font-size: 16px;
-  }
-
-  .sub-title p {
-    font-size: 12px;
-  }
-
-  .equipmentContents h2 {
-    font-size: 18px;
-  }
-
-  /* Stack search inputs vertically */
-  form.search {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: stretch;
-  }
-
-  input[name="search"] {
-    max-width: 100%;
-  }
-
-  .equipmentTable,
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .button-container {
-    margin-top: 10px;
-  }
-
-  .returnBtn {
-    width: 100%;
-    max-width: 80px;
-  }
-}
-
-@media (max-width: 480px) {
-  .equipmentContents {
-    width: 95%;
-    padding: 10px;
-  }
-
-  h2 {
-    font-size: 16px;
-    text-align: center;
-  }
-
-  table th,
-  table td {
-    padding: 5px;
-    font-size: 12px;
-  }
-
-  .button-container a,
-  .button-container .saveBtn {
-    font-size: 14px;
-    height: 35px;
-    margin-right: 0 !important;
-  }
-
-  .success-message,
-  .error-message {
-    width: 100%;
-    text-align: center;
-    padding: 8px;
-    font-size: 13px;
-  }
-}
+/* Button container */
 .button-container {
   display: flex;
-  flex-direction: column; /* vertical stack */
-  gap: 10px; /* spacing between buttons */
+  gap: 10px;
+  margin-bottom: 10px;
   align-items: center;
 }
-
-/* Small screens: side by side */
-@media (max-width: 600px) {
-  .button-container {
-    flex-direction: row; /* horizontal layout */
-    justify-content: center; /* center horizontally */
-    gap: 10px; /* spacing between buttons */
-  }
-
-  .button-container a,
-  .button-container .saveBtn {
-    margin-right: 0; /* cancel any old margins */
-  }
-}
-/* Default: keep table layout for larger screens */
-table {
-  width: 100%;
-  border-collapse: collapse;
+.equipmentContents {
+  margin: 50px auto;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* On screens ≤768px, stack fields vertically */
+/* Responsive */
 @media (max-width: 768px) {
-  table,
-  tbody,
-  tr,
-  td {
-    display: block;
-    width: 100%;
+  .equipmentContents h2 {
+    font-size: 1.5rem;
   }
 
-  td {
-    margin-bottom: 10px; /* spacing between stacked inputs */
+  table th,
+  table td {
+    font-size: 0.9rem;
+    padding: 8px;
   }
 
-  input[type="text"],
-  input[type="date"],
-  select {
-    width: 100%; /* full-width inputs on small screens */
-    box-sizing: border-box;
+  form.search {
+    flex-direction: column;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
