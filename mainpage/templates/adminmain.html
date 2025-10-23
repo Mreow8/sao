@@ -89,12 +89,11 @@
       }
 
       /* 4. THE FIX: Show the popup when hovering the PARENT container */
-      .account-info:hover .profile-popup {
+      .profile-popup.active {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
       }
-
       /* 5. Styling the logout button */
       .logout-btn {
         width: 100%;
@@ -362,6 +361,27 @@
           }
         });
       }
+    </script>
+    <script>
+      $(document).ready(function () {
+        // When the profile summary (name/icon) is clicked
+        $(".profile-summary").on("click", function (e) {
+          // Stop the click from closing the popup immediately
+          e.stopPropagation(); // Find the popup next to the summary and toggle its 'active' class
+          $(this).siblings(".profile-popup").toggleClass("active");
+        }); // When the user clicks anywhere else on the document
+
+        $(document).on("click", function (e) {
+          // If the click was *not* inside the popup or the summary
+          if (
+            !$(e.target).closest(".profile-popup").length &&
+            !$(e.target).closest(".profile-summary").length
+          ) {
+            // Remove the 'active' class to close the popup
+            $(".profile-popup").removeClass("active");
+          }
+        });
+      });
     </script>
   </body>
 </html>
