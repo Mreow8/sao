@@ -1,49 +1,83 @@
-/* Container styling */
-.admintable {
-  width: 100%;
-  overflow-x: auto;
-  margin-top: 20px;
-  font-family: "Arial", sans-serif;
+/* General Page Layout */
+body {
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
 }
 
-/* Table styling */
-.admintable table {
+/* Main Container (styled like .gmc-form) */
+section {
+  max-width: 900px;
+  margin: 50px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Header Section */
+.header-container {
+  text-align: center;
+  margin-bottom: 25px;
+}
+.header-container h1 {
+  color: #1a1a1a;
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+.header-container h4 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+  margin: 0;
+}
+hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin-bottom: 30px;
+}
+
+/* Table Container for Responsiveness */
+.admintable {
+  overflow-x: auto; /* Allows table to scroll horizontally on small screens */
+}
+
+/* Table Styling (from requestgmc.css) */
+table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
 }
 
-/* Table header */
-.admintable th {
-  background-color: #4caf50; /* GMC green-ish */
-  color: white;
+table th,
+table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table th {
+  background-color: #f7f7f7;
+  color: #ff8000; /* Orange accent color */
   font-weight: 600;
-  padding: 12px 15px;
   text-align: left;
-  text-transform: none; /* normal capitalization */
-  font-size: 14px;
-  border-bottom: 2px solid #ddd;
+  white-space: nowrap; /* Prevents header text from wrapping */
 }
 
-/* Table rows */
-.admintable td {
-  padding: 10px 12px;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-  color: #333;
+table td {
+  color: #444;
 }
 
-/* Hover effect for rows */
-.admintable tbody tr:hover {
-  background-color: #f1f8f5; /* light green background on hover */
+tbody tr:last-child td {
+  border-bottom: none;
 }
 
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
-  .admintable th,
-  .admintable td {
-    padding: 8px 10px;
-    font-size: 13px;
+/* Responsive Design */
+@media (max-width: 768px) {
+  section {
+    padding: 20px;
+    margin: 20px 10px;
+  }
+  .header-container h1 {
+    font-size: 22px;
   }
 }

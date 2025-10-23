@@ -4,22 +4,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <title>Student Login - CTU</title>
+
     <style>
+      /* --- Base & Typography --- */
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        font-family: Arial, sans-serif;
       }
 
       body,
       html {
         height: 100%;
         width: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: #f8f9fa; /* Light background */
       }
 
+      /* --- Main Layout --- */
       .container {
         display: flex;
         height: 100vh;
@@ -27,6 +31,7 @@
         overflow: hidden;
       }
 
+      /* --- Left Section (Branding) --- */
       .left-section {
         flex: 1;
         background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
@@ -37,53 +42,74 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        padding: 20px;
+        padding: 40px;
+        text-align: center;
+      }
+
+      /* Dark overlay for better text contrast */
+      .left-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+        z-index: 1;
+      }
+
+      .left-section img,
+      .left-section p {
+        position: relative;
+        z-index: 2;
       }
 
       .left-section img {
-        width: 150px;
-        max-width: 100%;
-        margin-bottom: 20px;
+        width: 150px; /* Logo size */
+        margin-bottom: 25px;
       }
 
       .left-section p {
         color: white;
-        font-size: 50px;
-        font-weight: bold;
-        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-        padding: 10px 20px;
-        border-radius: 8px;
-        text-align: center;
+        font-size: 48px; /* Welcome text size */
+        font-weight: 700;
+        letter-spacing: 1px;
       }
 
+      /* --- Right Section (Login Form) --- */
       .right-section {
         flex: 1;
-        background-color: #4884b4;
+        background-color: #f8f9fa; /* Consistent light background */
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
         padding: 40px;
       }
 
+      /* Login Box (styled like .gmc-form) */
       .login-box {
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 10px;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
         width: 100%;
-        max-width: 320px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-width: 400px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         color: #333;
       }
 
-      .login-box h3,
-      h5 {
-        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-        margin-bottom: 20px;
+      .login-box h3 {
+        font-size: 18px;
+        color: #1a1a1a;
+        font-weight: 600;
+      }
+      .login-box h5 {
+        font-size: 24px;
+        color: #1a1a1a;
+        font-weight: 700;
+        margin-bottom: 25px;
       }
 
+      /* --- Form Elements --- */
       .form-group {
         margin-bottom: 20px;
       }
@@ -91,127 +117,174 @@
       input[type="text"],
       input[type="password"] {
         width: 100%;
-        padding: 12px;
+        padding: 12px 15px; /* Consistent padding */
+        background: #f0f2f5; /* Light input background */
         border: 1px solid #ccc;
         border-radius: 8px;
         font-size: 14px;
+        color: #333;
+        transition: all 0.3s ease;
+      }
+
+      input:focus {
         outline: none;
-        box-sizing: border-box;
+        border-color: #ff8000; /* Orange focus border */
+        background-color: #fff;
       }
 
       input::placeholder {
-        color: #999;
-        font-size: 14px;
+        color: #adb5bd;
+      }
+
+      /* Google reCAPTCHA */
+      .g-recaptcha {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center; /* Center the captcha */
       }
 
       .btn-login {
         width: 100%;
         padding: 12px;
-        background-color: #ff9f43;
+        background-color: #ff8000; /* Orange button */
         color: white;
         border: none;
-        font-weight: bold;
-        border-radius: 6px;
+        font-weight: 600;
+        font-size: 16px;
+        border-radius: 8px;
         cursor: pointer;
         transition: background-color 0.3s ease;
       }
 
       .btn-login:hover {
-        background-color: #fb8c00;
+        background-color: #e67300; /* Darker orange on hover */
       }
 
+      /* --- Footer & Error Messages --- */
       .footer {
-        margin-top: 15px;
+        margin-top: 20px;
         text-align: center;
-        font-size: 0.9em;
-        color: #666;
+        font-size: 14px;
+        color: #6c757d;
+      }
+      .footer a {
+        color: #ff8000; /* Orange link */
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .footer a:hover {
+        text-decoration: underline;
       }
 
       .error {
-        color: red;
-        font-size: 0.9em;
-        margin-bottom: 10px;
+        color: #dc3545; /* Red error text */
+        background-color: #f8d7da; /* Light red background */
+        border: 1px solid #f5c6cb;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        margin-bottom: 15px;
+        text-align: center;
       }
 
-      /* Responsive Styles */
+      /* --- Responsive Design --- */
       @media (max-width: 900px) {
-        .container {
-          position: relative;
-          height: 100vh;
-          width: 100vw;
-        }
-        .login-box {
-          background-color: #e0dedcd4;
-        }
-        .footer {
-          color: #4d4d4d;
-        }
         .left-section {
-          width: 100vw;
-          height: 100vh;
-          padding: 0;
-          flex: none;
+          display: none; /* Hide image section on smaller screens */
         }
 
         .right-section {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 90%;
-          max-width: 350px;
-          background-color: rgb(255 255 255 / 0%);
-          padding: 30px 20px;
-          border-radius: 12px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          z-index: 10;
+          flex: 1; /* Take full width */
+          background-color: #f8f9fa; /* Keep background light */
+          padding: 20px; /* Reduce padding */
+          align-items: center; /* Center the box */
         }
 
-        .left-section img {
-          width: 120px;
-          margin-bottom: 15px;
-        }
-
-        .left-section p {
-          display: none; /* hide welcome text for less clutter */
+        .login-box {
+          max-width: 90%; /* Allow box to be wider on tablets */
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05); /* Keep shadow */
         }
       }
 
       @media (max-width: 480px) {
-        .left-section p {
-          font-size: 24px;
-          padding: 8px 12px;
+        .login-box {
+          padding: 30px; /* Slightly more padding for very small screens */
+        }
+      }
+      @media (max-width: 900px) {
+        .container {
+          /* Apply the background image to the container itself */
+          background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
+            center center;
+          background-size: cover;
+          position: relative; /* Needed for the overlay */
+          display: flex; /* Re-enable flex to center the right section */
+          justify-content: center;
+          align-items: center;
+          padding: 20px; /* Add some padding */
         }
 
-        .btn-login {
-          padding: 10px;
-          font-size: 16px;
+        /* Add an overlay to the container for readability */
+        .container::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+          z-index: 1;
         }
 
-        input[type="text"],
-        input[type="password"] {
-          padding: 10px;
-          font-size: 16px;
+        .left-section {
+          display: none; /* Hide the original left section div */
+        }
+
+        .right-section {
+          flex: none; /* Override the desktop flex setting */
+          width: 90%;
+          max-width: 400px;
+          background-color: transparent; /* Make it transparent */
+          padding: 0; /* Remove padding, handled by login-box */
+          position: relative; /* Ensure it's above the overlay */
+          z-index: 2;
+        }
+
+        .login-box {
+          background-color: rgba(
+            255,
+            255,
+            255,
+            0.9
+          ); /* White with slight transparency */
+          padding: 30px;
+          border-radius: 12px;
+          width: 100%;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Keep a subtle shadow */
+        }
+
+        .footer {
+          color: #4d4d4d; /* Keep footer text readable */
         }
       }
     </style>
+
+    <!-- ✅ Correct reCAPTCHA v2 script -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   </head>
+
   <body>
     <div class="container">
-      <!-- Left image + welcome -->
       <div class="left-section">
         <img src="{% static 'imgs/ctu_logo.png' %}" alt="CTU Logo" />
         <p>WELCOME</p>
       </div>
 
-      <!-- Right login form -->
       <div class="right-section">
         <div class="login-box">
           <h3>Cebu Technological University</h3>
           <h5>Sign In</h5>
+
           <form method="POST" action="{% url 'signinuser' %}">
             {% csrf_token %} {% if form.errors %}
             <div class="error">Invalid email or password.</div>
@@ -235,11 +308,19 @@
               />
             </div>
 
+            <!-- ✅ Visible reCAPTCHA checkbox -->
+            <div
+              class="g-recaptcha"
+              data-sitekey="6LfhQOcrAAAAANIW45UKBoxv_N6yLJfCCNpyx-j3"
+            ></div>
+
             <button type="submit" class="btn-login">Login</button>
           </form>
+
           {% if messages %} {% for message in messages %}
           <div class="error">{{ message }}</div>
           {% endfor %} {% endif %}
+
           <div class="footer">
             Don't have an account? Contact your administrator.
             <a href="{% url 'signupuser' %}">Register</a>

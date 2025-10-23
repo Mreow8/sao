@@ -1,42 +1,118 @@
-{% extends 'mainv2.html' %}
-{% load static tailwind_tags %}
-{% block title %}HealthHub Connect | Emergency Health Assistance{% endblock %}
+{% extends 'adminmain.html' %} {% load static %}
+<!-- prettier-ignore -->
+{% block title %}HealthHub Connect | Emergency Health Records{% endblock %}
+
 {% block extra_css %}
-{% tailwind_css %}
 {% endblock %}
 
-{% block content %}
-<div class="w-full xs:p-4 md:p-8 h-screen bg-white rounded-[18px] flex flex-col items-center gap-2">
-    <h2 class="font-bold xs:text-[1.3rem] sm:text-[1.5rem] text-center mb-4">Emergency Health Assistance Records</h2>
-    <div class="w-full h-full">
-        <table class="w-full h-full">
-            <thead class="bg-[#e6e6e6] w-full">
-                <tr class="tr-header">
-                    <th class="text-center p-2 xs:text-[14px] sm:text-base">ID Number</th>
-                    <th class="text-center p-2 xs:text-[14px] sm:text-base">Name</th>
-                    <th class="text-center p-2 xs:text-[14px] sm:text-base">Reason</th>
-                    <th class="text-center p-2 xs:text-[14px] sm:text-base">Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for record in emrgncy_record %}
-                    <tr class="tr-td">
-                        <td class="text-center">{{ record.user_id_display }}</td>
-                        <td class="text-center">{{ record.name }}</td>
-                        <td class="text-center">{{ record.reason }}</td>
-                        <td class="text-center">{{ record.date_assisted }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <button class="border border-[#cccccc] flex self-start  w-[8rem] rounded-md">
-        <a class="xs:p-2 md:p-3 text-[14px] h-full w-full" href="{% url 'medical:emergency_asst' %}">Back</a>
-    </button>
+{% block bodycontent %}
+<style>
+  /* --- General Body & Font Styling --- */
+  body {
+    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Helvetica, Arial, sans-serif;
+  }
+
+  /* --- Main Content Container (styled like .gmc-form) --- */
+  .main-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  /* --- Header --- */
+  .page-title {
+    font-weight: 700;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1a1a1a;
+  }
+
+  /* --- Table Styling (from requestgmc.css) --- */
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .records-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .records-table th,
+  .records-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .records-table thead th {
+    background-color: #f7f7f7;
+    color: #ff8000; /* Orange accent */
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .records-table tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  /* --- Button Styling --- */
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    margin-top: 30px;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+</style>
+
+<div class="main-container">
+  <h2 class="page-title">Emergency Health Assistance Records</h2>
+
+  <div class="table-responsive">
+    <table class="records-table">
+      <thead>
+        <tr>
+          <th>ID Number</th>
+          <th>Name</th>
+          <th>Reason</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in emrgncy_record %}
+        <tr>
+          <td>{{ record.user_id_display }}</td>
+          <td>{{ record.name }}</td>
+          <td>{{ record.reason }}</td>
+          <td>{{ record.date_assisted }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <a class="btn btn-secondary" href="{% url 'emergency_asst' %}">Back</a>
 </div>
-{% endblock %}
-{% block extra_js %}
-<script>
-
-</script>
 {% endblock %}

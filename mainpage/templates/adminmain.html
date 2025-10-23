@@ -5,9 +5,8 @@
     <title>
       {% block title %}STUDENT LIFE INFORMATION SYSTEM{% endblock %}
     </title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- External CSS -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
@@ -24,7 +23,6 @@
       referrerpolicy="no-referrer"
     />
 
-    <!-- Local CSS -->
     <link rel="stylesheet" href="{% static 'styles/guidance/main.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/sub-title.css' %}" />
     <link
@@ -33,10 +31,90 @@
       type="image/x-icon"
     />
 
-    <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     {% block headcontent %}{% endblock %}
+    <style>
+      /* --- Account Info & Profile Popup --- */
+
+      /* 1. The main container for the profile section */
+      .account-info {
+        position: relative; /* This is crucial for positioning the popup */
+        cursor: pointer;
+      }
+
+      /* 2. The visible part (icon and name) */
+      .profile-summary {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease-in-out;
+      }
+      .profile-summary:hover {
+        background-color: #f0f2f5; /* Light grey background on hover */
+      }
+      .profile-icon {
+        color: #4a5568;
+      }
+      .profile-name {
+        font-weight: 500;
+        color: #2d3748;
+      }
+
+      /* 3. The hidden popup that appears on hover */
+      .profile-popup {
+        /* Positioning */
+        position: absolute;
+        top: 100%; /* Position it right below the profile summary */
+        right: 0;
+        margin-top: 8px; /* Add a small gap */
+        width: 250px;
+        z-index: 50;
+
+        /* Appearance */
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        padding: 16px;
+        font-size: 14px;
+        line-height: 1.6;
+
+        /* Hiding and Transition */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      }
+
+      /* 4. THE FIX: Show the popup when hovering the PARENT container */
+      .account-info:hover .profile-popup {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      /* 5. Styling the logout button */
+      .logout-btn {
+        width: 100%;
+        background-color: #ef4444; /* A clear red for logout */
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        font-weight: 600;
+        border-radius: 6px;
+        margin-top: 15px;
+        transition: background-color 0.2s ease;
+      }
+      .logout-btn:hover {
+        background-color: #dc2626;
+      }
+      .logout-btn a {
+        color: white;
+        text-decoration: none;
+      }
+    </style>
   </head>
   <body>
     <button
@@ -47,7 +125,6 @@
       &#9776;
     </button>
 
-    <!-- Sidebar -->
     <div class="left-side">
       <div class="orange-bar">
         <a href="/homepage"
@@ -60,310 +137,196 @@
       </div>
 
       <nav class="side-nav">
+        <!-- prettier-ignore -->
         <ul>
-          <!-- OFFICE OF STUDENT LIFE -->
+          {% if user.role == 'student_life_staff' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="studentlife-btn"
-              >OFFICE OF STUDENT LIFE
+            <a href="#" class="studentlife-btn">OFFICE OF STUDENT LIFE
               <span class="fas fa-caret-down first"></span>
             </a>
             <ul class="studentlife">
-
-<li><a href="{% url 'assign_role' %}">Profiles</a></li>
-
-              <li>
-                <a href="{% url 'equipmentTrackerAdmin' %}"
-                  >Equipment Tracker</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'adminRequestedGmc' %}"
-                  >Good Moral Certificate Issuance</a
-                >
-              </li>
-<li><a href="{% url 'ppmp_list' %}">PPMP Tracker</a></li>
-
-
-              <li>
-                <a href="{% url 'monthlyCalendarAdmin' %}"
-                  >Monthly Calendar of Activites</a
-                >
-              </li>
-               <li><a href="{% url 'non_acad' %}">Non-Academic Award Issuance</a></li>
-                            <li><a href="{% url 'job_trans_rep' %}">Transaction Reports</a></li>
+              <li><a href="{% url 'assign_role' %}">Profiles</a></li>
+              <li><a href="{% url 'equipmentTrackerAdmin' %}">Equipment Tracker</a></li>
+              <li><a href="{% url 'adminRequestedGmc' %}">Good Moral Certificate Issuance</a></li>
+              <li><a href="{% url 'ppmp_list' %}">PPMP Tracker</a></li>
+              <li><a href="{% url 'monthlyCalendarAdmin' %}">Monthly Calendar of Activities</a></li>
+              <li><a href="{% url 'non_acad' %}">Non-Academic Award Issuance</a></li>
             </ul>
           </li>
+          {% endif %}
+<!-- prettier-ignore -->
 
-          <!-- SCHOLARSHIP -->
+          {% if user.role == 'scholarship_officer' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="scholar-btn"
-              >SCHOLARSHIP
+            <a href="#" class="scholar-btn">SCHOLARSHIP
               <span class="fas fa-caret-down second"></span>
             </a>
             <ul class="scholar-show">
-              <li><a href="{% url 'admin_req'%}"">Submission of Requirements Tracker</a></li>
-                        <li><a href="{% url 'adminapplication' %}">Application tracker</a></li>
-
-              <li>
-                <a href="{% url 'profile'%}"
-                  >Scholars Profile and Validation</a
-                >
-              </li>
-              <li>
-                <a href="#">Grade Submission with GPA Computation</a>
-              </li>
+              <li><a href="{% url 'admin_req'%}">Submission of Requirements Tracker</a></li>
+              <li><a href="{% url 'adminapplication' %}">Application tracker</a></li>
+              <li><a href="{% url 'profile'%}">Scholars Profile and Validation</a></li>
+              <li><a href="#">Grade Submission with GPA Computation</a></li>
               <li><a href="{% url 'liquidation'%}">Admin Cost Liquidation Tracker</a></li>
               <li><a href="{% url 'ched'%}">CHED Reports Submission</a></li>
-              <li><a href="#">Transaction Reports</a></li>
             </ul>
           </li>
+          {% endif %}
+<!-- prettier-ignore -->
 
-          <!-- JOB PLACEMENT -->
+          {% if user.role == 'placement_officer' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="jobplace-btn"
-              >JOB PLACEMENT
+            <a href="#" class="jobplace-btn">JOB PLACEMENT
               <span class="fas fa-caret-down third"></span>
             </a>
             <ul class="jobplace-show">
-              <li>
-                <a href="{% url 'ojt_hiring' %}">OJT Hiring</a>
-              </li>
-              <li>
-                <a href="{% url 'seminar_page' %}"
-                  >Career Guidance Tracker</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'ojt_requirements_tracker' %}"
-                  >OJT Requirements Tracker</a
-                >
-              </li>
-             
-              <li>
-                <a href="{% url 'job_trans_rep' %}"
-                  >Transaction Reports</a
-                >
-              </li>
-            
+              <li><a href="{% url 'ojt_hiring' %}">OJT Hiring</a></li>
+              <li><a href="{% url 'seminar_page' %}">Career Guidance Tracker</a></li>
+              <li><a href="{% url 'ojt_requirements_tracker' %}">OJT Requirements Tracker</a></li>
             </ul>
           </li>
+          {% endif %}
+<!-- prettier-ignore -->
 
-          <!-- STUDENT DISCIPLINE -->
+          {% if user.role == 'discipline_officer' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="student_disc-btn"
-              >STUDENT DISCIPLINE
+            <a href="#" class="student_disc-btn">STUDENT DISCIPLINE
               <span class="fas fa-caret-down fourth"></span>
             </a>
-            
             <ul class="student_disc-show">
-                                   <li><a href="{% url 'case_profile' %}">Case Profile</a></li>
-
-              <li><a href="{% url 'transaction' %}">Transaction Reports</a></li>
+              <li><a href="{% url 'case_profile' %}">Case Profile</a></li>
             </ul>
           </li>
+          {% endif %}
+<!-- prettier-ignore -->
 
-          <!-- GUIDANCE -->
+          {% if user.role == 'guidance' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="guide-btn"
-              >GUIDANCE
+            <a href="#" class="guide-btn">GUIDANCE
               <span class="fas fa-caret-down fifth"></span>
             </a>
             <ul class="guide-show">
-              <li>
-                <a href="{% url 'Counseling App With Scheduler Admin View' %}"
-                  >Counseling App with Scheduler</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'Intake Interview' %}"
-                  >Intake Interview</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'Exit Interview Admin View' %}"
-                  >Exit Interview</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'OJT Assessment Admin View' %}"
-                  >OJT Assessments/Psychological Issuance</a
-                >
-              </li>
+              <li><a href="{% url 'Counseling App With Scheduler Admin View' %}">Counseling App with Scheduler</a></li>
+              <li><a href="{% url 'Intake Interview' %}">Intake Interview</a></li>
+              <li><a href="{% url 'Exit Interview Admin View' %}">Exit Interview</a></li>
+              <li><a href="{% url 'OJT Assessment Admin View' %}">OJT Assessments/Psychological Issuance</a></li>
             </ul>
           </li>
+          {% endif %}
+<!-- prettier-ignore -->
 
-          <!-- ALUMNI -->
+          {% if user.role == 'alumni_officer' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="alumni-btn"
-              >ALUMNI
+            <a href="#" class="alumni-btn">ALUMNI
               <span class="fas fa-caret-down sixth"></span>
             </a>
             <ul class="alumni-show">
-              <li>
-                <a href="{% url 'admin_idRequest' %}">Alumni ID Requests</a>
-              </li>
-              <li>
-                <a href="{% url 'admin_gradTracer' %}">Graduate Tracer</a>
-              </li>
-              <li>
-                <a href="{% url 'admin_events' %}">Alumni Reunion and Events</a>
-              </li>
+              <li><a href="{% url 'admin_idRequest' %}">Alumni ID Requests</a></li>
+              <li><a href="{% url 'admin_gradTracer' %}">Graduate Tracer</a></li>
+              <li><a href="{% url 'admin_events' %}">Alumni Reunion and Events</a></li>
               <li><a href="{% url 'admin_jobfairs' %}">Job Fairs</a></li>
-              <li>
-                <a href="{% url 'transaction_alumni' %}"
-                  >Transaction Reports</a
-                >
-              </li>
             </ul>
           </li>
+          {% endif %}
 
-          <!-- COMMUNITY INVOLVEMENT -->
+          {% if user.role == 'student_life_staff' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="community-btn"
-              >COMMUNITY INVOLVEMENT
+            <a href="#" class="community-btn">COMMUNITY INVOLVEMENT
               <span class="fas fa-caret-down seventh"></span>
             </a>
             <ul class="community-show">
-                  <li><a href="{% url 'programs' %}">Events</a></li>
-                        <li><a href="{% url 'crowdfunding_list' %}">CrowdFunding Projects</a></li>
-                           <li><a href="{% url 'donation-validate' %}">Donation Validates</a></li>
-        <li><a href="{% url 'donation_dashboard' %}">Donations</a></li>
-                        
-              {% comment %}
-              <li><a href="{% url 'program-form' %}">Events</a></li>
-              <li>
-                <a href="{% url 'project-form' %}"
-                  >Crowd Funding Project</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'donation-validate' %}"
-                  >Donation Validates</a
-                >
-              </li>
-              <li>
-                <a href="{% url 'donation_dashboard' %}">Donations</a>
-              </li>
-              <li>
-                <a href="{% url 'reports' %}">Transaction Reports</a>
-              </li>
-              {% endcomment %}
+              <li><a href="{% url 'programs' %}">Events</a></li>
+              <li><a href="{% url 'crowdfunding_list' %}">CrowdFunding Projects</a></li>
+              <li><a href="{% url 'donation-validate' %}">Donation Validates</a></li>
+              <li><a href="{% url 'donation_dashboard' %}">Donations</a></li>
             </ul>
           </li>
-
-          <!-- STUDENT ORGANIZATION -->
+          {% endif %}
+<!-- prettier-ignore -->
+          {% if user.role == 'org_admin' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="student_org-btn"
-              >STUDENT ORGANIZATION
+            <a href="#" class="student_org-btn">STUDENT ORGANIZATION
               <span class="fas fa-caret-down eight"></span>
             </a>
             <ul class="student_org-show">
-              {% comment %}
-              <li><a href="{% url 'logins' %}">Org Profile</a></li>
-              {% endcomment %}
-               <li>
-            <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
+              <li><a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a></li>
+              <li><a href="{% url 'Gen_Home'%}">Org Profile</a></li>
+            </ul>
           </li>
-            </ul>  <ul class="student_org-show">
-                            <li><a href="{% url 'Gen_Home'%}">Org Profile</a></li>
-                            
-                        </ul>
-          
+          {% endif %}
+<!-- prettier-ignore -->
 
-          <!-- MEDICAL -->
+          {% if user.role == 'clinic_admin' or user.role == 'superadmin' %}
           <li>
-            <a href="#" class="medical-btn"
-              >MEDICAL
+            <a href="#" class="medical-btn">MEDICAL
               <span class="fas fa-caret-down ninth"></span>
             </a>
             <ul class="medical-show">
-              <li>
-  <a href="{%url 'admin_dashboard'%}">Patient Profile </a>
-</li>
-<li>
-  <a href="{% url 'viewrequest' %}">View Requests </a>
-</li>
-<li>
-  <a href="{% url 'medtracker' %}"
-            >Medical Requirements Tracker</a
-          >
-</li>
-<li>
-  <a   href="{% url 'emergency_asst' %}"
-            >Emergency Health Assistance</a
-          >
-</li>
-<li>
-  <a href="{% url 'pwdlist' %}"
-            >PWD Profile</a
-          >
-</li>
-<li>
-  <a  href="{% url 'dentalrequest' %}"
-            >Dental Services</a
-          >
-</li>
-<li>
-  <a href="{% url 'prescription' %}"
-            >Prescription Issuance</a
-          >
-</li>
-<li><a href="{% url 'mental_health' %}"
-            >Mental Health Services</a
-          ></li>
+              <li><a href="{% url 'admin_dashboard'%}">Patient Profile </a></li>
+              <li><a href="{% url 'viewrequest' %}">View Requests </a></li>
+              <li><a href="{% url 'medtracker' %}">Medical Requirements Tracker</a></li>
+              <li><a href="{% url 'emergency_asst' %}">Emergency Health Assistance</a></li>
+              <li><a href="{% url 'pwdlist' %}">PWD Profile</a></li>
+              <li><a href="{% url 'dentalrequest' %}">Dental Services</a></li>
+              <li><a href="{% url 'prescription' %}">Prescription Issuance</a></li>
+              <li><a href="{% url 'mental_health' %}">Mental Health Services</a></li>
               <br /><br /><br />
             </ul>
           </li>
+          {% endif %}
         </ul>
       </nav>
     </div>
 
-    <!-- Header / Search Bar / Account -->
     <div class="right-side">
-     
-<div class="custom-search-wrapper">
-  <div class="search-container flex items-center justify-between">
-    <!-- Search bar -->
-    <div class="flex items-center flex-1 max-w-md">
-      <div class="search-icon mr-2">
-        <i class="fa-solid fa-magnifying-glass"></i>
+      <div class="custom-search-wrapper">
+        <div class="search-container flex items-center justify-between">
+          <div class="flex items-center flex-1 max-w-md">
+            <div class="search-icon mr-2">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <input
+              type="text"
+              placeholder="Search..."
+              class="w-full border rounded-lg px-3 py-1"
+            />
+          </div>
+
+          <!-- Right-side controls (profile + upload btn) -->
+          <div class="flex items-center space-x-4 ml-4">
+            <a
+              href="{% url 'upload_files' %}"
+              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700 transition"
+            >
+              <i class="fas fa-upload mr-2"></i> Upload Student/Staff
+            </a>
+            <div class="account-info">
+              {% if user.is_authenticated %}
+              <div class="profile-summary flex items-center space-x-2">
+                <i class="fas fa-user-circle profile-icon text-2xl"></i>
+                <span class="profile-name"
+                  >{{ user.first_name }} {{ user.last_name }}</span
+                >
+              </div>
+
+              <div class="profile-popup">
+                <strong>Student ID:</strong> {{ user.username }}<br />
+                <strong>Name:</strong> {{ user.first_name }} {{ user.last_name
+                }}<br />
+                <button class="logout-btn">
+                  <a href="{% url 'logout' %}">Logout</a>
+                </button>
+              </div>
+              {% else %}
+              <div class="student-account-info">
+                <a href="{% url 'signinuser' %}">Sign in</a>
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Upload button -->
+          </div>
+        </div>
       </div>
-      <input type="text" placeholder="Search..." 
-             class="w-full border rounded-lg px-3 py-1" />
-    </div>
-
-    <!-- Right-side controls (profile + upload btn) -->
-    <div class="flex items-center space-x-4 ml-4">
-            <a href="{% url 'upload_files' %}" 
-         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700 transition">
-         <i class="fas fa-upload mr-2"></i> Upload Student
-      </a>
-      <div class="account-info">
-        {% if user.is_authenticated %}
-        <div class="profile-summary flex items-center space-x-2">
-          <i class="fas fa-user-circle profile-icon text-2xl"></i>
-          <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
-        </div>
-
-        <div class="profile-popup">
-          <strong>Student ID:</strong> {{ user.username }}<br />
-          <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br />
-          <button class="logout-btn">
-            <a href="{% url 'logout' %}">Logout</a>
-          </button>
-        </div>
-        {% else %}
-        <div class="student-account-info">
-          <a href="{% url 'signinuser' %}">Sign in</a>
-        </div>
-        {% endif %}
-      </div>
-
-      <!-- Upload button -->
-
-    </div>
-  </div>
-</div>
 
       <main class="main_content">{% block bodycontent %}{% endblock %}</main>
     </div>

@@ -35,20 +35,12 @@ from ..models import CommunityServiceTracker
 class CommunityServiceForm(forms.ModelForm):
     class Meta:
         model = CommunityServiceTracker
-        fields = ['date', 'morning_in', 'morning_out', 'afternoon_in', 'afternoon_out']
+        fields = ['session', 'service_date', 'time_in', 'time_out', 'student_signature', 'remarks']
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date'}),
-
-            'morning_in': forms.TimeInput(
-                attrs={'type': 'time', 'min': '06:00', 'max': '11:59'}
-            ),
-            'morning_out': forms.TimeInput(
-                attrs={'type': 'time', 'min': '06:00', 'max': '11:59'}
-            ),
-            'afternoon_in': forms.TimeInput(
-                attrs={'type': 'time', 'min': '12:00', 'max': '17:59'}
-            ),
-            'afternoon_out': forms.TimeInput(
-                attrs={'type': 'time', 'min': '12:00', 'max': '17:59'}
-            ),
+            'session': forms.Select(attrs={'class': 'form-control'}),
+            'service_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+         'time_in': forms.TimeInput(attrs={'type':'time','id':'id_time_in','step':900}),
+    'time_out': forms.TimeInput(attrs={'type':'time','id':'id_time_out','step':900}),
+            'student_signature': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+            'remarks': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
         }

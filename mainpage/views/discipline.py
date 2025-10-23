@@ -1,26 +1,25 @@
-from django.shortcuts import render, redirect
-from ..models.discipline import CaseProfile
-from ..forms.discipline import CaseProfileForm
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
 from datetime import datetime
-from ..models import studentInfo  # Add this import at the top
+import json
 
-# Replace these with the correct import paths from your models
-from mainpage.models import CommunityServiceTracker
-from django.shortcuts import render, redirect
-from ..forms import CommunityServiceForm
-from ..models import CommunityServiceTracker
-from django.utils import timezone
-from django.contrib import messages
-from django.http import JsonResponse
-from ..models import studentInfo, counseling_schedule, CaseProfile  # adjust model name
-from ..forms import CounselingSchedulerForm  # adjust form name
-
-# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
+from django.utils import timezone
+from django.contrib import messages
+
+from ..models import (
+    studentInfo,
+    counseling_schedule,
+    CaseProfile,
+    CommunityServiceTracker,
+)
+from ..forms import (
+    CaseProfileForm,
+    CommunityServiceForm,
+    CounselingSchedulerForm,
+)
 
 @csrf_exempt
 def update_suspension(request, case_id):
@@ -109,51 +108,55 @@ def get_student(request, studID):
 import logging
 
 logger = logging.getLogger(__name__)
+
 def student_hours_view(request, case_id):
     case = get_object_or_404(CaseProfile, pk=case_id)
-    records = CommunityServiceTracker.objects.filter(case=case).order_by('-date')
-
+    records = CommunityServiceTracker.objects.filter(case=case).order_by('-service_date')
     if request.method == 'POST':
-        form = CommunityServiceForm(request.POST)
+        form = CommunityServiceForm(request.POST, request.FILES)
         if form.is_valid():
-            tracker_date = form.cleaned_data['date']
+            tracker = form.save(commit=False)
+            tracker.case = case
 
-            # Check if record for this date exists
-            existing = CommunityServiceTracker.objects.filter(case=case, date=tracker_date).first()
-
-            if existing:
-                # Fill the next empty time slot
-                if not existing.morning_in:
-                    existing.morning_in = form.cleaned_data.get('time_in')
-                elif not existing.morning_out:
-                    existing.morning_out = form.cleaned_data.get('time_out')
-                elif not existing.afternoon_in:
-                    existing.afternoon_in = form.cleaned_data.get('time_in')
-                elif not existing.afternoon_out:
-                    existing.afternoon_out = form.cleaned_data.get('time_out')
-                else:
-                    messages.error(request, "All time slots for this date are already filled.")
-                    return redirect('student_hours', case_id=case.id)
-                
-                existing.save()
-                messages.success(request, "Time logged successfully.")
+            # Check if the session for that date already exists
+            exists = CommunityServiceTracker.objects.filter(
+                case=case,
+                service_date=tracker.service_date,
+                session=tracker.session
+            ).exists()
+            if exists:
+                messages.error(request, f"{tracker.session.capitalize()} session already exists for {tracker.service_date}.")
             else:
-                tracker = form.save(commit=False)
-                tracker.case = case
                 tracker.save()
-                messages.success(request, "New date record created.")
-            
-            return redirect('student_hours', case_id=case.id)
+                messages.success(request, "Community service record added successfully!")
+                return redirect('student_hours', case_id=case.id)
+
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = CommunityServiceForm()
 
-    return render(request, 'discipline/student_hours_rendered.html', {
+    # Create a dictionary of existing sessions by date
+    existing_sessions = {}
+    for r in records:
+        date_str = r.service_date.isoformat()
+        existing_sessions.setdefault(date_str, []).append(r.session)
+
+    total_hours = sum([r.total_hours_decimal() for r in records])
+    total_hours_display = f"{int(total_hours)}h {int((total_hours % 1) * 60)}m"
+
+    rendered_hours = sum([r.total_hours_decimal() for r in records])
+    rendered_hours_display = f"{int(rendered_hours)}h {int((rendered_hours % 1) * 60)}m"
+
+    context = {
+        'case': case,
         'form': form,
         'records': records,
-        'case': case,
-        'student': case.student,
-    })
-
+        'total_hours': total_hours_display,
+        'rendered_hours': rendered_hours_display,  # <--- add this
+        'existing_sessions': existing_sessions,
+    }
+    return render(request, 'discipline/student_hours_rendered.html', context)
 
 def case_profile_view(request):
     user = request.user
@@ -231,7 +234,7 @@ from ..models import CommunityService
 from ..forms import CommunityServiceForm
 
 def community_service_list(request):
-    services = CommunityService.objects.all().order_by('-date')
+    services = CommunityService.objects.all().order_by('-service_date')
     total_hours = sum(service.hours_rendered for service in services)
     return render(request, 'community_service/list.html', {
         'services': services,
@@ -247,55 +250,64 @@ def add_community_service(request):
     else:
         form = CommunityServiceForm()
     return render(request, 'community_service/add.html', {'form': form})
-
+# ...existing code...
 def serviceTracker(request, student_id):
     student = get_object_or_404(studentInfo, studID=student_id)
-    if student:
-        community_services = CommunityServiceTracker.objects.filter(student=student)
-        time_rendered = [service.time_rendered() for service in community_services]
-        total_hours = 0
-        total_minutes = 0
-        
-        for service in community_services:
-            hours, minutes = service.total_time_rendered()
-            total_hours += hours
-            total_minutes += minutes
-        
-        # Adjust total hours if total minutes exceed 60
-        total_hours += total_minutes // 60
-        total_minutes %= 60
-        
-        if student.community_service_hours is not None:
-            total_time_rendered_hours = total_hours
-            if total_time_rendered_hours >= student.community_service_hours:
-                student.sanction_completed = True
-                student.save()
-            else:
-                student.sanction_completed = False
-                student.save()
 
-    if request.method == "POST" and student:
+    # use case__student to get records for this student's cases
+    community_services = CommunityServiceTracker.objects.filter(case__student=student).order_by('-service_date')
+    time_rendered = [svc.time_rendered() for svc in community_services]
+
+    # compute totals using total_hours_decimal()
+    total_hours = 0
+    total_minutes = 0
+    for svc in community_services:
+        th = svc.total_hours_decimal() or 0.0
+        h = int(th)
+        m = int(round((th - h) * 60))
+        total_hours += h
+        total_minutes += m
+
+    total_hours += total_minutes // 60
+    total_minutes = total_minutes % 60
+
+    if student.community_service_hours is not None:
+        student.sanction_completed = (total_hours >= student.community_service_hours)
+        student.save()
+
+    if request.method == "POST":
         date_str = request.POST.get('service_date')
         service_date = datetime.strptime(date_str, '%Y-%m-%d').date()
         time_in = request.POST.get('time_in')
         time_out = request.POST.get('time_out')
-        student_signature = request.POST.get('student_signature')
+        student_signature = request.FILES.get('student_signature') or request.POST.get('student_signature')
         remarks = request.POST.get('remarks')
 
-        CommunityServiceTracker.objects.create(
-            student = student,
-            service_date = service_date,
-            time_in = time_in,
-            time_out = time_out,
-            student_signature = student_signature,
-            remarks = remarks
-        )
+        # find a CaseProfile for this student (use most recent)
+        case = CaseProfile.objects.filter(student=student).order_by('-date_reported').first()
+        if not case:
+            messages.error(request, "No case found for this student. Create a case first.")
+            return redirect(reverse('community-service-tracker', args=[student_id]))
 
+        CommunityServiceTracker.objects.create(
+            case=case,
+            service_date=service_date,
+            time_in=time_in,
+            time_out=time_out,
+            student_signature=student_signature,
+            remarks=remarks
+        )
         return redirect(reverse('community-service-tracker', args=[student_id]))
-    
-    context = {'student':student, 'community_services':community_services, 'time_rendered':time_rendered, 'total_hours': total_hours,
-        'total_minutes': total_minutes}
+
+    context = {
+        'student': student,
+        'community_services': community_services,
+        'time_rendered': time_rendered,
+        'total_hours': total_hours,
+        'total_minutes': total_minutes,
+    }
     return render(request, 'discipline/comm_service.html', context)
+# ...existing code...
 from django.shortcuts import get_object_or_404
 
 # def case_profile_view(request):

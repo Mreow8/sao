@@ -1,4 +1,7 @@
-{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+{% extends 'adminmain.html' %} {% load static %}
+<!-- prettier-ignore -->
+
+{% block headcontent %}
 <link
   rel="stylesheet"
   href="{% static 'styles/studentlife/equipmentTrackerAdmin.css' %}"
@@ -6,34 +9,31 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
-  href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Freeman&family=Rubik:wght@300..900&display=swap"
   rel="stylesheet"
 />
-
+{% endblock headcontent %} {% block bodycontent %}
 <div class="container">
   <div class="sub-title">
     <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
     <p class="hometext">Home</p>
     <p class="certxt">> Equipment Tracker</p>
   </div>
+
   <div class="equipmentContents">
     <!-- prettier-ignore -->
-
     {% if messages %}
-  {% for message in messages %}
-    {% if message.tags == "success" %}
-    <div class="messages success-message">
-      <div class="alert alert-success" role="alert">{{ message }}</div>
-    </div>
-    {% else %} {% if message.tags == "error" %}
-    <div class="messages error-message">
-      <div class="alert alert-danger" role="alert">{{ message }}</div>
-    </div>
-    {% endif %} {% endif %} {% endfor %} {% endif %}
+      {% for message in messages %}
+        {% if message.tags == "success" %}
+    <div class="messages success-message" role="alert">{{ message }}</div>
+    {% elif message.tags == "error" %}
+    <div class="messages error-message" role="alert">{{ message }}</div>
+    {% endif %} {% endfor %} {% endif %}
 
     <div class="title-txt">
       <p>Enter ID number:</p>
     </div>
+
     <form
       method="GET"
       action="{% url 'equipmentTrackerAdmin' %}"
@@ -42,7 +42,7 @@
       <input
         type="text"
         name="search"
-        placeholder="Search..."
+        placeholder="Search for student by ID..."
         value="{{ request.GET.search }}"
       />
       <input type="submit" class="searchBtn" value="SEARCH" />
@@ -51,107 +51,98 @@
     <form method="POST" action="{% url 'save_equipment_borrowing' %}">
       {% csrf_token %}
       <input type="hidden" name="student_id" value="{{ student.studID }}" />
-      <table>
-        <tbody>
-          <tr>
-            <td>Name of Borrower:</td>
-            <td>Course/Program of Borrower:</td>
-          </tr>
-          <tr>
-            <td>
-              <input
-                type="text"
-                name="borrowername"
-                id="borrowerName"
-                placeholder="Name of Borrower"
-                value="{{ student.firstname }} {{ student.lastname }}"
-                {%
-                if
-                student
-                %}
-                readonly
-                {%
-                endif
-                %}
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                name="courseprogram"
-                id="courseProgram"
-                placeholder="Course/Program of Borrower"
-                value="{{ student.degree }}"
-                {%
-                if
-                student
-                %}
-                readonly
-                {%
-                endif
-                %}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>Equipment Name:</td>
-            <td>Date Borrowed:</td>
-          </tr>
-          <tr>
-            <td>
-              <select id="equipmentName" name="equipmentname">
-                <option value="" disabled selected>Select equipment</option>
-                {% for equip in all_equipment %}
-                <option value="{{ equip.itemId }}">
-                  {{ equip.equipmentName }}
-                </option>
-                {% endfor %}
-              </select>
-            </td>
-            <td><input type="date" name="dateborrowed" id="dateBorrowed" /></td>
-          </tr>
-        </tbody>
 
-        <table class="equipmentTable">
-          <div class="button-container">
-            <a href="{% url 'addEquipment' %}" id="addbtn" class="button"
-              >ADD</a
-            >
-            <button class="saveBtn" type="submit">SAVE</button>
-          </div>
-          <thead>
-            <tr>
-              <th>Item ID</th>
-              <th>Name of Borrower</th>
-              <th>Course/Program</th>
-              <th>Equipment Name</th>
-              <th>Date Borrowed</th>
-              <th>Status</th>
-              <th>Date Returned</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for record in borrowing_records %}
-            <tr>
-              <td>{{record.equipment.itemId}}</td>
-              <td>
-                {{ record.student.firstname }} {{ record.student.lastname }}
-              </td>
-              <td>{{ record.student.degree }}</td>
-              <td>{{ record.equipment.equipmentName }}</td>
-              <td>{{ record.date_borrowed }}</td>
-              <td>
-                {% if record.is_returned %} Returned {% else %}
-                <button class="returnBtn" data-record-id="{{ record.id }}">
-                  Return
-                </button>
-                {% endif %}
-              </td>
-              <td>{{ record.date_returned }}</td>
-            </tr>
+      <div class="form-grid">
+        <div>
+          <label for="borrowerName">Name of Borrower:</label>
+          <input
+            type="text"
+            name="borrowername"
+            id="borrowerName"
+            placeholder="Name of Borrower"
+            value="{{ student.firstname }} {{ student.lastname }}"
+            {%
+            if
+            student
+            %}readonly{%
+            endif
+            %}
+          />
+        </div>
+        <div>
+          <label for="courseProgram">Course/Program of Borrower:</label>
+          <input
+            type="text"
+            name="courseprogram"
+            id="courseProgram"
+            placeholder="Course/Program of Borrower"
+            value="{{ student.degree }}"
+            {%
+            if
+            student
+            %}readonly{%
+            endif
+            %}
+          />
+        </div>
+        <div>
+          <label for="equipmentName">Equipment Name:</label>
+          <select id="equipmentName" name="equipmentname" required>
+            <option value="" disabled selected>Select equipment</option>
+            {% for equip in all_equipment %}
+            <option value="{{ equip.itemId }}">
+              {{ equip.equipmentName }}
+            </option>
             {% endfor %}
-          </tbody>
-        </table>
+          </select>
+        </div>
+        <div>
+          <label for="dateBorrowed">Date Borrowed:</label>
+          <input type="date" name="dateborrowed" id="dateBorrowed" required />
+        </div>
+      </div>
+
+      <div class="button-container">
+        <a href="{% url 'addEquipment' %}" id="addbtn">ADD EQUIPMENT</a>
+        <button class="saveBtn" type="submit">SAVE RECORD</button>
+      </div>
+
+      <table class="equipmentTable">
+        <thead>
+          <tr>
+            <th>Item ID</th>
+            <th>Name of Borrower</th>
+            <th>Course/Program</th>
+            <th>Equipment Name</th>
+            <th>Date Borrowed</th>
+            <th>Status</th>
+            <th>Date Returned</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in borrowing_records %}
+          <tr>
+            <td>{{ record.equipment.itemId }}</td>
+            <!-- prettier-ignore -->
+            <td>{{ record.student.firstname }} {{ record.studentlastname }}</td>
+            <td>{{ record.student.degree }}</td>
+            <td>{{ record.equipment.equipmentName }}</td>
+            <td>{{ record.date_borrowed }}</td>
+            <td>
+              {% if record.is_returned %} Returned {% else %}
+              <button
+                type="button"
+                class="returnBtn"
+                data-record-id="{{ record.id }}"
+              >
+                Return
+              </button>
+              {% endif %}
+            </td>
+            <td>{{ record.date_returned|default:"---" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </form>
   </div>
@@ -163,6 +154,7 @@
       button.addEventListener("click", function () {
         const recordId = this.getAttribute("data-record-id");
         const button = this;
+        const row = button.closest("tr");
 
         if (confirm("Are you sure you want to mark this item as returned?")) {
           fetch("{% url 'update_return_status' %}", {
@@ -176,12 +168,14 @@
             .then((response) => response.json())
             .then((data) => {
               if (data.status === "success") {
-                button.disabled = true;
-                button.textContent = "Returned";
-                button
-                  .closest("tr")
-                  .querySelector("td:nth-child(6)").textContent =
-                  data.date_returned;
+                // Replace button with "Returned" text
+                const statusCell = button.parentElement;
+                statusCell.innerHTML = "Returned";
+
+                // Update the date returned cell
+                const dateReturnedCell = row.querySelector("td:nth-child(7)");
+                dateReturnedCell.textContent = data.date_returned;
+
                 alert("Item marked as returned.");
               } else {
                 alert("Failed to update return status: " + data.message);

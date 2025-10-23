@@ -1,0 +1,135 @@
+/* --- General Body & Font Styling --- */
+body {
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #333;
+}
+
+/* --- Main Content Container (styled like .gmc-form) --- */
+.main-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- Header --- */
+.page-title {
+  font-weight: 700;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1a1a1a;
+}
+
+/* --- Form Styling --- */
+.assistance-form {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+.input-group {
+  display: flex;
+  gap: 10px;
+}
+.input-group input {
+  flex-grow: 1;
+}
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+input[type="text"],
+input[type="date"] {
+  width: 100%;
+  padding: 10px 12px;
+  background: #f0f2f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+input:focus {
+  outline: none;
+  border-color: #ff8000;
+  background-color: #fff;
+}
+
+/* --- Button Styling --- */
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.btn {
+  flex-grow: 1;
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  text-align: center;
+}
+.btn-get {
+  background-color: #3b82f6; /* Blue */
+  color: white;
+  flex-grow: 0;
+  width: 100px;
+}
+.btn-primary {
+  background-color: #ff8000; /* Orange */
+  color: white;
+}
+.btn-secondary {
+  background-color: #6c757d; /* Grey */
+  color: white;
+}
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* --- Autocomplete Suggestions --- */
+.autocomplete {
+  position: relative;
+}
+.suggestions-list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+}
+.suggestion-item {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+.suggestion-item:hover {
+  background-color: #f8f9fa;
+}

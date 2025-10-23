@@ -1,0 +1,206 @@
+/* --- General Body & Font Styling --- */
+body {
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+/* --- Main Content Container (styled like .gmc-form) --- */
+.main-container {
+  max-width: 1400px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Header & Search --- */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.page-title {
+  font-weight: 700;
+  font-size: 24px;
+  color: #1a1a1a;
+}
+.page-subtitle {
+  font-size: 14px;
+  color: #6c757d;
+}
+.search-form {
+  display: flex;
+  gap: 10px;
+}
+.search-form input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.search-form input:focus {
+  outline-color: #ff8000;
+}
+
+/* --- Table Styling (from requestgmc.css) --- */
+.table-container {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+}
+.table-responsive {
+  overflow-x: auto;
+}
+.pwd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.pwd-table th,
+.pwd-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.pwd-table thead th {
+  background-color: #f7f7f7;
+  color: #ff8000; /* Orange accent */
+  font-weight: 600;
+}
+.pwd-table tbody tr:hover {
+  background-color: #f1f3f5;
+}
+.pwd-table a {
+  color: #007bff;
+  text-decoration: none;
+}
+.pwd-table a:hover {
+  text-decoration: underline;
+}
+
+/* Status Badges & Action Buttons */
+.status-cell,
+.action-cell {
+  text-align: center;
+}
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+.status-verified {
+  background-color: #28a745;
+}
+.status-pending {
+  background-color: #ffc107;
+  color: #212529;
+}
+.btn {
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+.btn-verify {
+  background-color: #28a745;
+  color: white;
+}
+.btn-unverify {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+/* --- File Preview Modal --- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 800px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.close-modal {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.preview-body {
+  flex-grow: 1;
+  padding: 10px;
+  overflow: auto;
+  text-align: center;
+}
+.preview-body img {
+  max-width: 100%;
+  transform-origin: top left;
+}
+.preview-body object {
+  width: 100%;
+  height: 100%;
+}
+.zoom-controls {
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid #e0e0e0;
+}
+.zoom-controls button {
+  width: 30px;
+  height: 30px;
+  margin: 0 5px;
+}

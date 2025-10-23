@@ -1,134 +1,123 @@
-.sub-title h3 {
-  color: black;
-
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 15px;
-}
-
-.sub-title p {
-  display: inline;
-}
-
-.title-txt p {
-  color: black;
-  margin-top: 30px;
-  margin-bottom: 20px;
-}
-
-.txt-underline {
-  text-decoration: none;
-}
-
-.hometext {
-  color: gray;
-}
-
-.certxt {
-  margin-left: 5px;
-  color: #ff8000;
-}
-
-.equipmentContents {
-  width: 1155px;
+/* --- Main Content Container (styled like .gmc-form) --- */
+.body-content {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  color: black;
-  margin-top: 40px;
+  padding: 0 20px 40px 20px;
 }
-
+.equipmentContents {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
 .equipmentContents h2 {
-  color: black;
+  text-align: center;
+  color: #1a1a1a;
+  font-size: 26px;
+  margin-bottom: 25px;
 }
 
-input[name="search"] {
-  background-color: #dddeee;
-  color: black;
-  border: none;
-  padding: 0.5em;
-  height: 35px;
-  flex-grow: 1; /* Allows the input to grow and fill available space */
-  min-width: 150px; /* Minimum width */
-  max-width: 150px; /* Maximum width, adjust as necessary */
+/* --- Messages --- */
+.messages {
+  list-style: none;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  text-align: center;
 }
 
-input[name="search"]:focus {
+/* --- Form Grid & Inputs (from requestgmc.css) --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.form-grid label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+.form-grid input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  background: #f0f2f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.form-grid input:focus {
   outline: none;
-  border-color: transparent;
-}
-.equipmentform td {
-  font-weight: bold;
+  border-color: #ff8000;
+  background-color: #fff;
 }
 
-table {
-  margin-top: 20px;
+/* --- Button --- */
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+}
+.saveBtn {
+  background-color: #ff8000;
+  color: white;
+  border: none;
+  height: 40px;
+  padding: 0 30px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.saveBtn:hover {
+  background-color: #e67300;
+}
+
+/* --- Table Styling (from requestgmc.css) --- */
+.table-responsive {
+  overflow-x: auto;
+}
+.equipmentTable {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
 }
-
-table th,
-table td {
-  padding: 8px;
-  text-align: left;
-}
-
+.equipmentTable th,
 .equipmentTable td {
-  padding: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
   text-align: left;
-  border-bottom: 1px solid #ddd;
 }
-
-table th {
-  background-color: #f2f2f2;
+.equipmentTable th {
+  background-color: #f7f7f7;
   color: #ff8000;
+  font-weight: 600;
+}
+.equipmentTable td {
+  color: #444;
+}
+.equipmentTable tbody tr:last-child td {
+  border-bottom: none;
+}
+.equipmentTable tbody tr:hover {
+  background-color: #f8f9fa;
 }
 
-table td {
-  color: black;
-}
-
-input[name="equipmentname"],
-input[name="serialnum"] {
-  background-color: #dddeee;
-  color: black;
-  border: none;
-  padding: 0.5em;
-  height: 35px;
-  flex-grow: 1;
-  min-width: 400px;
-  max-width: 400px;
-}
-
-input[name="equipmentname"],
-input[name="serialnum"]:focus {
-  border-color: transparent;
-  outline: none;
-}
-
-.saveBtn {
-  margin-top: 15px;
-  margin-left: 10px;
-  color: white;
-  background-color: #ff8000;
-  height: 35px;
-  width: 120px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-left: 430px;
-}
-
-.success-message {
-  margin-top: 10px;
-  background-color: #1cbf19;
-  border-radius: 5px;
-  width: 250px;
-  align-items: center;
-  height: 30px;
-  padding-top: 5px;
-  padding-left: 5px;
-  color: white;
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+  .equipmentContents {
+    padding: 20px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }

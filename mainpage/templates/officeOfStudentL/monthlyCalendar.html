@@ -6,97 +6,11 @@ INFORMATION SYSTEM{% endblock %} {% block bodycontent %}
   rel="stylesheet"
   href="{% static 'styles/studentlife/fullcalendar/lib/main.min.css'%}"
 />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link
+  rel="stylesheet"
+  href="{% static 'styles/studentlife/fullcalendar.css'%}"
+/>
 
-<style>
-  /* 🌟 Calendar Redesign to Match Admin Dashboard */
-  #calendar {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    font-family: "Rubik", sans-serif;
-  }
-
-  /* Header (month navigation) */
-  .fc-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-
-  .fc-toolbar-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333;
-  }
-
-  .fc-button {
-    background: #f5f7fa !important;
-    border: none !important;
-    border-radius: 8px !important;
-    color: #333 !important;
-    font-weight: 500;
-    padding: 6px 14px !important;
-    transition: all 0.2s ease;
-  }
-
-  .fc-button:hover {
-    background: #e6e9ef !important;
-  }
-
-  /* Days of the week */
-  .fc-col-header-cell {
-    background: transparent !important;
-    color: #555;
-    font-weight: 600;
-    text-align: center;
-    padding: 8px 0;
-  }
-
-  /* Day cells */
-  .fc-daygrid-day {
-    border: none !important;
-    padding: 4px;
-  }
-
-  .fc-daygrid-day-number {
-    display: block;
-    width: 100%;
-    text-align: center;
-    background: #f5f7fa;
-    border-radius: 6px;
-    padding: 8px 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    transition: all 0.2s ease;
-  }
-
-  /* Hover effect */
-  .fc-daygrid-day-number:hover {
-    background: #e6e9ef;
-    cursor: pointer;
-  }
-
-  /* Today’s date */
-  .fc-day-today .fc-daygrid-day-number {
-    background: #2563eb;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  /* Selected event highlight */
-  .fc-event {
-    background: #2563eb !important;
-    color: #fff !important;
-    border: none !important;
-    border-radius: 6px;
-    padding: 2px 6px;
-    font-size: 12px;
-  }
-</style>
 <div class="container">
   <div class="sub-title">
     <h3>OFFICE OF STUDENT LIFE</h3>
@@ -113,6 +27,7 @@ INFORMATION SYSTEM{% endblock %} {% block bodycontent %}
   </div>
   <!-- Event Details Modal -->
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
   var scheds = JSON.parse("{{ sched_json|escapejs }}");

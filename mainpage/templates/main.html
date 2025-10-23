@@ -148,32 +148,41 @@
             </div>
         </div>
        <div class="right-side">
-  <div class="custom-search-wrapper">
  
-  <div class="search-container">
-    <div class="search-icon">
-      <i class="fa-solid fa-magnifying-glass"></i>
+<div class="custom-search-wrapper bg-white border-b border-gray-200 shadow-sm px-6 py-3">
+  <div class="search-container flex items-center justify-between">
+    <!-- Search bar -->
+    <div class="flex items-center flex-1 max-w-md">
+      <div class="search-icon mr-2 text-gray-500">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+      <input 
+        type="text" 
+        placeholder="Search..." 
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" 
+      />
     </div>
 
-    <input type="text" placeholder="Search..." />
-
-    <div class="account-info">
+    <!-- Account info (moved to far right) -->
+    <div class="account-info flex items-center ml-auto relative">
       {% if user.is_authenticated %}
-      <div class="profile-summary">
-        <i class="fas fa-user-circle profile-icon"></i>
-        <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
+      <div class="profile-summary flex items-center space-x-2 cursor-pointer">
+        <i class="fas fa-user-circle profile-icon text-2xl text-gray-700"></i>
+        <span class="profile-name font-medium text-gray-800">{{ user.first_name }} {{ user.last_name }}</span>
       </div>
 
-      <div class="profile-popup">
+      <!-- Hover dropdown -->
+      <div class="profile-popup absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg p-3 hidden group-hover:block z-50">
         <strong>Student ID:</strong> {{ user.username }}<br />
         <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br />
-        <button class="logout-btn">
+        <button class="logout-btn mt-2 bg-red-500 hover:bg-red-600 text-white w-full py-1 rounded">
           <a href="{% url 'logout' %}">Logout</a>
         </button>
       </div>
+
       {% else %}
       <div class="student-account-info">
-        <a href="{% url 'signinuser' %}">Sign in</a>
+        <a href="{% url 'signinuser' %}" class="text-blue-600 hover:underline text-sm">Sign in</a>
       </div>
       {% endif %}
     </div>

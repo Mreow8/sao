@@ -1,4 +1,7 @@
 import csv
+# In your views.py
+
+from django.contrib.auth.decorators import login_required # 👈 Import this
 from datetime import datetime
 import json
 from django.http import JsonResponse
@@ -353,10 +356,20 @@ def counseling_app_admin_view(request):
         'time': time,
     }
     return render(request, 'guidance/counseling_app_admin_view.html', context)
-
+@login_required # 👈 Add this decorator to ensure only logged-in users can access the page
 def exit_interview(request):
+    # Get the studentInfo object linked to the currently logged-in user
+    try:
+        student = studentInfo.objects.get(user=request.user)
+    except studentInfo.DoesNotExist:
+        # Handle case where a user is logged in but has no student profile
+        # You can redirect them or show an error message
+        messages.error(request, "Could not find a student profile for your account.")
+        return redirect('some_other_page')
+
     if request.method == 'POST':
         form = ExitInterviewForm(request.POST)
+        
         if form.is_valid():
             new_form = form.save(commit=False)
             fields = [

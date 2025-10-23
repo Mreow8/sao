@@ -20,18 +20,25 @@ from ..models.studentorg import Organization
 # --- CustomUser Model ---
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
+        # Existing Roles
         ('superadmin', 'Superadmin'),
-        ('guard', 'Guard'),
-        ('org_member', 'Org Member'),
+        ('clinic_admin', 'Clinic Admin'),
         ('guidance', 'Guidance'),
+        ('org_admin', 'Org Admin'),
+        ('guard', 'Guard'),
         ('student', 'Student'),
+
+        # New University Staff Roles
+        ('staff', 'Staff'),
+        ('discipline_officer', 'Discipline Officer'),
+        ('alumni_officer', 'Alumni Officer'),
+        ('student_life_staff', 'Student Life Staff'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     organization = models.ForeignKey(Organization, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return f"{self.username} ({self.role})"
- 
+        return f"{self.username} ({self.get_role_display()})"
 
 from django.contrib.auth.models import User
 from django.utils import timezone

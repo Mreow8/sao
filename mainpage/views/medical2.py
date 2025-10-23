@@ -1,337 +1,137 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, user_passes_test
+# Standard library imports
+import json
+import re
+import random
+import uuid
+import os
+import calendar
+import csv
+from datetime import datetime, date, timedelta
+from ..models import staffInfo as Faculty
+# Django imports
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.messages import get_messages
+from django.core.mail import send_mail
 from django.db import models
-from ..models import studentInfo, EmailVerification, Profile, Faculty, SystemSettings
+from django.db.models import Q
+from django.http import JsonResponse, HttpResponse, Http404, HttpResponseForbidden
+from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_http_methods
+
+# Local application imports
+from ..forms import UploadFileForm
 from ..models import (
-    PhysicalExamination,
+    studentInfo,
+    staffInfo,
+    SystemSettings,
+    EmailVerification,
     Patient,
+    PhysicalExamination,
     MedicalHistory,
     FamilyMedicalHistory,
     RiskAssessment,
-    MentalHealthRecord,
+    MentalHealthRecord,FacultyRequest,
     PatientRequest,
-    TransactionRecord,
     DentalRecords,
     PrescriptionRecord,
-    FacultyRequest,
     EmergencyHealthAssistanceRecord,
     MedicalRequirement,
     EligibilityForm,
     MedicalCertificate
 )
-from datetime import datetime, date
-from django.utils import timezone
-from django.core.mail import send_mail
-from django.conf import settings
-from django.urls import reverse
-from django.http import JsonResponse
+from ..views import can_access_medical_admin
 from utils import send_verification_email, send_password_reset_email
-import uuid
-from django.utils.crypto import get_random_string
-from django.contrib.messages import get_messages
-from django.views.decorators.csrf import ensure_csrf_cookie
-import re
-import random
-from django.views.decorators.http import require_http_methods
-import json # Import json for parsing request body
 
-def is_admin(user):
-    return user.is_staff
+# Get the User model
+User = get_user_model()
 
-@ensure_csrf_cookie
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('email')
-        password = request.POST.get('password')
-        next_url = request.POST.get('next', '')
 
-        user = authenticate(request, username=username, password=password)
+# @ensure_csrf_cookie
+# def login_view(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('email')
+#         password = request.POST.get('password')
+#         next_url = request.POST.get('next', '')
+
+#         user = authenticate(request, username=username, password=password)
         
-        if user is None:
-            try:
-                user_obj = User.objects.get(email=username)
-                user = authenticate(request, username=user_obj.username, password=password)
-            except User.DoesNotExist:
-                user = None
+#         if user is None:
+#             try:
+#                 user_obj = User.objects.get(email=username)
+#                 user = authenticate(request, username=user_obj.username, password=password)
+#             except User.DoesNotExist:
+#                 user = None
 
-        if user is not None:
-            # Check if OTP verification is required
-            system_settings = SystemSettings.get_settings()
+#         if user is not None:
+#             # Check if OTP verification is required
+#             system_settings = SystemSettings.get_settings()
             
-            if system_settings.require_otp_verification:
-                # Generate and send OTP for login
-                try:
-                    verification = EmailVerification.objects.get(user=user)
-                except EmailVerification.DoesNotExist:
-                    verification = EmailVerification.objects.create(user=user)
+#             if system_settings.require_otp_verification:
+#                 # Generate and send OTP for login
+#                 try:
+#                     verification = EmailVerification.objects.get(user=user)
+#                 except EmailVerification.DoesNotExist:
+#                     verification = EmailVerification.objects.create(user=user)
                 
-                # Generate new OTP
-                otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])
-                verification.otp = otp
-                verification.created_at = timezone.now()
-                verification.save()
+#                 # Generate new OTP
+#                 otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+#                 verification.otp = otp
+#                 verification.created_at = timezone.now()
+#                 verification.save()
                 
-                # Send verification email
-                send_verification_email(user, verification)
+#                 # Send verification email
+#                 send_verification_email(user, verification)
                 
-                # Store email in session for OTP verification
-                request.session['verification_email'] = user.email
+#                 # Store email in session for OTP verification
+#                 request.session['verification_email'] = user.email
                 
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'OTP sent to your email',
-                    'show_otp': True
-                })
-            else:
-                # OTP verification is disabled, log the user in directly
-                login(request, user)
+#                 return JsonResponse({
+#                     'status': 'success',
+#                     'message': 'OTP sent to your email',
+#                     'show_otp': True
+#                 })
+#             else:
+#                 # OTP verification is disabled, log the user in directly
+#                 login(request, user)
                 
-                # Determine redirect URL based on user role
-                if user.is_superuser or user.is_staff:
-                    redirect_url = reverse('admin_dashboard')
-                else:
-                    redirect_url = reverse('main')
+#                 # Determine redirect URL based on user role
+#                 if user.is_superuser or user.is_staff:
+#                     redirect_url = reverse('admin_dashboard')
+#                 else:
+#                     redirect_url = reverse('main')
                 
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'Login successful',
-                    'redirect_url': redirect_url
-                })
-        else:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Invalid ID number/Email or password'
-            })
+#                 return JsonResponse({
+#                     'status': 'success',
+#                     'message': 'Login successful',
+#                     'redirect_url': redirect_url
+#                 })
+#         else:
+#             return JsonResponse({
+#                 'status': 'error',
+#                 'message': 'Invalid ID number/Email or password'
+#             })
 
-    # Get messages and convert them to a list of dictionaries
-    messages_list = []
-    for message in get_messages(request):
-        messages_list.append({
-            'message': message.message,
-            'tags': message.tags
-        })
+#     # Get messages and convert them to a list of dictionaries
+#     messages_list = []
+#     for message in get_messages(request):
+#         messages_list.append({
+#             'message': message.message,
+#             'tags': message.tags
+#         })
 
-    return render(request, 'login.html', {
-        'messages': messages_list,
-        'next': request.GET.get('next', '')
-    })
+#     return render(request, 'login.html', {
+#         'messages': messages_list,
+#         'next': request.GET.get('next', '')
+#     })
 
-@require_http_methods(["GET", "POST"])
-def register(request):
-    if request.method == "POST":
-        print("Received POST request in register view.")
-        print("POST data:", request.POST)
-        try:
-            # Get common form data first
-            firstName = request.POST.get("firstName")
-            middleInitial = request.POST.get("middleInitial")
-            lastName = request.POST.get("lastName")
-            email = request.POST.get("email")
-            password = request.POST.get("password")
-            confirmPassword = request.POST.get("confirmPassword")
-            role = request.POST.get("role", 'Student')  # Get role from hidden input
-
-            # Security check for faculty registration
-            # if role == 'Faculty' and not request.GET.get('role') == 'faculty':
-            #     return JsonResponse({
-            #         'status': 'error',
-            #         'message': 'Invalid registration attempt.'
-            #     })
-
-            print("Received role:", role)
-
-            # Check if email already exists (common validation)
-            if User.objects.filter(email=email).exists():
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Email already registered.'
-                })
-
-            # Validate password (common validation)
-            if password != confirmPassword:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Passwords do not match.'
-                })
-
-            if role == 'Student':
-                # Get student-specific data
-                sex = request.POST.get("sex")
-                yrLevel = request.POST.get("yrLevel")
-                id_numbers = request.POST.getlist("idNumber")
-                idNumber = next((id_num for id_num in id_numbers if id_num), id_numbers[-1] if id_numbers else '')
-                lrn = request.POST.get("lrn")
-                course = request.POST.get("course")
-
-                print("Received LRN for student:", lrn)
-                print(f"firstName: {firstName}")
-                print(f"middleInitial: {middleInitial}")
-                print(f"lastName: {lastName}")
-                print(f"sex: {sex}")
-                print(f"yrLevel: {yrLevel}")
-                print(f"idNumber: {idNumber}")
-                print(f"lrn: {lrn}")
-                print(f"course: {course}")
-                print(f"email: {email}")
-                print(f"password: {password}")
-                print(f"confirmPassword: {confirmPassword}")
-
-                # Validate required fields for students
-                if not all([firstName, lastName, sex, yrLevel, idNumber, lrn, course, email, password, confirmPassword]):
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Please provide all required student information.'
-                    })
-
-                # Validate LRN format
-                if not lrn or not lrn.isdigit() or len(lrn) != 12:
-                    print("LRN validation failed for student.")
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'LRN must be exactly 12 digits.'
-                    })
-
-                # Validate Student ID Number format
-                if not idNumber or not idNumber.isdigit() or len(idNumber) != 7:
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'ID Number must be exactly 7 digits.'
-                    })
-
-                # Check if student ID already exists
-                if studentInfo.objects.filter(student_id=idNumber).exists():
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Student ID already registered.'
-                    })
-
-                # Check if LRN already exists
-                if studentInfo.objects.filter(lrn=lrn).exists():
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'LRN already registered.'
-                    })
-
-                # Create user
-                user = User.objects.create_user(
-                    username=email, # Using email as username
-                    email=email,
-                    password=password,
-                    first_name=firstName,
-                    last_name=lastName,
-                )
-
-                # Create Profile for the user
-                profile = Profile.objects.create(user=user, role=role)
-
-                # Create Student instance
-                student_instance = studentInfo.objects.create(
-                    student_id=idNumber,
-                    lrn=lrn,
-                    lastname=lastName,
-                    firstname=firstName,
-                    middlename=middleInitial,
-                    degree=course,
-                    year_level=int(yrLevel),
-                    sex=sex,
-                    email=email,
-                    contact_number='N/A'
-                )
-
-                # Create Patient instance and link to the User
-                Patient.objects.create(user=user)
-
-            elif role == 'Faculty':
-                # Get faculty-specific data
-                department = request.POST.get('department')
-                position = request.POST.get('position')
-                faculty_id = request.POST.get('idNumber')
-                sex = request.POST.get('sex')
-                middlename = request.POST.get('middleInitial')
-
-                # Validate required fields for faculty
-                if not all([firstName, middleInitial, lastName, department, position, faculty_id, sex, email, password, confirmPassword]):
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Please provide all required faculty information (First Name, Middle Initial, Last Name, Department, Position, ID Number, Sex, Email, Password, Confirm Password).'
-                    })
-
-                # Optional validation for faculty ID format
-                if not faculty_id.isdigit() or len(faculty_id) != 7:
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Faculty ID Number must be exactly 7 digits.'
-                    })
-
-                # Check if faculty ID already exists
-                if Faculty.objects.filter(faculty_id=faculty_id).exists():
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Faculty ID already registered.'
-                    })
-
-                # Create user
-                user = User.objects.create_user(
-                    username=email,
-                    email=email,
-                    password=password,
-                    first_name=firstName,
-                    last_name=lastName,
-                )
-
-                # Always set role to 'Faculty' for faculty registration
-                profile = Profile.objects.create(user=user, role='Faculty')
-
-                # Create Faculty instance
-                Faculty.objects.create(
-                    user=user,
-                    faculty_id=faculty_id,
-                    department=department,
-                    position=position,
-                    sex=sex,
-                    middlename=middlename
-                )
-
-                # Create Patient instance and link to the User
-                Patient.objects.create(user=user)
-
-            else:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Invalid role specified.'
-                })
-
-            # If registration is successful for either role
-            # If the registration was initiated by an authenticated staff/superuser (admin)
-            if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
-                # Retrieve the patient instance that was just created during student/faculty creation
-                patient_instance = Patient.objects.get(user=user)
-                # Redirect to patient form with patient_id and admin flag
-                redirect_url = reverse('patient_form') + f'?patient_id={patient_instance.id}&from_admin_register=true'
-            else:
-                # Default redirect for non-admin registrations
-                redirect_url = reverse('login')
-
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Registration successful.',
-                'redirect_url': redirect_url # Pass the redirect URL
-            })
-
-        except Exception as e:
-            return JsonResponse({
-                'status': 'error',
-                'message': str(e)
-            })
-
-    # For GET request, render the registration form
-    context = {
-        'is_faculty_registration': request.GET.get('role') == 'faculty'
-    }
-    return render(request, "register.html", context)
 
 def verify_otp(request):
     if request.method == 'POST':
@@ -851,8 +651,7 @@ def process_checkboxes(checkbox_list, other_value):
     if other_value:
         result = f"{result}, {other_value}" if result else other_value
     return result or 'None'
-
-@user_passes_test(is_admin)
+@user_passes_test(can_access_medical_admin)
 def admin_dashboard_view(request):
     # Get total patients count (both students and faculty)
     total_patients = Patient.objects.count()
@@ -1210,7 +1009,8 @@ def dashboard_view(request):
 
 
 
-@user_passes_test(is_admin)
+@user_passes_test(can_access_medical_admin)
+
 def mental_health_view(request):
     records = MentalHealthRecord.objects.all().order_by('-date_submitted')
     pending_count = records.filter(status='pending').count()
@@ -1273,7 +1073,8 @@ def mental_health_submit(request):
             
     return render(request, 'mental_health_submit.html')
 
-@user_passes_test(is_admin)
+@user_passes_test(can_access_medical_admin)
+
 def mental_health_review(request, record_id):
     record = get_object_or_404(MentalHealthRecord, id=record_id)
     
@@ -1526,8 +1327,8 @@ def faculty_dashboard_view(request):
         print(f"Error in faculty_dashboard_view: {e}")
         messages.error(request, 'Error loading dashboard data.')
         return redirect('login')
+@user_passes_test(can_access_medical_admin)
 
-@user_passes_test(is_admin)
 @require_http_methods(["POST"])
 def send_faculty_registration_link(request):
     try:

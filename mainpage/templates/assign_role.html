@@ -1,15 +1,18 @@
 {% extends 'adminmain.html' %}
 {% load static %}
 
-{% block bodycontent %}
-<link rel="stylesheet" href="{% static 'styles/role.css' %}">
- <div class="sub-title">
-    <h3>OFFICE OF STUDENT LIFE</h3>
-    <p class="hometext">Home</p>
-    <p class="certxt">&gt; Assign Role to Users</p>
-  </div>
-<div class="container mt-5">
+{% block headcontent %}
+  <link rel="stylesheet" href="{% static 'styles/role.css' %}">
+{% endblock headcontent %}
 
+{% block bodycontent %}
+<div class="sub-title">
+  <h3>OFFICE OF STUDENT LIFE</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Assign Role to Users</p>
+</div>
+
+<div class="container mt-5">
   <input
     type="text"
     id="userSearch"
@@ -18,54 +21,56 @@
     class="form-control mb-3"
   />
 
-  <table class="table table-bordered" id="userTable">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Current Role</th>
-        <th>Assign Role</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for user in users %}
-      <tr>
-        <form method="post">
-          {% csrf_token %}
-          <td>{{ user.username }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.role }}</td>
-          <td>
-            <input type="hidden" name="user_id" value="{{ user.id }}" />
+  <div class="table-responsive">
+    <table class="table table-bordered" id="userTable">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Current Role</th>
+          <th>Assign Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <form method="post">
+            {% csrf_token %}
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <!-- prettier-ignore -->
+            <td>{{ user.get_role_display }}</td> {# Use get_role_display for a clean name #}
+            <td>
+              <input type="hidden" name="user_id" value="{{ user.id }}" />
 
-            <!-- Role selection -->
-            <select name="role" class="form-select form-select-sm role-select" required onchange="toggleOrgDropdown(this)">
-              <option value="superadmin" {% if user.role == 'superadmin' %}selected{% endif %}>Superadmin</option>
-              <option value="guard" {% if user.role == 'guard' %}selected{% endif %}>Guard</option>
-              <option value="org_member" {% if user.role == 'org_member' %}selected{% endif %}>Org Member</option>
-              <option value="student" {% if user.role == 'student' %}selected{% endif %}>Student</option>
-            </select>
-
-            <!-- Organization dropdown -->
-            <div class="org-dropdown mt-1" style="{% if user.role != 'org_member' %}display:none;{% endif %}">
-              <select name="organization_id" class="form-select form-select-sm">
-                <option value="">None</option>
-                {% for org in organizations %}
-                <option value="{{ org.org_id }}"
-                  {% if user.organization and user.organization.org_id == org.org_id %}selected{% endif %}>
-                  {{ org.name }}
-                </option>
+              <select name="role" class="form-select form-select-sm role-select" required onchange="toggleOrgDropdown(this)">
+                {% for value, display_name in role_choices %}
+                  <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>
+                    {{ display_name }}
+                  </option>
                 {% endfor %}
               </select>
-            </div>
 
-            <button type="submit" class="btn btn-sm btn-primary mt-2">Save</button>
-          </td>
-        </form>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+              <div class="org-dropdown mt-1" style="{% if user.role != 'org_admin' %}display:none;{% endif %}">
+                <select name="organization_id" class="form-select form-select-sm">
+                  <option value="">None</option>
+                  {% for org in organizations %}
+                  <option value="{{ org.org_id }}"
+                    {% if user.organization and user.organization.org_id == org.org_id %}selected{% endif %}>
+                    {{ org.name }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-sm btn-primary mt-2">Save</button>
+            </td>
+          </form>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   {% if messages %}
   <div class="alert alert-info mt-3">
@@ -94,11 +99,11 @@ function filterTable() {
 
 function toggleOrgDropdown(roleSelect) {
   const orgDropdown = roleSelect.closest('td').querySelector('.org-dropdown');
-  if (roleSelect.value === 'org_member') {
+  // CORRECTED: This now checks for the new 'org_admin' role
+  if (roleSelect.value === 'org_admin') {
     orgDropdown.style.display = 'block';
   } else {
     orgDropdown.style.display = 'none';
-    // Optional: clear selection when hiding
     const select = orgDropdown.querySelector('select');
     if (select) select.value = "";
   }

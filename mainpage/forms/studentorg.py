@@ -22,10 +22,11 @@ class ProjectForm(forms.ModelForm):
 class FinancialStatementForm(forms.ModelForm):
     class Meta:
         model = FinancialStatement
-        fields = ['date', 'purpose', 'source_of_funds', 'org', 'amount', 'remarks']
+        fields = ['date', 'purpose', 'source_of_funds', 'amount', 'remarks']  # 👈 removed 'org'
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+
 from django import forms
 from ..models.studentorg import Officer, OfficerMembership, OfficerSeminar
 

@@ -1,0 +1,142 @@
+/* --- General Body & Font Styling --- */
+body {
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #343a40;
+}
+
+/* --- Page Title Section --- */
+.sub-title {
+  text-align: center;
+  padding: 40px 20px 20px 20px;
+}
+.sub-title h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #212529;
+}
+.sub-title p {
+  display: inline;
+  font-size: 15px;
+}
+.hometext {
+  color: #6c757d;
+}
+.certxt {
+  margin-left: 5px;
+  color: #ff8000;
+  font-weight: 500;
+}
+
+/* --- Main Content Container --- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 40px 20px;
+}
+
+/* --- Calendar Container Card --- */
+#calendar {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
+/* --- Calendar Header (Month, Year, Navigation) --- */
+.fc .fc-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
+  margin-bottom: 20px;
+}
+.fc .fc-toolbar-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #212529;
+}
+.fc .fc-button {
+  background: #f8f9fa !important;
+  border: 1px solid #dee2e6 !important;
+  color: #343a40 !important;
+  font-weight: 500;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease;
+  text-transform: capitalize;
+}
+.fc .fc-button:hover {
+  background: #e9ecef !important;
+  border-color: #ced4da !important;
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #ff8000 !important;
+  border-color: #ff8000 !important;
+  color: white !important;
+}
+
+/* --- Calendar Grid Styling --- */
+.fc-theme-standard .fc-scrollgrid {
+  border: none; /* Removes the outer border of the calendar */
+}
+.fc .fc-col-header-cell {
+  background: transparent !important;
+  color: #6c757d;
+  font-weight: 600;
+  text-align: center;
+  padding: 10px 0;
+  border: none !important;
+}
+.fc .fc-daygrid-day {
+  border: none !important;
+  padding: 4px;
+}
+
+/* Day Numbers */
+.fc .fc-daygrid-day-number {
+  color: #343a40;
+  padding: 8px;
+  text-align: center;
+  font-weight: 500;
+}
+.fc .fc-day-other .fc-daygrid-day-number {
+  color: #adb5bd; /* Fades out numbers from other months */
+}
+
+/* Today's Date Highlight */
+.fc .fc-day-today {
+  background-color: #fff3e6 !important; /* A very light orange */
+  border-radius: 8px;
+}
+.fc .fc-day-today .fc-daygrid-day-number {
+  color: #ff8000;
+  font-weight: 700;
+}
+
+/* --- Event Styling --- */
+.fc-event {
+  background-color: #ff8000 !important;
+  border: 1px solid #ff8000 !important;
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.fc-event:hover {
+  background-color: #e67300 !important;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+  .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .fc .fc-toolbar-title {
+    font-size: 18px;
+  }
+}

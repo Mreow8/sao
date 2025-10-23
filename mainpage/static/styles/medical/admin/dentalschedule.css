@@ -1,0 +1,169 @@
+/* --- General Body & Font Styling --- */
+body {
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #333;
+}
+
+/* --- Main Content Container (styled like .gmc-form) --- */
+.main-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Header --- */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+.page-title {
+  font-weight: 700;
+  font-size: 24px;
+}
+
+/* --- Base Button Styles --- */
+.btn {
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-secondary {
+  color: white;
+  background-color: #6c757d;
+}
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+.btn-done {
+  color: white;
+  background-color: #28a745;
+}
+.btn-done:hover {
+  background-color: #218838;
+}
+.btn-reschedule {
+  color: #212529;
+  background-color: #ffc107;
+}
+.btn-reschedule:hover {
+  background-color: #e0a800;
+}
+.btn-primary {
+  width: 100%;
+  justify-content: center;
+  padding: 12px;
+  font-size: 16px;
+  color: white;
+  background-color: #ff8000;
+}
+.btn-primary:hover {
+  background-color: #e67300;
+}
+
+/* --- Table Styling (from requestgmc.css) --- */
+.table-responsive {
+  overflow-x: auto;
+}
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.schedule-table th,
+.schedule-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+  vertical-align: middle;
+}
+.schedule-table thead th {
+  background-color: #f7f7f7;
+  color: #ff8000; /* Orange accent */
+  font-weight: 600;
+  white-space: nowrap;
+}
+.schedule-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+.action-cell {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* --- Reschedule Modal --- */
+.modal-overlay {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  place-items: center;
+}
+.modal-content {
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+}
+.close-button {
+  color: #aaa;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.close-button:hover {
+  color: black;
+}
+.modal-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+.modal-content label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.modal-content input[type="date"],
+.modal-content input[type="time"] {
+  width: 100%;
+  padding: 10px 12px;
+  background: #f0f2f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}

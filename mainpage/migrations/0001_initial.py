@@ -67,7 +67,6 @@ class Migration(migrations.Migration):
             name='Patient',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('profile_picture', models.ImageField(blank=True, null=True, upload_to=mainpage.models.medical.profile_picture_path)),
                 ('birth_date', models.CharField(max_length=100)),
                 ('age', models.PositiveIntegerField(blank=True, null=True)),
                 ('weight', models.FloatField(blank=True, null=True)),

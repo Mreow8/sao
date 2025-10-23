@@ -3,6 +3,7 @@ from ..import views
 
 
 urlpatterns = [
+   path('medical/user-suggestions/', views.user_suggestions, name='user_suggestions'),
     path('patientbasicinfo/<str:student_id>/', views.patient_basic_info, name='patient_basicinfo'),
     path('medicalclearance/<str:student_id>/', views.medicalclearance_view, name='medicalclearance'),
     path('eligibilityform/<str:student_id>/', views.eligibilty_form, name='eligibility_form'),
@@ -52,7 +53,7 @@ urlpatterns = [
     # path('logout/', views.logout_view, name='logout'),
     path('verify-otp/', views.verify_otp, name='verify_otp'),
     path('resend-verification/', views.resend_verification, name='resend_verification'),
-    path('upload-profile-picture/', views.upload_profile_picture_view, name='upload_profile_picture'),
-    path('faculty/dashboard/', views.faculty_dashboard_view, name='faculty_dashboard'),
+    # path('upload-profile-picture/', views.upload_profile_picture_view, name='upload_profile_picture'),
+    # path('faculty/dashboard/', views.faculty_dashboard_view, name='faculty_dashboard'),
     path('send-faculty-registration-link/', views.send_faculty_registration_link, name='send_faculty_registration_link'),
 ]

@@ -12,7 +12,8 @@ urlpatterns = [
     path("donates/<int:pk>/", views.donate, name="donates"),  path("crowdfunding/<int:pk>/edit/", views.edit_project, name="edit_project"),
     path("crowdfunding/<int:pk>/delete/", views.delete_project, name="delete_project"),
       path("donate", views.donate_view, name="donate"), 
-
+path("program/edit/<int:pk>/", views.edit_program, name="edit_program"),
+    path("program/delete/<int:pk>/", views.delete_program, name="delete_program"),
 path("projects/gcash-mode", views.gcash_mode, name="gcash-mode"),
   path("projects/bank-mode", views.bank_mode, name="bank-mode"),
   path("projects/volunteer-mode", views.volunteer_mode, name="volunteer-mode"),

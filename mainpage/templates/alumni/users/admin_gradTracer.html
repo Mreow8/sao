@@ -1,47 +1,115 @@
-{% extends 'adminmain.html' %}
-
-{% block bodycontent %}
-<section class=" flex items-center justify-center  bg-grayyy ">
-  <div class="mx-auto container text-black" >
-    <div class="flex items-center  justify-center mt-[200px]">
-      <div class="bg-white w-full h-screen p-11">
-        <h1 class="text-[26px] font-bold mb-4">Graduates</h1>
-
-
-        <div class="flex flex-col w-full border justify-between items-center p-2">
-
-          <div class="grid grid-cols-5 w-full items-center justify-center">
-            <h3 class="text-blo font-bold text-[24px] w-full text-center">Alumni ID</h3>
-            <h3 class="text-blo font-bold text-[24px] w-full text-center">First Name</h3>
-            <h3 class="text-blo font-bold text-[24px] w-full text-center">Last Name</h3>
-            <h3 class="text-blo font-bold text-[24px] w-full text-center">Date Gradaute</h3>
-            <h3 class="text-blo font-bold text-[24px] w-full text-center ">Email</h3>
-
-            {% for graduate_request in graduate_requests %}
-
-            <p class="w-full font-bold text-center">
-              {{ graduate_request.alumniID.alumniID }}
-            </p>
-            <p class="w-full font-bold text-center">
-              {{ graduate_request.firstname }}
-            </p>
-            <p class="w-full font-bold text-center">
-              {{ graduate_request.lastname }}
-            </p>
-            <p class="w-full font-bold text-center">
-              {{ graduate_request.dategraduated|date:"F d, Y" }}
-            </p>
-            <p class="w-full font-bold text-center text-[14px]">
-              {{ graduate_request.email_add }}
-            </p>
-
-            {% endfor %}
-          </div>
-        </div>
-
-
-
-      </div>
-    </div>
-</section>
+{% extends 'adminmain.html' %} {% block bodycontent %}
+<style>
+  body {
+    background: #f0f2f5;
+  }
+  .gradtracer-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #f0f2f5;
+  }
+  .gradtracer-container {
+    max-width: 1400px; /* Increased width */
+    margin: 50px auto;
+    background: #fff;
+    color: #222;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  }
+  .gradtracer-title {
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  .gradtracer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+  .gradtracer-table th,
+  .gradtracer-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+  }
+  .gradtracer-table th {
+    background: #f7f7f7;
+    color: #ff8000;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .gradtracer-table td {
+    color: #444;
+    font-size: 15px;
+  }
+  @media (max-width: 1600px) {
+    .gradtracer-container {
+      max-width: 98vw;
+    }
+  }
+  @media (max-width: 768px) {
+    .gradtracer-container {
+      padding: 10px;
+      max-width: 100vw;
+    }
+    .gradtracer-title {
+      margin-bottom: 18px;
+    }
+    .gradtracer-table th,
+    .gradtracer-table td {
+      font-size: 14px;
+      padding: 10px 4px;
+    }
+  }
+  @media (max-width: 480px) {
+    .gradtracer-title {
+      font-size: 17px;
+    }
+    .gradtracer-table th,
+    .gradtracer-table td {
+      font-size: 12px;
+      padding: 8px 30px;
+    }
+    .gradtracer-container {
+      padding: 4px;
+    }
+  }
+</style>
+<div class="sub-title">
+  <h3>ALUMNI</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Graduate Tracer</p>
+</div>
+<div class="gradtracer-container">
+  <table class="gradtracer-table">
+    <thead>
+      <tr>
+        <th>Alumni ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Date Graduate</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for graduate_request in graduate_requests %}
+      <tr>
+        <td>{{ graduate_request.alumniID.alumniID }}</td>
+        <td>{{ graduate_request.firstname }}</td>
+        <td>{{ graduate_request.lastname }}</td>
+        <td>{{ graduate_request.dategraduated|date:"F d, Y" }}</td>
+        <td>{{ graduate_request.email_add }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

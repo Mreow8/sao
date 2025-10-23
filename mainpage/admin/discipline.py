@@ -30,10 +30,10 @@ from ..models import CommunityServiceTracker
 
 @admin.register(CommunityServiceTracker)
 class CommunityServiceTrackerAdmin(admin.ModelAdmin):
-    list_display = ('case', 'date', 'morning_in', 'morning_out', 'afternoon_in', 'afternoon_out', 'total_hours')
-    list_filter = ('date', 'case')
-    search_fields = ('case__id', 'case__name')  # adjust if CaseProfile has a name field
-
+    list_display = [
+        'case', 'service_date', 'time_in', 'time_out', 'student_signature', 'remarks', 'total_hours_decimal'
+    ]
+    list_filter = ['service_date', 'case']
 
 @admin.register(DisciplinarySanction)
 class DisciplinarySanctionAdmin(admin.ModelAdmin):

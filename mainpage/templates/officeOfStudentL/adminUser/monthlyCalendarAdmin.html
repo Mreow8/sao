@@ -57,104 +57,114 @@
 
 <!-- FullCalendar Init -->
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var calendarEl = document.getElementById("calendar");
+    document.addEventListener("DOMContentLoaded", function () {
+      var calendarEl = document.getElementById("calendar");
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: "dayGridMonth",
-      selectable: true,
-      selectHelper: true,
-      events: Object.values(scheds),
-      eventClick: function (info) {
-        // Fill modal fields
-        document.getElementById("title").textContent = info.event.title;
-        document.getElementById("description").textContent =
-          info.event.extendedProps.description || "";
-        document.getElementById("start").textContent =
-          info.event.start.toLocaleString();
-        document.getElementById("end").textContent = info.event.end
-          ? info.event.end.toLocaleString()
-          : "";
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        selectable: true,
+        selectHelper: true,
+        events: Object.values(scheds),
+        eventClick: function (info) {
+          // Fill modal fields
+          document.getElementById("title").textContent = info.event.title;
+          document.getElementById("description").textContent =
+            info.event.extendedProps.description || "";
+          document.getElementById("start").textContent =
+            info.event.start.toLocaleString();
+          document.getElementById("end").textContent = info.event.end
+            ? info.event.end.toLocaleString()
+            : "";
 
-        // Set data-id for edit/delete
-        document.getElementById("edit") &&
-          (document.getElementById("edit").dataset.id = info.event.id);
-        document.getElementById("delete") &&
-          (document.getElementById("delete").dataset.id = info.event.id);
+          // Set data-id for edit/delete
+          document.getElementById("edit") &&
+            (document.getElementById("edit").dataset.id = info.event.id);
+          document.getElementById("delete") &&
+            (document.getElementById("delete").dataset.id = info.event.id);
 
-        // Show modal
-        $("#event-details-modal").modal("show");
-      },
-          {% if is_admin %}
-      select: function (info) {
+          // Show modal
+          $("#event-details-modal").modal("show");
+        },
+            {% if is_admin %}
+        select: function (info) {
 
-        const endDate = new Date(info.end);
-        endDate.setDate(endDate.getDate() - 1);
-        const formattedEnd = endDate.toISOString().slice(0, 16);
-        const formattedStart = info.startStr + "T08:00";
+          const endDate = new Date(info.end);
+          endDate.setDate(endDate.getDate() - 1);
+          const formattedEnd = endDate.toISOString().slice(0, 16);
+          const formattedStart = info.startStr + "T08:00";
+  Swal.fire({
+    title: "Add Schedule",
+    html:
+      // Add a label for the Title
+      `<label for="swal-title">Title</label>` +
+      `<input id="swal-title" class="swal2-input" placeholder="Enter the event title">` +
 
-        Swal.fire({
-          title: "Add Schedule",
-          html:
-            `<input id="swal-title" class="swal2-input" placeholder="Title">` +
-            `<textarea id="swal-description" class="swal2-textarea" placeholder="Description"></textarea>` +
-            `<input id="swal-start" type="datetime-local" class="swal2-input" value="${formattedStart}">` +
-            `<input id="swal-end" type="datetime-local" class="swal2-input" value="${formattedEnd}">`,
-          focusConfirm: false,
-          showCancelButton: true,
-          confirmButtonText: "Save",
-          preConfirm: () => {
-            const title = document.getElementById("swal-title").value;
-            const description =
-              document.getElementById("swal-description").value;
-            const start_datetime = document.getElementById("swal-start").value;
-            const end_datetime = document.getElementById("swal-end").value;
+      // Add a label for the Description
+      `<label for="swal-description">Description</label>` +
+      `<textarea id="swal-description" class="swal2-textarea" placeholder="Enter the event description"></textarea>` +
 
-            if (!title || !description || !start_datetime || !end_datetime) {
-              Swal.showValidationMessage("All fields are required.");
-              return false;
-            }
+      // Add a label for the Start Date
+      `<label for="swal-start">Start Date & Time</label>` +
+      `<input id="swal-start" type="datetime-local" class="swal2-input" value="${formattedStart}">` +
 
-            return { title, description, start_datetime, end_datetime };
-          },
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            try {
-              const response = await fetch("{% url 'save_schedule' %}", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-CSRFToken": "{{ csrf_token }}",
-                },
-                body: JSON.stringify(result.value),
-              });
+      // Add a label for the End Date
+      `<label for="swal-end">End Date & Time</label>` +
+      `<input id="swal-end" type="datetime-local" class="swal2-input" value="${formattedEnd}">`,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: "Save",
+            preConfirm: () => {
+              const title = document.getElementById("swal-title").value;
+              const description =
+                document.getElementById("swal-description").value;
+              const start_datetime = document.getElementById("swal-start").value;
+              const end_datetime = document.getElementById("swal-end").value;
 
-              const responseData = await response.json();
-
-              if (response.ok && responseData.status === "success") {
-                Swal.fire("Saved!", "Schedule has been added.", "success");
-                calendar.addEvent({
-                  id: responseData.id,
-                  title: responseData.title,
-                  start: responseData.start,
-                  end: responseData.end,
-                });
-              } else {
-                throw new Error(
-                  responseData.message || "Failed to save schedule."
-                );
+              if (!title || !description || !start_datetime || !end_datetime) {
+                Swal.showValidationMessage("All fields are required.");
+                return false;
               }
-            } catch (error) {
-              Swal.fire("Error", error.message, "error");
-            }
-          }
-        });
-      },
-          {% endif %}
-    });
 
-    calendar.render();
-  });
+              return { title, description, start_datetime, end_datetime };
+            },
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              try {
+                const response = await fetch("{% url 'save_schedule' %}", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                  },
+                  body: JSON.stringify(result.value),
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok && responseData.status === "success") {
+                  Swal.fire("Saved!", "Schedule has been added.", "success");
+                  calendar.addEvent({
+                    id: responseData.id,
+                    title: responseData.title,
+                    start: responseData.start,
+                    end: responseData.end,
+                  });
+                } else {
+                  throw new Error(
+                    responseData.message || "Failed to save schedule."
+                  );
+                }
+              } catch (error) {
+                Swal.fire("Error", error.message, "error");
+              }
+            }
+          });
+        },
+            {% endif %}
+      });
+
+      calendar.render();
+    });
 </script>
 
 <!-- Optional: Modal for Viewing Events -->

@@ -43,11 +43,15 @@ INSTALLED_APPS = [
     'mainpage',
     'widget_tweaks',
    "tailwind",
+      'captcha',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+# Google reCAPTCHA Keys
+RECAPTCHA_PUBLIC_KEY = '6LfhQOcrAAAAANIW45UKBoxv_N6yLJfCCNpyx-j3'
+RECAPTCHA_SECRET_KEY = '6LfhQOcrAAAAAE9VIfgc4IoDIlW4y695n3T9INer'
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware', 

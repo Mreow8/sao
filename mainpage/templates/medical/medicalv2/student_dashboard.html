@@ -357,41 +357,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Declare variables at the top of the scope
-const editBtn = document.getElementById('editProfileBtn');
-const modal = document.getElementById('editProfileModal');
-const closeModal = document.getElementById('closeEditProfile');
-    const profilePictureInput = document.getElementById('profile-picture-upload'); // Get the hidden file input
-    const profilePictureForm = document.getElementById('profile-picture-form'); // Get the form
-    const uploadUrl = "{% url 'upload_profile_picture' %}"; // Get the upload URL from the template
-
-    // Edit Profile Modal Logic (using already declared variables)
-    if (editBtn) {
-        editBtn.onclick = () => {
-            // Trigger the hidden file input click
-            profilePictureInput.click();
-            // You might also want to open the modal depending on desired workflow
-            // modal.classList.remove('hidden');
-        };
-    }
-
-    // Listen for changes on the hidden file input
-    if (profilePictureInput) {
-        profilePictureInput.addEventListener('change', function() {
-            // If a file is selected, set the form action and submit
-            if (this.files && this.files[0]) {
-                profilePictureForm.action = uploadUrl; // Set the form's action
-                profilePictureForm.submit();
-            }
-        });
-    }
-
-    if (modal && closeModal) {
-    closeModal.onclick = () => modal.classList.add('hidden');
-    window.onclick = (e) => {
-        if (e.target === modal) modal.classList.add('hidden');
-    };
-}
-
+    
     // Profile Picture Preview Logic (wrapped in a function and called here)
     initializeProfilePreview();
 

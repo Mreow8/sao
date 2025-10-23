@@ -5,6 +5,8 @@ from .. import views
 from ..views import org_profile, add_organization
 
 urlpatterns = [
+    path('captcha/', include('captcha.urls')),
+
  path("cases/edit/<int:case_id>/", views.edit_case, name="edit_case"),
     path("cases/delete/<int:case_id>/", views.delete_case, name="delete_case"),
            path('assign-role/', views.assign_role, name='assign_role'), 

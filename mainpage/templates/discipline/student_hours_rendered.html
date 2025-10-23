@@ -1,59 +1,188 @@
-<!-- student_hours_rendered.html -->
-{% extends "main.html" %} {% block bodycontent %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'styles/discipline/hoursRendered.css' %}" />
+{% extends "main.html" %} {% block bodycontent %} {% load static %}
+
+<link
+  rel="stylesheet"
+  href="{% static 'styles/discipline/hoursRendered.css' %}"
+/>
+
 <div class="sub-title">
-    <h3>STUDENT DISCIPLINE</h3>
-    <p class="hometext">Home</p>
-    <p class="">&gt; Case Profile</p>
-    <p class="certxt">&gt; Hours Rendered</p>
-  </div>
-<div class="case-details">
-<div class="case-container">
-
-<h2>Case Details</h2>
-{% if case %}
-  <ul class="mb-4">
-    <li><strong>Student:</strong> {{ case.student.studID }} - {{ case.student.firstname }} {{ case.student.lastname }}</li>
-    <li><strong>Offense:</strong> {{ case.offense_type }}</li>
-    <li><strong>Date of Incident:</strong> {{ case.date_of_incident }}</li>
-    <li><strong>Status:</strong> {{ case.status }}</li>
-    <li><strong>Remarks:</strong> {{ case.remarks }}</li>
-  </ul>
-{% endif %}
+  <h3>STUDENT DISCIPLINE</h3>
+  <p class="hometext">Home</p>
+  <p>&gt; Case Profile</p>
+  <p class="certxt">&gt; Hours Rendered</p>
 </div>
-<div class="case-container">
 
-<form method="POST">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Submit</button>
-</form>
-</div></div>
+<div class="case-details">
+  <div class="case-container">
+    <h2>Case Details</h2>
+    {% if case %}
+    <ul>
+      <li>
+        <!-- prettier-ignore -->
+        <strong>Student:</strong> {{ case.student.studID }} -
+        {{case.student.firstname }} {{ case.student.lastname }}
+      </li>
+      <li><strong>Offense:</strong> {{ case.offense_type }}</li>
+      <li><strong>Date of Incident:</strong> {{ case.date_reported }}</li>
+      <li><strong>Status:</strong> {{ case.status }}</li>
+      <li><strong>Remarks:</strong> {{ case.remarks }}</li>
+      <!-- prettier-ignore -->
+      <li>
+        <strong>Hours Needed to Render:</strong> {{ case.community_service_hours   }}
+      </li>
+    </ul>
+    {% endif %}
+  </div>
+
+  <div class="case-container">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="id_session">Session:</label>
+        {{ form.session }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_service_date">Date of Service:</label>
+        {{ form.service_date }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_time_in">Time In:</label>
+        {{ form.time_in }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_time_out">Time Out:</label>
+        {{ form.time_out }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_student_signature">Student Signature:</label>
+        {{ form.student_signature }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_remarks">Remarks:</label>
+        {{ form.remarks }}
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
 <hr />
 
 <h2>Hours Rendered</h2>
-<table border="1" cellpadding="8">
+<table>
   <thead>
     <tr>
-  <th>Date</th>
-  <th>Morning In</th>
-  <th>Morning Out</th>
-  <th>Afternoon In</th>
-  <th>Afternoon Out</th>
-  <th>Total Hours</th>
-</tr>
-{% for r in records %}
-<tr>
-  <td>{{ r.date }}</td>
-  <td>{{ r.morning_in }}</td>
-  <td>{{ r.morning_out }}</td>
-  <td>{{ r.afternoon_in }}</td>
-  <td>{{ r.afternoon_out }}</td>
-  <td>{{ r.total_hours }}</td>
-</tr>
-{% endfor %}
-
+      <th>Date</th>
+      <th>Time In</th>
+      <th>Time Out</th>
+      <th>Rendered</th>
+      <th>Remarks</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in records %}
+    <tr>
+      <td>{{ r.service_date }}</td>
+      <td>{{ r.time_in }}</td>
+      <td>{{ r.time_out }}</td>
+      <td>{{ r.time_rendered }}</td>
+      <td>{{ r.remarks }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="5">No records yet.</td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
+<p>
+  <strong>Hours Needed to Render:</strong> {{ case.community_service_hours }}h
+</p>
+<p><strong>Hours Already Rendered:</strong> {{ rendered_hours }}</p>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const sessionSelect = document.getElementById("id_session");
+    const timeInInput = document.getElementById("id_time_in");
+    const timeOutInput = document.getElementById("id_time_out");
+
+    if (!timeInInput || !timeOutInput) return;
+
+    // allow 1-minute granularity (60 seconds). Use 1 for second-level precision.
+    timeInInput.step = 60;
+    timeOutInput.step = 60;
+
+    // Define inclusive time ranges
+    const sessionTimes = {
+      morning: { start: "07:00", end: "13:00" },
+      afternoon: { start: "12:00", end: "18:00" },
+    };
+
+    function setTimeLimits(session) {
+      if (session && sessionTimes[session]) {
+        const { start, end } = sessionTimes[session];
+
+        // Set min/max for Time In/Out
+        timeInInput.min = start;
+        timeInInput.max = end;
+        timeOutInput.min = start;
+        timeOutInput.max = end;
+
+        // Clear invalid values
+        if (
+          timeInInput.value &&
+          (timeInInput.value < start || timeInInput.value > end)
+        )
+          timeInInput.value = "";
+        if (
+          timeOutInput.value &&
+          (timeOutInput.value < start || timeOutInput.value > end)
+        )
+          timeOutInput.value = "";
+
+        // Ensure Time Out >= Time In
+        if (
+          timeInInput.value &&
+          timeOutInput.value &&
+          timeOutInput.value < timeInInput.value
+        )
+          timeOutInput.value = "";
+      } else {
+        // No session selected: remove restrictions
+        timeInInput.removeAttribute("min");
+        timeInInput.removeAttribute("max");
+        timeOutInput.removeAttribute("min");
+        timeOutInput.removeAttribute("max");
+      }
+    }
+
+    // Update on session change
+    if (sessionSelect) {
+      sessionSelect.addEventListener("change", function () {
+        setTimeLimits(this.value);
+      });
+      // Apply on page load if editing existing record
+      setTimeLimits(sessionSelect.value);
+    } else {
+      // If session rendered as radios, handle them
+      const radios = document.querySelectorAll('input[name="session"]');
+      if (radios.length) {
+        radios.forEach((r) =>
+          r.addEventListener("change", () => setTimeLimits(r.value))
+        );
+        const checked = [...radios].find((r) => r.checked);
+        setTimeLimits(checked ? checked.value : null);
+      } else {
+        setTimeLimits(null);
+      }
+    }
+  });
+</script>
 {% endblock %}

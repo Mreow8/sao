@@ -1,95 +1,251 @@
-{% extends base_template|default:"main.html" %} {% block headcontent %}
-
-<!-- ignore prettier -->
-{% load static %}
-<link
-  rel="stylesheet"
-  href="{% static 'styles/job_placement/seminarpage.css' %}?506"
-/>
+{% extends base_template|default:"main.html" %}
+<!-- prettier-ignore -->
+{% block headcontent %} 
+  {% load static %}
+<link rel="stylesheet" href="{% static 'styles/community/program.css' %}" />
 {% endblock headcontent %} {% block bodycontent %}
+<style>
+  .program-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+
+    /* Add this line to center the cards */
+    align-items: center;
+  }
+  /* program.css */
+  .delete-button-subtle {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #dc2626; /* Red-600 */
+    border-radius: 6px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .delete-button-subtle:hover {
+    background-color: #fef2f2; /* Red-50 */
+  }
+
+  .delete-button-subtle .delete-icon {
+    width: 16px;
+    height: 16px;
+  }
+</style>
 <div class="container">
   <div class="sub-title">
     <h3>JOB PLACEMENT</h3>
     <p class="hometext">Home</p>
     <p class="certxt">&gt; Career Guidance Tracker</p>
   </div>
-  {% if request.user.is_staff %}
-  <div class="button-container">
-    <button class="showform">Add Event</button>
+
+  {% if user.is_staff %}
+  <div class="post-box">
+    <div class="collapsed" id="collapsedBox">Add Event...</div>
+
+    <form
+      method="post"
+      id="expandedBox"
+      class="expanded"
+      enctype="multipart/form-data"
+      action=""
+    >
+      {% csrf_token %}
+      <input
+        type="text"
+        name="title"
+        placeholder="Event Title"
+        required
+        style="
+          width: 100%;
+          border: none;
+          padding: 10px;
+          font-size: 16px;
+          border-bottom: 1px solid #ddd;
+          outline: none;
+        "
+      />
+      <textarea
+        name="theme"
+        rows="2"
+        placeholder="Theme..."
+        style="
+          width: 100%;
+          border: none;
+          resize: none;
+          font-size: 15px;
+          padding: 10px;
+          outline: none;
+        "
+      ></textarea>
+
+      <div class="actions">
+        <div>
+          <label for="date_of_event" style="color: #65676b; font-size: 14px"
+            >Date of Event:</label
+          >
+          <input id="date_of_event" type="date" name="date_of_event" required />
+        </div>
+        <label class="action-btn" for="imageUpload">📷 Photo</label>
+        <input
+          type="file"
+          id="imageUpload"
+          name="image"
+          accept="image/*"
+          style="display: none"
+        />
+      </div>
+
+      <div id="preview"></div>
+      <button type="submit" class="submit" id="submitBtn">Post</button>
+    </form>
   </div>
   {% endif %}
-  <hr id="demo" />
 
-  {% for seminar in seminars %}
-  <div class="scontainer">
-    <div class="card">
-      {% if request.user.is_staff %}
-      <form
-        action="{% url 'seminar_delete' seminar.seminar_id %}"
-        method="POST"
-        id="myForm"
-        class="delete-form"
-      >
-        {% csrf_token %}
-        <button type="submit" class="delete-btn" title="Delete">
-          <i class="fas fa-trash"></i>
-        </button>
-      </form>
-      {% endif %}
+  <div class="program-list">
+    {% for seminar in seminars %}
+    <div class="program-card">
+      <div class="flex justify-between items-start">
+        <h3 class="text-lg font-semibold">
+          {% if request.user.is_staff %}
+          <a href="{% url 'manage_att' seminar.seminar_id %}"
+            >{{ seminar.title }}</a
+          >
+          {% else %} {{ seminar.title }} {% endif %}
+        </h3>
 
-      <div class="info-group">
-        <h3>Title:</h3>
-        {% if request.user.is_staff %}
-
-        <a href="{% url 'manage_att' seminar.seminar_id %}"
-          >{{ seminar.title }}</a
-        >
-        {% else %}
-        <h3 class="hiring">{{ seminar.title }}</h3>
+        {% if user.is_staff %}
+        <div class="relative">
+          <button
+            type="button"
+            class="menu-btn text-gray-600 hover:text-gray-900 focus:outline-none"
+          >
+            ⋮
+          </button>
+          <div
+            class="menu hidden absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-10"
+          >
+            <form
+              action="{% url 'seminar_delete' seminar.seminar_id %}"
+              method="POST"
+              class="delete-seminar-form"
+            >
+              {% csrf_token %}
+              <button type="submit" class="delete-button-subtle">
+                <svg
+                  class="delete-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 10.23-1.482A41.13 41.13 0 0014 4.193v-.443A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75a1.25 1.25 0 00-1.25-1.25h-2.5A1.25 1.25 0 007.5 3.75v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="delete-text">Delete</span>
+              </button>
+            </form>
+          </div>
+        </div>
         {% endif %}
       </div>
-      <div class="info-group">
-        <h3>Theme:</h3>
-        <h3 class="hiring">{{ seminar.theme }}</h3>
-      </div>
-      <div class="info-group">
-        <h2 style="color: rgb(128, 128, 128)">Date of Event: &nbsp;</h2>
-        <h2 style="color: gray" class="hiring">{{ seminar.date_of_event }}</h2>
-      </div>
+
+      <p style="color: #050505; font-weight: 600">Theme: {{ seminar.theme }}</p>
+      <p style="color: #65676b; font-size: 14px">
+        Date: {{ seminar.date_of_event }}
+      </p>
+
       {% if seminar.image %}
-      <img src="{{ seminar.image.url }}" alt="{{ seminar.title }}" />
-      {% else %}
-      <p>No image available</p>
+      <div class="fb-gallery count-1">
+        <div class="gallery-item">
+          <img src="{{ seminar.image.url }}" alt="{{ seminar.title }}" />
+        </div>
+      </div>
       {% endif %}
     </div>
-  </div>
-  {% endfor %}
-  <div class="showform_container">
-    <div class="form_container">
-      <button class="closeform">×</button>
-      <form action="" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <label for="{{ form.title.name }}">Title</label>
-        <input type="text" name="{{ form.title.name }}" />
-
-        <label for="{{ form.title.name }}">Theme</label>
-        <input type="text" name="{{ form.theme.name }}" />
-
-        <label for="date">Date of Event:</label>
-        <input
-          id="date_filter"
-          type="date"
-          name="{{ form.date_of_event.name }}"
-        />
-
-        <label for="image">Upload Image</label>
-        {{ form.image }}
-
-        <input type="submit" value="Submit" />
-      </form>
-    </div>
+    {% endfor %}
   </div>
 </div>
-<script src="{% static 'scripts/job_placement/ojthiring_show.js' %}?320"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // --- Logic for the "Add Event" form ---
+    const collapsedBox = document.getElementById("collapsedBox");
+    const expandedBox = document.getElementById("expandedBox");
+    if (collapsedBox && expandedBox) {
+      const postText = expandedBox.querySelector('input[name="title"]');
+      const imageUpload = document.getElementById("imageUpload");
+      const preview = document.getElementById("preview");
+
+      collapsedBox.addEventListener("click", () => {
+        collapsedBox.style.display = "none";
+        expandedBox.style.display = "flex";
+        postText.focus();
+      });
+
+      imageUpload.addEventListener("change", () => {
+        preview.innerHTML = "";
+        const file = imageUpload.files[0];
+        if (file) {
+          const wrapper = document.createElement("div");
+          wrapper.classList.add("preview-item");
+          const img = document.createElement("img");
+          img.src = URL.createObjectURL(file);
+          wrapper.appendChild(img);
+          preview.appendChild(wrapper);
+        }
+      });
+    }
+
+    // --- Logic for Edit/Delete Menu ---
+    const programList = document.querySelector(".program-list");
+    if (programList) {
+      programList.addEventListener("click", function (e) {
+        if (e.target.classList.contains("menu-btn")) {
+          document.querySelectorAll(".menu").forEach((menu) => {
+            if (menu !== e.target.nextElementSibling) {
+              menu.classList.add("hidden");
+            }
+          });
+          e.target.nextElementSibling.classList.toggle("hidden");
+          e.stopPropagation();
+        }
+      });
+    }
+
+    document.body.addEventListener("click", function () {
+      document
+        .querySelectorAll(".menu")
+        .forEach((menu) => menu.classList.add("hidden"));
+    });
+
+    // --- SweetAlert2 for Delete Confirmation ---
+    document.querySelectorAll(".delete-seminar-form").forEach(function (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        Swal.fire({
+          title: "Are you sure?",
+          text: "This action cannot be undone.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();
+          }
+        });
+      });
+    });
+  });
+</script>
 {% endblock bodycontent %}

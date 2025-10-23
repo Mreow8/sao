@@ -182,45 +182,39 @@
       <h1>{{ hiring.company_name }}</h1>
       <div class="info-groups-container">
         <div class="info-group">
-          <img src="{% static '/jobplacement/imgs/human.png' %}" alt="human" />
+          <img src="{% static '/imgs/imgs/human.png' %}" alt="human" />
           <h3 style="font-weight: bold">Employer:</h3>
           <h3 class="hiring">{{ hiring.owner }}</h3>
         </div>
         <div class="info-group">
-          <img
-            src="{% static '/jobplacement/imgs/briefcase.png' %}"
-            alt="case"
-          />
+          <img src="{% static '/imgs/imgs/briefcase.png' %}" alt="case" />
           <h3 style="font-weight: bold">Position:</h3>
           <h3 class="hiring">{{ hiring.position }}</h3>
         </div>
         <div class="info-group">
-          <img
-            src="{% static '/jobplacement/imgs/placeholder.png' %}"
-            alt="arrow"
-          />
+          <img src="{% static '/imgs/imgs/placeholder.png' %}" alt="arrow" />
           <h3 style="font-weight: bold">Address:</h3>
           <h3 class="hiring">{{ hiring.address }}</h3>
         </div>
         <div class="info-group">
-          <img src="{% static '/jobplacement/imgs/phone.png' %}" alt="phone" />
+          <img src="{% static '/imgs/imgs/phone.png' %}" alt="phone" />
           <h3 style="font-weight: bold">Contact:</h3>
           <h3 class="hiring">{{ hiring.company_contact }}</h3>
         </div>
         <div class="info-group">
-          <img src="{% static '/jobplacement/imgs/clock.png' %}" alt="clock" />
+          <img src="{% static '/imgs/imgs/clock.png' %}" alt="clock" />
           <h3 style="font-weight: bold">Work Shift:</h3>
           <h3>{{ hiring.shift }}</h3>
         </div>
         <div class="info-group">
-          <img src="{% static '/jobplacement/imgs/plus.png' %}" alt="plus" />
+          <img src="{% static '/imgs/imgs/plus.png' %}" alt="plus" />
           <h3 style="font-weight: bold">Slots Available:</h3>
           <h3>{{ hiring.number_of_slots }}</h3>
         </div>
       </div>
       <h3>Job Description:</h3>
       <p>{{ hiring.description }}</p>
-      <button class="close">Close</button>
+      <button class="close"></button>
     </div>
   </div>
   {% endfor %} {% for hiring in ojt_list %}

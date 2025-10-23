@@ -1,8 +1,10 @@
-{% extends "main.html" %}{% block bodycontent %} {% load static %}
+{% extends base_template|default:"main.html" %}{% block bodycontent %}
 <!-- prettier-ignore -->
-{% include "community_involvement/donate.html" %}
 
+{% load static %}
+{% include "community_involvement/donate.html" %}
 <link rel="stylesheet" href="{% static 'styles/community/program.css' %}" />
+
 <style>
   .post-box {
     max-width: 500px;

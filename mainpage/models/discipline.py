@@ -48,33 +48,59 @@ class CommunityService(models.Model):
     def __str__(self):
         return f"{self.student} - {self.hours_rendered} hrs on {self.date}"
 # models.pyfrom datetime import datetime, date
+from django.core.exceptions import ValidationError
+from datetime import datetime, timedelta
+from django.db import models
 
+# ...existing code...
 class CommunityServiceTracker(models.Model):
-    case = models.ForeignKey(CaseProfile, on_delete=models.CASCADE)
-    date = models.DateField()
-    morning_in = models.TimeField(null=True, blank=True)
-    morning_out = models.TimeField(null=True, blank=True)
-    afternoon_in = models.TimeField(null=True, blank=True)
-    afternoon_out = models.TimeField(null=True, blank=True)
+    SESSION_CHOICES = [
+    ('morning', 'Morning'),
+    ('afternoon', 'Afternoon'),
+]
 
-    @property
-    def total_hours(self):
-        total_seconds = 0
-
-        # Morning hours
-        if self.morning_in and self.morning_out:
-            morning_delta = datetime.combine(date.min, self.morning_out) - datetime.combine(date.min, self.morning_in)
-            total_seconds += morning_delta.total_seconds()
-
-        # Afternoon hours
-        if self.afternoon_in and self.afternoon_out:
-            afternoon_delta = datetime.combine(date.min, self.afternoon_out) - datetime.combine(date.min, self.afternoon_in)
-            total_seconds += afternoon_delta.total_seconds()
-
-        return round(total_seconds / 3600, 2)
+    session = models.CharField(max_length=10, choices=SESSION_CHOICES)
+    case = models.ForeignKey('CaseProfile', on_delete=models.CASCADE)
+    service_date = models.DateField()
+    time_in = models.TimeField()
+    time_out = models.TimeField()
+    student_signature = models.ImageField(upload_to='signatures/', blank=True, null=True)
+    remarks = models.TextField(blank=True)
 
 
-# # ...existing code...
+    class Meta:
+        unique_together = ('case', 'service_date', 'session')  # <-- allow morning & afternoon separately
+
+    def total_hours_decimal(self):
+        delta = datetime.combine(date.min, self.time_out) - datetime.combine(date.min, self.time_in)
+        return delta.total_seconds() / 3600
+    def clean(self):
+        if not getattr(self, 'case_id', None):
+            return
+        if CommunityServiceTracker.objects.filter(
+            case_id=self.case_id,
+            service_date=self.service_date,
+            session=self.session  # <-- include session
+        ).exclude(pk=self.pk).exists():
+            raise ValidationError({'service_date': f"A log for {self.session} session on {self.service_date} already exists for this case."})
+
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # enforce validation before saving
+        super().save(*args, **kwargs)
+
+    def time_rendered(self):
+        delta = datetime.combine(self.service_date, self.time_out) - datetime.combine(self.service_date, self.time_in)
+        total_minutes = delta.total_seconds() / 60
+        hours = int(total_minutes // 60)
+        minutes = int(total_minutes % 60)
+        return f"{hours} hours {minutes} minutes"
+
+    def __str__(self):
+        student = getattr(self.case, 'student', None)
+        return f"{student} - {self.service_date}"
+
+
 # class CommunityServiceTracker(models.Model):
 #     student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
 #     service_date = models.DateField()

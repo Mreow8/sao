@@ -3,8 +3,60 @@ from django.http import JsonResponse
 from ..models import Program, ProgramImage, MOD
 from ..models import QrDonation  # if you have donations
 from django.contrib import messages
-from ..forms import CrowdfundingProjectForm
+from ..forms import CrowdfundingProjectForm,  ProgramForm
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
+# ... other imports ...
+# community.py
+
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+# ... other imports
+
+def edit_program(request, pk):
+    program = get_object_or_404(Program, pk=pk)
+    
+    if request.method == "POST":
+        form = ProgramForm(request.POST, instance=program)
+        if form.is_valid():
+            program = form.save()
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({
+                    "success": True, 
+                    "program": {
+                        "id": program.id,
+                        "title": program.title,
+                        "caption": program.caption,
+                        "description": program.description,
+                    }
+                })
+            return redirect("programs")
+        else:
+             if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({"success": False, "errors": form.errors})
+
+    else: # GET request
+        form = ProgramForm(instance=program)
+
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        # THIS IS THE FIX 👇
+        html_form = render_to_string(
+            "community_involvement/_edit_program_form.html",
+            {"form": form, "program": program},
+            request=request  # Ensure this keyword argument is present
+        )
+        return JsonResponse({"html_form": html_form})
+
+    return render(request, "community_involvement/edit_program.html", {"form": form, "program": program})
+
+def delete_program(request, pk):
+    program = get_object_or_404(Program, pk=pk)
+    if request.method == "POST":
+        program.delete()
+        return redirect("programs")
+    # This renders a confirmation page before deleting
+    return render(request, "community_involvement/admin/confirm_delete_program.html", {"program": program})
 def edit_project(request, pk):
     project = get_object_or_404(CrowdfundingProject, pk=pk)
     if request.method == "POST":
@@ -62,7 +114,7 @@ def add_programs(request):
         title = request.POST.get("title", "Untitled Event")
         caption = request.POST.get("caption", "")
         description = request.POST.get("description", "")
-
+        
         program = Program.objects.create(
             title=title,
             caption=caption,
@@ -96,11 +148,19 @@ def add_programs(request):
 
 
 def programs(request):
+
     loadPrograms = Program.objects.filter(archive=False).order_by("-date_time")
+
+    # Get all QR donation records
     qrCodeID = QrDonation.objects.all()
 
-    user = request.user.is_staff
+    # Choose base template based on user role
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
+    # Boolean flag indicating if the user is an admin/staff
+    is_staff_user = request.user.is_staff
+
+    # Render the page with context
     return render(
         request,
         "community_involvement/programs.html",
@@ -108,23 +168,30 @@ def programs(request):
             "url": "programs",
             "title": "Programs",
             "loadPrograms": loadPrograms,
-            "user": user,
             "qrCodeID": qrCodeID,
+            "base_template": base_template,
         },
     )
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from ..models import CrowdfundingProject, Donation, DonationChannel
 from django.views.decorators.csrf import csrf_exempt
 
-
 def crowdfunding_list(request):
     """List all active crowdfunding projects"""
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
     projects = CrowdfundingProject.objects.filter(active=True).order_by("-created_at")
+
+    context = {
+        "projects": projects,
+        "base_template": base_template,
+    }
+
     return render(
         request,
         "community_involvement/crowdfunding_list.html",
-        {"projects": projects},
+        context
     )
 
 

@@ -88,7 +88,7 @@
 
 .submit {
   margin-top: 8px;
-  background: #1877f2;
+  background: #ff8000;
   color: #fff;
   border: none;
   padding: 10px;
@@ -251,4 +251,26 @@
   font-size: 14px;
   line-height: 18px;
   text-align: center;
+}
+/* program.css */
+.delete-button-subtle {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #dc2626; /* Red-600 */
+  border-radius: 6px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.delete-button-subtle:hover {
+  background-color: #fef2f2; /* Red-50 */
+}
+
+.delete-button-subtle .delete-icon {
+  width: 16px;
+  height: 16px;
 }

@@ -7,7 +7,11 @@ With Scheduler{% endblock %} {% block headcontent %}
   href="{% static 'styles/guidance/counseling_app_admin.css'%}"
 />
 {% endblock %} {% block bodycontent %}
-
+<style>
+  body {
+    font-size: 14px;
+  }
+</style>
 <div class="container">
   {{form.errors}}
   <div class="sub-title">
@@ -18,13 +22,11 @@ With Scheduler{% endblock %} {% block headcontent %}
 
   <div class="form-container">
     {% csrf_token %}
-    <h2>Counseling Schedule Request List</h2>
-    <label>Enter ID number:</label>
     <span id="search_id">
       <input
         type="text"
         name="studentID"
-        placeholder="search"
+        placeholder="Enter ID number"
         required=""
         id="studentIDBox"
       />

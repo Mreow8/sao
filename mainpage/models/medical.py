@@ -4,57 +4,21 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from ..models import staffInfo, studentInfo
 
 
 # Helper function for profile picture upload path
 
-class Profile(models.Model):
-    ROLE_CHOICES = (
-        ('Student', 'Student'),
-        ('Faculty', 'Faculty'),
-    )
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='Student')
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.user.get_full_name()} - {self.role}"
-
-
-def profile_picture_path(instance, filename):
-    # File will be uploaded to MEDIA_ROOT/medical/<lastname>_<firstname>/profile_picture/<filename>
-    # Updated to use user's username or ID for path
-    user_identifier = instance.user.username or instance.user.id # Use username or ID as identifier
-    return os.path.join('medical', f'{user_identifier}', 'profile_picture', filename)
-class Faculty(models.Model):
-    GENDER_CHOICES = [
-        ('M', 'Male'),
-        ('F', 'Female'),
-    ]
-
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    faculty_id = models.CharField(max_length=7, unique=True, null=True, blank=True)
-    department = models.CharField(max_length=100)
-    position = models.CharField(max_length=100)
-    sex = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
-    middlename = models.CharField(max_length=100, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.user.get_full_name()} ({self.faculty_id}) - {self.position}"
 
 
 # Create your models here.
 
 class Patient(models.Model):
-    # Link Patient to the User model instead of Student
-    # Make nullable initially for migration purposes
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    # Add profile picture field
-    profile_picture = models.ImageField(upload_to=profile_picture_path, null=True, blank=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True) 
 
+    # ADDED THESE TWO LINES:
+    student = models.OneToOneField(studentInfo, on_delete=models.SET_NULL, null=True, blank=True)
+    faculty = models.OneToOneField(staffInfo, on_delete=models.SET_NULL, null=True, blank=True)
     birth_date = models.CharField(max_length=100)
     # Make age nullable for initial patient creation during registration
     age = models.PositiveIntegerField(null=True, blank=True)
@@ -219,7 +183,7 @@ class MedicalRequirement(models.Model):
 
     # Link to Patient, make nullable initially
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, null=True, blank=True)
-    faculty = models.OneToOneField(Faculty, on_delete=models.CASCADE, null=True, blank=True)
+    faculty = models.OneToOneField(studentInfo, on_delete=models.CASCADE, null=True, blank=True)
     vaccination_type = models.CharField(max_length=50, null=True, blank=True)
     vaccinated_1st = models.BooleanField(default=False, null=True, blank=True)
     vaccinated_2nd = models.BooleanField(default=False, null=True, blank=True)
@@ -326,7 +290,7 @@ class PatientRequest(models.Model):
     request_id = models.AutoField(primary_key=True)
     # Link to Patient, make nullable initially
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, null=True, blank=True)
+    faculty = models.ForeignKey(studentInfo, on_delete=models.CASCADE, null=True, blank=True)
     request_type = models.CharField(max_length=100)
     status = models.CharField(max_length=20, choices=REQUEST_STATUS, default='pending')
     date_requested = models.DateTimeField(auto_now_add=True)
@@ -351,7 +315,7 @@ class FacultyRequest(models.Model):
     ]
     
     request_id = models.AutoField(primary_key=True)
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+    faculty = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
     request_type = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=REQUEST_STATUS, default='pending')
@@ -375,15 +339,29 @@ class FacultyRequest(models.Model):
         ordering = ['-date_requested', 'is_urgent']
 
 class PrescriptionRecord(models.Model):
-    # Link to Patient, make nullable initially
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
+
+    # ✅ Common identifiers
+    id_number = models.CharField(max_length=20, null=True, blank=True)
+    user_type = models.CharField(  # either 'student' or 'staff'
+        max_length=10,
+        choices=[('student', 'Student'), ('staff', 'Staff')],
+        null=True,
+        blank=True
+    )
+
+    # ✅ Basic info
     name = models.CharField(max_length=100)
     problem = models.CharField(max_length=50)
     treatment = models.CharField(max_length=50)
     date_prescribed = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"Prescription for {self.patient.user.get_full_name() or self.patient.user.username}"
+        display_name = self.name or "Unknown"
+        id_display = self.id_number or "N/A"
+        type_display = self.user_type.title() if self.user_type else "Unknown Type"
+        return f"{type_display} {id_display} - {display_name}"
+
 
 class DentalRecords(models.Model):
     # Link to Patient, make nullable initially
@@ -417,7 +395,7 @@ class TransactionRecord(models.Model):
 class MentalHealthRecord(models.Model):
     # Link to Patient, make nullable initially
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
-    faculty = models.OneToOneField(Faculty, on_delete=models.CASCADE, null=True, blank=True)
+    faculty = models.OneToOneField(studentInfo, on_delete=models.CASCADE, null=True, blank=True)
     is_availing_mental_health = models.BooleanField(default=False)
     
     def mental_health_path(instance, filename, field_name):

@@ -13,51 +13,52 @@
         <p class="hometext">Home </p><a href="{% url 'equipmentTrackerAdmin' %}" class="txt-underline"><p class="hometext"> > Equipment Tracker</p></a><p class="certxt"> > Add Equipment</p>
     </div>
     <div class="equipmentContents">
-        <form id="trackerForm" action="{% url 'addEquipment' %}" method="POST">
-            {% csrf_token %}
-            <table id="equipmentTable">
-                <h2>Add Equipment</h2>
-                {% if messages %}
-                    <ul class="messages success-message">
-                        {% for message in messages %}
-                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                        {% endfor %}
-                    </ul>   
-                {% endif %}
-                <table class="equipmentform">
-                    <tbody>
-                        <tr>
-                            <td>Equipment Name:</td>
-                            <td>Equipment Serial Number:</td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" name="equipmentname" id="equipmentName" placeholder="Equipment Name" required></td>
-                            <td><input type="text" name="serialnum" id="serialnum" placeholder="Equipment Serial Number"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="button">
-                    <button class="saveBtn" type="submit">SAVE</button>
-                </div>
-                <table class="equipmentTable">
-                    <thead>
-                        <tr>
-                            <th>Item ID</th>
-                            <th>Equipment Name</th>
-                            <th>Equipment Serial Number</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for equipment in all_equipment %}
-                        <tr>
-                            <td>{{ equipment.itemId }}</td>
-                            <td>{{ equipment.equipmentName }}</td>
-                            <td>{{ equipment.equipmentSN }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </table>
-        </form>
+  <form id="trackerForm" action="{% url 'addEquipment' %}" method="POST">
+    {% csrf_token %}
+
+    {% if messages %}
+    <ul class="messages success-message">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="form-grid">
+      <div>
+        <label for="equipmentName">Equipment Name:</label>
+        <input type="text" name="equipmentname" id="equipmentName" placeholder="Equipment Name" required>
+      </div>
+      <div>
+        <label for="serialnum">Equipment Serial Number:</label>
+        <input type="text" name="serialnum" id="serialnum" placeholder="Equipment Serial Number">
+      </div>
     </div>
+
+    <div class="button-container">
+      <button class="saveBtn" type="submit">SAVE</button>
+    </div>
+  </form>
+
+  <div class="table-responsive">
+    <table class="equipmentTable">
+      <thead>
+        <tr>
+          <th>Item ID</th>
+          <th>Equipment Name</th>
+          <th>Equipment Serial Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for equipment in all_equipment %}
+        <tr>
+          <td>{{ equipment.itemId }}</td>
+          <td>{{ equipment.equipmentName }}</td>
+          <td>{{ equipment.equipmentSN }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock bodycontent %}

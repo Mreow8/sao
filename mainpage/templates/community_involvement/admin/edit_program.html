@@ -1,0 +1,23 @@
+<form
+  method="post"
+  action="{% url 'edit_program' program.id %}"
+  id="editProgramForm"
+  class="p-4"
+>
+  {% csrf_token %}
+  <h3 class="text-xl font-bold mb-4">Edit Program</h3>
+
+  {{ form.as_p }}
+
+  <div class="flex justify-end mt-4">
+    <button
+      type="button"
+      class="btn-close-modal mr-2 px-4 py-2 bg-gray-300 rounded"
+    >
+      Cancel
+    </button>
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
+      Save Changes
+    </button>
+  </div>
+</form>

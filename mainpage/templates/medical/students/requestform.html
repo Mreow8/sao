@@ -1,62 +1,146 @@
-{% extends 'main.html' %} {% load static tailwind_tags %} {% block title %}
-HealthHub Connect | Documentary Request {% endblock %} {% block extra_css %}
-<!-- prettier-ignore -->
-{%tailwind_css %} {% endblock %} {% block bodycontent %}
+{% extends 'main.html' %} {% load static %} {% block title %} HealthHub Connect
+| Documentary Request {% endblock %}
+<!-- prettyer-ignore  -->
+
+{%block extra_css %} {% endblock %} {% block bodycontent %}
+
 <style>
-  .upload {
+  /* --- General Body & Font Styling --- */
+  body {
+    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Helvetica, Arial, sans-serif;
+  }
+
+  /* --- Page Title Section --- */
+  .sub-title {
+    text-align: center;
+    padding: 40px 20px 20px 20px;
+  }
+  .sub-title h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2b2b2b;
+  }
+  .sub-title p {
+    display: inline;
+    font-size: 14px;
+  }
+  .hometext {
+    color: #666;
+  }
+  .certxt {
+    margin-left: 5px;
+    color: #ff8000;
+    font-weight: 500;
+  }
+
+  /* --- Main Content Container (styled like .gmc-form) --- */
+  .main-container {
+    max-width: 700px;
+    margin: 20px auto 40px auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  /* --- Form Styling --- */
+  .request-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Adds space between the inputs and the button */
+  }
+
+  .form-header {
+    display: flex;
+    background-color: #f7f7f7;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #e0e0e0;
+    border-bottom: none;
+  }
+
+  .form-header label {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    color: #ff8000;
+    font-size: 14px;
+  }
+
+  .form-inputs {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .form-inputs input,
+  .form-inputs select {
+    flex: 1;
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    background: #f0f2f5;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .form-inputs input:focus,
+  .form-inputs select:focus {
+    outline: none;
+    border-color: #ff8000;
+    background-color: #fff;
+  }
+
+  /* --- Submit Button --- */
+  .submit-btn {
     background-color: #ff8000;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 14px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%;
+  }
+
+  .submit-btn:hover {
+    background-color: #e67300;
   }
 </style>
 <div class="sub-title">
   <h3>Medical</h3>
   <p class="hometext">Home</p>
-  <p class="certxt">&gt; Documentary Request</p>
+  <p class="certxt">> Documentary Request</p>
 </div>
 
-<div
-  class="bg-white h-[80vh] xs:p-4 lg:p-8 flex flex-col gap-2 rounded-[18px] w-[40%]"
->
-  <form method="POST" class="flex flex-col justify-between">
+<div class="main-container">
+  <form method="POST" class="request-form">
     {% csrf_token %}
-    <div class="flex flex-col">
-      <div class="flex bg-[#e6e6e6] p-2">
-        <label
-          class="w-full text-center font-bold xs:text-[14px] md:text-base"
-          for="idNumber"
-          >ID Number</label
-        >
-        <label
-          class="w-full text-center font-bold xs:text-[14px] md:text-base"
-          for="requestType"
-          >Request Type</label
-        >
+    <div>
+      <div class="form-header">
+        <label for="student_id">ID Number</label>
+        <label for="requestType">Request Type</label>
       </div>
-      <div class="flex gap-2 py-2">
+      <div class="form-inputs">
         <input
-          class="w-full xs:text-[14px] md:text-base"
           type="text"
           id="student_id"
           name="student_id"
           value="{{ id_number }}"
           readonly
         />
-        <select
-          class="w-full xs:text-[14px] md:text-base"
-          id="requestType"
-          name="request_type"
-          required
-        >
+        <select id="requestType" name="request_type" required>
           <option value="">Select Request Type</option>
           {% if not faculty %}
           <option value="Eligibility Form">Eligibility Form</option>
-
           {% endif %}
           <option value="Medical Certificate for Intramurals">
             Medical Certificate for Intramurals
@@ -65,20 +149,24 @@ HealthHub Connect | Documentary Request {% endblock %} {% block extra_css %}
       </div>
     </div>
 
-    {% if messages %}
-    <script>
-      {% for message in messages %}
-      Swal.fire({
-          icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% elif "warning" in message.tags %}warning{% elif "info" in message.tags %}info{% else %}info{% endif %}',
-          title: '',
-          text: "{{ message|escapejs }}",
-          timer: 2500,
-          showConfirmButton: false
-      });
-      {% endfor %}
-    </script>
-    {% endif %}
-    <input class="upload" type="submit" value="Submit" />
+    <input class="submit-btn" type="submit" value="Submit" />
   </form>
 </div>
-{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if messages %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    {% for message in messages %}
+    Swal.fire({
+        icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% else %}info{% endif %}',
+        title: '{{ message.tags|title }}',
+        text: "{{ message|escapejs }}",
+        timer: 3000,
+        showConfirmButton: false
+    });
+    {% endfor %}
+  });
+</script>
+{% endif %} {% endblock %}

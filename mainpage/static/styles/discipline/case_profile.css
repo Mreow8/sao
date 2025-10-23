@@ -1,0 +1,233 @@
+/* --- General Body & Font Styling --- */
+body {
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #333;
+}
+
+/* --- Page Title Section --- */
+.sub-title {
+  text-align: center;
+  padding: 40px 20px 20px 20px;
+}
+.sub-title h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2b2b2b;
+}
+.sub-title p {
+  display: inline;
+  font-size: 14px;
+}
+.hometext {
+  color: #666;
+}
+.certxt {
+  margin-left: 5px;
+  color: #ff8000;
+  font-weight: 500;
+}
+
+/* --- Main Content Container (styled like .gmc-form) --- */
+.container {
+  max-width: 1200px;
+  margin: 20px auto 40px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Form Styling --- */
+form {
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #e0e0e0;
+}
+form > div {
+  margin-bottom: 20px;
+}
+form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: #f0f2f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+input[type="file"] {
+  width: 100%;
+  padding: 8px; /* Slightly less padding for file input */
+  background: #f0f2f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #ff8000;
+  background-color: #fff;
+}
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+input[readonly] {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+#student_details {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border: 1px dashed #ced4da;
+  border-radius: 8px;
+  font-size: 14px;
+}
+#student_details.hidden {
+  display: none;
+}
+#student_details p {
+  margin-bottom: 5px;
+}
+
+/* Submit Button */
+form button[type="submit"] {
+  background-color: #ff8000;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+form button[type="submit"]:hover {
+  background-color: #e67300;
+}
+
+/* --- Table Styling (from requestgmc.css) --- */
+.table-responsive {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+th,
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+  vertical-align: middle;
+}
+thead th {
+  background-color: #f7f7f7;
+  color: #ff8000; /* Orange accent */
+  font-weight: 600;
+  white-space: nowrap;
+}
+tbody tr:hover {
+  background-color: #f8f9fa;
+}
+td a {
+  color: #007bff;
+  text-decoration: none;
+  margin-right: 10px;
+}
+td a:hover {
+  text-decoration: underline;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+.status-pending {
+  background-color: #ffc107;
+  color: #212529;
+}
+.status-resolved {
+  background-color: #28a745;
+}
+.status-default {
+  background-color: #6c757d;
+}
+
+/* --- Edit Modal Styling --- */
+#editModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none; /* Hidden by default, shown by JS */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-box {
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-box h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.modal-box button {
+  /* Style for buttons inside modal */
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+#editFormFields label {
+  margin-top: 15px;
+} /* Space out fields in modal */
+#editModal.hidden {
+  display: none;
+} /* Ensure hidden class works */
+
+/* SweetAlert overrides (Optional, if needed for consistency) */
+.swal2-select,
+.swal2-input {
+  border-radius: 8px !important;
+  border: 1px solid #ccc !important;
+}
+.swal2-confirm {
+  background-color: #ff8000 !important;
+  border-radius: 8px !important;
+}

@@ -1,6 +1,11 @@
 #dir-gray {
   color: #636363;
 }
+@media (max-width: 900px) {
+  .page_viewer {
+    font-size: 14px;
+  }
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -16,8 +21,8 @@
   background-color: #f9f9f9;
   padding: 30px;
   width: 100%;
-  border: 1px solid #e2e2e2;
-  border-radius: 10px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 .form-container form {
   display: flex;
@@ -200,15 +205,15 @@
   display: flex;
   width: 100%;
   justify-content: center;
-  gap: 50px;
+  gap: 5%;
   padding: 20px;
 }
 .fill_out_container {
   display: flex;
   width: 100%;
   flex-direction: column;
-  background-color: white;
-  border: 1px solid #e2e2e2;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
   border-radius: 20px;
   padding: 20px;
   gap: 10px;
@@ -229,12 +234,11 @@
   height: 40px;
   width: 40px;
   border-radius: 100%;
-  border: 1px solid black;
   justify-content: center;
   align-items: center;
   font-size: 18px;
   font-weight: 500;
-  background-color: white;
+  background-color: #e0e0e0;
 }
 .current-fill-out {
   background-color: #ff8000;

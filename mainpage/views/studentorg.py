@@ -65,8 +65,6 @@ def accreditation_detail(request, accreditation_id):
     return render(request, "main/accreditation_detail.html", {
         "accreditation": accreditation,
     })
-from django.contrib import messages
-
 def view_financial(request, slug):
     print("🔍 view_financial called with slug:", slug)
 
@@ -74,30 +72,29 @@ def view_financial(request, slug):
         org_obj = Organization.objects.get(slug=slug)
         print("✅ Organization found:", org_obj.name)
     except Organization.DoesNotExist:
-        print("❌ Organization not found for slug:", slug)
+        print("❌ ERROR: Organization not found for slug:", slug)
         messages.error(request, "Organization not found.")
-        return redirect('home')  # or wherever you want to redirect
+        return redirect('home')
 
-    # Determine which statements to show
-    if request.user.is_superuser:
-        print("👑 User is superadmin – showing all financial statements.")
-        statements = FinancialStatement.objects.all()
-    else:
-        print(f"👤 Regular user – showing statements for org: {org_obj.name}")
-        statements = FinancialStatement.objects.filter(org=org_obj)
+    approved_statements = FinancialStatement.objects.filter(status='approved', org=org_obj)
+    print("📊 Found", approved_statements.count(), "approved statements for", org_obj.name)
 
     if request.method == 'POST':
         print("📩 POST request received.")
         form = FinancialStatementForm(request.POST)
         if form.is_valid():
-            print("✅ Form is valid. Saving statement...")
-            instance = form.save(commit=False)
-            instance.organization_slug = slug
-            instance.org = org_obj
-            instance.save()
-            print("💾 Financial statement saved successfully.")
-            messages.success(request, "Financial statement submitted successfully!")
-            return redirect('financial_statements', slug=slug)
+            print("✅ Form is valid. Saving financial statement...")
+            try:
+                instance = form.save(commit=False)
+                instance.organization_slug = slug
+                instance.org = org_obj
+                instance.save()
+                print("💾 Financial statement saved successfully!")
+                messages.success(request, "Financial statement submitted successfully!")
+                return redirect('view_financial_by_slug', slug=slug)
+            except Exception as e:
+                print("❌ ERROR while saving FinancialStatement:", e)
+                messages.error(request, "An error occurred while saving the financial statement.")
         else:
             print("❌ Form is invalid. Errors:", form.errors)
             messages.error(request, "There was an error submitting the form.")
@@ -105,10 +102,10 @@ def view_financial(request, slug):
         print("📄 GET request – displaying form.")
         form = FinancialStatementForm()
 
-    print("➡️ Rendering template with", statements.count(), "statements.")
+    print("➡️ Rendering template with", approved_statements.count(), "approved statements.")
     return render(request, 'studentorg/MAIN/view_financial.html', {
         'form': form,
-        'statements': statements,
+        'statements': approved_statements,
         'org': org_obj,
         'slug': slug
     })

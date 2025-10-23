@@ -96,41 +96,47 @@ def signupuser(request):
                     error_message = "Invalid ID. No matching student or staff found."
 
     return render(request, 'scholarship/register.html', {'error_message': error_message})
+# from django.shortcuts import render, redirect
+# from django.contrib import messages
+# from django.contrib.auth import authenticate, login, get_user_model
 
-def signinuser(request):
-    if request.method == 'POST':
-        email = request.POST.get('email').strip()
-        password = request.POST.get('password')
+# User = get_user_model()
 
-        try:
-            user_obj = User.objects.get(email=email)
-        except User.DoesNotExist:
-            messages.error(request, "Account does not exist.")
-            return render(request, 'login.html')
+# def signinuser(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email').strip()
+#         password = request.POST.get('password')
 
-        if not user_obj.is_active:
-            messages.error(request, "This account is inactive. Contact admin.")
-            return render(request, 'login.html')
+#         try:
+#             user_obj = User.objects.get(email=email)
+#         except User.DoesNotExist:
+#             messages.error(request, "Account does not exist.")
+#             return render(request, 'login.html')
 
-        user = authenticate(request, username=user_obj.username, password=password)
+#         if not user_obj.is_active:
+#             messages.error(request, "This account is inactive. Contact admin.")
+#             return render(request, 'login.html')
 
-        if user:
-            login(request, user)
-            
-            # Redirect based on user type
-            if user.is_superuser:
-                return redirect('adminmain')
-            elif hasattr(user, 'studentinfo'):
-                return redirect('student_homepage')
-            elif hasattr(user, 'staffinfo'):
-                return redirect('staff_homepage')
-            else:
-                return redirect('homepage')
-        else:
-            messages.error(request, "Incorrect password.")
-            return render(request, 'login.html')
+#         user = authenticate(request, username=user_obj.username, password=password)
 
-    return render(request, 'login.html')
+#         if user:
+#             login(request, user)
+
+#             # Redirect based on user type
+#             if user.is_superuser:
+#                 return redirect('adminmain')
+#             elif hasattr(user, 'studentinfo'):
+#                 return redirect('student_homepage')
+#             elif hasattr(user, 'staffinfo'):
+#                 return redirect('staff_homepage')
+#             else:
+#                 return redirect('homepage')
+#         else:
+#             messages.error(request, "Incorrect password.")
+#             return render(request, 'login.html')
+
+#     return render(request, 'login.html')
+
 
 def studentapplicationform(request):
     studID_str = request.user.username

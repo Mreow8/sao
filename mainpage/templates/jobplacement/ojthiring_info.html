@@ -1,9 +1,15 @@
 {% extends 'main.html' %} {% block headcontent %} {% load static %}
+<!-- prettier-ignore -->
+{% endblock headcontent %} {% block bodycontent %} {% load static %}
 <link
   rel="stylesheet"
   href="{% static 'styles/job_placement/ojthiring_info.css' %}?244"
 />
-{% endblock headcontent %} {% block bodycontent %} {% load static %}
+<div class="sub-title">
+  <h3>JOB PLACEMENT</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; {{ ojt.company_name }}</p>
+</div>
 <section>
   <div>
     <!-- mura ni ug header -->
