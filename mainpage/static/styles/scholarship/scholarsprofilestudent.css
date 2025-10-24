@@ -1,389 +1,138 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-  color: white;
-  list-style-type: none;
-}
+/* --- General Body & Font Styling --- */
 body {
-  display: flex;
-}
-#side_nav_box {
-  height: 100vh;
-  width: fit-content;
-}
-.side-nav {
-  width: 299px;
-  background: #4682b4;
-  overflow: auto;
-}
-.side-nav::-webkit-scrollbar {
-  display: none;
-}
-.orange-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-  padding: 0px 18px;
-  background-color: #ff8000;
-  width: 299px;
-}
-
-.logo {
-  height: 55px;
-}
-.bars {
-  height: 25px;
-}
-.side-nav li {
-  line-height: 30px;
-}
-
-.side-nav ul li {
-  line-height: 50px;
-  border-bottom: 1px solid #2b40d1;
-}
-
-.side-nav ul ul {
-  position: static;
-  display: none;
-}
-
-.side-nav ul.studentlife.show {
-  display: block;
-}
-
-.side-nav ul.scholar-show.show2 {
-  display: block;
-}
-
-.side-nav ul.jobplace-show.show3 {
-  display: block;
-}
-
-.side-nav ul.student_disc-show.show4 {
-  display: block;
-}
-
-.side-nav ul.guide-show.show5 {
-  display: block;
-}
-
-.side-nav ul.alumni-show.show6 {
-  display: block;
-}
-
-.side-nav ul.community-show.show7 {
-  display: block;
-}
-
-.side-nav ul.student_org-show.show8 {
-  display: block;
-}
-
-.side-nav ul.medical-show.show9 {
-  display: block;
-}
-
-.side-nav ul ul li {
-  line-height: 40px;
-}
-
-.side-nav ul ul li a {
-  font-size: 15px;
-  padding-left: 60px;
-}
-
-.side-nav ul li a:hover {
-  background: #3e74a0;
-  border-left-color: white;
-}
-
-.side-nav ul li a {
-  position: relative;
-  color: white;
-  padding-left: 30px;
-  text-decoration: none;
-  font-size: 14px;
-  display: block;
-  width: 100%;
-  border-left: 5px solid transparent;
-}
-
-.side-nav ul li a span {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  font-size: 18px;
-  transition: transform 0.4s;
-}
-
-.side-nav ul li a span.rotate {
-  transform: translateY(-50%) rotate(-180deg);
-}
-.search-container {
-  width: 100%;
-  background-color: #f1f1f1;
-  padding: 12.5px;
-  display: flex;
-  align-items: center;
-}
-
-.search-icon i {
-  margin-right: 10px;
-  cursor: pointer;
-  color: black;
-  font-size: 20px;
-}
-
-input[type="text"] {
-  padding: 9.6px;
-  border: transparent;
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding-left: 10px;
-  align-items: left;
-  color: black;
-  width: 300px;
-  background-color: #fff;
-}
-.content_box {
-  height: 100vh;
-  width: 100%;
-}
-.content {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  height: 89.5vh;
-  overflow: auto;
-  background-color: #fff;
-}
-.content h1 {
-  color: black;
-}
-
-.form_div {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: fit-content;
-  width: 80%;
-  padding: 40px;
-  gap: 25px;
-  background-color: #f5f5f5;
-  border-radius: 15px;
-}
-.form_div .search_id_container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 70%;
-}
-.form_div #display_search {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 70%;
-  gap: 20px;
-}
-.form_div #display_search div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-.form_div #display_search div label {
-  color: black;
-}
-/* .form_div div button{
-    padding: 10px 30px;
-    background-color: green;
-    border: none;
-    border-radius: 5px;
-} */
-.container h1 {
-  font-size: 32px;
-  margin-bottom: 20px;
-  color: #c66604;
-  text-align: center;
-}
-
-.profile-section,
-.profile-section_2 {
-  margin-bottom: 30px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  width: 100%;
-}
-
-.profile-section h2,
-.profile-section_2 h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #c66604;
-}
-
-.info-group {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  padding: 5px 0; /* Reduced padding */
-  border-bottom: 1px solid #ccc;
-}
-.info-box {
-  display: grid;
-  grid-template-columns: 180px auto auto auto auto;
-  /* justify-content: space-between; */
-  margin-bottom: 10px;
-  padding: 5px 0; /* Reduced padding */
-  border-bottom: 1px solid #ccc;
-}
-.info-box label {
-  color: black;
-}
-.info-group label {
-  font-weight: 500;
-  color: #555;
-  flex: 1;
-  margin-right: 10px; /* Add space between label and data */
-}
-#editgpa {
-  width: 250px;
-}
-
-.info-group span {
-  flex: 2;
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
   color: #333;
 }
 
-.button-container {
+/* --- Page Title Section --- */
+.sub-title {
+  text-align: center;
+  padding: 40px 20px 20px 20px;
+}
+.sub-title h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2b2b2b;
+}
+.sub-title p {
+  display: inline;
+  font-size: 14px;
+}
+.hometext {
+  color: #666;
+}
+.certxt {
+  margin-left: 5px;
+  color: #ff8000;
+  font-weight: 500;
+}
+
+/* --- Main Content Container (styled like .gmc-form) --- */
+.content_box {
+  max-width: 900px; /* Adjust as needed */
+  margin: 0 auto;
+  padding: 0 20px 40px 20px;
+}
+.content {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Form Container --- */
+.form_div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Profile Sections --- */
+.profile-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.profile-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.profile-section h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+}
+
+/* --- Information Groups --- */
+.info-group {
+  display: grid;
+  grid-template-columns: 180px 1fr; /* Fixed width for label, rest for value */
+  gap: 10px;
+  margin-bottom: 12px;
+  align-items: start; /* Align items at the start */
+}
+.info-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
   text-align: right;
-  margin-top: 20px;
+  padding-right: 10px;
+}
+.info-group span {
+  font-size: 14px;
+  color: #333;
+  word-wrap: break-word; /* Wrap long text */
+  background-color: #f8f9fa; /* Slight background for value */
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #eee;
 }
 
-button#submitRequirementsButton {
-  background-color: #c66604;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button#submitRequirementsButton:hover {
-  background-color: #a55503;
-}
-#cor_pic,
-#grade_pic,
-#schoolid_pic {
-  height: 20px;
-  width: 50px;
-}
-.info-group input {
-  background-color: transparent;
-  width: 50px;
-}
-.info-box input[type="file"] {
-  width: 200px;
-}
+/* --- Apply Button --- */
 #aapplybtn {
-  text-decoration: none;
+  display: block; /* Make the anchor tag block level */
+  text-decoration: none; /* Remove underline */
+  margin-top: 15px;
 }
 #applybtn {
-  padding: 5px 10px;
-  background-color: #c66604;
-  border: none;
-  border-radius: 5px;
-  width: fit-content;
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  background-color: #ff8000; /* Orange color */
+  color: #fff;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
 }
 #applybtn:hover {
-  background-color: #a55503;
-}
-.button-container #cancelbtn {
-  border: none;
-  height: 32px;
-  width: 70px;
-  border-radius: 5px;
-  background-color: rgb(198, 36, 36);
-}
-.button-container #cancelbtn:hover {
-  background-color: rgb(167, 31, 31);
-}
-.button-container #editbtn,
-.button-container #donebtn {
-  border: none;
-  height: 32px;
-  width: 70px;
-  border-radius: 5px;
-  background-color: rgb(0, 174, 0);
-}
-.button-container #editbtn:hover,
-.button-container #donebtn:hover {
-  background-color: green;
+  background-color: #e67300; /* Darker orange */
 }
 
-/* ------- modal ---------- */
-
-/* The Modal (background) */
+/* --- Image Modal --- */
 .modal {
   display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 60px; /* Location of the box */
+  position: fixed;
+  z-index: 1000;
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100vh; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding-top: 60px;
 }
-
-/* Modal Content (image) */
 .modal-content {
   margin: auto;
   display: block;
   width: 80%;
   max-width: 700px;
 }
-
-/* Add Animation */
-.modal-content {
-  -webkit-animation-name: zoom;
-  -webkit-animation-duration: 0.6s;
-  animation-name: zoom;
-  animation-duration: 0.6s;
-}
-
-@-webkit-keyframes zoom {
-  from {
-    -webkit-transform: scale(0);
-  }
-  to {
-    -webkit-transform: scale(1);
-  }
-}
-
-@keyframes zoom {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-/* The Close Button */
 .close {
   position: absolute;
   top: 15px;
@@ -393,10 +142,27 @@ button#submitRequirementsButton:hover {
   font-weight: bold;
   transition: 0.3s;
 }
-
 .close:hover,
 .close:focus {
   color: #bbb;
   text-decoration: none;
   cursor: pointer;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .content {
+    padding: 20px;
+  }
+  .info-group {
+    grid-template-columns: 1fr; /* Stack label and value */
+    gap: 5px;
+  }
+  .info-group label {
+    text-align: left; /* Align label left on mobile */
+    padding-right: 0;
+  }
+  .info-group span {
+    width: 100%; /* Ensure value takes full width */
+  }
 }

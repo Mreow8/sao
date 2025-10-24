@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cars with Switch-Case</title>
+  </head>
+  <body>
+    <h2>Switch–Case Output:</h2>
+    <div id="output1"></div>
+
+    <script>
+      function createCar(type) {
+        switch (type.toLowerCase()) {
+          case "toyota":
+            return { type: "Toyota", drive: () => "Driving a Toyota!" };
+          case "suv":
+            return { type: "SUV", drive: () => "Driving an SUV!" };
+          case "truck":
+            return { type: "Truck", drive: () => "Driving a Truck!" };
+          case "ferrari":
+            return { type: "Ferrari", drive: () => "Driving a Ferrari!" };
+          case "van":
+            return { type: "Van", drive: () => "Driving a Van!" };
+          case "sedan":
+            return { type: "Sedan", drive: () => "Driving a Sedan!" };
+          default:
+            return { type: "Unknown", drive: () => "Unknown car type!" };
+        }
+      }
+
+      const cars = [
+        "toyota",
+        "suv",
+        "truck",
+        "ferrari",
+        "van",
+        "sedan",
+        "bike",
+      ];
+      let html1 = "";
+      for (let i = 0; i < cars.length; i++) {
+        let car = createCar(cars[i]);
+        html1 += `<p>${car.type}: ${car.drive()}</p>`;
+      }
+      document.getElementById("output1").innerHTML = html1;
+    </script>
+  </body>
+</html>

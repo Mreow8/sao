@@ -165,7 +165,7 @@ def signinuser(request):
             if user.is_superuser:
                 return redirect('adminmain') # Use your actual admin URL name
             elif hasattr(user, 'role') and user.role == 'student':
-                 return redirect('student_homepage') # Use your actual student URL name
+                 return redirect('homepage') # Use your actual student URL name
             elif hasattr(user, 'role') and user.role in ['clinic_admin', 'staff', 'guidance', 'scholarship_officer', 'placement_officer', 'discipline_officer', 'alumni_officer', 'student_life_staff']: # Check for any staff role
                  return redirect('adminmain') # Use your actual staff URL name
             elif hasattr(user, 'role') and user.role == 'guard':

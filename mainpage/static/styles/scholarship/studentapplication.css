@@ -1,95 +1,181 @@
-input[type="text"] {
-  padding: 9.6px;
-  border: transparent;
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding-left: 10px;
-  align-items: left;
-  color: black;
-  width: 300px;
+/* --- General Body & Font Styling --- */
+body {
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #333;
 }
-input[type="file"] {
-  padding: 5px 22px;
+
+/* --- Page Title Section --- */
+.sub-title {
+  text-align: center;
+  padding: 40px 20px 20px 20px;
 }
-.content_box {
-  height: 100vh;
-  width: 100%;
+.sub-title h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2b2b2b;
+}
+.sub-title p {
+  display: inline;
+  font-size: 14px;
+}
+.hometext {
+  color: #666;
+}
+.certxt {
+  margin-left: 5px;
+  color: #ff8000;
+  font-weight: 500;
+}
+
+/* --- Main Content Container --- */
+.container {
+  max-width: 900px; /* Adjust as needed */
+  margin: 0 auto;
+  padding: 0 20px 40px 20px;
 }
 .content {
-  display: flex;
-  justify-content: center;
-  margin: 20px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
-.content h1 {
-  color: black;
-}
+
+/* --- Form Container --- */
 .form_div {
-  border-color: #3f3e3d;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 80%;
-  background-color: #f5f5f5;
-  height: fit-content;
-  gap: 20px;
-  padding: 30px 0px;
-  color: black;
-  border-radius: 10px;
 }
-.form_div_2 {
-  width: fit-content;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  padding: 50px 190px;
-  height: fit-content;
-  background-color: #f5f5f5;
-  border-radius: 10px;
-}
-label {
-  color: black;
-}
-/* .search_id_container{
-    display: flex;
-    justify-content: space-between;
-    padding: 0px 70px;
-    border: 1px solid green;
-    width: 80%;
-} */
-#display_search {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 80%;
+
+/* --- Form Layout & Elements --- */
+form#display_search {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(300px, 1fr)
+  ); /* Responsive grid */
   gap: 20px;
 }
-#display_search div {
+
+form#display_search > div {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+}
+
+form#display_search label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+form#display_search input[type="text"],
+form#display_search input[type="date"], /* Added date type */
+form#display_search select {
   width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  background: #f0f2f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333; /* Make sure text is visible */
+  transition: all 0.3s ease;
 }
-#display_search div select {
-  border: none;
-  padding: 7px;
-  width: 300px;
-  border-radius: 10px;
+
+form#display_search input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  background: #f0f2f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333; /* Make sure text is visible */
 }
-#display_search div input {
-  background-color: white;
+
+form#display_search input:focus,
+form#display_search select:focus {
+  outline: none;
+  border-color: #ff8000;
+  background-color: #fff;
 }
-button {
-  padding: 7px 35px;
-  width: fit-content;
+
+/* Style disabled inputs */
+form#display_search input:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Style for the "Submit Requirements" title */
+form#display_search h2 {
+  grid-column: 1 / -1; /* Make title span full width */
+  font-size: 18px;
+  font-weight: 600;
+  color: #ff8000; /* Orange color */
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Submit Button */
+form#display_search button[type="submit"] {
+  grid-column: 1 / -1; /* Span full width */
   background-color: #ff8000;
-  border: none;
   color: white;
-  border-radius: 5px;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  justify-self: center; /* Center button horizontally */
+  width: 50%; /* Adjust width as needed */
+  max-width: 250px;
 }
-button:hover {
+form#display_search button[type="submit"]:hover {
+  background-color: #e67300;
+}
+
+/* --- "Already Submitted" Message --- */
+.form_div_2 {
+  text-align: center;
+  padding: 40px 20px;
+}
+.form_div_2 h3 {
+  color: #ff8000;
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+.checkbtn {
   background-color: #ff8000;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.checkbtn:hover {
+  background-color: #e67300;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .content {
+    padding: 20px;
+  }
+  form#display_search {
+    grid-template-columns: 1fr;
+  } /* Stack fields on smaller screens */
+  form#display_search button[type="submit"] {
+    width: 80%;
+  }
 }

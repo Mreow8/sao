@@ -5,19 +5,23 @@
     <meta charset="UTF-8" />
     <title>Student Register - CTU</title>
     <style>
+      /* --- Base & Typography --- */
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        font-family: Arial, sans-serif;
       }
 
       body,
       html {
         height: 100%;
         width: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: #f8f9fa; /* Light background */
       }
 
+      /* --- Main Layout --- */
       .container {
         display: flex;
         height: 100vh;
@@ -25,109 +29,233 @@
         overflow: hidden;
       }
 
+      /* --- Left Section (Branding - Same as Login) --- */
       .left-section {
         flex: 1;
         background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
           center center;
         background-size: cover;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-      }
-
-      .left-section img {
-        width: 150px;
-        margin-bottom: 20px;
-      }
-
-      .left-section p {
-        color: white;
-        font-size: 50px;
-        font-weight: bold;
-        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-        padding: 10px 20px;
-        border-radius: 8px;
-      }
-
-      .right-section {
-        flex: 1;
-        background-color: #4884b4;
+        position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         padding: 40px;
+        text-align: center;
       }
 
+      /* Dark overlay for better text contrast */
+      .left-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+        z-index: 1;
+      }
+
+      .left-section img,
+      .left-section p {
+        position: relative;
+        z-index: 2;
+      }
+
+      .left-section img {
+        width: 150px; /* Logo size */
+        margin-bottom: 25px;
+      }
+
+      .left-section p {
+        color: white;
+        font-size: 48px; /* Welcome text size */
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      /* --- Right Section (Registration Form - Same background as Login) --- */
+      .right-section {
+        flex: 1;
+        background-color: #3e74a0; /* Consistent background from login */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        overflow-y: auto; /* Allow scrolling if content overflows */
+      }
+
+      /* Registration Box (Styled like login-box) */
       .register-box {
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 10px;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
         width: 100%;
-        max-width: 320px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-width: 400px; /* Slightly wider to accommodate more fields if needed */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         color: #333;
       }
 
       .register-box h2 {
-        text-align: center;
+        font-size: 24px;
+        color: #1a1a1a;
+        font-weight: 700;
         margin-bottom: 25px;
-        color: #ff9f43;
+        text-align: center; /* Center the heading */
       }
 
+      /* --- Form Elements (Styled like Login) --- */
       .form-group {
-        margin-bottom: 18px;
+        margin-bottom: 20px; /* Consistent spacing */
       }
 
       input[type="text"],
       input[type="email"],
       input[type="password"] {
         width: 100%;
-        padding: 12px;
+        padding: 12px 15px; /* Consistent padding */
+        background: #f0f2f5; /* Light input background */
         border: 1px solid #ccc;
         border-radius: 8px;
         font-size: 14px;
+        color: #333;
+        transition: all 0.3s ease;
+      }
+
+      input:focus {
         outline: none;
-        box-sizing: border-box;
+        border-color: #ff8000; /* Orange focus border */
+        background-color: #fff;
+      }
+
+      input::placeholder {
+        color: #adb5bd;
       }
 
       .btn-register {
         width: 100%;
         padding: 12px;
-        background-color: #ff9f43;
+        background-color: #ff8000; /* Orange button */
         color: white;
         border: none;
-        font-weight: bold;
-        border-radius: 6px;
+        font-weight: 600;
+        font-size: 16px;
+        border-radius: 8px;
         cursor: pointer;
         transition: background-color 0.3s ease;
       }
 
       .btn-register:hover {
-        background-color: #fb8c00;
+        background-color: #e67300; /* Darker orange on hover */
+      }
+
+      /* --- Footer & Error/Success Messages (Styled like Login) --- */
+      .footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #6c757d;
+      }
+      .footer a {
+        color: #ff8000; /* Orange link */
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .footer a:hover {
+        text-decoration: underline;
       }
 
       .error-message {
-        color: #d32f2f;
-        margin-bottom: 12px;
+        color: #dc3545; /* Red error text */
+        background-color: #f8d7da; /* Light red background */
+        border: 1px solid #f5c6cb;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        margin-bottom: 15px;
         text-align: center;
-        font-size: 0.9em;
       }
 
       .success-message {
-        color: #388e3c;
-        margin-bottom: 12px;
+        color: #198754; /* Green success text */
+        background-color: #d1e7dd; /* Light green background */
+        border: 1px solid #badbcc;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        margin-bottom: 15px;
         text-align: center;
-        font-size: 0.9em;
       }
 
-      .footer {
-        margin-top: 15px;
-        text-align: center;
-        font-size: 0.9em;
-        color: #666;
+      /* --- Responsive Design (Same breakpoints and logic as Login) --- */
+      @media (max-width: 900px) {
+        .container {
+          /* Apply the background image to the container itself */
+          background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
+            center center;
+          background-size: cover;
+          position: relative; /* Needed for the overlay */
+          display: flex; /* Re-enable flex to center the right section */
+          justify-content: center;
+          align-items: center;
+          padding: 20px; /* Add some padding */
+          height: auto; /* Adjust height for potentially longer form */
+          min-height: 100vh; /* Ensure it covers viewport height */
+        }
+
+        /* Add an overlay to the container for readability */
+        .container::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+          z-index: 1;
+        }
+
+        .left-section {
+          display: none; /* Hide the original left section div */
+        }
+
+        .right-section {
+          flex: none; /* Override the desktop flex setting */
+          width: 90%;
+          max-width: 400px;
+          background-color: transparent; /* Make it transparent */
+          padding: 0; /* Remove padding, handled by register-box */
+          position: relative; /* Ensure it's above the overlay */
+          z-index: 2;
+          /* Remove align-items to allow top alignment if content overflows */
+        }
+
+        .register-box {
+          background-color: rgba(
+            255,
+            255,
+            255,
+            0.9
+          ); /* White with slight transparency */
+          padding: 30px;
+          border-radius: 12px;
+          width: 100%;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Keep a subtle shadow */
+          margin: 20px 0; /* Add some margin top/bottom */
+        }
+
+        .footer {
+          color: #4d4d4d; /* Keep footer text readable */
+        }
+      }
+
+      @media (max-width: 480px) {
+        .register-box {
+          padding: 25px; /* Adjust padding for very small screens */
+        }
+        .right-section {
+          padding: 10px; /* Add padding back to right section on smallest screens */
+        }
       }
     </style>
   </head>

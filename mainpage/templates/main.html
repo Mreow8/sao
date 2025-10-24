@@ -59,7 +59,7 @@
                         {% endif %}
                         
                         <li><a href="{% url "profile_student" %}">Scholars Profile</a></li>
-                        <li><a href="{% url "mentor" %}">Mentorship Program</a></li>
+                  
                     </ul>
                     </li>
                     <li><a href="#" class="jobplace-btn">JOB PLACEMENT
@@ -90,7 +90,6 @@
                         <li><a href="{% url 'Intake Interview' %}">Intake Interview</a></li>
                         <li><a href="{% url 'Exit Interview'%}">Exit Interview</a></li>
                         <li><a href="{% url 'OJT Assessment'%}">OJT Assessments/Psychological Issuance</a></li>
-                        <li><a href="#">Transaction Reports</a></li>
                     </ul>
                     </li>
                     <li><a href="#" class="alumni-btn">ALUMNI
@@ -110,9 +109,9 @@
                     <ul class="community-show">
                         <li><a href="{% url 'programs' %}">Events</a></li>
                         <li><a href="{% url 'crowdfunding_list' %}">CrowdFunding Projects</a></li>
-                        <li><a href="{% url 'donate'%}">Donation App</a></li>
+                        <!-- <li><a href="{% url 'donate'%}">Donation App</a></li>
                         <li><a href="#">Transaction Reports</a></li>
-                        
+                         -->
                     </ul>
                     </li>
                     <li><a href="#" class="student_org-btn">STUDENT ORGANIZATION
@@ -149,7 +148,7 @@
         </div>
        <div class="right-side">
  
-<div class="custom-search-wrapper bg-white border-b border-gray-200 shadow-sm px-6 py-3">
+<div class="custom-search-wrapper">
   <div class="search-container flex items-center justify-between">
     <!-- Search bar -->
     <div class="flex items-center flex-1 max-w-md">
@@ -172,7 +171,7 @@
       </div>
 
       <!-- Hover dropdown -->
-      <div class="profile-popup absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg p-3 hidden group-hover:block z-50">
+    <div class="profile-popup ">
         <strong>Student ID:</strong> {{ user.username }}<br />
         <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br />
         <button class="logout-btn mt-2 bg-red-500 hover:bg-red-600 text-white w-full py-1 rounded">
