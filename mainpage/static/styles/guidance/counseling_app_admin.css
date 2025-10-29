@@ -1,233 +1,678 @@
-.container {
-  max-width: 1400px; /* Wider container as requested */
-  margin: 20px auto 40px auto;
-}
-.form-container {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-}
-.form-container h2 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #1a1a1a;
+/* --- Global, Fonts & Layout --- */
+body {
+  font-family: "Rubik", sans-serif;
+  background-color: #f4f7f6; /* Light gray background */
 }
 
-/* --- Search Bar --- */
-#search_id {
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem 1.5rem;
+}
+/* --- Modal Fix --- */
+
+/* This is the main fix to "hide first" and "float" */
+.showform_container {
+  display: none; /* Hides the modal by default */
+  position: fixed; /* Makes it "float" over the page */
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Adds scroll if modal is too tall */
+  background-color: rgba(0, 0, 0, 0.6); /* Black overlay */
+}
+
+/* This is the white box for the modal content */
+.form_container {
+  background-color: #fefefe;
+  margin: 5% auto; /* Centers it vertically and horizontally */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 230mm; /* A bit wider than A4 paper */
+  border-radius: 10px;
+  position: relative;
+}
+
+/* Close button style */
+.closeform {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+}
+.closeform:hover {
+  color: #000;
+}
+
+/* This makes your certificate scrollable inside the modal */
+/* Note: You have a typo in your HTML ("scollable" instead of "scrollable") */
+.scollable {
+  max-height: 70vh; /* Sets a max height */
+  overflow-y: auto; /* Adds a vertical scrollbar if needed */
+  background: #f4f7f6; /* Light gray background behind paper */
+  padding: 20px;
+} /* --- Fix for Modal Not Showing --- */
+
+/* 1. This hides the modal by default */
+.showform_container {
+  display: none;
+  position: fixed; /* Makes it "float" over the page */
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6); /* Black overlay */
+}
+
+/* 2. This is the missing rule. It shows the modal when JS adds the 'active' class. */
+.showform_container.active {
+  display: block;
+}
+
+/* --- Other Modal Styles (You may already have these) --- */
+.form_container {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 230mm; /* A bit wider than A4 paper */
+  border-radius: 10px;
+  position: relative;
+}
+
+/* Note: You have a typo in your HTML ("scollable" instead of "scrollable") */
+.scollable {
+  max-height: 70vh;
+  overflow-y: auto;
+  background: #f4f7f6;
+  padding: 20px;
+}
+
+.closeform {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+}
+/* --- Fix for Modal Not Hiding --- */
+.showform_container {
+  display: none; /* Hides the modal by default */
+  position: fixed; /* Makes it "float" over the page */
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6); /* Black overlay */
+}
+
+/* This shows the modal when JS adds the 'active' class */
+.showform_container.active {
+  display: block;
+}
+
+/* --- Styles for new modal buttons --- */
+.modal-buttons {
   display: flex;
   gap: 10px;
-  margin: 20px 0;
-  max-width: 500px;
-}
-#studentIDBox {
-  flex-grow: 1;
-  padding: 10px 12px;
-  background: #f0f2f5;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-}
-#studentIDBox:focus {
-  outline: none;
-  border-color: #ff8000;
+  justify-content: flex-end; /* Aligns buttons to the right */
+  padding-top: 15px; /* Adds space above the buttons */
 }
 
-/* --- Main Table Styling --- */
+.saveButton,
+.printButton {
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.saveButton:hover,
+.printButton:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+}
+
+/* Style print button differently */
+.printButton {
+  background-color: #38a169; /* Green */
+}
+
+.printButton:hover {
+  background-color: #2f855a; /* Darker Green */
+}
+/* --- Main Card (from .admin-table-wrapper) --- */
+.form-container {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* Clips the table and search bar */
+  padding: 0; /* Remove padding to let table fill */
+}
+
+/* --- Search Bar (Top part of the card) --- */
+#search_id {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+#studentIDBox {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  flex-grow: 1; /* Takes available space */
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#studentIDBox:focus {
+  outline: none;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* Style the search button (based on .requestBtn) */
+.OrangeButton {
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.OrangeButton:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+}
+
+/* --- Messages (Using styles from your HTML) --- */
+.messages {
+  list-style: none;
+  margin: 10px 0 0 0;
+  padding: 0;
+  width: 100%; /* Make messages span full width */
+}
+.messages li {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.messages li.error {
+  background-color: #ffe5e5;
+  color: #a30000;
+  border: 1px solid #a30000;
+}
+.messages li.success {
+  background-color: #e7ffe7;
+  color: #007a00;
+  border: 1px solid #007a00;
+}
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto; /* This adds the horizontal scrollbar */
+}
+
+/* --- Table (Based on #trackerTable) --- */
+#info_table {
+  width: 100%;
+  min-width: 1200px; /* Forces horizontal scroll. Adjust as needed. */
+  border-collapse: collapse;
+}
+/* --- Table (Based on #trackerTable) --- */
 #info_table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
-}
-#info_table th,
-#info_table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  vertical-align: middle;
-}
-#info_table th {
-  background-color: #f7f7f7;
-  color: #ff8000;
-  font-weight: 600;
-  text-align: left;
-}
-#info_table tbody tr:hover {
-  background-color: #f8f9fa;
 }
 
-/* Status Badges */
+#info_table th,
+#info_table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* Table Header */
+#info_table_head th {
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#info_table tbody tr:last-child td {
+  border-bottom: none;
+}
+#info_table tbody tr:hover {
+  background-color: #ebf8ff; /* Light blue hover */
+}
+
+/* --- Status Badges (Based on .status-badge) --- */
 .accepted,
 .declined,
 .pending,
 .expired {
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 5px 12px;
+  border-radius: 15px;
   font-size: 12px;
   font-weight: 600;
   color: white;
+  text-transform: uppercase;
+  display: inline-block;
 }
 .accepted {
-  background-color: #28a745;
+  background-color: #2ecc71; /* Green */
 }
 .declined {
-  background-color: #dc3545;
+  background-color: #e74c3c; /* Red */
 }
 .pending {
-  background-color: #ffc107;
-  color: #212529;
+  background-color: #f39c12; /* Orange */
 }
 .expired {
-  background-color: #6c757d;
+  background-color: #777; /* Gray */
 }
 
-/* Action Buttons in Table */
+/* --- Action Buttons --- */
 .horizontal {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
+  align-items: center;
 }
+
 .accept,
 .decline,
-.delete,
-.showformButton,
-.OrangeButton {
-  border: none;
-  padding: 6px 14px;
-  font-size: 13px;
+.delete {
+  font-family: "Rubik", sans-serif;
+  font-size: 0.8rem;
   font-weight: 600;
+  padding: 6px 12px;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  text-transform: uppercase;
+  transition: background-color 0.2s;
+  color: white;
 }
 .accept {
-  background-color: #28a745;
-  color: white;
+  background-color: #28a745; /* Green */
+}
+.accept:hover {
+  background-color: #218838;
 }
 .decline {
-  background-color: #dc3545;
-  color: white;
+  background-color: #f39c12; /* Orange */
+}
+.decline:hover {
+  background-color: #e67e22;
 }
 .delete {
-  background-color: #343a40;
-  color: white;
+  background-color: #e74c3c; /* Red */
 }
-.showformButton,
-.OrangeButton {
-  background-color: #ff8000;
-  color: white;
+.delete:hover {
+  background-color: #c0392b;
 }
 
-/* --- Modal for "Show Form" --- */
-.showform_container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  display: none; /* Controlled by JS */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-.showform_container .form_container {
-  width: 95%;
-  max-width: 8.5in; /* A4 paper width */
-  height: 90vh;
-  padding: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.closeform {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 28px;
-  color: #fff;
-  background: #333;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  border: none;
-  cursor: pointer;
-  z-index: 10;
-}
-.scollable {
-  height: 100%;
-  overflow-y: auto;
-  background: white;
-  padding: 2.5cm 1.5cm; /* Standard margin for a document */
-}
-#paper {
-  font-family: "Times New Roman", Times, serif;
-  color: black;
-}
-.logo_content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-}
-.logo_content img {
-  width: 80px;
-}
-.header p {
-  margin: 2px 0;
-  font-size: 11pt;
-}
-.title h4 {
-  text-align: center;
-  font-weight: bold;
-  font-size: 14pt;
-  margin: 20px 0;
-}
-.title p {
-  text-align: justify;
-  font-size: 12pt;
-  margin-bottom: 20px;
-}
-.title_table {
-  width: 100%;
-  margin-bottom: 20px;
-  font-size: 12pt;
-}
-.content strong {
-  display: block;
-  margin-top: 15px;
-  font-size: 12pt;
-}
-.content p,
-.long-text-p {
-  font-size: 11pt;
-  margin-top: 5px;
-}
-.answer-long-text,
-.answer-mid-text {
-  display: block;
-  min-height: 40px;
-  border-bottom: 1px solid #ccc;
-  padding: 5px;
-}
-.custom-table-cell {
-  border: 1px solid black;
-  padding: 5px;
-}
-.saveButton {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 30px;
-}
-
-/* Responsive */
+/* --- Responsive Card View --- */
 @media (max-width: 768px) {
-  .container {
-    max-width: 100%;
+  /* On mobile, remove card wrapper */
+  .form-container {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
   }
-  #info_table {
+
+  /* Hide table headers */
+  #info_table thead {
+    display: none;
+  }
+
+  #info_table,
+  #info_table tbody,
+  #info_table tr,
+  #info_table td {
     display: block;
     width: 100%;
-    overflow-x: auto;
+  }
+
+  /* Each <tr> becomes a card */
+  #info_table tr {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  #info_table td {
+    position: relative;
+    padding-left: 50%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    min-height: 40px;
+  }
+  #info_table td:last-child {
+    border-bottom: none;
+  }
+
+  /* This pulls the label from your HTML */
+  #info_table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    font-weight: 600;
+    color: #2c5282; /* Primary Blue */
+    white-space: nowrap;
+  }
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  list-style-type: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.school-year {
+  font-size: 20px;
+  width: 243px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.school-year:focus {
+  outline: none;
+}
+
+.certificate-container {
+  margin-top: 50px;
+  justify-content: center;
+  margin-left: 350px;
+  width: 55%;
+  border: 2px solid #000;
+  height: 1120px;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin-bottom: 50px;
+}
+
+.content1 {
+  color: black;
+  margin-top: -100px;
+  margin-left: -50px;
+}
+
+.content2 {
+  color: black;
+  font-weight: bold;
+  font-family: Arial;
+  font-size: 23px;
+  margin-left: -50px;
+}
+
+.upper-contents {
+  margin-left: 55px;
+}
+
+.line {
+  width: 700px;
+  border-top: 3px solid #000;
+  color: black;
+  margin-top: 20px;
+  margin-left: 25px;
+}
+.bottomline {
+  width: 700px;
+  border-top: 1px solid #000;
+  color: black;
+  margin-top: 30px;
+  margin-left: 50px;
+}
+
+.ornum {
+  margin-top: 90px;
+  margin-left: 50px;
+  text-align: left;
+}
+
+.ornum p {
+  font-size: 12px;
+  color: black;
+}
+
+.content3,
+.content4 {
+  color: black;
+  margin-left: -50px;
+}
+
+.logo1 {
+  margin-top: 40px;
+  width: 100px;
+  height: 100px;
+  margin-right: 640px;
+}
+.logo2-container {
+  margin-top: -25px;
+}
+
+.logo2 {
+  width: 100px;
+  height: 100px;
+  margin-left: 550px;
+  margin-top: -1100px;
+}
+
+.maincontents {
+  width: 100%;
+  margin-top: 10px;
+  margin-right: 1050px;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.maincontents h4 {
+  font-size: 18px;
+  font-family: Algerian;
+  color: black;
+}
+
+.maincontents h3 {
+  font-size: 25px;
+  font-family: Algerian;
+  color: black;
+}
+
+.maincontents h2 {
+  margin-top: 20px;
+  color: black;
+  font-weight: bold;
+  font-size: 25px;
+  text-align: center;
+  font-family: Georgia;
+}
+
+.sub-contents {
+  margin-top: 55px;
+  width: 80%;
+  margin-left: 80px;
+}
+
+.sub-contents h3 {
+  font-size: 20px;
+  color: black;
+  text-align: justify;
+  margin-top: 30px;
+}
+
+.sub-contents p {
+  font-size: 20px;
+  text-indent: 30px;
+  margin: 20px 0;
+  text-align: justify;
+  color: black;
+}
+
+.Dean {
+  margin-top: 60px;
+}
+
+.Dean p {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  color: black;
+  text-align: right;
+  text-decoration: underline;
+}
+
+#lower-content {
+  margin-top: 60px;
+}
+
+#campus-director {
+  font-size: 16px;
+  margin-top: -20px;
+  margin-right: 35px;
+  text-decoration: none;
+}
+
+.footerImg {
+  margin-top: 25px;
+  width: 650px;
+}
+
+.print {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+#print {
+  background-color: #ff8000;
+  width: 200px;
+  color: white;
+  border: none;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background-color 0.3s ease;
+  margin-bottom: 30px;
+}
+
+#print i {
+  font-size: 25px;
+  margin-right: 8px;
+  color: white;
+  vertical-align: middle;
+}
+
+.underline {
+  text-decoration: underline;
+  color: black;
+}
+
+@media print {
+  .side-nav,
+  .search-container,
+  .orange-bar,
+  .print {
+    display: none !important;
+  }
+
+  .certificate-container {
+    position: absolute;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px;
+    border: none;
+    height: 90px;
+  }
+
+  .underline {
+    font-weight: bold;
+  }
+  .content1 {
+    font-size: 18px;
+  }
+
+  .line {
+    width: 640px;
+    margin-left: 20px;
+    border-top: 3px solid #000;
+  }
+
+  .sub-contents h3,
+  .sub-contents p {
+    font-size: 14px;
+  }
+  #campus-director {
+    font-size: 13px;
+    margin-top: -20px;
+    margin-right: 20px;
+    text-decoration: none;
+  }
+  .school-year {
+    width: 170px;
+    font-size: 14px;
+    border: none;
+    font-weight: bold;
+    text-decoration: underline;
   }
 }

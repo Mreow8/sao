@@ -1,4 +1,4 @@
-{% extends 'main.html' %} {% block headcontent %} {% load static %}
+{% extends 'adminmain.html' %} {% block headcontent %} {% load static %}
 <link
   rel="stylesheet"
   href="{% static 'styles/job_placement/att_manager2.css' %}?306"
@@ -29,63 +29,66 @@
     <button id="saveAll">Attend All</button>
     <hr />
     <!-- <h4>diri makita ang list sa students para imong ma attendance</h4>  Pwede ra e delete ig abot sa design -->
-
-    <table class="studentTable" id="attendeeTable">
-      <thead>
-        <tr>
-          <th>Student ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for att in attendance %}
-        <tr data-item-id="{{ att.sem_at_id }}">
-          <!-- id ra sa row -->
-          <td name="{{ att.student.studID }}">{{ att.student_id.studID }}</td>
-          <td>{{ att.student_id.firstname }}</td>
-          <td>{{ att.student_id.lastname }}</td>
-          <td class="cancelaction">
-            <form
-              action="{% url 'cancel_pending' att.sem_at_id %}"
-              method="POST"
-            >
-              {% csrf_token %}
-              <!-- DELETE BTN -->
-              <input type="submit" value="X" />
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-card-wrapper">
+      <table class="studentTable" id="attendeeTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for att in attendance %}
+          <tr data-item-id="{{ att.sem_at_id }}">
+            <!-- id ra sa row -->
+            <td name="{{ att.student.studID }}">{{ att.student_id.studID }}</td>
+            <td>{{ att.student_id.firstname }}</td>
+            <td>{{ att.student_id.lastname }}</td>
+            <td class="cancelaction">
+              <form
+                action="{% url 'cancel_pending' att.sem_at_id %}"
+                method="POST"
+              >
+                {% csrf_token %}
+                <!-- DELETE BTN -->
+                <input type="submit" value="X" />
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
   <br />
   <hr />
   <br />
   <div>
     <h3>Present Students</h3>
-    <table id="present_students" class="studentTable">
-      <thead>
-        <tr>
-          <th>Student ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for present in presents %}
-        <tr>
-          <td name="{{ present.student_id.studID }}">
-            {{ present.student_id.studID }}
-          </td>
-          <td>{{ present.student_id.firstname }}</td>
-          <td>{{ present.student_id.lastname }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-card-wrapper">
+      <table id="present_students" class="studentTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for present in presents %}
+          <tr>
+            <td name="{{ present.student_id.studID }}">
+              {{ present.student_id.studID }}
+            </td>
+            <td>{{ present.student_id.firstname }}</td>
+            <td>{{ present.student_id.lastname }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 

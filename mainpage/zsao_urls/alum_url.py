@@ -18,10 +18,13 @@ from mainpage.views.alumni import (
     admin_gradTracer,
     admin_events,
     admin_jobfairs,
-    admin_yearbook,
+    alumni_events_admin,update_form_status,admin_tracer_list
+
 )
 
 urlpatterns = [
+    path('admin_grad_tracer/', admin_tracer_list, name='admin_tracer_list'),
+    path('update-form-status/<str:pk>/', update_form_status, name='update_form_status'),
     path("id_request/", idRequest, name="idRequest"),
     path("search_id/", search_id, name="search_id"),
     path("add_alumni/", add_alumni, name="add_alumni"),
@@ -29,6 +32,7 @@ urlpatterns = [
     path("graduateTracer_submit", graduateTracer_submit, name="graduateTracer_submit"),
     path("graduateTracer/", graduateTracer, name="graduateTracer"),
     path("reunionandevents/", alumni_events, name="alumni_events"),
+    path("alumni_events_admin/", alumni_events_admin, name="alumni_events_admin"),
     path("jobfairs/", jobfairs, name="jobfairs"),
     path("yearbook/", yearbook, name="yearbook"),
     path("search_yearbook/", search_yearbook, name="search_yearbook"),
@@ -40,5 +44,4 @@ urlpatterns = [
     path("admin_grad_tracer/", admin_gradTracer, name="admin_gradTracer"),
     path("admin_events/", admin_events, name="admin_events"),
     path("admin_jobfairs", admin_jobfairs, name="admin_jobfairs"),
-    path("admin_yearbook", admin_yearbook, name="admin_yearbook"),
 ]

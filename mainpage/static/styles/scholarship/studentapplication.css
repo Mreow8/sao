@@ -1,181 +1,204 @@
-/* --- General Body & Font Styling --- */
-body {
-  background-color: #f8f9fa;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
-  color: #333;
+/* --- Global & Fonts --- */
+.content,
+.form_div,
+.form_div_2 {
+  font-family: "Rubik", sans-serif;
 }
 
-/* --- Page Title Section --- */
-.sub-title {
-  text-align: center;
-  padding: 40px 20px 20px 20px;
-}
-.sub-title h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #2b2b2b;
-}
-.sub-title p {
-  display: inline;
-  font-size: 14px;
-}
-.hometext {
-  color: #666;
-}
-.certxt {
-  margin-left: 5px;
-  color: #ff8000;
-  font-weight: 500;
-}
-
-/* --- Main Content Container --- */
-.container {
-  max-width: 900px; /* Adjust as needed */
-  margin: 0 auto;
-  padding: 0 20px 40px 20px;
-}
-.content {
-  background: #ffffff;
-  padding: 40px;
+/* --- Main Content Card --- */
+/* This is the main white card for both states */
+.form_div,
+.form_div_2 {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 900px; /* Good width for a form */
+  margin: 0 auto; /* Center the card */
 }
 
-/* --- Form Container --- */
-.form_div {
+/* --- "Already Submitted" View --- */
+.form_div_2 {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5rem;
 }
 
-/* --- Form Layout & Elements --- */
-form#display_search {
+.form_div_2 h3 {
+  /* User's inline style sets the orange color */
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.checkbtn {
+  /* Primary button style */
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+  text-decoration: none; /* For the <a> tag */
+}
+
+.checkbtn:hover {
+  background-color: #2a4365;
+  transform: translateY(-2px);
+}
+
+/* --- Main Application Form --- */
+#display_search {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(300px, 1fr)
-  ); /* Responsive grid */
-  gap: 20px;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 1.5rem 1.25rem; /* row-gap, column-gap */
 }
 
-form#display_search > div {
+/* Form items */
+#display_search > div {
   display: flex;
   flex-direction: column;
 }
 
-form#display_search label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 8px;
+#display_search label {
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #333;
+  margin-bottom: 0.5rem;
 }
 
-form#display_search input[type="text"],
-form#display_search input[type="date"], /* Added date type */
-form#display_search select {
-  width: 100%;
-  height: 40px;
-  padding: 0 12px;
-  background: #f0f2f5;
+#display_search input[type="text"],
+#display_search input[type="file"],
+#display_search select {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 14px;
-  color: #333; /* Make sure text is visible */
-  transition: all 0.3s ease;
-}
-
-form#display_search input[type="file"] {
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
   width: 100%;
-  padding: 8px;
-  background: #f0f2f5;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #333; /* Make sure text is visible */
+  box-sizing: border-box;
+  color: #333; /* Override user's inline black */
 }
 
-form#display_search input:focus,
-form#display_search select:focus {
+/* Focus state */
+#display_search input[type="text"]:focus,
+#display_search input[type="file"]:focus,
+#display_search select:focus {
   outline: none;
-  border-color: #ff8000;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
   background-color: #fff;
 }
 
-/* Style disabled inputs */
-form#display_search input:disabled {
+/* Disabled state */
+#display_search input:disabled {
   background-color: #e9ecef;
+  color: #495057;
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
-/* Style for the "Submit Requirements" title */
-form#display_search h2 {
-  grid-column: 1 / -1; /* Make title span full width */
-  font-size: 18px;
+/* File Input Button */
+#display_search input[type="file"]::file-selector-button {
+  font-family: "Rubik", sans-serif;
   font-weight: 600;
-  color: #ff8000; /* Orange color */
-  margin-top: 20px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #718096; /* Gray */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 10px;
+}
+
+#display_search input[type="file"]::file-selector-button:hover {
+  background-color: #4a5568;
+}
+
+/* --- Form Sectioning --- */
+#display_search h2 {
+  /* "Submit Requirements" heading */
+  grid-column: 1 / -1; /* Span full width */
+  font-size: 1.5rem;
+  font-weight: 600;
+  /* User's inline style handles the color */
+  margin-top: 1rem;
+  margin-bottom: 0;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid #e0e0e0;
 }
 
-/* Submit Button */
-form#display_search button[type="submit"] {
-  grid-column: 1 / -1; /* Span full width */
-  background-color: #ff8000;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 20px;
-  justify-self: center; /* Center button horizontally */
-  width: 50%; /* Adjust width as needed */
-  max-width: 250px;
+/* GWA Calculator Link */
+#display_search a {
+  color: #2c5282;
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 0.9rem;
 }
-form#display_search button[type="submit"]:hover {
-  background-color: #e67300;
+#display_search a:hover {
+  text-decoration: underline;
 }
 
-/* --- "Already Submitted" Message --- */
-.form_div_2 {
-  text-align: center;
-  padding: 40px 20px;
+/* Note Text */
+#display_search p {
+  font-size: 0.9rem;
+  color: #333;
+  margin: 0;
 }
-.form_div_2 h3 {
-  color: #ff8000;
-  font-size: 18px;
-  line-height: 1.6;
-  margin-bottom: 25px;
-}
-.checkbtn {
-  background-color: #ff8000;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  font-size: 14px;
+#display_search p span {
+  /* User's inline style handles the red color */
   font-weight: 600;
+}
+
+/* Submit Button */
+#display_search button[type="submit"] {
+  grid-column: 1 / -1; /* Span full width */
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 24px; /* Make it a bit larger */
+  border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+  margin-top: 1.5rem;
 }
-.checkbtn:hover {
-  background-color: #e67300;
+
+#display_search button[type="submit"]:hover {
+  background-color: #2a4365;
+  transform: translateY(-2px);
 }
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
-  .content {
-    padding: 20px;
+  .form_div,
+  .form_div_2 {
+    padding: 1.5rem;
   }
-  form#display_search {
-    grid-template-columns: 1fr;
-  } /* Stack fields on smaller screens */
-  form#display_search button[type="submit"] {
-    width: 80%;
+
+  #display_search {
+    grid-template-columns: 1fr; /* Stack columns on mobile */
+  }
+
+  /* All grid items (h2, button) should be 1 column */
+  #display_search h2,
+  #display_search button[type="submit"] {
+    grid-column: 1;
   }
 }

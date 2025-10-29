@@ -1,5 +1,5 @@
 {% extends 'main.html' %} {% load static tailwind_tags %}
-<!-- prettier-ignore -->{% block bodycontent%}
+{% block bodycontent%}
 
 
 {% block extra_css %} {% tailwind_css %}
@@ -81,16 +81,18 @@
     padding-top: 10px; /* Add some space above preview content */
   }
   #previewContainer img,
-  #previewContainer object {
+  #previewContainer object,
+  #previewContainer iframe {
     display: block; /* Prevent extra space below inline elements */
     max-width: 100%;
     height: auto; /* Maintain aspect ratio */
     margin: auto; /* Center image/object */
     transform-origin: top left; /* Set transform origin for zooming */
   }
-  #previewContainer object {
+  #previewContainer object,
+  #previewContainer iframe {
     width: 100%; /* Allow object to take full width of container if needed */
-    height: 100%; /* Allow object to take full height of container if needed */
+    min-height: 60vh; /* Give PDF viewer height */
   }
   .zoom-controls {
     margin-top: 10px;
@@ -123,7 +125,6 @@
   <div
     class="bg-white xs:h-fit md:h-full xs:p-4 lg:p-8 flex flex-col gap-6 rounded-[18px] xs:w-full md:w-auto shadow-lg"
   >
-    <!-- Section for Mental Health Service -->
     <form
       method="POST"
       id="mental-health-form"
@@ -194,7 +195,6 @@
       </div>
     </form>
 
-    <!-- Single form for all uploads -->
     <form
       method="POST"
       enctype="multipart/form-data"
@@ -211,7 +211,6 @@
       />
       {% endif %}
 
-      <!-- Required Medical Documents Section (with table) -->
       <div
         class="bg-[#f8fafc] rounded-lg p-4 mb-2 border border-gray-200 w-full"
       >
@@ -222,7 +221,6 @@
           <p class="text-sm text-blue-800">
             Please submit all required medical documents. These are essential
             for ensuring the health and safety of all
-            <!-- prettier-ignore -->
             {{ is_faculty|yesno:'faculty,students' }}.
           </p>
         </div>
@@ -269,7 +267,6 @@
             {% for req in requirements %}
             <tr class="bg-white border-b hover:bg-gray-50">
               <td class="p-2 text-center">
-                <!-- prettier-ignore -->
                 {% if md %}
   {% if req.slug == 'chest_xray' %}
     {{ md.x_ray_remarks|default:'None' }}
@@ -314,7 +311,6 @@
                 >
                   Preview
                 </button>
-                <!-- prettier-ignore -->
                 {% elif req.slug == 'stool_examination' and md.stool_examination  %}
                 <button
                   type="button"
@@ -344,8 +340,6 @@
                 <span class="text-green-600 text-xl">&#10003;</span>
                 {% elif req.slug == 'drug_test' and md.drug_test %}
                 <span class="text-green-600 text-xl">&#10003;</span>
-                <!-- prettier-ignore -->
-
                 {% elif req.slug == 'stool_examination' and md.stool_examination %}
                 <span class="text-green-600 text-xl">&#10003;</span>
                 {% elif req.slug == 'pwd_card' and md.pwd_card %}
@@ -381,7 +375,6 @@
         </table>
       </div>
 
-      <!-- Mental Health Documents Section (Integrated) -->
       <div
         class="bg-[#f8fafc] rounded-lg p-4 mt-6 mb-2 border border-gray-200 w-full hidden"
         id="mental-health-docs-section"
@@ -410,16 +403,12 @@
           <tbody>
             <tr class="bg-white border-b hover:bg-gray-50">
               <td class="p-2 text-center">
-                <!-- prettier-ignore -->
-
                 {% if mental_health_record %}
                {{  mental_health_record.prescription_remarks|default:'None' }} 
                {%  else %}None{% endif %}
               </td>
               <td class="p-2 font-medium text-center">Prescription</td>
               <td class="p-2 text-center">
-                <!-- prettier-ignore -->
-
                 {% if mental_health_record and mental_health_record.prescription   %}
                 <button
                   type="button"
@@ -433,8 +422,6 @@
                 {% endif %}
               </td>
               <td class="p-2 text-center">
-                <!-- prettier-ignore -->
-
                 {% if mental_health_record and mental_health_record.prescription  %}
                 <span class="text-green-600 text-xl">&#10003;</span>
                 {% else %}
@@ -462,15 +449,11 @@
             <tr class="bg-white hover:bg-gray-50">
               <td class="p-2 text-center">
                 {% if mental_health_record %}
-                <!-- prettier-ignore -->
-
                 {{mental_health_record.certification_remarks|default:'None' }} 
               {% else %}None{% endif %}
               </td>
               <td class="p-2 font-medium text-center">Certification</td>
               <td class="p-2 text-center">
-                <!-- prettier-ignore -->
-
                 {% if mental_health_record and mental_health_record.certification    %}
                 <button
                   type="button"
@@ -484,8 +467,6 @@
                 {% endif %}
               </td>
               <td class="p-2 text-center">
-                <!-- prettier-ignore -->
-
                 {% if mental_health_record and mental_health_record.certification   %}
                 <span class="text-green-600 text-xl">&#10003;</span>
                 {% else %}
@@ -516,7 +497,6 @@
         </table>
       </div>
 
-      <!-- Upload Documents Section (with single button) -->
       <div
         class="mt-6 p-4 bg-[#f8fafc] rounded-lg border border-gray-200 w-full"
       >
@@ -532,22 +512,21 @@
     </form>
   </div>
 
-  <!-- Add Modal for File Preview -->
   <div id="previewModal" class="modal">
     <div class="modal-content" onclick="event.stopPropagation()">
       <div class="modal-header">
         <h5 class="modal-title" id="modalTitle">File Preview</h5>
-        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <span class="close-modal" onclick="closeModal()" aria-label="Close Preview">&times;</span>
       </div>
       <div id="previewContainer"></div>
-      <div class="zoom-controls">
+      <div class="zoom-controls" style="display: none;">
         <button onclick="zoomOut()">-</button>
         <button onclick="zoomIn()">+</button>
       </div>
     </div>
   </div>
 </div>
-{% endblock %} {% block extra_js %}
+{% block extra_js %}<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   // Script to display chosen filename next to Choose File button
   document.addEventListener("change", function (event) {
@@ -564,101 +543,88 @@
     }
   });
 
-  let currentZoom = 1.0; // Initial zoom level
-  const zoomStep = 0.1; // How much to zoom in/out by
+  // Modal JavaScript
+  var modal = document.getElementById("previewModal");
+  var previewContainer = document.getElementById("previewContainer");
+  var modalTitle = document.getElementById("modalTitle");
+  var currentZoom = 1;
+  var zoomStep = 0.1;
+  var minZoom = 0.5;
+  var maxZoom = 3;
 
-  function previewFile(fileUrl, studentName, requirementName) {
-    const modal = document.getElementById("previewModal");
-    const previewContainer = document.getElementById("previewContainer");
-    const modalTitle = document.getElementById("modalTitle");
+  function previewFile(fileUrl, studentName, requirementType) {
+    modalTitle.textContent = `${studentName} - ${requirementType}`;
+    previewContainer.innerHTML = ""; // Clear previous content
+    currentZoom = 1; // Reset zoom level
+    
+    var showZoom = false; // Flag to control zoom visibility
 
-    // Clear previous content
-    previewContainer.innerHTML = "";
+    // Determine file type
+    var fileExtension = fileUrl.split(".").pop().toLowerCase();
 
-    modalTitle.textContent = `Preview: ${studentName} - ${requirementName}`;
-
-    const isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileUrl);
-    const isPDF = /\.pdf$/i.test(fileUrl);
-
-    if (isImage) {
-      const img = document.createElement("img");
-      img.id = "imagePreview";
+    if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
+      var img = document.createElement("img");
+      img.id = "imagePreview"; // Give it an ID for zooming
       img.src = fileUrl;
-      img.style.maxWidth = "100%"; // Ensure image doesn't overflow initially
-      img.style.height = "auto";
-      previewContainer.appendChild(img);
-      currentZoom = 1.0; // Reset zoom for new image
       img.style.transform = `scale(${currentZoom})`;
-    } else if (isPDF) {
-      const obj = document.createElement("object");
-      obj.id = "filePreview";
-      obj.data = fileUrl;
-      obj.type = "application/pdf";
-      obj.style.width = "100%"; // PDF object can take full width
-      obj.style.height = "100%"; // PDF object can take full height
-      // For PDFs, embedding might not support direct CSS zoom. Fallback to link or iframe.
-      // For simplicity and consistency with admin, let's use an iframe if object fails or for better control
-      // Or keep object and note zoom might not work depending on browser/PDF viewer
-      const fallbackLink = document.createElement("p");
-      fallbackLink.innerHTML = `Unable to display PDF file. <a href="${fileUrl}" target="_blank">Download</a> instead.`;
-      obj.appendChild(fallbackLink);
+      img.style.transformOrigin = "top left"; // Set transform origin
+      previewContainer.appendChild(img);
+      showZoom = true; // Show zoom for images
 
-      previewContainer.appendChild(obj);
-      currentZoom = 1.0; // Reset zoom for new PDF
-      // Note: CSS transform might not work reliably on <object> or <iframe> for PDFs
-      // If true PDF zoom is needed, consider a library or server-side rendering approach.
-      // For now, the zoom buttons will be added but might not affect the PDF object depending on the browser.
-      obj.style.transform = `scale(${currentZoom})`; // Apply transform, but manage expectations for PDFs
+    } else if (fileExtension === "pdf") {
+      // Use a more reliable iframe for PDFs
+      var iframe = document.createElement("iframe");
+      iframe.src = fileUrl;
+      iframe.style.width = "100%";
+      iframe.style.height = "100%"; // Use height from CSS
+      previewContainer.appendChild(iframe);
+      // showZoom remains false
+    
+    } else {
+      previewContainer.innerHTML =
+        "<p>Preview not available for this file type.</p>";
+      // showZoom remains false
     }
 
+    // Set zoom controls visibility ONCE
+    document.querySelector(".zoom-controls").style.display = showZoom ? "flex" : "none";
+    
     modal.style.display = "block";
     // Hide body scrollbars when modal is open
     document.body.style.overflow = "hidden";
   }
 
   function closeModal() {
-    const modal = document.getElementById("previewModal");
     modal.style.display = "none";
+    previewContainer.innerHTML = ""; // Clear content when closing
     // Show scrollbars again
     document.body.style.overflow = "auto";
     currentZoom = 1.0; // Reset zoom when closing modal
   }
 
-  // Close modal when clicking outside the modal-content
-  window.onclick = function (event) {
-    const modal = document.getElementById("previewModal");
-    const modalContent = document.querySelector(".modal-content");
-    // Check if the clicked area is outside the modal-content but inside the modal
-    if (event.target === modal) {
-      closeModal();
-    }
-  };
-
   function zoomIn() {
-    currentZoom += zoomStep;
+    currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
     applyZoom();
   }
 
   function zoomOut() {
-    currentZoom = Math.max(zoomStep, currentZoom - zoomStep); // Prevent zooming out to zero or negative
+    currentZoom = Math.max(currentZoom - zoomStep, minZoom);
     applyZoom();
   }
 
   function applyZoom() {
-    const imageElement = document.getElementById("imagePreview");
-    const objectElement = document.getElementById("filePreview");
-
-    if (imageElement) {
-      imageElement.style.transform = `scale(${currentZoom})`;
-      // Adjust transform origin if needed, currently set to top left in CSS
-    } else if (objectElement) {
-      // Applying transform to object element (for PDFs) - behavior may vary across browsers
-      // Consider alternative PDF viewers for reliable zoom
-      objectElement.style.transform = `scale(${currentZoom})`;
-      // You might need to adjust the container's overflow and dimensions if zooming causes content to exceed boundaries
+    var img = previewContainer.querySelector("#imagePreview");
+    if (img) {
+      img.style.transform = `scale(${currentZoom})`;
     }
-    // You might also want to update a visual indicator of the current zoom level
   }
+
+  // Close modal when clicking outside the modal-content
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      closeModal();
+    }
+  };
 
   // JavaScript for showing/hiding Mental Health Documents section and SweetAlert
   document.addEventListener("DOMContentLoaded", function () {
@@ -671,31 +637,34 @@
     const mentalHealthForm = document.getElementById("mental-health-form");
 
     function toggleMentalHealthDocsSection() {
-      const selectedValue = document.querySelector(
+      // Check if a radio button is selected
+      const selectedRadio = document.querySelector(
         'input[name="avail_mental_health"]:checked'
-      ).value;
-      if (selectedValue === "yes") {
-        mentalHealthDocsSection.classList.remove("hidden");
+      );
+      if (selectedRadio) {
+          // If one is selected (e.g., on page load from server), check its value
+          if (selectedRadio.value === "yes") {
+            mentalHealthDocsSection.classList.remove("hidden");
+          } else {
+            mentalHealthDocsSection.classList.add("hidden");
+          }
       } else {
-        mentalHealthDocsSection.classList.add("hidden");
+          // If no radio is selected, default to hidden
+          mentalHealthDocsSection.classList.add("hidden");
       }
     }
 
-    // Removed: Add event listeners to radio buttons to prevent automatic display on change
-    // availMentalHealthRadios.forEach(radio => {
-    //     radio.addEventListener('change', toggleMentalHealthDocsSection);
-    // });
+    // *** FIX 1: Run the check on page load ***
+    // This ensures the section appears if the user reloads the page
+    // after having already selected "yes".
+    toggleMentalHealthDocsSection(); 
 
-    // Set initial visibility on page load
-    // toggleMentalHealthDocsSection(); // This line is intentionally commented out to prevent automatic display
-
-    // Handle mental health form submission
     // Handle mental health form submission
     mentalHealthForm.addEventListener("submit", async function (event) {
       event.preventDefault();
 
       const formData = new FormData(this);
-      const selectedValue = formData.get("avail_mental_health"); // Get selected choice before hiding
+      const selectedValue = formData.get("avail_mental_health"); // Get selected choice
 
       try {
         const response = await fetch("/med/update_mental_health_choice/", {
@@ -717,6 +686,7 @@
           }).then(() => {
             // Hide the choice form itself
             mentalHealthForm.classList.add("hidden");
+            
             // Update docs section visibility based on the value just saved
             if (selectedValue === "yes") {
               mentalHealthDocsSection.classList.remove("hidden");
@@ -744,19 +714,6 @@
     });
   });
 
-  // Event listeners for file input change to display filename
-  document.addEventListener("change", function (event) {
-    if (event.target.type === "file") {
-      const fileNameSpan = document.getElementById(
-        event.target.id + "_filename"
-      );
-      if (fileNameSpan) {
-        fileNameSpan.textContent =
-          event.target.files.length > 0
-            ? event.target.files[0].name
-            : "No file chosen";
-      }
-    }
-  });
+  // *** FIX 4: Removed duplicate event listener ***
 </script>
-{% endblock %}
+{% endblock %}{% endblock %} 

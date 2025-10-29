@@ -1,27 +1,35 @@
 from django.db import models
-from ..models import studentInfo 
+from mainpage.models import studentInfo
 
 class Alumni(models.Model):
-    alumniID = models.AutoField(primary_key=True)
+    
     student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
-    alumnidate = models.DateField()
-    alumnibirthday = models.DateField()
-    alumnicontact = models.CharField(max_length=15)
-    sssgsis = models.CharField(max_length=20)
-    tin = models.CharField(max_length=20)
-    parentguardian = models.CharField(max_length=100)
-    alumniaddress = models.TextField()
-    firstname = models.CharField(max_length=100, default="")
-    lastname = models.CharField(max_length=100, default="")
-    email_add = models.CharField(max_length=100, null=False, default="")
-    degree = models.CharField(max_length=100, null=False, default="")
-    sex = models.CharField(max_length=10, null=False, default="")
-    claimed_date = models.DateTimeField(null=True, blank=True)
-    approved = models.BooleanField(default=False)
+    alumniID = models.AutoField(primary_key=True)
 
+    alumnidate = models.DateField(null=True, blank=True)
+    alumnibirthday = models.DateField(null=True, blank=True)
+    alumnicontact = models.CharField(max_length=15, null=True, blank=True)
+    sssgsis = models.CharField(max_length=20, null=True, blank=True)
+    tin = models.CharField(max_length=20, null=True, blank=True)
+    parentguardian = models.CharField(max_length=100, null=True, blank=True)
+    alumniaddress = models.TextField(null=True, blank=True)
+    firstname = models.CharField(max_length=100, null=True, blank=True)
+    lastname = models.CharField(max_length=100, null=True, blank=True)
+    email_add = models.CharField(max_length=100, null=True, blank=True)
+    degree = models.CharField(max_length=100, null=True, blank=True)
+    sex = models.CharField(max_length=10, null=True, blank=True)
+
+    claimed_date = models.DateTimeField(null=True, blank=True)
+    approved = models.BooleanField(default=False) 
+
+    def __str__(self):
+        return f"Alumni Profile for {self.student.studID}"
+
+        
 class graduateForm(models.Model):
     alumniID = models.OneToOneField(Alumni, on_delete=models.CASCADE, primary_key=True)
     student = models.ForeignKey(studentInfo, on_delete=models.CASCADE, default=0)
+    organizationType = models.CharField(max_length=100, null=True, blank=True)
     firstname = models.CharField(max_length=100, null=False)
     lastname = models.CharField(max_length=100, null=False)
     degree = models.CharField(max_length=100, null=False, default="")
@@ -40,6 +48,22 @@ class graduateForm(models.Model):
     reasonstayingjob = models.TextField(null=False)
     designation = models.CharField(max_length=100, null=False)
     status = models.CharField(max_length=50, null=True)
+
+    # --- FIELD ADDED AS REQUESTED ---
+    APPROVAL_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Declined', 'Declined'),
+    ]
+    approval_status = models.CharField(
+        max_length=20,
+        choices=APPROVAL_STATUS_CHOICES,
+        default='Pending',
+        null=True,
+        blank=True
+    )
+    # --- END OF ADDED FIELD ---
+
     department = models.CharField(max_length=50, null=True)
     monthlyincome = models.CharField(max_length=50, null=False)
     workwhileworking = models.CharField(max_length=10, null=False)
@@ -86,7 +110,6 @@ class graduateForm(models.Model):
         return self.alumni.alumniID
 
     alumni_id.short_description = "Alumni ID"
-
 
 class Event(models.Model):
     eventID = models.AutoField(primary_key=True)

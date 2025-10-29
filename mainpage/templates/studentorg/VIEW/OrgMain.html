@@ -5,7 +5,7 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
-<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
+
 <link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
 <link
   rel="stylesheet"
@@ -16,85 +16,7 @@
 />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<style>
-  /* 🔹 SweetAlert2 custom styles for small screens */
-  @media (max-width: 768px) {
-    .swal2-popup {
-      width: 90% !important; /* fit screen width */
-      font-size: 14px !important;
-      padding: 1rem !important;
-    }
 
-    .swal2-title {
-      font-size: 18px !important;
-    }
-
-    .swal2-input,
-    .swal2-file {
-      font-size: 14px !important;
-      padding: 10px !important;
-      width: 100% !important;
-    }
-
-    .swal2-actions {
-      flex-direction: column !important;
-      gap: 8px;
-    }
-
-    .swal2-confirm,
-    .swal2-cancel {
-      width: 100% !important;
-      font-size: 14px !important;
-      padding: 10px !important;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .swal2-popup {
-      width: 95% !important;
-      font-size: 13px !important;
-    }
-
-    .swal2-title {
-      font-size: 16px !important;
-    }
-  }
-
-  .pages a,
-  .pages {
-    color: black;
-    transition: color 0.3s, transform 0.3s;
-    text-decoration: none;
-  }
-
-  .pages a:hover {
-    color: #ff8000;
-    transform: scale(1.1);
-  }
-
-  .pf2 {
-    list-style-type: none;
-    border-bottom: 2px solid #ff8000;
-    padding-bottom: 10px;
-  }
-
-  .add-org-btn {
-    margin: 20px 0 10px 0;
-    background: #ff8000;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s, transform 0.2s;
-  }
-
-  .add-org-btn:hover {
-    background: #e06d00;
-    transform: scale(1.05);
-  }
-</style>
 {% endblock %} {% block bodycontent %}
 <div class="container">
   <div class="sub-title">
@@ -113,7 +35,10 @@
   <div class="row" id="orgImagesRow1">
     {% for org in orgs %}
     <a href="{% url 'org_profile' slug=org.slug %}" class="image">
-      <img src="{{ org.logo.url }}" alt="{{ org.name }}" />
+      <div class="org-circle">
+        <img src="{{ org.logo.url }}" alt="{{ org.name }}" />
+      </div>
+      <div>{{ org.name }}</div>
     </a>
     {% endfor %}
   </div>
@@ -160,23 +85,22 @@
             body: formData,
           })
             .then((response) => response.json())
+            // ...
             .then((data) => {
               if (data.success) {
-                const orgLinks = document.getElementById("orgLinks");
-                orgLinks.innerHTML += ` - <a href="/org/${data.slug}/">${data.name}</a>`;
-
-                const orgImagesRow2 = document.getElementById("orgImagesRow2");
-                const a = document.createElement("a");
-                a.href = `/org/${data.slug}/`;
-                a.className = "image";
-                a.innerHTML = `<img src="${data.image_url}" alt="${data.name}"/><div style="text-align:center;">${data.name}</div>`;
-                orgImagesRow2.appendChild(a);
-
-                Swal.fire("Added!", `${data.name} has been saved.`, "success");
+                Swal.fire(
+                  "Added!",
+                  `${data.name} has been saved.`,
+                  "success"
+                ).then(() => {
+                  // Add this line to reload the page
+                  location.reload();
+                });
               } else {
                 Swal.fire("Error", data.error, "error");
               }
             });
+          // ...
         }
       });
     });

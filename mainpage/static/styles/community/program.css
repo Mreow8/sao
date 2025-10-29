@@ -1,258 +1,213 @@
-.image-gallery {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+/* --- Global, Fonts & Container --- */
+.container,
+.sub-title,
+.post-box,
+.program-card {
+  font-family: "Rubik", sans-serif;
 }
 
-.image-gallery img {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem 1.5rem;
 }
 
+/* --- Admin "Post Event" Card --- */
 .post-box {
-  background: #fff;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 600px;
+  margin: 1.5rem auto 0 auto; /* Center the post box */
+}
+
+/* Collapsed "Add Event..." prompt */
+#collapsedBox {
+  padding: 12px 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  margin: auto;
-}
-
-.collapsed {
-  display: flex;
-  align-items: center;
-  background: #f0f2f5;
-  padding: 10px 12px;
-  border-radius: 20px;
-  cursor: pointer;
   color: #555;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+#collapsedBox:hover {
+  background-color: #f0f0f0;
 }
 
-.collapsed:hover {
-  background: #e4e6eb;
-}
-
-.expanded {
-  display: none;
+/* Expanded Form */
+#expandedBox {
+  display: none; /* JS will change this to flex */
   flex-direction: column;
+  gap: 1rem;
 }
 
-.expanded textarea {
+/* --- Form Input Styling (Overrides inline styles) --- */
+/* Unset inline styles first to ensure override */
+.post-box input[type="text"],
+.post-box textarea {
+  all: unset; /* Remove conflicting inline styles */
+
+  /* Apply theme styles */
   width: 100%;
-  border: none;
-  resize: none;
-  font-size: 15px;
-  padding: 10px;
-  outline: none;
-  border-bottom: 1px solid #ddd;
+  box-sizing: border-box; /* Important for 100% width */
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.post-box textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.post-box input[type="text"]:focus,
+.post-box textarea:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* --- Form Actions & Buttons --- */
 .actions {
   display: flex;
-  justify-content: space-around;
-  padding: 8px 0;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.actions input[type="date"] {
+  font-family: "Rubik", sans-serif;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
 }
 
 .action-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  padding: 6px 10px;
+  font-family: "Rubik", sans-serif;
+  display: inline-block;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2c5282;
+  background-color: #f0f0f0;
   border-radius: 6px;
-  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
-
 .action-btn:hover {
-  background: #f0f2f5;
+  background-color: #e0e0e0;
 }
 
-#preview img,
-#preview video {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-}
-
-#preview {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
+/* Submit Button (from requestgmc.css .requestBtn) */
 .submit {
-  margin-top: 8px;
-  background: #ff8000;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.submit:disabled {
-  background: #ccd0d5;
-  cursor: not-allowed;
-}
-/* Each post card */
-.program-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 12px 16px;
-  max-width: 500px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Post title (event name) */
-.program-card h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #050505;
-}
-
-/* Post caption */
-.program-card p:last-of-type {
-  margin: 6px 0 4px;
-  color: #65676b;
-  font-size: 14px;
-}
-
-/* Post description */
-.program-card p:first-of-type {
-  margin: 0 0 10px;
-  font-size: 15px;
-  color: #050505;
-  line-height: 1.4;
-}
-
-/* Image & video gallery */
-.image-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.image-gallery img,
-.image-gallery video {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: #f0f2f5;
-}
-
-/* Optional hover effect */
-.image-gallery img:hover,
-.image-gallery video:hover {
-  filter: brightness(95%);
-}
-
-/* Programs list container */
-.program-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 20px;
-}
-.fb-gallery {
-  display: grid;
-  gap: 4px;
-  margin-top: 10px;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-/* Different layouts depending on count */
-.fb-gallery.count-1 {
-  grid-template-columns: 1fr;
-}
-.fb-gallery.count-2 {
-  grid-template-columns: 1fr 1fr;
-}
-.fb-gallery.count-3 {
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: 1fr 1fr;
-}
-.fb-gallery.count-3 .gallery-item:first-child {
-  grid-row: span 2;
-}
-.fb-gallery.count-4 {
-  grid-template-columns: 1fr 1fr;
-}
-.fb-gallery.count-5 {
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: 1fr 1fr;
-}
-.fb-gallery.count-5 .gallery-item:first-child {
-  grid-row: span 2;
-}
-
-/* Each image */
-.gallery-item {
-  position: relative;
-  overflow: hidden;
-}
-.gallery-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Overlay for “+N more” */
-.more {
-  position: relative;
-}
-.more-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* Primary Blue */
   color: white;
+  font-size: 1rem;
   font-weight: 600;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+  align-self: flex-end; /* Puts it to the right */
+}
+.submit:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+}
+
+/* Image Preview */
+#preview {
+  margin-top: 10px;
 }
 .preview-item {
   position: relative;
-  display: inline-block;
-  margin: 5px;
+  max-width: 100%;
+}
+.preview-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
-.preview-item img,
-.preview-item video {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+/* --- Program/Seminar List --- */
+.program-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* More space between cards */
+  margin: 2rem auto; /* Center the list */
+  align-items: center;
+  width: 100%;
+  max-width: 600px; /* Match the post box width */
 }
 
-.remove-btn {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
+/* --- Program/Seminar Card --- */
+.program-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.program-card h3 a {
+  color: #2c5282;
+  text-decoration: none;
+  font-weight: 600;
+}
+.program-card h3 a:hover {
+  text-decoration: underline;
+}
+
+/* --- Image Gallery --- */
+.fb-gallery {
+  display: grid;
+  gap: 4px;
+  margin-top: 1rem;
+}
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+/* --- Dropdown Menu Styles --- */
+.menu-btn {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+  background: none;
   border: none;
-  border-radius: 50%;
   cursor: pointer;
-  width: 20px;
-  height: 20px;
-  font-size: 14px;
-  line-height: 18px;
-  text-align: center;
+  color: #555;
+  padding: 0 0.5rem;
 }
-/* program.css */
+.menu-btn:hover {
+  color: #000;
+}
+
+/* This is the CSS you provided, integrated here */
 .delete-button-subtle {
   display: flex;
   align-items: center;
@@ -264,13 +219,69 @@
   color: #dc2626; /* Red-600 */
   border-radius: 6px;
   transition: background-color 0.2s ease-in-out;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
 }
-
 .delete-button-subtle:hover {
   background-color: #fef2f2; /* Red-50 */
 }
-
 .delete-button-subtle .delete-icon {
   width: 16px;
   height: 16px;
+}
+/* --- End of your provided CSS --- */
+
+/* --- UTILITY CLASSES --- */
+/* * Your HTML uses classes like .flex, .hidden, etc.
+ * These definitions are needed so they work.
+*/
+.flex {
+  display: flex;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.items-start {
+  align-items: flex-start;
+}
+.text-lg {
+  font-size: 1.25rem;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.right-0 {
+  right: 0;
+}
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.w-32 {
+  width: 8rem;
+}
+.bg-white {
+  background-color: #fff;
+}
+.border {
+  border: 1px solid #e0e0e0;
+}
+.rounded-md {
+  border-radius: 6px;
+}
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.z-10 {
+  z-index: 10;
+}
+.hidden {
+  display: none;
 }

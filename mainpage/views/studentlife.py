@@ -148,20 +148,26 @@ def update_return_status(request):
             logger.error(f"Error updating return status: {e}")
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
-
-# Request for GoodMoral Certificate Student Side
 def requestedgmc(request):
     student = None
     existing_request = None
+    request_history = None  # <-- Initialize history
     user = request.user
 
     if request.user.is_authenticated:
         try:
             student = studentInfo.objects.get(studID=int(user.username))
-            # Check for unprocessed request
+            
+            # Check for unprocessed request (same as before)
             existing_request = RequestedGMC.objects.filter(
                 student=student, processed=False
             ).first()
+
+            # --- NEW QUERY ---
+            # Get all requests for this student, ordered by most recent
+            request_history = RequestedGMC.objects.filter(student=student).order_by('-request_date')
+            # --- END NEW QUERY ---
+
         except studentInfo.DoesNotExist:
             messages.error(request, "Student not found")
 
@@ -178,10 +184,10 @@ def requestedgmc(request):
 
     context = {
         "student": student,
-        "existing_request": existing_request
+        "existing_request": existing_request,
+        "request_history": request_history  # <-- Pass the history to the template
     }
     return render(request, "officeOfStudentL/requestgmc.html", context)
-
 # @sao_admin_required
 
 # Processing Goodmoral Certificate Admin side 
@@ -388,7 +394,44 @@ def equipmentTrackerAdmin(request):
         'borrowing_records': borrowing_records
     }
     return render(request, 'officeOfStudentL/adminUser/equipmentTrackerAdmin.html', context)
+from django.core.paginator import Paginator
+# @sao_admin_required (uncomment this if you have your custom decorator)
+def equipmentborrowed(request):
+    student = None
+    borrowing_records = BorrowingRecord.objects.all()
+    
+    # Sorting functionality
+    sort_by = request.GET.get('sort', 'date_borrowed')  # Default to sorting by 'date_borrowed'
+    
+    if sort_by in ['name', 'equipment_name', 'date_borrowed', 'status']:
+        borrowing_records = borrowing_records.order_by(sort_by)
+    
+    # Pagination functionality
+    paginator = Paginator(borrowing_records, 10)  # Show 10 items per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
+    # Search functionality
+    if request.method == "GET" and "search" in request.GET:
+        search_id = request.GET.get("search")
+        if search_id:
+            try:
+                student = studentInfo.objects.get(studID=search_id)
+                borrowing_records = borrowing_records.filter(student=student)
+            except studentInfo.DoesNotExist:
+                messages.error(request, "Student not found")
+
+    # Get all equipment types for dropdown
+    all_equipment = Equipment.objects.all()
+
+    context = {
+        'student': student,
+        'all_equipment': all_equipment,
+        'borrowing_records': page_obj,  # Passing paginated records to the template
+        'sort_by': sort_by,
+    }
+
+    return render(request, 'officeOfStudentL/adminUser/equipmentborrowed.html', context)
 
 # Add Equipment
 def addEquipment(request):

@@ -1,0 +1,151 @@
+{% extends 'adminmain.html' %} {% block bodycontent %}{%load static%}
+
+<style>
+  /* --- Global & Fonts --- */
+  /* Ensures all text in this block uses the Rubik font */
+
+  /* --- Layout --- */
+  .container {
+    padding: 1rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* --- Event Grid --- */
+  .event-grid {
+    display: grid;
+    /* This creates a responsive grid. 
+     It will fit as many 280px cards as it can, 
+     then grow them to fill the space.
+     On mobile, it becomes a single column. */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; /* 24px */
+  }
+
+  /* --- Event Card --- */
+  .event-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle lift */
+    overflow: hidden; /* Clips the image to the card's rounded corners */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  .event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  /* --- Card Image --- */
+  .event-img {
+    width: 100%;
+    height: 200px; /* Fixed height for a uniform grid */
+    object-fit: cover; /* Prevents image from stretching or squishing */
+    display: block;
+  }
+
+  /* --- Card Details --- */
+  .event-details {
+    padding: 1.5rem;
+    flex-grow: 1; /* Ensures all cards match height in a row */
+  }
+
+  .event-details h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c5282; /* Primary Blue */
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  .event-details p {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0.5rem 0;
+    line-height: 1.6;
+  }
+
+  /* Date styling */
+  .event-details p:nth-of-type(1) {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+  }
+
+  /* Location styling */
+  .event-details p:nth-of-type(2) {
+    color: #444;
+    font-weight: 500;
+  }
+
+  /* Description styling */
+  .event-details p:nth-of-type(3) {
+    margin-top: 1rem; /* Adds space before the description */
+  }
+
+  /* --- No Events Fallback --- */
+  .no-events {
+    font-size: 1.2rem;
+    color: #777;
+    text-align: center;
+    padding: 4rem 1rem;
+    background-color: #ffffff;
+    border: 2px dashed #e0e0e0;
+    border-radius: 12px;
+    margin-top: 2rem;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem 1rem; /* Tighter padding on mobile */
+    }
+
+    .sub-title h3 {
+      font-size: 1.5rem;
+    }
+
+    .event-details {
+      padding: 1.25rem;
+    }
+
+    .event-details h2 {
+      font-size: 1.25rem;
+    }
+  }
+</style>
+<section>
+  <div class="container">
+    <div class="sub-title">
+      <h3>Alumni</h3>
+      <p class="hometext">Home</p>
+      <p class="certxt">&gt; Alumni Reunion and Events</p>
+    </div>
+    {% if events %}
+    <div class="event-grid">
+      {% for event in events %}
+      <div class="event-card">
+        <img
+          src="{{ event.eventsImage.url }}"
+          alt="Event Image"
+          class="event-img"
+        />
+        <div class="event-details">
+          <h2>{{ event.eventsName }}</h2>
+          <p>{{ event.eventsDate }}</p>
+          <p>{{ event.eventsLocation }}</p>
+          <p>{{ event.eventsDescription }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-events">No events available</p>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

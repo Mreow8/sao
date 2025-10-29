@@ -1,7 +1,7 @@
 from django import forms
 from ..models import counseling_schedule, IndividualProfileBasicInfo, FileUploadTest, exit_interview_db, OjtAssessment
 from datetime import date
-
+from django.core.validators import RegexValidator
 class UploadFileForm(forms.Form):
     file = forms.FileField()
 
@@ -119,11 +119,48 @@ class IndividualProfileForm(forms.ModelForm):
             'dateOfBirth': forms.DateInput(attrs={'type':'date'}),
             'fatherDateOfBirth': forms.DateInput(attrs={'type':'date'}),
             'motherDateOfBirth': forms.DateInput(attrs={'type':'date'}),
+            'mobileNo': forms.TextInput(attrs={
+    'type': 'text',
+    'inputmode': 'tel',
+    'pattern': '^(09|\\+639)\\d{9}$',
+    'title': 'Enter a valid Philippine mobile number (e.g., 09171234567).',
+}),
+            'fatherMobilePhone': forms.TextInput(attrs={
+                'type': 'number',
+                'placeholder': 'e.g., 09171234567',
+                'onkeydown': "return event.key.length === 1 ? event.key.match(/^[0-9+]+$/) : true;"
+            }),
+            'motherMobilePhone': forms.TextInput(attrs={
+                'type': 'number',
+                'placeholder': 'e.g., 09171234567',
+                'onkeydown': "return event.key.length === 1 ? event.key.match(/^[0-9+]+$/) : true;"
+            }),
+            'personInCaseofEmergencyMobileNo': forms.TextInput(attrs={
+                'type': 'number',
+                'placeholder': 'e.g., 09171234567',
+                'onkeydown': "return event.key.length === 1 ? event.key.match(/^[0-9+]+$/) : true;"
+            }),
+            'landlineNo': forms.TextInput(attrs={
+                'type': 'number',
+                'onkeydown': "return event.key.length === 1 ? event.key.match(/^[0-9+]+$/) : true;"
+            }),
+            'fatherLandline': forms.TextInput(attrs={
+                'type': 'number',
+                'onkeydown': "return event.key.length === 1 ? event.key.match(/^[0-9+]+$/) : true;"
+            }),
+            'motherLandLine': forms.TextInput(attrs={
+                'type': 'number',
+                'onkeydown': "return event.key.length === 1 ? event.key.match(/^[0-9+]+$/) : true;"
+            }),
+            'email': forms.EmailInput(attrs={
+                'placeholder': 'example@email.com'
+            }),
         }
+        
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        
         # ========================
         # Birthday validation rule
         # ========================
@@ -166,7 +203,15 @@ class IndividualProfileForm(forms.ModelForm):
         self.fields['lastEducationAttainment'].required = False
         self.fields['specifyTheDecision'].required = False
         self.fields['describeYouBestOther'].required = False
-
+        phone_regex = RegexValidator(
+            regex=r'^(09|\+639)\d{9}$', 
+            message="Enter a valid Philippine mobile number (e.g., 09171234567)."
+        )
+        
+        self.fields['mobileNo'].validators.append(phone_regex)
+        self.fields['fatherMobilePhone'].validators.append(phone_regex)
+        self.fields['motherMobilePhone'].validators.append(phone_regex)
+        self.fields['personInCaseofEmergencyMobileNo'].validators.append(phone_regex)
 class FileUpload(forms.ModelForm):
     class Meta:
         model = FileUploadTest

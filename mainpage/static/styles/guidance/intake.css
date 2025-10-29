@@ -1,176 +1,206 @@
-/* Base Styles */
+/* --- Global, Fonts & Layout --- */
 body {
-  background-color: #f4f6fa;
-  color: #2c2c2c;
+  font-family: "Rubik", sans-serif;
+  background-color: #f4f7f6; /* Light gray background */
 }
 
 .container {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 40px;
-  background-color: #fff;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem 1.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+/* --- Main Form Card --- */
+.form-container {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Section Title */
-.container h3 {
-  font-size: 24px;
+/* --- Form Headers --- */
+.form-container h2 {
+  font-size: 1.75rem;
   font-weight: 600;
-  color: #2b2b2b;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 1rem;
+}
+
+/* Section labels (I, II, III...) */
+#intakeForm > label {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c5282;
+  margin: 2.5rem 0 1rem 0;
+}
+
+/* --- Search Bar --- */
+#search_id {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+#studentIDBox {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  flex-grow: 1; /* Takes available space */
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#studentIDBox:focus {
+  outline: none;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* --- All Buttons (based on .requestBtn) --- */
+.OrangeButton {
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.OrangeButton:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+}
+
+.center_object {
+  display: flex;
+  justify-content: flex-end; /* Aligns submit button to the right */
+  margin-top: 2rem;
+}
+
+/* --- Messages --- */
+.messages {
+  list-style: none;
+  margin: 10px 0 0 0;
+  padding: 0;
+  width: 100%;
+}
+.messages li {
+  padding: 10px;
+  border-radius: 5px;
   margin-bottom: 5px;
-}
-
-.container span label {
-  font-size: 14px;
-}
-
-#dir-gray {
-  color: #666;
-}
-
-#dir-orange {
-  color: #ff8000;
   font-weight: 500;
 }
-
-/* Tables */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 25px 0;
-  font-size: 14px;
+.messages li.error {
+  background-color: #ffe5e5;
+  color: #a30000;
+  border: 1px solid #a30000;
+}
+.messages li.success {
+  background-color: #e7ffe7;
+  color: #007a00;
+  border: 1px solid #007a00;
 }
 
-table th,
-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
+/* --- Table Styling (General) --- */
+/* This styles ALL tables in the form */
+.form-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden; /* Clips the table corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-container table th,
+.form-container table td {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
   vertical-align: middle;
 }
 
-table th {
-  background-color: #f7f7f7;
-  color: #ff8000;
+.form-container table th {
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
   font-weight: 600;
-  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-table td {
-  color: #444;
+.form-container table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-table input[type="text"],
-table input[type="date"] {
+/* --- Student Details Bar --- */
+#student_details_row td {
+  background-color: #ebf8ff; /* Light blue background */
+}
+#student_details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 1rem;
+}
+#student_details p {
+  margin: 0;
+}
+
+/* --- Form Inputs (Inside Tables) --- */
+.field_container input[type="text"],
+.field_container input[type="date"] {
   width: 100%;
+  box-sizing: border-box; /* Critical for 100% width */
+  font-family: "Rubik", sans-serif;
+  font-size: 14px;
   padding: 8px 10px;
   border: 1px solid #ccc;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border-color 0.2s;
 }
 
-.field_container {
-  padding: 0;
+.field_container input[type="text"]:focus,
+.field_container input[type="date"]:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue focus */
 }
 
-/* Radio Button Layout */
+/* Radio Button Styling */
 .side-way {
   display: flex;
-  flex-direction: row;
-  gap: 15px;
+  flex-wrap: wrap;
+  gap: 1rem;
   align-items: center;
 }
-
-/* Button Styling */
-.OrangeButton {
-  background-color: #ff8000;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-.deleteRow {
-  background-color: #ef5350;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-.OrangeButton:hover {
-  background-color: #e67300;
-}
-
-/* Centered Buttons */
-.center_object {
+.side-way label {
   display: flex;
-  justify-content: center;
-  margin: 20px 0;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 14px;
+  margin: 0;
 }
-
-.deleteBox {
-  display: flex;
-  justify-content: center;
-}
-
-/* Labels */
-form label {
-  display: block;
-  font-weight: 600;
-  font-size: 16px;
-  margin: 30px 0 10px;
-  color: #2c2c2c;
-}
-
-/* Responsive Table Layout */
-@media (max-width: 768px) {
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
-    display: block;
-    width: 100%;
-  }
-
-  thead {
-    display: none;
-  }
-
-  tbody tr {
-    margin-bottom: 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #ffffff;
-    padding: 12px;
-  }
-
-  tbody td {
-    position: relative;
-    padding-left: 50%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  tbody td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 16px;
-    top: 12px;
-    font-weight: 600;
-    color: #ff8000;
-    white-space: nowrap;
-  }
-
-  tbody td:last-child {
-    border-bottom: none;
-  }
+.side-way input[type="radio"] {
+  margin: 0;
 }

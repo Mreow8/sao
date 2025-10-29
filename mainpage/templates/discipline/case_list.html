@@ -1,0 +1,381 @@
+{% extends base_template|default:"main.html" %}
+{% block title %}Case List{% endblock %}
+{% load static %}
+
+{% block bodycontent %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'styles/discipline/case_profile.css' %}"
+/>
+<style>
+    /* ... (existing pagination styles) ... */
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .pagination a, .pagination .current {
+        padding: 8px 12px;
+        margin: 0 3px;
+        border: 1px solid #ddd;
+        text-decoration: none;
+        color: #337ab7;
+        border-radius: 4px;
+    }
+    .pagination .current {
+        background-color: #337ab7;
+        color: white;
+        border-color: #337ab7;
+    }
+    .pagination a:hover {
+        background-color: #f4f4f4;
+    }
+    .pagination .disabled {
+        color: #aaa;
+        border-color: #ddd;
+        pointer-events: none;
+    }
+
+    /* --- Add Styles for Sorting --- */
+    th.sortable a {
+        text-decoration: none;
+        color: inherit; /* Make header links look like normal text */
+        display: block; /* Make the whole header clickable */
+    }
+    th.sortable a:hover {
+        text-decoration: underline;
+        color: #337ab7;
+    }
+    th.sortable a.sorted::after {
+        content: ' ▲'; /* Ascending arrow */
+        font-size: 0.8em;
+        padding-left: 5px;
+    }
+    th.sortable a.sorted.desc::after {
+        content: ' ▼'; /* Descending arrow */
+    }
+    /* --- End Sorting Styles --- */
+</style>
+
+<div class="sub-title">
+    <h3>STUDENT DISCIPLINE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Case List</p>
+</div>
+<div class="container">
+    <div style="overflow-x: auto">
+        <table>
+            <thead>
+                <tr>
+                    <th class="sortable">
+                        {% if current_sort == 'student' %}
+                            <a href="?sort=student&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
+                               class="sorted {% if current_order == 'desc' %}desc{% endif %}">
+                                Student
+                            </a>
+                        {% else %}
+                            <a href="?sort=student&order=asc">Student</a>
+                        {% endif %}
+                    </th>
+                    <th class="sortable">
+                        {% if current_sort == 'offense' %}
+                            <a href="?sort=offense&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
+                               class="sorted {% if current_order == 'desc' %}desc{% endif %}">
+                                Offense
+                            </a>
+                        {% else %}
+                            <a href="?sort=offense&order=asc">Offense</a>
+                        {% endif %}
+                    </th>
+                    <th class="sortable">
+                        {% if current_sort == 'date' %}
+                            <a href="?sort=date&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
+                               class="sorted {% if current_order == 'desc' %}desc{% endif %}">
+                                Date
+                            </a>
+                        {% else %}
+                            <a href="?sort=date&order=asc">Date</a>
+                        {% endif %}
+                    </th>
+                    <th class="sortable">
+                        {% if current_sort == 'status' %}
+                            <a href="?sort=status&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
+                               class="sorted {% if current_order == 'desc' %}desc{% endif %}">
+                                Status
+                            </a>
+                        {% else %}
+                            <a href="?sort=status&order=asc">Status</a>
+                        {% endif %}
+                    </th>
+                    <th>Action Taken</th> <th>Actions</th>      </tr>
+            </thead>
+            <tbody>
+                {% for case in page_obj %}
+                <tr>
+                    <td>{{ case.student.firstname }} {{ case.student.lastname }}</td>
+                    <td>{{ case.offense_type }}</td>
+                    <td>{{ case.date_reported }}</td>
+                    <td>
+                        <span
+                            class="status-badge {% if case.status == 'Pending' %}status-pending{% elif case.status == 'Resolved' %}status-resolved{% else %}status-default{% endif %}"
+                        >
+                            {{ case.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if user.is_authenticated %} {% if user.role == 'superadmin' or user.role == 'guard' %} {% if case.action_taken == 'Counseling' %}
+                        <a href="{% url 'counseling_form' case.id %}"
+                            >{{ case.action_taken }}</a
+                        >
+                        {% elif case.action_taken == 'Suspension' %}
+                        <a
+                            href="#"
+                            class="suspensionBtn"
+                            data-id="{{ case.id }}"
+                            data-duration="{{ case.suspension_duration }}"
+                        >
+                            Suspension
+                        </a>
+                        {% elif case.action_taken == 'Community Service' %}
+                        <a href="{% url 'student_hours' case.id %}"
+                            >{{ case.action_taken }}</a
+                        >
+                        {% else %}
+                            {{ case.action_taken }}
+                        {% endif %}
+                        {% else %} {{ case.action_taken }} {% endif %} {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
+                        <a
+                            href="#"
+                            class="editBtn"
+                            data-id="{{ case.id }}"
+                            style="color: rgb(71, 255, 47)"
+                            >Edit</a
+                        >
+                        <a
+                            href="#"
+                            class="deleteBtn"
+                            data-id="{{ case.id }}"
+                            style="color: red"
+                            >Delete</a
+                        >
+                         {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?sort={{ current_sort }}&order={{ current_order }}&page=1">&laquo; first</a>
+                <a href="?sort={{ current_sort }}&order={{ current_order }}&page={{ page_obj.previous_page_number }}">previous</a>
+            {% else %}
+                <span class="disabled">&laquo; first</span>
+                <span class="disabled">previous</span>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?sort={{ current_sort }}&order={{ current_order }}&page={{ page_obj.next_page_number }}">next</a>
+                <a href="?sort={{ current_sort }}&order={{ current_order }}&page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% else %}
+                <span class="disabled">next</span>
+                <span class="disabled">last &raquo;</span>
+            {% endif %}
+        </span>
+    </div>
+
+</div>
+
+<div id="editModal">
+    </div>
+
+<script src="https://cdn.j/sdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const editModal = document.getElementById("editModal");
+        const editForm = document.getElementById("editForm");
+        const editFormFields = document.getElementById("editFormFields");
+
+        document.querySelectorAll(".editBtn").forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                const caseId = this.dataset.id;
+
+                fetch(`/main/cases/edit/${caseId}/`)
+                    .then((res) => res.text())
+                    .then((html) => {
+                        editFormFields.innerHTML = html;
+                        editForm.action = `/main/cases/edit/${caseId}/`;
+                        editModal.style.display = "flex";
+                        
+                        // Initialize dynamic fields within the modal when loaded
+                        // We must call this *after* the modal content is loaded
+                        initializeDynamicFields(editModal); 
+                    })
+                    .catch((err) => console.error("Error loading edit form:", err));
+            });
+        });
+
+        document.getElementById("closeEdit").addEventListener("click", () => {
+            editModal.style.display = "none";
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to handle dynamic field display
+        // Pass a 'container' so it can work on the main form OR the modal
+        function initializeDynamicFields(container) {
+            const scope = container || document;
+
+            // Offense Type Logic (Custom Offense)
+            const offenseTypeSelect = scope.querySelector("#id_offense_type");
+            const customOffenseInput = scope.querySelector("#custom_offense");
+
+            function toggleCustomOffense() {
+                if (offenseTypeSelect && customOffenseInput) {
+                    customOffenseInput.style.display = offenseTypeSelect.value === "Others" ? "block" : "none";
+                }
+            }
+
+            if (offenseTypeSelect) {
+                offenseTypeSelect.addEventListener("change", toggleCustomOffense);
+                toggleCustomOffense(); // Run on load/init
+            }
+            
+            // Action Taken Logic (Community Service, Suspension, Custom Action)
+            const actionTakenSelect = scope.querySelector("#id_action_taken");
+            const communityHoursInput = scope.querySelector("#community_service_hours");
+            const suspensionDurationInput = scope.querySelector("#suspension_duration");
+            const customActionInput = scope.querySelector("#custom_action");
+            
+            function toggleActionFields() {
+                const value = actionTakenSelect ? actionTakenSelect.value : '';
+
+                if (communityHoursInput) communityHoursInput.style.display = "none";
+                if (suspensionDurationInput) suspensionDurationInput.style.display = "none";
+                if (customActionInput) customActionInput.style.display = "none";
+
+                if (value === "Community Service" && communityHoursInput) {
+                    communityHoursInput.style.display = "block";
+                } else if (value === "Suspension" && suspensionDurationInput) {
+                    suspensionDurationInput.style.display = "block";
+                } else if (value === "Others" && customActionInput) {
+                    customActionInput.style.display = "block";
+                }
+            }
+            
+            if (actionTakenSelect) {
+                actionTakenSelect.addEventListener("change", toggleActionFields);
+                toggleActionFields(); // Run on load/init
+            }
+        }
+        
+        // Note: No need to call initializeDynamicFields() here, 
+        // it's called inside the edit button fetch logic.
+
+        document.querySelectorAll(".suspensionBtn").forEach((btn) => {
+            btn.addEventListener("click", function () {
+                const caseId = this.dataset.id;
+                const currentDuration = this.dataset.duration || "";
+
+                Swal.fire({
+                    title: "Set Suspension Duration",
+                    html: `
+                        <select id="suspensionType" class="swal2-select">
+                            <option value="days">Days</option>
+                            <option value="semester">Semester</option>
+                        </select>
+                        <input type="text" id="suspensionValue" 
+                            class="swal2-input" 
+                            placeholder="Enter value (e.g., 5 days or 1 semester)" 
+                            value="${currentDuration}">
+                    `,
+                    confirmButtonText: "Save",
+                    showCancelButton: true,
+                    preConfirm: () => {
+                        const type = document.getElementById("suspensionType").value;
+                        const value = document.getElementById("suspensionValue").value.trim();
+                        
+                        if (!value) {
+                            Swal.showValidationMessage("Please enter a duration value");
+                            return false;
+                        }
+                        
+                        // Combine type and value for storage (e.g., "5 days" or "1 semester")
+                        return `${value} ${type}`;
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/main/update-suspension/${caseId}/`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": "{{ csrf_token }}",
+                            },
+                            body: JSON.stringify({ suspension_duration: result.value }),
+                        })
+                            .then((res) => res.json())
+                            .then((data) => {
+                                Swal.fire(
+                                    "Updated!",
+                                    "Suspension updated successfully",
+                                    "success"
+                                ).then(() => location.reload());
+                            })
+                            .catch((err) =>
+                                Swal.fire("Error", "Something went wrong", "error")
+                            );
+                    }
+                });
+            });
+        });
+
+        // Delete Button Logic
+        document.querySelectorAll(".deleteBtn").forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                const caseId = this.dataset.id;
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "This action cannot be undone.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/main/cases/delete/${caseId}/`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": "{{ csrf_token }}",
+                            },
+                        }).then((res) => {
+                            if (res.ok) {
+                                Swal.fire(
+                                    "Deleted!",
+                                    "The case has been deleted.",
+                                    "success"
+                                ).then(() => location.reload());
+                            } else {
+                                Swal.fire("Error", "Could not delete case.", "error");
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,19 +1,26 @@
+# mainpage/views/discipline.py
+# (Or wherever your discipline.py file is)
+
 from datetime import datetime
 import json
+import logging
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
+# --- Your Models and Forms ---
 from ..models import (
     studentInfo,
     counseling_schedule,
     CaseProfile,
-    CommunityServiceTracker,
+    CommunityServiceTracker,CommunityService,
 )
 from ..forms import (
     CaseProfileForm,
@@ -21,236 +28,13 @@ from ..forms import (
     CounselingSchedulerForm,
 )
 
-@csrf_exempt
-def update_suspension(request, case_id):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        suspension_type = data.get("type")
-        value = data.get("value")
-
-        try:
-            case = CaseProfile.objects.get(id=case_id)
-            case.suspension_duration = f"{value} {suspension_type}"
-            case.save()
-            return JsonResponse({"success": True})
-        except CaseProfile.DoesNotExist:
-            return JsonResponse({"success": False, "error": "Case not found"})
-
-def counseling_form_view(request, case_id):
-    # Get the case record first
-    case = get_object_or_404(CaseProfile, id=case_id)
-
-    # Then get the student from the case
-    student = case.student  # assuming ForeignKey to studentInfo
-
-    if request.method == "POST":
-        form = CounselingSchedulerForm(request.POST)
-        if form.is_valid():
-            current_datetime = timezone.now()
-
-            ongoing_schedule = counseling_schedule.objects.filter(
-                studentID=student,
-                scheduled_date__gte=current_datetime.date()
-            ).exclude(status__in=["Declined", "Expired"]).first()
-
-            if ongoing_schedule:
-                time = {
-                    '8-9': '8:00 AM - 9:00 AM',
-                    '9-10': '9:00 AM - 10:00 AM',
-                    '10-11': '10:00 AM - 11:00 AM',
-                    '11-12': '11:00 AM - 12:00 PM',
-                    '1-2': '1:00 PM - 2:00 PM',
-                    '2-3': '2:00 PM - 3:00 PM',
-                    '3-4': '3:00 PM - 4:00 PM',
-                    '4-5': '4:00 PM - 5:00 PM'
-                }
-
-                scheduled_date = ongoing_schedule.scheduled_date.strftime('%B %d, %Y')
-                scheduled_time = time.get(ongoing_schedule.scheduled_time, ongoing_schedule.scheduled_time)
-                messages.error(request, f"Student already has a counseling schedule on {scheduled_date} at {scheduled_time}.")
-                return redirect("counseling_form", case_id=case.id)
-
-            counseling = form.save(commit=False)
-            counseling.dateRecieved = current_datetime.strftime('%Y-%m-%d')
-            counseling.studentID = student
-            counseling.save()
-
-            messages.success(request, f"Counseling request for {student.firstname} {student.lastname} has been created.")
-            return redirect("counseling_form", case_id=case.id)
-    else:
-        form = CounselingSchedulerForm()
-
-    context = {
-        "form": form,
-        "student": student,
-        "case": case
-    }
-    return render(request, "discipline/counseling_form.html", context)
-
-def get_student(request, studID):
-    try:
-        studID = int(studID)  # convert to integer
-        student = studentInfo.objects.get(studID=studID)
-        return JsonResponse({
-            'found': True,
-            'name': f"{student.firstname} {student.lastname}",
-            'course': student.degree,
-            'year': student.yearlvl,
-        })
-    except ValueError:
-        # studID was not a valid integer
-        return JsonResponse({'found': False, 'error': 'Invalid student ID'})
-    except studentInfo.DoesNotExist:
-        return JsonResponse({'found': False})
-    except Exception as e:
-        print(f"Error fetching student {studID}: {e}")
-        return JsonResponse({'found': False, 'error': str(e)})
-import logging
-
 logger = logging.getLogger(__name__)
 
-def student_hours_view(request, case_id):
-    case = get_object_or_404(CaseProfile, pk=case_id)
-    records = CommunityServiceTracker.objects.filter(case=case).order_by('-service_date')
-    if request.method == 'POST':
-        form = CommunityServiceForm(request.POST, request.FILES)
-        if form.is_valid():
-            tracker = form.save(commit=False)
-            tracker.case = case
-
-            # Check if the session for that date already exists
-            exists = CommunityServiceTracker.objects.filter(
-                case=case,
-                service_date=tracker.service_date,
-                session=tracker.session
-            ).exists()
-            if exists:
-                messages.error(request, f"{tracker.session.capitalize()} session already exists for {tracker.service_date}.")
-            else:
-                tracker.save()
-                messages.success(request, "Community service record added successfully!")
-                return redirect('student_hours', case_id=case.id)
-
-        else:
-            messages.error(request, "Please correct the errors below.")
-    else:
-        form = CommunityServiceForm()
-
-    # Create a dictionary of existing sessions by date
-    existing_sessions = {}
-    for r in records:
-        date_str = r.service_date.isoformat()
-        existing_sessions.setdefault(date_str, []).append(r.session)
-
-    total_hours = sum([r.total_hours_decimal() for r in records])
-    total_hours_display = f"{int(total_hours)}h {int((total_hours % 1) * 60)}m"
-
-    rendered_hours = sum([r.total_hours_decimal() for r in records])
-    rendered_hours_display = f"{int(rendered_hours)}h {int((rendered_hours % 1) * 60)}m"
-
-    context = {
-        'case': case,
-        'form': form,
-        'records': records,
-        'total_hours': total_hours_display,
-        'rendered_hours': rendered_hours_display,  # <--- add this
-        'existing_sessions': existing_sessions,
-    }
-    return render(request, 'discipline/student_hours_rendered.html', context)
-
-def case_profile_view(request):
-    user = request.user
-    students = studentInfo.objects.all()
-    base_template = (
-        "adminmain.html" 
-        if user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'
-        else "main.html"
-    )
-
-    # Determine case list based on user role
-    if user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'):
-        case_list = CaseProfile.objects.all()
-    elif user.is_authenticated and getattr(user, 'role', None) == 'student':
-        case_list = CaseProfile.objects.filter(student__studID=user.username)
-    else:
-        case_list = CaseProfile.objects.none()
-
-    if request.method == 'POST':
-        form = CaseProfileForm(request.POST)
-        if form.is_valid():
-            student_id = request.POST.get('student')  # text input
-            if not student_id:
-                messages.error(request, "Student ID is required.")
-                return render(request, 'discipline/case_profile.html', {
-                    'form': form,
-                    'case_list': case_list,
-                    'students': students,
-                    'base_template': base_template,
-                })
-            
-            try:
-                student = studentInfo.objects.get(studID=student_id)
-            except studentInfo.DoesNotExist:
-                messages.error(request, f"Student with ID {student_id} not found.")
-                return render(request, 'discipline/case_profile.html', {
-                    'form': form,
-                    'case_list': case_list,
-                    'students': students,
-                    'base_template': base_template,
-                })
-            except Exception as e:
-                logger.error(f"Unexpected error fetching student {student_id}: {e}")
-                messages.error(request, "An unexpected error occurred while fetching the student.")
-                return render(request, 'discipline/case_profile.html', {
-                    'form': form,
-                    'case_list': case_list,
-                    'students': students,
-                    'base_template': base_template,
-                })
-            
-            try:
-                case = form.save(commit=False)
-                case.student = student
-                case.save()
-                messages.success(request, "Case profile saved successfully.")
-                return redirect('case_profile')
-            except Exception as e:
-                logger.error(f"Error saving case for student {student_id}: {e}")
-                messages.error(request, "An error occurred while saving the case profile.")
-        else:
-            # Form is invalid, log errors
-            logger.warning(f"Invalid form submission: {form.errors}")
-            messages.error(request, "Please correct the errors in the form.")
-    else:
-        form = CaseProfileForm()
-
-    return render(request, 'discipline/case_profile.html', {
-        'form': form,
-        'case_list': case_list,
-        'students': students,
-        'base_template': base_template,
-    })
-from ..models import CommunityService
-from ..forms import CommunityServiceForm
-
-def community_service_list(request):
-    services = CommunityService.objects.all().order_by('-service_date')
-    total_hours = sum(service.hours_rendered for service in services)
-    return render(request, 'community_service/list.html', {
-        'services': services,
-        'total_hours': total_hours
-    })
-
-def add_community_service(request):
-    if request.method == 'POST':
-        form = CommunityServiceForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('community_service_list')
-    else:
-        form = CommunityServiceForm()
-    return render(request, 'community_service/add.html', {'form': form})
-# ...existing code...
+# ---
+# VIEW 1: For case_profile.html (Create Form)
+# ---
+# This view combines the GET (show form) and POST (create case)
+# from your original case_profile_view
 def serviceTracker(request, student_id):
     student = get_object_or_404(studentInfo, studID=student_id)
 
@@ -307,39 +91,330 @@ def serviceTracker(request, student_id):
         'total_minutes': total_minutes,
     }
     return render(request, 'discipline/comm_service.html', context)
-# ...existing code...
-from django.shortcuts import get_object_or_404
+def case_profile_create(request):
+    user = request.user
+    students = studentInfo.objects.all()
+    base_template = (
+        "adminmain.html" 
+        if user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'
+        else "main.html"
+    )
 
-# def case_profile_view(request):
-#     student = get_object_or_404(studentInfo, user=request.user)  # or however you're identifying the student
-#     context = {
-#         'student': student
-#     }
-#     return render(request, 'main.html', context)
-def delete_case(request, case_id):
+    if request.method == 'POST':
+        form = CaseProfileForm(request.POST, request.FILES) # Added request.FILES
+        if form.is_valid():
+            student_id = request.POST.get('student')  # text input
+            if not student_id:
+                messages.error(request, "Student ID is required.")
+            else:
+                try:
+                    student = studentInfo.objects.get(studID=student_id)
+                    case = form.save(commit=False)
+                    case.student = student
+                    # Set reported_by from the form's initial value (which should be user.username)
+                    case.reported_by = form.cleaned_data.get('reported_by', user.username)
+                    case.save()
+                    messages.success(request, "Case profile saved successfully.")
+                    return redirect('case_list') # Redirect to the new list view
+                except studentInfo.DoesNotExist:
+                    messages.error(request, f"Student with ID {student_id} not found.")
+                except Exception as e:
+                    logger.error(f"Error saving case for student {student_id}: {e}")
+                    messages.error(request, "An error occurred while saving the case profile.")
+        else:
+            logger.warning(f"Invalid form submission: {form.errors}")
+            messages.error(request, "Please correct the errors in the form.")
+    else:
+        # Set initial 'reported_by' for the create form
+        form = CaseProfileForm(initial={'reported_by': user.username})
+
+    context = {
+        'form': form,
+        'students': students,
+        'base_template': base_template,
+    }
+    return render(request, 'discipline/case_profile.html', context)
+
+# Make sure to add this import at the top of your views.py
+from django.core.paginator import Paginator
+
+# ... (all your other imports) ...
+
+# This is your UPDATED case_list view
+def case_list(request):
+    user = request.user
+    base_template = (
+        "adminmain.html" 
+        if user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'
+        else "main.html"
+    )
+
+    # --- Start Sorting Logic ---
+    
+    # Get sort parameters from URL, default to 'date' descending
+    sort_by = request.GET.get('sort', 'date')
+    order = request.GET.get('order', 'desc')
+
+    # Whitelist of valid sort fields to prevent malicious queries
+    # 'key' is the URL parameter, 'value' is the Django model field
+    valid_sort_fields = {
+        'student': 'student__firstname',
+        'offense': 'offense_type',
+        'date': 'date_reported',
+        'status': 'status',
+    }
+
+    # Get the model field, defaulting to 'date_reported' if invalid
+    sort_field = valid_sort_fields.get(sort_by, 'date_reported')
+
+    # Add '-' prefix for descending order
+    if order == 'desc':
+        order_string = f'-{sort_field}'
+    else:
+        order_string = sort_field
+        
+    # --- End Sorting Logic ---
+
+    # Determine case list based on user role
+    if user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'):
+        # Apply the dynamic sorting here
+        all_cases = CaseProfile.objects.all().order_by(order_string)
+        
+    elif user.is_authenticated and getattr(user, 'role', None) == 'student':
+        # Apply the dynamic sorting here
+        all_cases = CaseProfile.objects.filter(student__studID=user.username).order_by(order_string)
+    else:
+        all_cases = CaseProfile.objects.none()
+
+    # --- Start Pagination Logic (no changes here) ---
+    paginator = Paginator(all_cases, 10) # 10 items per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    # --- End Pagination Logic ---
+
+    context = {
+        'page_obj': page_obj,      
+        'base_template': base_template,
+        # --- Add these to the context ---
+        # Pass current sort state to template for building links
+        'current_sort': sort_by,
+        'current_order': order,
+    }
+    return render(request, 'discipline/case_list.html', context)
+def case_edit(request, case_id):
     case = get_object_or_404(CaseProfile, id=case_id)
-
-    if request.method == "POST":
-        case.delete()
-        messages.success(request, "Case deleted successfully.")
-        return redirect("case_profile")  # back to case list
-
-    return render(request, "discipline/delete_case.html", {
-        "case": case,
-    })
-def edit_case(request, case_id):
-    case = get_object_or_404(CaseProfile, id=case_id)
-
     if request.method == "POST":
         form = CaseProfileForm(request.POST, request.FILES, instance=case)
         if form.is_valid():
             form.save()
             messages.success(request, "Case updated successfully.")
-            return redirect("case_profile")  # redirect to your case list page
+            return redirect("case_list") # Redirect to the list after saving
+        else:
+            # If form is invalid, re-render the modal form with errors
+            context = {"form": form, "case": case}
+            return render(request, "discipline/_case_edit_form.html", context)
     else:
+        # GET request: show the form pre-filled with case data
         form = CaseProfileForm(instance=case)
 
-    return render(request, "discipline/edit_case.html", {
+    context = {
         "form": form,
         "case": case,
+    }
+    # Renders the *partial* template for the modal
+    return render(request, "discipline/edit_case.html", context)
+
+
+def get_student(request, studID):
+    try:
+        studID = int(studID)  # convert to integer
+        student = studentInfo.objects.get(studID=studID)
+        return JsonResponse({
+            'found': True,
+            'name': f"{student.firstname} {student.lastname}",
+            'course': student.degree,
+            'year': student.yearlvl,
+        })
+    except ValueError:
+        # studID was not a valid integer
+        return JsonResponse({'found': False, 'error': 'Invalid student ID'})
+    except studentInfo.DoesNotExist:
+        return JsonResponse({'found': False})
+    except Exception as e:
+        print(f"Error fetching student {studID}: {e}")
+        return JsonResponse({'found': False, 'error': str(e)})
+def community_service_list(request):
+    services = CommunityService.objects.all().order_by('-service_date')
+    total_hours = sum(service.hours_rendered for service in services)
+    return render(request, 'community_service/list.html', {
+        'services': services,
+        'total_hours': total_hours
     })
+
+def add_community_service(request):
+    if request.method == 'POST':
+        form = CommunityServiceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('community_service_list')
+    else:
+        form = CommunityServiceForm()
+    return render(request, 'community_service/add.html', {'form': form})
+# ---
+# VIEW 4: For the Delete Button (AJAX)
+# ---
+# This view handles the POST request from the SweetAlert pop-up
+# It replaces your original delete_case view
+@require_POST # Ensures this view only accepts POST requests
+def case_delete(request, case_id):
+    try:
+        case = get_object_or_404(CaseProfile, id=case_id)
+        case.delete()
+        # Return a success JSON response, which the JavaScript expects
+        return JsonResponse({"status": "success", "message": "Case deleted successfully."})
+    except Exception as e:
+        logger.error(f"Error deleting case {case_id}: {e}")
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+
+# ---
+# ALL OTHER VIEWS (Copied from your file)
+# ---
+
+# This is your AJAX view for the student datalist
+# Renamed from get_student to avoid confusion, but it's your code
+def get_student_details(request, studID):
+    try:
+        studID = int(studID)  # convert to integer
+        student = studentInfo.objects.get(studID=studID)
+        return JsonResponse({
+            'found': True,
+            'name': f"{student.firstname} {student.lastname}",
+            'course': student.degree,
+            'year': student.yearlvl,
+        })
+    except ValueError:
+        return JsonResponse({'found': False, 'error': 'Invalid student ID'})
+    except studentInfo.DoesNotExist:
+        return JsonResponse({'found': False})
+    except Exception as e:
+        print(f"Error fetching student {studID}: {e}")
+        return JsonResponse({'found': False, 'error': str(e)})
+
+# Your original update_suspension view
+@csrf_exempt
+def update_suspension(request, case_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        # Note: Your JS sends 'type' and 'value'
+        suspension_type = data.get("type") 
+        value = data.get("value")
+
+        try:
+            case = CaseProfile.objects.get(id=case_id)
+            # Your original code used this f-string, but the JS
+            # from case_list.html sends a combined string.
+            # I'll use the one from the JS:
+            duration = data.get('suspension_duration')
+            if duration:
+                 case.suspension_duration = duration
+            else:
+                 # Fallback to your original logic if 'suspension_duration' isn't sent
+                 case.suspension_duration = f"{value} {suspension_type}"
+            
+            case.save()
+            return JsonResponse({"success": True})
+        except CaseProfile.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Case not found"})
+    return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
+
+
+# Your original counseling_form_view
+def counseling_form_view(request, case_id):
+    case = get_object_or_404(CaseProfile, id=case_id)
+    student = case.student 
+
+    if request.method == "POST":
+        form = CounselingSchedulerForm(request.POST)
+        if form.is_valid():
+            current_datetime = timezone.now()
+            ongoing_schedule = counseling_schedule.objects.filter(
+                studentID=student,
+                scheduled_date__gte=current_datetime.date()
+            ).exclude(status__in=["Declined", "Expired"]).first()
+
+            if ongoing_schedule:
+                time = {
+                    '8-9': '8:00 AM - 9:00 AM',
+                    '9-10': '9:00 AM - 10:00 AM',
+                    '10-11': '10:00 AM - 11:00 AM',
+                    '11-12': '11:00 AM - 12:00 PM',
+                    '1-2': '1:00 PM - 2:00 PM',
+                    '2-3': '2:00 PM - 3:00 PM',
+                    '3-4': '3:00 PM - 4:00 PM',
+                    '4-5': '4:00 PM - 5:00 PM'
+                }
+                scheduled_date = ongoing_schedule.scheduled_date.strftime('%B %d, %Y')
+                scheduled_time = time.get(ongoing_schedule.scheduled_time, ongoing_schedule.scheduled_time)
+                messages.error(request, f"Student already has a counseling schedule on {scheduled_date} at {scheduled_time}.")
+                return redirect("counseling_form", case_id=case.id)
+
+            counseling = form.save(commit=False)
+            counseling.dateRecieved = current_datetime.strftime('%Y-%m-%d')
+            counseling.studentID = student
+            counseling.save()
+            messages.success(request, f"Counseling request for {student.firstname} {student.lastname} has been created.")
+            return redirect("counseling_form", case_id=case.id)
+    else:
+        form = CounselingSchedulerForm()
+
+    context = {
+        "form": form,
+        "student": student,
+        "case": case
+    }
+    return render(request, "discipline/counseling_form.html", context)
+
+
+# Your original student_hours_view
+def student_hours_view(request, case_id):
+    case = get_object_or_404(CaseProfile, pk=case_id)
+    records = CommunityServiceTracker.objects.filter(case=case).order_by('-service_date')
+    if request.method == 'POST':
+        form = CommunityServiceForm(request.POST, request.FILES)
+        if form.is_valid():
+            tracker = form.save(commit=False)
+            tracker.case = case
+            exists = CommunityServiceTracker.objects.filter(
+                case=case,
+                service_date=tracker.service_date,
+                session=tracker.session
+            ).exists()
+            if exists:
+                messages.error(request, f"{tracker.session.capitalize()} session already exists for {tracker.service_date}.")
+            else:
+                tracker.save()
+                messages.success(request, "Community service record added successfully!")
+                return redirect('student_hours', case_id=case.id)
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = CommunityServiceForm()
+
+    existing_sessions = {}
+    for r in records:
+        date_str = r.service_date.isoformat()
+        existing_sessions.setdefault(date_str, []).append(r.session)
+
+    total_hours = sum([r.total_hours_decimal() for r in records])
+    total_hours_display = f"{int(total_hours)}h {int((total_hours % 1) * 60)}m"
+
+    context = {
+        'case': case,
+        'form': form,
+        'records': records,
+        'total_hours': total_hours_display,
+        'rendered_hours': total_hours_display, # Fixed this from your code
+        'existing_sessions': existing_sessions,
+    }
+    return render(request, 'discipline/student_hours_rendered.html', context)

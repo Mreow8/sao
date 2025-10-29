@@ -1,6 +1,29 @@
 <!-- prettier-ignore -->
 {% extends "adminmain.html" %} {% load static %} {% block title %}Counseling App
 With Scheduler{% endblock %} {% block headcontent %}
+<style>
+  .messages {
+    list-style: none;
+    margin: 10px 0;
+    padding: 0;
+  }
+
+  .messages li {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+
+  .messages li.error {
+    background-color: #ffe5e5;
+    color: #a30000;
+  }
+
+  .messages li.success {
+    background-color: #e7ffe7;
+    color: #007a00;
+  }
+</style>
 <link
   rel="stylesheet"
   type="text/css"
@@ -31,70 +54,83 @@ With Scheduler{% endblock %} {% block headcontent %}
         id="studentIDBox"
       />
       <button class="OrangeButton" id="searchButton">Search</button>
+      {% if page == 'counseling_app_admin' %}
       <ul class="messages">
         {% for message in messages %}
         <li class="{{ message.tags }}">{{ message }}</li>
         {% endfor %}
       </ul>
+      {% endif %}
     </span>
-    <table id="info_table">
-      <tr id="info_table_head">
-        <th>Date Received</th>
-        <th>Name</th>
-        <th>Program/Year and Section</th>
-        <th>Contact No</th>
-        <th>Date and Time of Meeting</th>
-        <th>Reason for Call</th>
-
-        <th colspan="2">Status</th>
-      </tr>
-      {% for schedule_request in meeting_requests %}
-      <tr>
-        <input
-          type="hidden"
-          name="counselingID"
-          class="counselingID"
-          value="{{ schedule_request.counselingID }}"
-        />
-        <td>{{ schedule_request.dateRecieved }}</td>
-        <td>
-          {{ schedule_request.studentID.lastname }},
-          {{schedule_request.studentID.firstname }}
-        </td>
-        <td>
-          {{ schedule_request.studentID.degree }}
-          {{schedule_request.studentID.yearlvl }}
-        </td>
-        <td>0{{ schedule_request.studentID.contact }}</td>
-        <td>
-          {{ schedule_request.scheduled_date }}
-          {{time|get_formatted_time:schedule_request.scheduled_time }}
-        </td>
-        <td>{{ schedule_request.reason }}</td>
-        <td>
-          {% if schedule_request.status == 'Accepted' %}
-          <span class="accepted">{{ schedule_request.status }}</span>
-          {% elif schedule_request.status == 'Declined' %}
-          <span class="declined">{{ schedule_request.status }}</span>
-          {% elif schedule_request.status == 'Pending' %}
-          <span class="pending">{{ schedule_request.status }}</span>
-          {% elif schedule_request.status == 'Expired' %}
-          <span class="expired">{{ schedule_request.status }}</span>
-          {% else %} {{ schedule_request.status }} {% endif %}
-        </td>
-        <td>
-          <!-- prettier-ignore -->
-          <div class="horizontal">
-            {% if schedule_request.status != 'Expired' and schedule_request.status != 'Accepted' and schedule_request.status != 'Declined' %}
-            <button class="accept">ACCEPT</button>
-            <button class="decline">DECLINE</button>
-            {% endif %}
-            <button class="delete">DELETE</button>
-          </div>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="table-responsive-wrapper">
+      <table id="info_table">
+        <thead>
+          <tr id="info_table_head">
+            <th>Date Received</th>
+            <th>Name</th>
+            <th>Program/Year</th>
+            <th>Contact No</th>
+            <th>Meeting Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for schedule_request in meeting_requests %}
+          <tr>
+            <input
+              type="hidden"
+              name="counselingID"
+              class="counselingID"
+              value="{{ schedule_request.counselingID }}"
+            />
+            <!-- Add data-label attributes to each <td> -->
+            <td data-label="Date Received">
+              {{ schedule_request.dateRecieved }}
+            </td>
+            <td data-label="Name">
+              {{ schedule_request.studentID.lastname }},
+              {{schedule_request.studentID.firstname }}
+            </td>
+            <td data-label="Program/Year">
+              {{ schedule_request.studentID.degree }}
+              {{schedule_request.studentID.yearlvl }}
+            </td>
+            <td data-label="Contact No">
+              0{{ schedule_request.studentID.contact }}
+            </td>
+            <td data-label="Meeting Date">
+              {{ schedule_request.scheduled_date }}
+              {{time|get_formatted_time:schedule_request.scheduled_time }}
+            </td>
+            <td data-label="Reason">{{ schedule_request.reason }}</td>
+            <td data-label="Status">
+              {% if schedule_request.status == 'Accepted' %}
+              <span class="accepted">{{ schedule_request.status }}</span>
+              {% elif schedule_request.status == 'Declined' %}
+              <span class="declined">{{ schedule_request.status }}</span>
+              {% elif schedule_request.status == 'Pending' %}
+              <span class="pending">{{ schedule_request.status }}</span>
+              {% elif schedule_request.status == 'Expired' %}
+              <span class="expired">{{ schedule_request.status }}</span>
+              {% else %} {{ schedule_request.status }} {% endif %}
+            </td>
+            <td data-label="Action">
+              <!-- prettier-ignore -->
+              <div class="horizontal">
+        {% if schedule_request.status != 'Expired' and schedule_request.status != 'Accepted' and schedule_request.status != 'Declined' %}
+        <button class="accept">ACCEPT</button>
+        <button class="decline">DECLINE</button>
+        {% endif %}
+        <button class="delete">DELETE</button>
+      </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 <script src="{% static 'scripts/guidance/counseling_app_admin.js'%}"></script>

@@ -7,12 +7,14 @@ from ..views import org_profile, add_organization
 urlpatterns = [
     path('captcha/', include('captcha.urls')),
 
- path("cases/edit/<int:case_id>/", views.edit_case, name="edit_case"),
-    path("cases/delete/<int:case_id>/", views.delete_case, name="delete_case"),
            path('assign-role/', views.assign_role, name='assign_role'), 
            path('staff_upload/', views.staff_upload, name='staff_upload'),
 # urls.py
-path("update-suspension/<int:case_id>/", views.update_suspension, name="update_suspension"),
+
+
+
+
+
   path("organizations/<slug:slug>/accreditations/upload/", views.upload_accreditation, name="view_accreditation_by_slug"),
     # ... your other direct paths ...
     # urls.py
@@ -34,18 +36,12 @@ path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
  path('post', views.post , name='post'),
     # Community Service Tracker
 
- path('community-service/', views.community_service_list, name='community_service_list'),
 
- 
-    path('community-service/add/', views.add_community_service, name='add_community_service'), 
-    # path('slife', include('mainpage.slife_url')),
-path('student-hours/<int:case_id>/', views.student_hours_view, name='student_hours'),
-path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_form"),
 
-    path('case-profile/', views.case_profile_view, name='case_profile'),
 
-    # Community Service Tracker
-      path('get-student/<str:studID>/', views.get_student, name='get_student'),
+
+
+
 
     path("equipmenttracker", views.equipmentTracker, name="equipmentTracker"),
     path("requestgmc", views.requestedgmc, name="requestgmc"),
@@ -59,7 +55,6 @@ path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_f
     path(
         "update_return_status/", views.update_return_status, name="update_return_status"
     ),
-      path('community-service-tracker/<int:student_id>/', views.serviceTracker, name="community-service-tracker"),
 
     
     path("adminmain", views.adminhome, name="adminmain"),
@@ -246,7 +241,9 @@ path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_f
     path('delete_counseling_schedule/', views.delete_counseling_schedule, name='delete_counseling_schedule'),
 
     # Exit Interview Views URLS
+    
     path('exit_interview', views.exit_interview, name="Exit Interview"),
+    path('print_exit_interview/<int:request_id>/', views.print_exit_interview, name="print_exit_interview"),
     path('exit_interview/admin/', views.exit_interview_admin_view, name="Exit Interview Admin View"),
     path('search_exit_interview_request/',views. search_exit_interview_request, name='search_exit_interview_request'),
 
@@ -263,6 +260,9 @@ path("counseling/<int:case_id>/", views.counseling_form_view, name="counseling_f
     
     # OJT Assessment Seacher, Validator, Updator URLS
     path('search_ojt_assessment_request/', views.search_ojt_assessment_request, name='search_ojt_assessment_request'),
+    path('print/assessment/<int:request_id>/', 
+         views.print_ojt_assessment, 
+         name='print_ojt_assessment'),
     path('update_ojt_assessment/', views.update_ojt_assessment, name='update_ojt_assessment'),
     path('delete_ojt_assessment/', views.delete_ojt_assessment, name='delete_ojt_assessment'),
     path('get_ojt_assessment_data/', views.get_ojt_assessment_data, name="get_ojt_assessment_data"),

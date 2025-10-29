@@ -1,135 +1,231 @@
-{% extends 'adminmain.html' %} {% block bodycontent %}
-<div class="container mx-auto px-4 py-10">
-  <div class="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-5xl mx-auto">
-    <h1 class="text-3xl font-bold text-indigo-800 mb-8 text-center">
-      Admin Jobfairs
-    </h1>
+{%extends "adminmain.html" %} {% block bodycontent %} {% load static %}
+<style>
+  /* --- Global, Fonts & Body --- */
+  /* Ensure fonts are applied */
+  .page-title,
+  .sub-title, /* Added sub-title */
+  button,
+  input,
+  label,
+  textarea,
+  select {
+    font-family: "Rubik", sans-serif;
+  }
 
-    <form method="post" action="{% url 'admin_jobfairs' %}" class="space-y-6">
-      {% csrf_token %}
+  /* Use body-content for consistent padding (from requestgmc.css) */
+  .body-content {
+    padding: 1rem 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
 
-      <!-- Grid Layout for All Inputs -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Job Title -->
-        <div class="col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Job Title</label
-          >
-          <input
-            type="text"
-            name="jobtitle"
-            required
-            class="w-full bg-gray-50 text-base text-gray-900 border border-gray-400 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+  /* --- Main Form Card (from requestgmc.css .gmc-form) --- */
+  .form-wrapper {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
+  }
+
+  /* --- Form Elements --- */
+  .form-wrapper form > div {
+    margin-bottom: 1.5rem; /* Space out each form group */
+  }
+
+  .form-wrapper label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c5282; /* Primary Blue */
+    margin-bottom: 8px;
+  }
+
+  /* Shared styles for inputs, textareas, and selects (from requestgmc.css #comboBox) */
+  .form-wrapper input[type="text"],
+  .form-wrapper input[type="date"],
+  .form-wrapper select,
+  .form-wrapper textarea {
+    width: 100%;
+    font-family: "Rubik", sans-serif;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box; /* Ensures padding doesn't break layout */
+    /* Ensures select looks similar */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  /* Add a background arrow for the <select> */
+  .form-wrapper select {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232c5282%22%20d%3D%22M287%2069.4a17.6%2017.6%0%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px 10px;
+    padding-right: 30px; /* Make space for arrow */
+  }
+
+  /* Focus styles for all elements */
+  .form-wrapper input[type="text"]:focus,
+  .form-wrapper input[type="date"]:focus,
+  .form-wrapper select:focus,
+  .form-wrapper textarea:focus {
+    outline: none;
+    border-color: #2c5282; /* Primary Blue */
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
+    background-color: #fff;
+  }
+
+  .form-wrapper textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  /* --- Form Grid Layout --- */
+  .form-grid {
+    display: grid;
+    /* This will create 1-3 columns depending on screen width */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* --- Submit Button (from requestgmc.css .requestBtn) --- */
+  .submit-container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end; /* Aligns button to the right */
+  }
+
+  .submit-container button[type="submit"] {
+    font-family: "Rubik", sans-serif;
+    background-color: #2c5282; /* Primary Blue */
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+
+  .submit-container button[type="submit"]:hover {
+    background-color: #2a4365; /* Darker Blue */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .submit-container button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  /* --- Responsive Design --- */
+  @media (max-width: 768px) {
+    /* Stack the grid items on mobile */
+    .form-grid {
+      grid-template-columns: 1fr;
+      gap: 0; /* Gaps will be handled by the div margin-bottom */
+    }
+
+    /* Adjust padding on main card for mobile */
+    .form-wrapper {
+      padding: 1.5rem;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+    }
+
+    /* Adjust breadcrumb padding */
+    .sub-title {
+      padding: 0 1.5rem;
+      margin: 1rem auto 0 auto;
+    }
+
+    .body-content {
+      padding: 1rem 1.5rem;
+    }
+  }
+</style>
+
+<div class="sub-title">
+  <h3>Alumni</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Admin Jobfairs</p>
+</div>
+
+<div class="body-content">
+  <div>
+    <div class="form-wrapper">
+      <form method="post" action="{% url 'admin_jobfairs' %}">
+        {% csrf_token %}
+
+        <div class="form-grid">
+          <div>
+            <label>Job Title</label>
+            <input type="text" name="jobtitle" required />
+          </div>
+
+          <div>
+            <label>Company Name</label>
+            <input type="text" name="companyname" required />
+          </div>
+
+          <div>
+            <label>Location</label>
+            <input type="text" name="joblocation" required />
+          </div>
+
+          <div>
+            <label>Employment Type</label>
+            <select name="employmenttype" required>
+              <option value="" disabled selected>Select</option>
+              <option value="Full-Time">Full-Time</option>
+              <option value="Contract">Contract</option>
+              <option value="Part-Time">Part-Time</option>
+              <option value="Non-Profit">Non-Profit</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Job Salary</label>
+            <input type="text" name="jobsalary" required />
+          </div>
+
+          <div>
+            <label>Application Deadline</label>
+            <input type="date" name="applicationdeadline" required />
+          </div>
+
+          <div>
+            <label>Date Posted</label>
+            <input
+              type="date"
+              name="posted_date"
+              value="{{ today|date:'Y-m-d' }}"
+              required
+            />
+          </div>
+        </div>
+        <div>
+          <label>Job Description</label>
+          <textarea name="jobdescription" required></textarea>
         </div>
 
-        <!-- Company Name -->
-        <div class="col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Company Name</label
-          >
-          <input
-            type="text"
-            name="companyname"
-            required
-            class="w-full bg-gray-50 text-base text-gray-900 border border-gray-400 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+        <div class="submit-container">
+          <button type="submit">Submit</button>
         </div>
-
-        <!-- Job Location -->
-        <div class="col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Location</label
-          >
-          <input
-            type="text"
-            name="joblocation"
-            required
-            class="w-full bg-gray-50 text-base text-gray-900 border border-gray-400 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-
-        <!-- Employment Type -->
-        <div class="col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Employment Type</label
-          >
-          <select
-            name="employmenttype"
-            required
-            class="w-full bg-gray-50 text-base text-gray-900 border border-gray-400 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="" disabled selected>Select</option>
-            <option value="Full-Time">Full-Time</option>
-            <option value="Contract">Contract</option>
-            <option value="Part-Time">Part-Time</option>
-            <option value="Non-Profit">Non-Profit</option>
-          </select>
-        </div>
-
-        <!-- Job Salary -->
-        <div class="col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Job Salary</label
-          >
-          <input
-            type="text"
-            name="jobsalary"
-            required
-            class="w-full bg-gray-50 text-base text-gray-900 border border-gray-400 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-
-        <!-- Application Deadline -->
-        <div class="col-span-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Application Deadline</label
-          >
-          <input
-            type="date"
-            name="applicationdeadline"
-            required
-            class="w-full bg-gray-50 text-base text-gray-900 border border-gray-400 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-
-        <!-- Date Posted -->
-        <div class="col-span-1 md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Date Posted</label
-          >
-          <input
-            type="date"
-            name="posted_date"
-            value="{{ today|date:'Y-m-d' }}"
-            required
-            class="w-full bg-gray-50 text-base text-gray-900 border border-gray-400 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-      </div>
-
-      <!-- Job Description -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1"
-          >Job Description</label
-        >
-        <textarea
-          name="jobdescription"
-          required
-          class="w-full bg-gray-50 text-base text-gray-900 border border-gray-400 rounded-md p-3 h-36 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        ></textarea>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="text-center">
-        <button
-          type="submit"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition"
-        >
-          Submit
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}

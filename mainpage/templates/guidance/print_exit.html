@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+{% load static %}
+    <head>
+        <link rel="shortcut icon" type="x-icon" href="{% static 'studentlife/images/CTU_logo.png' %}">
+        <title>Exit Interview</title>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+        />
+        
+    
+           <link rel="stylesheet" type="text/css" href="{% static 'styles/guidance/print_exit.css'%}">
+
+        <style>.upper-contents {
+   
+    text-align: center;
+}
+          </style>
+    </head>
+    <body>
+       
+        <div class="certificate" id="paper">
+          <div class="upper-contents">
+                <div class="logo1-container">
+                    <img src="{% static 'imgs/CTU_logo.png'%}" alt="School Logo" class="logo1">
+                </div>
+                <div class="logo2-container">
+                    <img src="{% static 'studentorg/css/BagongPilipinaslogo.png' %}" alt="School Logo" class="logo2">
+                </div>
+                <div class="content1">REPUBLIC OF THE PHILIPPINES</div>
+                <div class="content2">CEBU TECHNOLOGICAL UNIVERSITY</div>
+                <div class="content3">ARGAO CAMPUS</div>
+                <div class="content4">Ed Kintanar Street, Lamacan, Argao, Cebu</div>
+                <div class="content4">Website: https://www.argao.ctu.edu.ph E-mail: cdargao@ctu.edu.ph</div>
+                <div class="content4">Phone No.:(032) 401-0737 local 1700</div>
+                <div class="line"></div>
+            </div>
+            <div class="page-container">
+              <hr />
+              <div class="title">
+                <h4>EXIT INTERVIEW<br /></h4>
+              
+                <table class="title_table">
+                  <tr>
+                    <td>Name: <label id="name">{{ interview.studentID.firstname|title }} {{ interview.studentID.lastname|title }}</label></td>
+                    <td>Date: <label id="date">{{ interview.date|date:"F d, Y" }}</label></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      Date Enrolled at CTU-AC: <label id="date-enrolled">{{ interview.dateEnrolled|date:"F d, Y" }}</label>
+                    </td>
+                    <td>Contact #: <label id="contact">{{ interview.studentID.contact }}</label></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="content">
+                <strong
+                  >1. Please describe your primary reason of leaving CTU- Argao
+                  Campus.</strong
+                >
+                <span class="answer-long-text" id="question1">{{ interview.reasonForLeaving }}</span>
+                <strong
+                  >2. Were you satisfied with your academic experience at CTU-Argao
+                  Campus?
+                  {% if interview.satisfiedWithAcadamic %}
+                    <label id="question2_yes">✔</label>YES
+                    <label id="question2_no">__</label>NO
+                  {% else %}
+                    <label id="question2_yes">__</label>YES
+                    <label id="question2_no">✔</label>NO
+                  {% endif %}
+                </strong>
+                <p>Please give us feedback on your academic experience:</p>
+                <span class="answer-long-text" id="question2">{{ interview.feedbackWithAcademic }}</span>
+                <strong
+                  >3. Were you satisfied with your social experience at CTU –Argao
+                  Campus?
+                  {% if interview.satisfiedWithSocial %}
+                    <label id="question3_yes">✔</label>YES
+                    <label id="question3_no">__</label>NO
+                  {% else %}
+                    <label id="question3_yes">__</label>YES
+                    <label id="question3_no">✔</label>NO
+                  {% endif %}
+                </strong>
+              
+                <span class="answer-long-text" id="question3">{{ interview.feedbackWithSocial }}</span>
+                <strong
+                  >4. Were you satisfied with the support services offered at
+                  CTU-Argao?
+                  {% if interview.satisfiedWithServices %}
+                    <label id="question4_yes">✔</label>YES
+                    <label id="question4_no">__</label>NO
+                  {% else %}
+                    <label id="question4_yes">__</label>YES
+                    <label id="question4_no">✔</label>NO
+                  {% endif %}
+                </strong>
+              
+                <span class="answer-mid-text" id="question4">{{ interview.feedbackWithServices }}</span>
+    
+                <table style="border-collapse: collapse; margin-left: 52.31pt" cellspacing="0">
+                  <tbody>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Academically too challenging</p></td>
+                      <td class="custom-table-cell"><p id="table_data1">{{ interview.contributedToDecision.0 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Not academically challenging enough</p></td>
+                      <td class="custom-table-cell"><p id="table_data2">{{ interview.contributedToDecision.1 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Does not offer my academic major</p></td>
+                      <td class="custom-table-cell"><p id="table_data3">{{ interview.contributedToDecision.2 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5">
+                        <p class="s6">What is your intended major?</p>
+                        <p class="s6" id="intendedMajor">{{ interview.intendedMajor }}</p>
+                      </td>
+                      <td class="custom-table-cell"><p id="table_data4"><br /></p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Size of the School</p></td>
+                      <td class="custom-table-cell"><p id="table_data5">{{ interview.contributedToDecision.3 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Location of the School</p></td>
+                      <td class="custom-table-cell"><p id="table_data6">{{ interview.contributedToDecision.4 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Negative social campus climate</p></td>
+                      <td class="custom-table-cell"><p id="table_data7">{{ interview.contributedToDecision.5 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Residence Hall environment not positive</p></td>
+                      <td class="custom-table-cell"><p id="table_data8">{{ interview.contributedToDecision.6 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Social environment not diverse enough</p></td>
+                      <td class="custom-table-cell"><p id="table_data9">{{ interview.contributedToDecision.7 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Not enough campus activities</p></td>
+                      <td class="custom-table-cell"><p id="table_data10">{{ interview.contributedToDecision.8 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Needed more academic support</p></td>
+                      <td class="custom-table-cell"><p id="table_data11">{{ interview.contributedToDecision.9 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Financial</p></td>
+                      <td class="custom-table-cell"><p id="table_data12">{{ interview.contributedToDecision.10 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell" colspan="5"><p class="s6">Medical: Injury</p></td>
+                      <td class="custom-table-cell"><p id="table_data13">{{ interview.contributedToDecision.11 }}</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <br />
+            </div>
+            <div class="page-container additionalpadding">
+              <div class="content">
+                <table style="border-collapse: collapse; margin-left: 52.31pt" cellspacing="0">
+                  <tbody>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell"><p class="s6">Medical: Psychological or Emotional</p></td>
+                      <td class="table-cell-197pt"><p id="table_data14">{{ interview.contributedToDecision.12 }}</p></td>
+                    </tr>
+                    <tr style="height: 14pt">
+                      <td class="custom-table-cell"><p class="s6">Family obligations</p></td>
+                      <td class="table-cell-197pt"><p id="table_data15">{{ interview.contributedToDecision.13 }}</p></td>
+                    </tr>
+                    <tr style="height: 68pt">
+                      <td class="custom-table-cell"><p class="s6">Major life event...</p></td>
+                      <td class="table-cell-197pt"><p id="table_data16">{{ interview.contributedToDecision.14 }}</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <strong
+                  >5. When did you first consider leaving CTU-Argao Campus?</strong
+                >
+                <span class="answer-mid-text" id="question5">{{ interview.firstConsider }}</span>
+                <strong
+                  >6. Under what conditions, if any, would you have stayed at
+                  CTU-Ara Campus?</strong
+                >
+                <span class="answer-mid-text" id="question6">{{ interview.whatCondition }}</span>
+                <strong
+                  >7. Would you recommend attending CTU-Argao Campus to prospective
+                  new students?</strong
+                >
+                <span class="answer-mid-text" id="question7">{% if interview.recommend %}Yes{% else %}No{% endif %}</span>
+                <strong
+                  >8. Overall, how satisfied are you with CTU-Argao Campus?</strong
+                >
+                <div class="check-box-container">
+                  <label id="question8_vs">[{% if interview.howSatisfied == 'Very Satisfied' %}✔{% else %} {% endif %}]Very satisfied</label>
+                  <label id="question8_ss">[{% if interview.howSatisfied == 'Somewhat Satisfied' %}✔{% else %} {% endif %}]Somewhat satisfied</label>
+                  <label id="question8_s">[{% if interview.howSatisfied == 'Satisfied' %}✔{% else %} {% endif %}]Satisfied</label>
+                  <label id="question8_sd">[{% if interview.howSatisfied == 'Somewhat Dissatisfied' %}✔{% else %} {% endif %}]Somewhat Dissatisfied</label>
+                  <label id="question8_vd">[{% if interview.howSatisfied == 'Very Dissatisfied' %}✔{% else %} {% endif %}]Very Dissatisfied</label>
+                </div>
+                <strong
+                  >9. Do you plan to return at CTU-Argao Campus in the future? If
+                  yes, please indicate when.</strong
+                >
+                <span class="answer-mid-text" id="question9">{{ interview.planTOReturn }}</span>
+                <strong
+                  >10. Were you satisfied with your academic experience at CTU-Argao
+                  Campus?
+                  {% if interview.accademicExperienceSatisfied %}
+                    <label id="question10_yes">✔</label>YES
+                    <label id="question10_no">__</label>NO
+                  {% else %}
+                    <label id="question10_yes">__</label>YES
+                    <label id="question10_no">✔</label>NO
+                  {% endif %}
+                </strong>
+                <br />
+                <br />
+                <strong
+                  >11. Is there anything else you would like us to know about your
+                  time at CTU-Argao Campus?</strong
+                >
+                <span class="answer-mid-text" id="question11">{{ interview.knowAboutYourTime }}</span>
+                <strong
+                  >12. Are you currently employed?
+                  {% if interview.currentlyEmployed %}
+                    <label id="question12_yes">✔</label>YES
+                    <label id="question12_no">__</label>NO
+                  {% else %}
+                    <label id="question12_yes">__</label>YES
+                    <label id="question12_no">✔</label>NO
+                  {% endif %}
+                </strong>
+                <p>If yes, please provide the name and address of the company:</p>
+                <span class="answer-mid-text" id="question12_ifyes">{% if interview.currentlyEmployed %}{{ interview.explainationEmployed }}{% endif %}</span>
+                <p>
+                  If no, please provide the name and address of the company you want
+                  to apply:
+                </p>
+                <span class="answer-mid-text" id="question12_ifno">{% if not interview.currentlyEmployed %}{{ interview.explainationEmployed }}{% endif %}</span>
+              </div>
+                       <img class="footerImg" src="{% static 'studentorg/css/footer.png' %}">
+
+            </div>
+          </div>
+        <div class="print">
+            <button id="print"><i class="fa-solid fa-print"></i></button>
+        </div>
+        
+          
+       <script src="{% static 'studentlife/gmc.js'%}"></script>
+       
+       <script>
+        // Manual print
+        document.getElementById('print').addEventListener('click', function() {
+            window.print();
+        });
+    </script>
+       
+    </body>
+    
+</html>

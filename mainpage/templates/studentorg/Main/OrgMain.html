@@ -11,22 +11,18 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
 
-<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/profiles.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/general.css' %}" />
-<link rel="stylesheet" href="{% static 'styles/sub-title.css' %}" />
 
-<link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/orgfinal.css' %}" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %} {% block bodycontent %}
-<div class="container">
-  <div class="sub-title">
+ <div class="sub-title">
     <h3>STUDENT ORGANIZATION</h3>
     <p class="hometext">Home</p>
     <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
   </div>
 
+<div class="container">
+ 
   <div class="tabs">
     <a href="" class="tab active">Profiles</a>
     <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="tab"
@@ -93,18 +89,18 @@
         </div>
         <div class="con bot">
           <a href="/main/{{ org.slug }}_CBL" class="button">View CBL</a>
-
+{% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
           <a href="{% url 'officer_form' slug=org.slug %}" class="button"
             >Register Officer</a
-          >
+          >{%endif%}
 
           <a href="{% url 'view_adviser' org.slug %}" class="button"
             >List Advisers</a
           >
-
+{% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
           <a href="/main/{{ org.slug }}_adviserdata" class="button"
             >Register Adviser</a
-          >
+          >{%endif%}
         </div>
         {% if key_elements %}
         <h2 class="pf">Key elements of the logo include:</h2>

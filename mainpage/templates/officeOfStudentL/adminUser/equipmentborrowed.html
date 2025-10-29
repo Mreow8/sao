@@ -1,0 +1,374 @@
+{% extends 'adminmain.html' %}
+{% load static %}
+{% block bodycontent %}
+ <style>/* --- Global & Fonts --- */
+.equipmentContents,
+.search-form,
+.sorting-container,
+.pagination {
+  font-family: "Rubik", sans-serif;
+}
+
+/* --- Container --- */
+.container {
+  padding: 0 1.5rem;
+  max-width: 1400px; /* Constrain max width for wide screens */
+  margin: 0 auto;
+}
+
+/* --- Search Section --- */
+.search-container {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-form input[type="text"] {
+  flex-grow: 1;
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-form input[type="text"]:focus {
+  outline: none;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+}
+
+.searchBtn {
+  font-family: "Rubik", sans-serif;
+  background-color: #718096; /* Gray for search */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.2s;
+}
+.searchBtn:hover {
+  background-color: #4a5568;
+}
+
+/* --- Sorting Section --- */
+.sorting-container {
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem; /* Align slightly with card padding */
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+.sorting-container p {
+  display: inline;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+.sorting-container a {
+  color: #2c5282;
+  text-decoration: none;
+  font-weight: 500;
+}
+.sorting-container a:hover {
+  text-decoration: underline;
+}
+
+/* --- Main Content Card --- */
+.equipmentContents {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow-x: auto; /* For the table inside */
+}
+
+/* --- Alert Messages --- */
+.messages {
+  list-style: none;
+  padding: 1rem 1.5rem;
+  margin: 0 0 1.5rem 0;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.success-message {
+  background-color: #ebf8ff;
+  border: 1px solid #bee3f8;
+  border-left: 5px solid #2c5282;
+  color: #2b6cb0;
+}
+.error-message {
+  background-color: #ffebeb;
+  border: 1px solid #ffcdd2;
+  border-left: 5px solid #e53e3e;
+  color: #c53030;
+}
+
+/* --- Equipment Table Styles --- */
+.equipmentTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px; /* Force scroll */
+}
+
+.equipmentTable th,
+.equipmentTable td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+  white-space: nowrap; /* Keep content on one line */
+}
+
+.equipmentTable th {
+  background-color: #f9f9f9;
+  color: #2c5282;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.equipmentTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Status & Action Buttons --- */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+.status-processed {
+  background-color: #2ecc71; /* Green */
+}
+
+.returnBtn,
+.editBtn,
+.deleteBtn {
+  font-family: "Rubik", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.returnBtn {
+  background-color: #28a745; /* Green */
+  color: white;
+}
+.returnBtn:hover {
+  background-color: #218838;
+}
+
+.editBtn {
+  background-color: #007bff; /* Blue */
+  color: white;
+  margin-right: 5px; /* Space between buttons */
+}
+.editBtn:hover {
+  background-color: #0069d9;
+}
+
+.deleteBtn {
+  background-color: #dc3545; /* Red */
+  color: white;
+}
+.deleteBtn:hover {
+  background-color: #c82333;
+}
+
+/* --- Pagination --- */
+.pagination {
+  font-family: "Rubik", sans-serif;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+.pagination span {
+  font-weight: 600;
+}
+.pagination .page-links a {
+  color: #2c5282;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin: 0 2px;
+  transition: background-color 0.2s;
+}
+.pagination .page-links a:hover {
+  background-color: #ebf8ff; /* Light blue */
+  text-decoration: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  .search-container,
+  .equipmentContents {
+    padding: 1.5rem;
+  }
+  .search-form {
+    flex-direction: column;
+  }
+  .searchBtn {
+    width: 100%;
+  }
+}</style>
+  <div class="container">
+    <div class="sub-title">
+      <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
+      <p class="hometext">Home</p>
+      <p class="certxt">> Equipment Tracker</p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-container">
+      <form method="GET" action="{% url 'equipmentTrackerAdmin' %}" class="search-form">
+        <input type="text" name="search" placeholder="Search for equipment by ID..." value="{{ request.GET.search }}" />
+        <input type="submit" class="searchBtn" value="SEARCH" />
+      </form>
+    </div>
+
+    <!-- Sorting Section -->
+    <div class="sorting-container">
+      <p>Sort by:</p>
+      <a href="?sort=name">Name</a> |
+      <a href="?sort=equipment_name">Equipment Name</a> |
+      <a href="?sort=date_borrowed">Date Borrowed</a> |
+      <a href="?sort=status">Status</a>
+    </div>
+
+    <!-- Equipment Tracker Table -->
+    <div class="equipmentContents">
+      {% if messages %}
+        {% for message in messages %}
+          {% if message.tags == "success" %}
+            <div class="messages success-message" role="alert">{{ message }}</div>
+          {% elif message.tags == "error" %}
+            <div class="messages error-message" role="alert">{{ message }}</div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      <table class="equipmentTable">
+        <thead>
+          <tr>
+            <th>Item ID</th>
+            <th>Name of Borrower</th>
+            <th>Course/Program</th>
+            <th>Equipment Name</th>
+            <th>Type of Item</th>  <!-- Equipment Category -->
+            <th>Date Borrowed</th>
+            <th>Status</th>
+            <th>Date Returned</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in borrowing_records %}
+            <tr>
+              <td>{{ record.equipment.itemId }}</td>
+              <td>{{ record.student.firstname }} {{ record.student.lastname }}</td>
+              <td>{{ record.student.degree }}</td>
+              <td>{{ record.equipment.equipmentName }}</td>
+              <td>{{ record.equipment.category }}</td> <!-- Show Equipment Category -->
+              <td>{{ record.date_borrowed }}</td>
+              <td>
+                {% if record.is_returned %}
+                  <span class="status-badge status-processed">Returned</span>
+                {% else %}
+                  <button type="button" class="returnBtn" data-record-id="{{ record.id }}">Return</button>
+                {% endif %}
+              </td>
+              <td>{{ record.date_returned|default:"---" }}</td>
+              <td>
+                <button class="editBtn">Edit</button>
+                <button class="deleteBtn">Delete</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Pagination Controls -->
+      <div class="pagination">
+        <span>Page: </span>
+        <span class="page-links">
+          {% for i in page_obj.paginator.page_range %}
+            <a href="?page={{ i }}&sort={{ sort_by }}">{{ i }}</a>
+          {% endfor %}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".returnBtn").forEach(function (button) {
+        button.addEventListener("click", function () {
+          const recordId = this.getAttribute("data-record-id");
+          const button = this;
+          const row = button.closest("tr");
+
+          if (confirm("Are you sure you want to mark this item as returned?")) {
+            fetch("{% url 'update_return_status' %}", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+              },
+              body: JSON.stringify({ record_id: recordId }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === "success") {
+                // Update the button text to "Returned"
+                const statusCell = button.parentElement;
+                statusCell.innerHTML = "Returned";
+
+                // Update the date returned cell
+                const dateReturnedCell = row.querySelector("td:nth-child(7)");
+                dateReturnedCell.textContent = data.date_returned;
+
+                alert("Item marked as returned.");
+              } else {
+                alert("Failed to update return status: " + data.message);
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("An error occurred while updating the return status.");
+            });
+          }
+        });
+      });
+    });
+  </script>
+
+{% endblock %}

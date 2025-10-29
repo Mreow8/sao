@@ -1,117 +1,310 @@
-#dir-gray{
-    color: #636363;
+/* --- Global & Fonts --- */
+body {
+  font-family: "Rubik", sans-serif;
+  background-color: #f4f7fa; /* Light page background */
+  color: #333;
+  margin: 0;
+  padding: 0;
 }
-.container{
-    display: flex;
-    flex-direction: column;
-    width: 100%;;
-    padding: 20px;
-}
-#dir-orange{
-    color: #FF8000;
-}
-.form-container{
-    display: flex;
-    flex-direction: column;
-    background-color: #F9F9F9;
-    padding: 30px;
-    width: 100%;
-    border: 1px solid #e2e2e2;
-    border-radius: 10px;
-}
-.form-container form{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 10px;
-}
-#search_id{
-    display: flex;
-    gap: 40px;
-    align-items: center;
-}
-.success{
-    font-size: 18px;
-    font-weight: 400;
-    color: #FF8000;
-}
-.error{
-    font-size: 18px;
-    font-weight: 400;
-    color: #ff0000;
-}
-#search_id input{
-    background-color: #DDDFEE;
 
-    padding: 9.6px;
-    border: transparent;
-    border-radius: 10px;
-    box-sizing: border-box;
-    padding-left: 10px;
-    align-items: left;
-    color: black;
-    width: 200px;
+/* --- Container --- */
+.container {
+  padding: 1.5rem; /* Use padding on all sides for mobile */
+  max-width: 960px;
+  margin: 2rem auto;
 }
-.OrangeButton{
-    background-color: #FF8000;
-    padding: 9.6px;
-    color: white;
+
+/* --- Main Form Card --- */
+.form-container {
+  /* Styled like .gmc-form from guide */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.alert {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid transparent;
+}
+
+/* For Django messages */
+.alert-info {
+  background-color: #ebf8ff; /* Light blue */
+  border-color: #bee3f8; /* Lighter blue border */
+  color: #2b6cb0; /* Darker blue text */
+  font-weight: 500;
+}
+
+/* For the "Pending Request" box */
+.alert-warning {
+  /* This is styled like .pending-request-box from the guide */
+  background-color: #ebf8ff;
+  border: 1px solid #bee3f8;
+  border-left: 5px solid #2c5282; /* Accent border */
+}
+
+.alert-warning .alert-heading {
+  /* h4 */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2b6cb0;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.alert-warning p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.alert-warning hr {
+  margin: 1.5rem 0; /* Override default hr margin */
+  border: 0;
+  height: 1px;
+  background-color: #bee3f8;
+}
+
+/* --- New Request Form --- */
+.form-container h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.form-container p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+#requestForm label {
+  display: block;
+  font-weight: 600;
+  color: #2c5282; /* Primary Blue */
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Style Django Form Inputs (select, input) */
+#requestForm select,
+#requestForm input[type="email"] {
+  /* Styled like #comboBox from guide */
+  width: 100%;
+  box-sizing: border-box; /* Include padding in width */
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#requestForm select:focus,
+#requestForm input[type="email"]:focus {
+  /* Focus style from guide */
+  outline: none;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* Django Form Errors */
+.form-container .errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #dc3545; /* Red for errors */
+}
+
+/* --- Form Button --- */
+.OrangeButton {
+  /* Styled like .requestBtn from guide */
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+  margin-top: 1.5rem;
+  width: 100%; /* Make button full-width on mobile */
+}
+
+.OrangeButton:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Divider --- */
+hr {
+  /* Style from guide */
+  margin: 2.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+/* --- Student History Table --- */
+.history-container h3 {
+  /* Styled like .history-wrapper h4 from guide */
+  font-size: 1.5rem; /* 24px */
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  font-family: "Rubik", sans-serif;
+}
+
+.history-container p {
+  /* For "no requests" message */
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Table Wrapper for border-radius (from guide) */
+.gmc-table-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden; /* Clips the table corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#history_table {
+  /* Styled like #historyTable from guide */
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
+}
+
+#history_table th,
+#history_table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+#history_table th {
+  /* Header style from guide */
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Remove bottom border from last row */
+#history_table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Student Table Status Badges --- */
+.status-badge {
+  /* Replaces all inline styles for status */
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+.status-pending {
+  background-color: #f39c12; /* Orange (from guide) */
+  color: #fff;
+}
+.status-accepted {
+  background-color: #2ecc71; /* Green (from guide .status-processed) */
+}
+.status-declined {
+  background-color: #dc3545; /* Red (from your inline style) */
+}
+.status-other {
+  background-color: #6c757d; /* Gray (from your inline style) */
+}
+
+/* --- Responsive Layout (from guide) --- */
+@media (max-width: 768px) {
+  /* Make button full-width on desktop as well */
+  .OrangeButton {
+    width: auto;
+  }
+
+  /* Remove wrapper border on mobile, the cards will have them */
+  .gmc-table-wrapper {
     border: none;
-    border-radius: 5px;
-    width: 100px;
-}
-#info_table {
-    border-collapse: collapse;
-    width: 100%; 
-}
-#info_table th {
-    padding: 9.6px;
-    margin: 0; 
-    text-align: left;
-    color: #FF8000;
-}
-#info_table td{
-    padding: 9.6px;
-    margin: 0; 
-    text-align: left;
-}
-#info_table tr{
-    border-bottom: 1px solid #e2e2e2;
-}
-#info_table_head{
-    background-color: #f1f1f1;
-}
-#requestForm{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 50%;
-    padding: 9.6px;
-}
-#requestForm label{
-    width: max-content;
-}
-#requestForm select, input{
-    background-color: #DDDFEE;
+    box-shadow: none;
+    overflow: visible; /* Override for card view */
+  }
 
-    padding: 9.6px;
-    border: transparent;
-    border-radius: 10px;
-    box-sizing: border-box;
-    padding-left: 10px;
-    align-items: left;
-    color: black;
-    width: 200px;    background-color: #DDDFEE;
+  #history_table,
+  #history_table thead,
+  #history_table tbody,
+  #history_table th,
+  #history_table td,
+  #history_table tr {
+    display: block;
+    width: 100%;
+  }
 
-    padding: 9.6px;
-    border: transparent;
+  #history_table thead {
+    display: none; /* hide table headers */
+  }
+
+  #history_table tbody tr {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
     border-radius: 10px;
-    box-sizing: border-box;
-    padding-left: 10px;
-    align-items: left;
-    color: black;
-    width: 200px;
-}
-.hidden{
-    display: none !important;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Reset table borders for mobile cards */
+  #history_table tbody td {
+    position: relative;
+    padding-left: 50%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #2c2c2c;
+    min-height: 1.5em; /* Ensure cell has height */
+  }
+
+  #history_table tbody td::before {
+    content: attr(data-label); /* This reads from the data-label attribute */
+    position: absolute;
+    left: 16px;
+    top: 12px; /* Align with padding */
+    font-weight: 600;
+    color: #2c5282; /* Primary Blue */
+    white-space: nowrap;
+    width: calc(50% - 32px); /* 50% - (left padding + right padding) */
+  }
+
+  #history_table tbody td:last-child {
+    border-bottom: none;
+  }
+
+  /* Adjust padding on main card for mobile */
+  .form-container {
+    padding: 1.5rem;
+  }
 }

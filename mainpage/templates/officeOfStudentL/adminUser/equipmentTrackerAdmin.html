@@ -25,6 +25,7 @@
     {% if messages %}
       {% for message in messages %}
         {% if message.tags == "success" %}
+    <!-- prettier-ignore -->
     <div class="messages success-message" role="alert">{{ message }}</div>
     {% elif message.tags == "error" %}
     <div class="messages error-message" role="alert">{{ message }}</div>
@@ -106,45 +107,13 @@
         <a href="{% url 'addEquipment' %}" id="addbtn">ADD EQUIPMENT</a>
         <button class="saveBtn" type="submit">SAVE RECORD</button>
       </div>
-
-      <table class="equipmentTable">
-        <thead>
-          <tr>
-            <th>Item ID</th>
-            <th>Name of Borrower</th>
-            <th>Course/Program</th>
-            <th>Equipment Name</th>
-            <th>Date Borrowed</th>
-            <th>Status</th>
-            <th>Date Returned</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for record in borrowing_records %}
-          <tr>
-            <td>{{ record.equipment.itemId }}</td>
-            <!-- prettier-ignore -->
-            <td>{{ record.student.firstname }} {{ record.studentlastname }}</td>
-            <td>{{ record.student.degree }}</td>
-            <td>{{ record.equipment.equipmentName }}</td>
-            <td>{{ record.date_borrowed }}</td>
-            <td>
-              {% if record.is_returned %} Returned {% else %}
-              <button
-                type="button"
-                class="returnBtn"
-                data-record-id="{{ record.id }}"
-              >
-                Return
-              </button>
-              {% endif %}
-            </td>
-            <td>{{ record.date_returned|default:"---" }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
     </form>
+    <div class="button-container">
+      <!-- Make the button a clickable link by wrapping it in <a> -->
+      <a href="{% url 'equipmentborrowed' %}" class="saveBtn">
+        Students that Borrowed
+      </a>
+    </div>
   </div>
 </div>
 

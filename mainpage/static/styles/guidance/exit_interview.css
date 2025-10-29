@@ -1,208 +1,346 @@
-/* --- General Body & Font Styling --- */
+/* --- Global & Fonts --- */
 body {
-  background-color: #f8f9fa;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family: "Rubik", sans-serif;
+  background-color: #f4f7fa; /* Light page background */
   color: #333;
 }
 
-/* --- Consent Form Modal --- */
-.showform_container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-.form_container {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 550px;
-}
-.form_container h2 {
-  text-align: center;
-  color: #1a1a1a;
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-.form_container p.with-indent {
-  text-indent: 2em;
-  line-height: 1.6;
-  color: #444;
-  margin-bottom: 20px;
-}
-.form_container label {
-  font-weight: 500;
-  cursor: pointer;
-}
-.form_container input[type="checkbox"] {
-  margin-right: 8px;
-}
-.form_container .actionButton {
-  background-color: #ff8000;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: block;
-  margin: 20px auto 0;
-}
-.form_container .actionButton.disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-/* --- Page Title Section (from requestgmc.css) --- */
-.sub-title {
-  text-align: center;
-  padding: 40px 20px 20px 20px;
-}
-.sub-title h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #2b2b2b;
-}
-.sub-title p {
-  display: inline;
-  font-size: 14px;
-}
-.hometext {
-  color: #666;
-}
-.certxt {
-  margin-left: 5px;
-  color: #ff8000;
-  font-weight: 500;
-}
-
-/* --- Main Form Container (styled like .gmc-form) --- */
 .container {
-  max-width: 900px;
-  margin: 20px auto 40px auto;
-}
-.form-container {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  max-width: 960px;
+  margin: 2rem auto;
 }
 
-/* --- Form Content & Inputs --- */
-.questions h2 {
-  color: #1a1a1a;
-  font-size: 22px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e0e0e0;
+.hidden {
+  display: none !important;
 }
-.questions p {
-  line-height: 1.6;
-  color: #555;
-  margin-bottom: 20px;
+
+/* --- Main Form Card --- */
+.form-container {
+  /* Styled like .gmc-form from guide */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-top: 2rem;
 }
-.questions label {
+
+/* --- Generic Form Element Styles --- */
+.form-container label {
   display: block;
-  font-size: 16px;
-  font-weight: 500;
-  margin-top: 25px;
-  margin-bottom: 10px;
-  color: #333;
+  font-weight: 600;
+  color: #2c5282; /* Primary Blue */
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
 }
-.questions input[type="text"],
-.questions input[type="date"],
-.questions input[type="email"],
-.questions select,
-.questions textarea {
+
+/* Style all Django Form Inputs */
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="date"],
+.form-container input[type="time"],
+.form-container input[type="number"],
+.form-container select,
+.form-container textarea {
+  /* Styled like #comboBox from guide */
   width: 100%;
+  box-sizing: border-box; /* Include padding in width */
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
   padding: 10px 12px;
-  background: #f0f2f5;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 14px;
-  color: #333;
-  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.questions input:focus,
-.questions select:focus,
-.questions textarea:focus {
+
+.form-container textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-container input:focus,
+.form-container select:focus,
+.form-container textarea:focus {
+  /* Focus style from guide */
   outline: none;
-  border-color: #ff8000;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
   background-color: #fff;
 }
-.twocolumn {
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+
+/* --- Form Structure & Sections --- */
+.questions h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
 }
 
-/* --- Ranking Table (styled like requestgmc.css) --- */
-#info_table2 table {
+.questions p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.twocolumn {
+  margin-bottom: 1.5rem; /* Simple stack layout */
+}
+
+/* Layout for date and time pickers */
+#datetimepicker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#datetimepicker label {
+  grid-column: 1 / -1; /* Label spans both columns */
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* --- Student Info Table (#info_table) --- */
+/* Wrapper for border-radius */
+.gmc-table-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden; /* Clips the table corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#info_table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
-  margin-top: 15px;
 }
-#info_table2 th,
-#info_table2 td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-}
-#info_table2 th {
-  background-color: #f7f7f7;
-  color: #ff8000;
-  font-weight: 600;
+
+#info_table th,
+#info_table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
   text-align: left;
+  font-size: 14px;
 }
-#info_table2 td {
-  color: #444;
+
+#info_table th {
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-#info_table2 .smallarea {
-  width: 70%;
+
+#info_table tbody tr:last-child td {
+  border-bottom: none;
 }
-#info_table2 input[type="number"] {
-  width: 100px;
-  padding: 8px;
+
+/* --- Ranking Table (#info_table2) --- */
+/* This div acts as the scrollable wrapper */
+div#info_table2 {
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
+}
+
+div#info_table2 > label {
+  /* Style for the instruction label */
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  padding: 1rem;
+  display: block;
+  font-weight: 500;
+  margin: 0;
+}
+
+table.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* Force scroll on small screens */
+}
+
+table.table th,
+table.table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+table.table th {
+  background-color: #f9f9f9;
+  color: #2c5282;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+table.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Set width for the first column */
+th.smallarea,
+td.smallarea {
+  width: 40%;
+  font-weight: 500;
+}
+
+/* Style for number inputs in the table */
+table.table input[type="number"] {
+  /* Styled like .ornum-input from guide */
   border: 1px solid #ccc;
-  border-radius: 6px;
+  width: 120px;
+  height: 35px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-#info_table2 input[type="number"]:focus {
+
+table.table input[type="number"]:focus {
   outline: none;
-  border-color: #ff8000;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
 }
 
 /* --- Submit Button --- */
 .OrangeButton {
-  background-color: #ff8000;
+  /* Styled like .requestBtn from guide */
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* Primary Blue */
   color: white;
-  border: none;
-  padding: 12px 30px;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
+  padding: 10px 24px;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: block;
-  margin: 30px auto 0;
-}
-.OrangeButton:hover {
-  background-color: #e67300;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+  margin-top: 2.5rem;
 }
 
-/* --- Responsive Design --- */
+.OrangeButton:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Responsive --- */
 @media (max-width: 768px) {
-  .form-container,
-  .form_container {
-    padding: 20px;
+  .form-container {
+    padding: 1.5rem;
   }
+
+  /* Stack date and time on mobile */
+  #datetimepicker {
+    grid-template-columns: 1fr;
+  }
+
+  /* --- Responsive Card View for #info_table --- */
+  .gmc-table-wrapper {
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  #info_table,
+  #info_table thead,
+  #info_table tbody,
+  #info_table th,
+  #info_table td,
+  #info_table tr {
+    display: block;
+    width: 100%;
+  }
+
+  #info_table thead {
+    display: none; /* hide table headers */
+  }
+
+  #info_table tbody tr {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  #info_table tbody td {
+    position: relative;
+    padding-left: 50%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+  }
+
+  #info_table tbody td::before {
+    content: attr(data-label); /* Reads from data-label attribute */
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    font-weight: 600;
+    color: #2c5282; /* Primary Blue */
+    white-space: nowrap;
+  }
+
+  #info_table tbody td:last-child {
+    border-bottom: none;
+  }
+}
+/* --- Alert Box (for Pending Request) --- */
+.alert {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem; /* Match the form-container margin */
+  margin-bottom: 1.5rem;
+  border: 1px solid transparent;
+}
+
+.alert-warning {
+  /* This is styled like .pending-request-box from the guide */
+  background-color: #ebf8ff; /* Light blue */
+  border: 1px solid #bee3f8; /* Lighter blue border */
+  border-left: 5px solid #2c5282; /* Accent border */
+}
+
+.alert-warning .alert-heading {
+  /* h4 */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2b6cb0; /* Darker blue text */
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.alert-warning p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.alert-warning hr {
+  margin: 1.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #bee3f8; /* Lighter border color */
+}
+
+.alert-warning p.mb-0 {
+  margin-bottom: 0;
 }

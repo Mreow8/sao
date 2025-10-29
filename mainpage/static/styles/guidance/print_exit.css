@@ -1,0 +1,317 @@
+/* ======================================================
+   Base & Page Layout
+   ====================================================== */
+body {
+  background-color: #f0f0f0; /* Light gray background to make the "paper" stand out */
+  font-family: "Times New Roman", Times, serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+.certificate {
+  width: 850px; /* Standard paper-like width */
+  min-height: 1100px;
+  margin: 30px auto; /* Center the paper on the page */
+  background: #ffffff;
+  border: 1px solid #d0d0d0;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  padding: 50px 60px; /* Generous padding like a document margin */
+  box-sizing: border-box; /* Include padding in the width/height */
+  position: relative;
+}
+
+/* ======================================================
+   Certificate Header (Letterhead)
+   ====================================================== */
+.upper-contents {
+  position: relative; /* Needed for positioning the logos */
+  text-align: center;
+  padding-bottom: 10px;
+  margin-left: 0; /* Override inline style */
+}
+
+.logo1-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.logo2-container {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.logo1,
+.logo2 {
+  width: 80px;
+  height: auto;
+}
+
+.upper-contents .content1 {
+  font-size: 11pt;
+}
+.upper-contents .content2 {
+  font-size: 14pt;
+  font-weight: bold;
+  color: #000;
+}
+.upper-contents .content3 {
+  font-size: 12pt;
+  font-weight: bold;
+}
+.upper-contents .content4 {
+  font-size: 10pt;
+  margin: 2px 0;
+}
+
+.upper-contents .line {
+  border-bottom: 2px solid #000;
+  margin-top: 15px;
+}
+
+/* ======================================================
+   Form Title & Student Info
+   ====================================================== */
+.page-container {
+  padding-top: 20px;
+}
+
+.page-container hr {
+  border: none;
+  border-top: 1px solid #888;
+}
+/* Sets the default font for the entire page */
+body {
+  font-family: "Times New Roman", Times, serif;
+  line-height: 1.6;
+}
+
+/* Letterhead text */
+.upper-contents .content1 {
+  font-size: 11pt;
+}
+.upper-contents .content2 {
+  font-size: 14pt;
+  font-weight: bold;
+  color: #000;
+}
+.upper-contents .content3 {
+  font-size: 12pt;
+  font-weight: bold;
+}
+.upper-contents .content4 {
+  font-size: 10pt;
+}
+
+/* "EXIT INTERVIEW" title */
+.title h4 {
+  text-align: center;
+  font-size: 16pt;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.title h4 {
+  text-align: center;
+  font-size: 16pt;
+  font-weight: bold;
+  margin: 15px 0;
+  text-transform: uppercase;
+}
+
+.title_table {
+  width: 100%;
+  margin-bottom: 20px;
+  font-size: 11pt;
+}
+
+.title_table td {
+  padding: 4px 0;
+  width: 50%;
+}
+
+/* This styles the dynamic data to look "filled in" */
+.title_table label {
+  font-weight: normal;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+/* ======================================================
+   Main Q&A Content
+   ====================================================== */
+.content {
+  font-size: 11pt;
+}
+
+.content strong {
+  display: block; /* Makes each question start on a new line */
+  margin-top: 18px;
+  margin-bottom: 5px;
+}
+
+.content p {
+  margin: 5px 0 5px 20px; /* Indents the "If yes..." prompts */
+}
+
+/* Styles for the text answers */
+.answer-long-text,
+.answer-mid-text,
+.answer-short-text {
+  display: block;
+  width: 100%;
+  min-height: 20px;
+  border-bottom: 1px solid #aaa;
+  padding: 4px 2px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Styles for "YES/NO" labels */
+.content strong label {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12pt;
+  margin: 0 5px;
+  font-weight: bold;
+}
+
+/* Styles for the satisfaction rating "checkboxes" */
+.check-box-container {
+  margin: 10px 0 15px 0;
+}
+
+.check-box-container label {
+  display: inline-block;
+  margin-right: 15px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11pt;
+}
+
+/* ======================================================
+   Checklist Table
+   ====================================================== */
+.content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-left: 0 !important; /* Override inline style */
+  margin-top: 10px;
+}
+
+.content table .custom-table-cell,
+.content table .table-cell-197pt,
+.content table td {
+  border: 1px solid #000;
+  padding: 6px 8px;
+  vertical-align: top;
+  font-size: 10pt;
+}
+
+/* Give the answer/check cell a specific width and center it */
+.content table .custom-table-cell:last-child,
+.content table .table-cell-197pt {
+  width: 80px;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+.content table p.s6 {
+  margin: 0;
+  padding: 0;
+}
+
+/* Specific fix for the "Intended Major" row */
+p#intendedMajor {
+  padding-left: 20px;
+  font-style: italic;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+  min-height: 1.2em;
+  border-bottom: 1px solid #aaa;
+}
+
+/* Hide the empty cell placeholder */
+p#table_data4 {
+  display: none;
+}
+
+/* ======================================================
+   Footer & Print Button
+   ====================================================== */
+.footerImg {
+  display: block;
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  margin: 40px auto 0 auto;
+}
+
+.print {
+  position: fixed; /* Floats on the screen */
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+}
+
+.print button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.print button:hover {
+  background-color: #0056b3;
+}
+
+/* ======================================================
+   Print-Specific Styles
+   ====================================================== */
+@media print {
+  body {
+    background-color: #fff; /* Print on white */
+    margin: 0;
+    padding: 0;
+  }
+
+  .certificate {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none; /* No shadow when printing */
+    min-height: 0;
+  }
+
+  .print {
+    display: none; /* Hide the print button */
+  }
+
+  /* Ensure pages break cleanly */
+  .page-container {
+    page-break-after: always;
+  }
+  .page-container:last-child {
+    page-break-after: auto;
+  }
+
+  .additionalpadding {
+    padding-top: 0; /* Reset padding for subsequent pages */
+  }
+
+  .footerImg {
+    page-break-inside: avoid;
+  }
+}

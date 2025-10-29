@@ -31,7 +31,7 @@ from ..models import CommunityServiceTracker
 @admin.register(CommunityServiceTracker)
 class CommunityServiceTrackerAdmin(admin.ModelAdmin):
     list_display = [
-        'case', 'service_date', 'time_in', 'time_out', 'student_signature', 'remarks', 'total_hours_decimal'
+        'case', 'service_date', 'time_in', 'time_out', 'remarks', 'total_hours_decimal'
     ]
     list_filter = ['service_date', 'case']
 

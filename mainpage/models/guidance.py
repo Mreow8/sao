@@ -24,6 +24,17 @@ class studentInfo(models.Model):
     extension = models.CharField(max_length=10, default='N/A')
     birthday = models.DateField(blank=True, null=True)
     zip_code = models.CharField(max_length=10, default='N/A')
+    STATUS_CHOICES = [
+        ('Enrolled', 'Enrolled'),
+        ('Graduated', 'Graduated'),
+        ('Dropped', 'Dropped'),
+        ('Transferred', 'Transferred'),
+    ]
+    student_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='Enrolled'  # This is important!
+    )
         
     def __str__(self):
         return f"{self.studID}"
@@ -147,7 +158,7 @@ class OjtAssessment(models.Model):
         ('Expired' , 'Expired')
     ]
     status = models.CharField(max_length=10, choices=approval_status, default='Pending')
-    dateAccepted = models.DateField()
+    dateAccepted = models.DateField(null=True, blank=True)
     emailadd = models.EmailField()
 
 class counseling_schedule(models.Model):
@@ -175,14 +186,15 @@ class counseling_schedule(models.Model):
         ('Expired' , 'Expired')
     ]
     status = models.CharField(max_length=10, choices=approval_status, default='Pending')
-
+from django.core.validators import RegexValidator
 class IndividualProfileBasicInfo(models.Model):
+    level_choices = [(1, '1st Year'), (2, '2nd Year'), (3, '3rd Year'), (4, '4th Year'), (5, '5th Year')]
     individualProfileID = models.AutoField(primary_key=True)
     studentId = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
     studentPhoto = models.FileField(upload_to='media/studentPhoto')
     
     nickName = models.CharField(max_length=255)
-    yearlvl = models.IntegerField()
+    yearlvl = models.IntegerField(choices=level_choices)
     section = models.CharField(max_length=255)
     major = models.CharField(max_length=255)
     dateFilled = models.DateField()
@@ -231,7 +243,18 @@ class IndividualProfileBasicInfo(models.Model):
     currentAddress = models.CharField(max_length=255)
     permanentAddress = models.CharField(max_length=255)
     landlineNo = models.CharField(max_length=255)
-    mobileNo = models.CharField(max_length=255)
+    phone_regex = RegexValidator(
+        regex=r'^(09|\+639)\d{9}$', 
+        message="Enter a valid Philippine mobile number (e.g., 09171234567 or +639171234567)."
+    )
+    
+    # 2. Apply the validator to your field
+    mobileNo = models.CharField(
+        validators=[phone_regex], 
+        max_length=13,  # Set a reasonable max length (11 for 09xx, 13 for +639xx)
+        blank=True,     # Optional: Allow the field to be empty
+        null=True       # Optional: Allow the field to be null in the database
+    )
     email = models.EmailField()
     languagesDialectsSpokenAtHome = models.CharField(max_length=255)
     languagesDialectsMostFluentIn = models.CharField(max_length=255)

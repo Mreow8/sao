@@ -1,233 +1,184 @@
-/* --- General Body & Font Styling --- */
-body {
-  background-color: #f8f9fa;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
-  color: #333;
-}
-
-/* --- Page Title Section --- */
-.sub-title {
-  text-align: center;
-  padding: 40px 20px 20px 20px;
-}
-.sub-title h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #2b2b2b;
-}
-.sub-title p {
-  display: inline;
-  font-size: 14px;
-}
-.hometext {
-  color: #666;
-}
-.certxt {
-  margin-left: 5px;
-  color: #ff8000;
-  font-weight: 500;
-}
-
-/* --- Main Content Container (styled like .gmc-form) --- */
+/* --- Global & Fonts --- */
 .container {
-  max-width: 1200px;
-  margin: 20px auto 40px auto;
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  font-family: "Rubik", sans-serif;
 }
 
-/* --- Form Styling --- */
-form {
-  margin-bottom: 30px;
-  padding-bottom: 30px;
-  border-bottom: 1px solid #e0e0e0;
+/* --- Main Content Card --- */
+.container {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 900px; /* Good width for a form */
+  margin-left: auto;
+  margin-right: auto;
 }
+
+/* --- Form Layout --- */
 form > div {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
 }
+
+/* --- Form Labels --- */
 form label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #333;
+  margin-bottom: 0.5rem;
 }
-input[type="text"],
-input[type="number"],
-input[type="date"],
-select,
-textarea {
-  width: 100%;
+
+/* --- Standard Form Inputs --- */
+form input[type="text"],
+form input[type="date"],
+form input[type="number"],
+form select,
+form textarea {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
   padding: 10px 12px;
-  background: #f0f2f5;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-input[type="file"] {
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
   width: 100%;
-  padding: 8px; /* Slightly less padding for file input */
-  background: #f0f2f5;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
+  box-sizing: border-box; /* Important for padding */
 }
-input:focus,
-select:focus,
-textarea:focus {
+
+/* --- Textarea Specific --- */
+form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* --- Input Focus State --- */
+form input[type="text"]:focus,
+form input[type="date"]:focus,
+form input[type="number"]:focus,
+form select:focus,
+form textarea:focus {
   outline: none;
-  border-color: #ff8000;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
   background-color: #fff;
 }
-textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-input[readonly] {
-  background-color: #e9ecef;
+
+/* --- Readonly Input --- */
+form input[readonly] {
+  background-color: #e9ecef; /* Gray background */
+  color: #495057;
   cursor: not-allowed;
 }
+
+/* --- Student Details Info Box --- */
 #student_details {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #f8f9fa;
-  border: 1px dashed #ced4da;
+  background-color: #ebf8ff; /* Light blue */
+  border: 1px solid #bee3f8;
+  border-left: 5px solid #2c5282; /* Accent border */
   border-radius: 8px;
-  font-size: 14px;
+  padding: 1rem;
+  margin-top: -0.5rem; /* Pulls it closer to search */
 }
+
 #student_details.hidden {
   display: none;
 }
+
 #student_details p {
-  margin-bottom: 5px;
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+#student_details p strong {
+  color: #2c5282;
+  font-weight: 600;
 }
 
-/* Submit Button */
-form button[type="submit"] {
-  background-color: #ff8000;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  font-size: 14px;
-  font-weight: 600;
+/* --- Dynamic Fields (Custom, Hours, etc.) --- */
+/* Add margin when they appear */
+#custom_offense,
+#community_service_hours,
+#suspension_duration,
+#custom_action {
+  margin-top: 0.75rem;
+}
+
+/* --- File Input --- */
+form input[type="file"] {
+  font-size: 0.9rem;
+  padding: 8px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
   border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-form button[type="submit"]:hover {
-  background-color: #e67300;
+  width: 100%;
 }
 
-/* --- Table Styling (from requestgmc.css) --- */
-.table-responsive {
-  overflow-x: auto;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-th,
-td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  text-align: left;
-  vertical-align: middle;
-}
-thead th {
-  background-color: #f7f7f7;
-  color: #ff8000; /* Orange accent */
+form input[type="file"]::file-selector-button {
+  font-family: "Rubik", sans-serif;
   font-weight: 600;
-  white-space: nowrap;
-}
-tbody tr:hover {
-  background-color: #f8f9fa;
-}
-td a {
-  color: #007bff;
-  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #718096; /* Gray */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
   margin-right: 10px;
 }
-td a:hover {
-  text-decoration: underline;
+
+form input[type="file"]::file-selector-button:hover {
+  background-color: #4a5568;
 }
 
-/* Status Badges */
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
+/* --- Buttons --- */
+/* Submit Button */
+form button[type="submit"] {
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* Primary Blue */
   color: white;
-}
-.status-pending {
-  background-color: #ffc107;
-  color: #212529;
-}
-.status-resolved {
-  background-color: #28a745;
-}
-.status-default {
-  background-color: #6c757d;
-}
-
-/* --- Edit Modal Styling --- */
-#editModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: none; /* Hidden by default, shown by JS */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-.modal-box {
-  background: #ffffff;
-  padding: 30px 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-.modal-box h2 {
-  font-size: 22px;
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 20px;
-  text-align: center;
-}
-.modal-box button {
-  /* Style for buttons inside modal */
-  background-color: #6c757d;
-  color: white;
+  padding: 10px 24px;
   border: none;
-  padding: 8px 16px;
-  font-size: 14px;
   border-radius: 8px;
   cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+  float: right; /* Aligns to the right */
 }
-#editFormFields label {
-  margin-top: 15px;
-} /* Space out fields in modal */
-#editModal.hidden {
-  display: none;
-} /* Ensure hidden class works */
 
-/* SweetAlert overrides (Optional, if needed for consistency) */
-.swal2-select,
-.swal2-input {
-  border-radius: 8px !important;
-  border: 1px solid #ccc !important;
+form button[type="submit"]:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
 }
-.swal2-confirm {
-  background-color: #ff8000 !important;
+
+/* View Case List Link (Overrides inline styles) */
+form > a {
+  display: inline-block !important;
+  font-family: "Rubik", sans-serif !important;
+  background-color: #4a5568 !important; /* Gray */
+  color: white !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  padding: 10px 24px !important;
   border-radius: 8px !important;
+  text-decoration: none !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s;
+  width: fit-content;
+  margin-top: 1.5rem;
+}
+
+form > a:hover {
+  background-color: #2d3748 !important; /* Darker Gray */
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
 }

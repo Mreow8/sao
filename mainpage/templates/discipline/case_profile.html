@@ -1,6 +1,4 @@
 {% extends base_template|default:"main.html" %}
-<!-- prettier-ignore -->
-
 {% block title %}Case Profile{% endblock %}
 {% load widget_tweaks %}
 {% load static %}
@@ -8,384 +6,228 @@
 {% block bodycontent %}
 
 <link
-  rel="stylesheet"
-  href="{% static 'styles/discipline/case_profile.css' %}"
+    rel="stylesheet"
+    href="{% static 'styles/discipline/case_profile.css' %}"
 />
 <style></style>
 <div class="sub-title">
-  <h3>STUDENT DISCIPLINE</h3>
-  <p class="hometext">Home</p>
-  <p class="certxt">&gt; Student Case Profile</p>
+    <h3>STUDENT DISCIPLINE</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt; Student Case Profile</p>
 </div>
 <div class="container">
-  <!-- prettier-ignore -->
+    {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <input
+                type="text"
+                name="student"
+                id="id_student"
+                list="student-options"
+                placeholder="Enter Student ID"
+            />
+            <datalist id="student-options">
+                {% for student in students %}
+                <option value="{{ student.studID }}">
+                    {{ student.firstname }} {{ student.lastname }}
+                </option>
+                {% endfor %}
+            </datalist>
+        </div>
+        <div id="student_details" class="hidden">
+            <p><strong>Name:</strong> <span id="student_name"></span></p>
+            <p><strong>Course:</strong> <span id="student_course"></span></p>
+            <p><strong>Year:</strong> <span id="student_year"></span></p>
+        </div>
 
-  {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div>
-      <input
-        type="text"
-        name="student"
-        id="id_student"
-        list="student-options"
-        placeholder="Enter Student ID"
-      />
-      <datalist id="student-options">
-        <!-- prettier-ignore -->
-
-        {% for student in students %}
-        <option value="{{ student.studID }}">
-          {{ student.firstname }} {{ student.lastname }}
-        </option>
-        {% endfor %}
-      </datalist>
-    </div>
-    <div id="student_details" class="hidden">
-      <p><strong>Name:</strong> <span id="student_name"></span></p>
-      <p><strong>Course:</strong> <span id="student_course"></span></p>
-      <p><strong>Year:</strong> <span id="student_year"></span></p>
-    </div>
-
-    <div>
-      <label>Date Reported</label>
-      {{ form.date_reported }}
-    </div>
-
-    <div>
-      <label>Offense Type</label>
-      <select id="id_offense_type" name="offense_type">
-        <option value="">Select Offense</option>
-        <option value="Cheating">Cheating</option>
-        <option value="Bullying">Bullying</option>
-        <option value="Others">Others</option>
-      </select>
-      <input
-        type="text"
-        id="other_offense"
-        name="other_offense"
-        placeholder="Specify offense"
-        style="display: none"
-      />
-    </div>
-
-    <div>
-      <label>Description</label>
-      <textarea id="id_description" name="description" rows="3"></textarea>
-    </div>
-
-    <div>
-      <label>Reported By</label>
-      <input
-        type="text"
-        id="id_reported_by"
-        name="reported_by"
-        value="{{ user.username }}"
-        readonly
-      />
-    </div>
-
-    <div>
-      <label>Action Taken</label>
-      <select id="id_action_taken" name="action_taken">
-        <option value="">Select Action</option>
-        <option value="Community Service">Community Service</option>
-        <option value="Suspension">Suspension</option>
-        <option value="Counseling">Counseling</option>
-      </select>
-      <input
-        type="number"
-        id="community_service_hours"
-        name="community_service_hours"
-        placeholder="Number of Hours"
-        style="display: none"
-      />
-      <input
-        type="text"
-        id="suspension_duration"
-        name="suspension_duration"
-        placeholder="Number of Days/Semester"
-        style="display: none"
-      />
-    </div>
-
-    <div>
-      <label>Status</label>
-      <select id="id_status" name="status">
-        <option value="Pending">Pending</option>
-        <option value="Resolved">Resolved</option>
-      </select>
-    </div>
-
-    <div>
-      <label>Attachment (optional)</label>
-      <input type="file" name="evidence" />
-    </div>
-
-    <div style="text-align: right">
-      <button type="submit" class="bg-gray-600">Submit</button>
-    </div>
-  </form>
-  {% endif %}
-
-  <div style="overflow-x: auto">
-    <table>
-      <thead>
-        <tr>
-          <th>Student</th>
-          <th>Offense</th>
-          <th>Date</th>
-          <th>Status</th>
-          <th>Action Taken</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for case in case_list %}
-        <tr>
-          <td>{{ case.student.firstname }} {{ case.student.lastname }}</td>
-          <td>{{ case.offense_type }}</td>
-          <td>{{ case.date_reported }}</td>
-          <td>
-            <span
-              class="status-badge {% if case.status == 'Pending' %}status-pending{% elif case.status == 'Resolved' %}status-resolved{% else %}status-default{% endif %}"
-            >
-              {{ case.status }}
-            </span>
-          </td>
-          <td>
-            <!-- prettier-ignore -->
-
-            {% if user.is_authenticated %} {% if user.role == 'superadmin' or  user.role == 'guard' %} {% if case.action_taken == 'Counseling' %}
-            <a href="{% url 'counseling_form' case.id %}"
-              >{{ case.action_taken }}</a
-            >
-            {% elif case.action_taken == 'Suspension' %}
-            <a
-              href="#"
-              class="suspensionBtn"
-              data-id="{{ case.id }}"
-              data-duration="{{ case.suspension_duration }}"
-            >
-              Suspension
-            </a>
-            {% else %}
-            <a href="{% url 'student_hours' case.id %}"
-              >{{ case.action_taken }}</a
-            >
-            {% endif %}
-            <a
-              href="#"
-              class="editBtn"
-              data-id="{{ case.id }}"
-              style="color: rgb(71, 255, 47)"
-              >Edit</a
-            >
-            <a
-              href="#"
-              class="deleteBtn"
-              data-id="{{ case.id }}"
-              style="color: red"
-              >Delete</a
-            >
-            {% else %} {{ case.action_taken }} {% endif %} {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div id="editModal">
-  <div class="modal-box">
-    <h2>Edit Case</h2>
-    <div style="text-align: right">
-      <button type="button" id="closeEdit" class="bg-gray-400">Cancel</button>
-    </div>
-    <form id="editForm" method="post">
-      {% csrf_token %}
-      <div id="editFormFields"></div>
-    </form>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const editModal = document.getElementById("editModal");
-    const editForm = document.getElementById("editForm");
-    const editFormFields = document.getElementById("editFormFields");
-
-    document.querySelectorAll(".editBtn").forEach((btn) => {
-      btn.addEventListener("click", function (e) {
-        e.preventDefault();
-        const caseId = this.dataset.id;
-
-        fetch(`/main/cases/edit/${caseId}/`)
-          .then((res) => res.text())
-          .then((html) => {
-            editFormFields.innerHTML = html;
-            editForm.action = `/main/cases/edit/${caseId}/`;
-            editModal.style.display = "flex";
-          })
-          .catch((err) => console.error("Error loading edit form:", err));
-      });
-    });
-
-    document.getElementById("closeEdit").addEventListener("click", () => {
-      editModal.classList.add("hidden");
-    });
-  });
-
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".suspensionBtn").forEach((btn) => {
-      btn.addEventListener("click", function () {
-        const caseId = this.dataset.id;
-        const currentDuration = this.dataset.duration || "";
-
-        Swal.fire({
-          title: "Set Suspension Duration",
-          html: `
-            <select id="suspensionType" class="swal2-select">
-              <option value="days">Days</option>
-              <option value="semester">Semester</option>
+        <div>
+            <label>Date Reported</label>
+            {{ form.date_reported }}
+        </div>
+        
+        <div>
+            <label>Offense Number</label>
+            <select id="id_offense_number" name="offense_number">
+                <option value="1st">1st Offense</option>
+                <option value="2nd">2nd Offense</option>
+                <option value="3rd">3rd Offense</option>
+                <option value="4th">4th Offense</option>
+                <option value="5th">5th Offense</option>
+                <option value="Subsequent">Subsequent Offense</option>
             </select>
-            <input type="number" id="suspensionValue" 
-                   class="swal2-input" 
-                   placeholder="Enter value" 
-                   value="${currentDuration}">
-          `,
-          confirmButtonText: "Save",
-          showCancelButton: true,
-          preConfirm: () => {
-            const type = document.getElementById("suspensionType").value;
-            const value = document.getElementById("suspensionValue").value;
-            if (!value) {
-              Swal.showValidationMessage("Please enter a value");
-              return false;
+        </div>
+
+        <div>
+            <label>Offense Type</label>
+            <select id="id_offense_type" name="offense_type">
+                <option value="">Select Offense</option>
+                {% for value, label in form.offense_type.field.choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <input
+                type="text"
+                id="custom_offense"
+                name="custom_offense"
+                placeholder="Specify custom offense"
+                style="display: none"
+            />
+        </div>
+
+        <div>
+            <label>Description</label>
+            <textarea id="id_description" name="description" rows="3"></textarea>
+        </div>
+
+        <div>
+            <label>Reported By</label>
+            <input
+                type="text"
+                id="id_reported_by"
+                name="reported_by"
+                value="{{ user.username }}"
+                readonly
+            />
+        </div>
+
+        <div>
+            <label>Action Taken</label>
+            <select id="id_action_taken" name="action_taken">
+                <option value="">Select Action</option>
+                {% for value, label in form.action_taken.field.choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <input
+                type="number"
+                id="community_service_hours"
+                name="community_service_hours"
+                placeholder="Number of Hours"
+                style="display: none"
+            />
+            <input
+                type="text"
+                id="suspension_duration"
+                name="suspension_duration"
+                placeholder="Number of Days/Semester"
+                style="display: none"
+            />
+            <input
+                type="text"
+                id="custom_action"
+                name="custom_action"
+                placeholder="Specify custom action"
+                style="display: none"
+            />
+        </div>
+
+        <div>
+            <label>Status</label>
+            <select id="id_status" name="status">
+                <option value="Pending">Pending</option>
+                <option value="Resolved">Resolved</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Attachment (optional)</label>
+            <input type="file" name="evidence" />
+        </div>
+
+        <div style="text-align: right">
+            <button type="submit" class="bg-gray-600">Submit</button>
+        </div>
+          <a href="{% url 'case_list' %}" 
+   style="display: inline-block; padding: 8px 16px; background-color: #4A5568; color: white; text-decoration: none; border-radius: 5px; font-weight: 600;">
+    View Case List
+</a>
+    </form>
+
+    {% endif %}
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to handle dynamic field display for this form
+        function initializeDynamicFields() {
+            // Offense Type Logic (Custom Offense)
+            const offenseTypeSelect = document.getElementById("id_offense_type");
+            const customOffenseInput = document.getElementById("custom_offense");
+
+            function toggleCustomOffense() {
+                if (offenseTypeSelect && customOffenseInput) {
+                    customOffenseInput.style.display = offenseTypeSelect.value === "Others" ? "block" : "none";
+                }
             }
-            return { type, value };
-          },
-        }).then((result) => {
-          if (result.isConfirmed) {
-            fetch(`/main/update-suspension/${caseId}/`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}",
-              },
-              body: JSON.stringify(result.value),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                Swal.fire(
-                  "Updated!",
-                  "Suspension updated successfully",
-                  "success"
-                ).then(() => location.reload());
-              })
-              .catch((err) =>
-                Swal.fire("Error", "Something went wrong", "error")
-              );
-          }
-        });
-      });
-    });
 
-    // Toggle Offense "Others"
-    document
-      .getElementById("id_offense_type")
-      .addEventListener("change", function () {
-        const otherOffense = document.getElementById("other_offense");
-        if (this.value === "Others") {
-          otherOffense.style.display = "block";
-        } else {
-          otherOffense.style.display = "none";
-        }
-      });
-
-    document
-      .getElementById("id_action_taken")
-      .addEventListener("change", function () {
-        const communityHours = document.getElementById(
-          "community_service_hours"
-        );
-        const suspensionDuration = document.getElementById(
-          "suspension_duration"
-        );
-
-        communityHours.style.display =
-          this.value === "Community Service" ? "block" : "none";
-        suspensionDuration.style.display =
-          this.value === "Suspension" ? "block" : "none";
-      });
-
-    // Student Search AJAX
-    const studentInput = document.getElementById("id_student");
-    const studentDetails = document.getElementById("student_details");
-
-    function fetchStudentDetails(studentID) {
-      if (!studentID) {
-        studentDetails.classList.add("hidden");
-        return;
-      }
-      fetch(`/main/get-student/${studentID}/`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.found) {
-            document.getElementById("student_name").textContent = data.name;
-            document.getElementById("student_course").textContent = data.course;
-            document.getElementById("student_year").textContent = data.year;
-            studentDetails.classList.remove("hidden");
-          } else {
-            studentDetails.classList.add("hidden");
-          }
-        });
-    }
-
-    studentInput.addEventListener("input", function () {
-      fetchStudentDetails(this.value.trim());
-    });
-    studentInput.addEventListener("change", function () {
-      fetchStudentDetails(this.value.trim());
-    });
-  });
-  document.querySelectorAll(".deleteBtn").forEach((btn) => {
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      const caseId = this.dataset.id;
-
-      Swal.fire({
-        title: "Are you sure?",
-        text: "This action cannot be undone.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          fetch(`/main/cases/delete/${caseId}/`, {
-            method: "POST",
-            headers: {
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-          }).then((res) => {
-            if (res.ok) {
-              Swal.fire(
-                "Deleted!",
-                "The case has been deleted.",
-                "success"
-              ).then(() => location.reload());
-            } else {
-              Swal.fire("Error", "Could not delete case.", "error");
+            if (offenseTypeSelect) {
+                offenseTypeSelect.addEventListener("change", toggleCustomOffense);
+                toggleCustomOffense(); // Run on load
             }
-          });
+            
+            // Action Taken Logic (Community Service, Suspension, Custom Action)
+            const actionTakenSelect = document.getElementById("id_action_taken");
+            const communityHoursInput = document.getElementById("community_service_hours");
+            const suspensionDurationInput = document.getElementById("suspension_duration");
+            const customActionInput = document.getElementById("custom_action");
+            
+            function toggleActionFields() {
+                const value = actionTakenSelect ? actionTakenSelect.value : '';
+
+                if (communityHoursInput) communityHoursInput.style.display = "none";
+                if (suspensionDurationInput) suspensionDurationInput.style.display = "none";
+                if (customActionInput) customActionInput.style.display = "none";
+
+                if (value === "Community Service" && communityHoursInput) {
+                    communityHoursInput.style.display = "block";
+                } else if (value === "Suspension" && suspensionDurationInput) {
+                    suspensionDurationInput.style.display = "block";
+                } else if (value === "Others" && customActionInput) {
+                    customActionInput.style.display = "block";
+                }
+            }
+            
+            if (actionTakenSelect) {
+                actionTakenSelect.addEventListener("change", toggleActionFields);
+                toggleActionFields(); // Run on load
+            }
         }
-      });
+        
+        // Initialize dynamic fields for the main form
+        initializeDynamicFields();
+
+        // Student Search AJAX
+        const studentInput = document.getElementById("id_student");
+        const studentDetails = document.getElementById("student_details");
+
+        function fetchStudentDetails(studentID) {
+            if (!studentID) {
+                studentDetails.classList.add("hidden");
+                return;
+            }
+            fetch(`/discipline/get-student/${studentID}/`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.found) {
+                        document.getElementById("student_name").textContent = data.name;
+                        document.getElementById("student_course").textContent = data.course;
+                        document.getElementById("student_year").textContent = data.year;
+                        studentDetails.classList.remove("hidden");
+                    } else {
+                        studentDetails.classList.add("hidden");
+                    }
+                });
+        }
+
+        studentInput.addEventListener("input", function () {
+            fetchStudentDetails(this.value.trim());
+        });
+        studentInput.addEventListener("change", function () {
+            fetchStudentDetails(this.value.trim());
+        });
+        
     });
-  });
 </script>
 {% endblock %}

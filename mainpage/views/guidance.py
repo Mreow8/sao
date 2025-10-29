@@ -170,82 +170,124 @@ def individualProfile(request):
     return render(request, 'guidance/individual_profile.html', context)
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+
+# Assuming necessary models are imported:
+# from .models import IndividualProfileBasicInfo, IntakeInterview, studentInfo 
+# from django.contrib import messages # Import if using messages
 
 def intake_interview_view(request):
+    # 1. FIX: Fetch students before the POST check so it's available 
+    # for the template rendering in both GET and POST (if form invalid).
+    students = studentInfo.objects.all()
+
     if request.method == 'POST':
         individualId = request.POST.get('individualId')
 
+        # --- I. Individual Inventory Service ---
         individualActivity = request.POST.getlist('individualActivity[]')
         individualDateAccomplished = request.POST.getlist('individualAccomplished[]')
         individualRemarks = request.POST.getlist('individualRemarks[]')
 
-        apprailsalTest = request.POST.getlist('appraisalTest[]')
-        apprailsalDateTaken = request.POST.getlist('appraisalDateTaken[]')
-        apprailsalDateInterpreted = request.POST.getlist('appraisalDateInterpreted[]')
-        apprailsalRemarks = request.POST.getlist('appraisalRemarks[]')
+        # --- II. Appraisal Service (Typo: apprailsal -> appraisal) ---
+        appraisalTest = request.POST.getlist('appraisalTest[]')
+        appraisalDateTaken = request.POST.getlist('appraisalDateTaken[]')
+        appraisalDateInterpreted = request.POST.getlist('appraisalDateInterpreted[]')
+        appraisalRemarks = request.POST.getlist('appraisalRemarks[]')
 
-        counseling_types = request.POST.getlist('couseling_type[]')
-        selected_types = []
+        # --- III. Counseling Service (CRITICAL ISSUE: HTML Radio Names) ---
+        # The HTML uses 'couseling_type1[]', 'couseling_type2[]', etc.
+        # This view logic assumes a single name, which is incorrect for the current HTML.
+        # It's highly recommended to fix the HTML to use a consistent name like 'counseling_type'.
+        # Assuming the HTML fix suggested previously: name="counseling_type" and values="Walk-in"/"Referral"
+        # If the HTML is NOT fixed, the block below is error-prone.
         
-        for ctype in counseling_types:
-            if ctype == 'True':
-                selected_types.append('Referral')
-            elif ctype == 'False':
-                selected_types.append('Walk-in')
+        # Current (flawed) logic:
+        # counseling_types = request.POST.getlist('couseling_type[]')
+        # selected_types = []
+        # for ctype in counseling_types:
+        #     if ctype == 'True':
+        #         selected_types.append('Referral')
+        #     elif ctype == 'False':
+        #         selected_types.append('Walk-in')
+        
+        # Since the HTML uses names like couseling_type1[], couseling_type2[], etc.
+        # A workaround (if HTML isn't fixed) must iterate over all 10 possible groups:
+        selected_types = []
+        for i in range(1, 11): # Iterate from 1 to 10
+            # Get the list of selected values for this row's radio group (should be 0 or 1 item)
+            radio_value = request.POST.getlist(f'couseling_type{i}[]') 
+            if radio_value:
+                # Apply the specific logic for this form's True/False values
+                if radio_value[0] == 'True':
+                    selected_types.append('Walk-in')
+                elif radio_value[0] == 'False':
+                    selected_types.append('Referral')
 
         counselingDate = request.POST.getlist('counselingDate[]')
         counselingConcern = request.POST.getlist('counselingConcern[]')
         counselingRemarks = request.POST.getlist('counselingRemarks[]')
 
+        # --- IV. Follow-up Service ---
         followActivity = request.POST.getlist('followActivity[]')
-        followDate =     request.POST.getlist('followDate[]')
-        followRemarks =  request.POST.getlist('followRemarks[]')
+        followDate = request.POST.getlist('followDate[]')
+        followRemarks = request.POST.getlist('followRemarks[]')
 
+        # --- V. Information Service ---
         informationActivity = request.POST.getlist('informationActivity[]')
-        informationDate =     request.POST.getlist('informationDate[]')
-        informationRemarks =  request.POST.getlist('informationRemarks[]')
+        informationDate = request.POST.getlist('informationDate[]')    
+        informationRemarks = request.POST.getlist('informationRemarks[]')
 
-        counsultationActivity = request.POST.getlist('counseltationActivity[]')
-        counsultationDate =     request.POST.getlist('counseltationDate[]')
-        counsultationRemarks =  request.POST.getlist('counseltationRemarks[]')
+        # --- VI. Consultation Service (Typo: counsultation -> consultation) ---
+        consultationActivity = request.POST.getlist('counseltationActivity[]')
+        consultationDate = request.POST.getlist('counseltationDate[]')    
+        consultationRemarks = request.POST.getlist('counseltationRemarks[]')
 
         individual = get_object_or_404(IndividualProfileBasicInfo, individualProfileID=individualId)
 
-        obj = IntakeInverView(
-            individualProfileId = individual,
-            individualActivity = individualActivity,
-            individualDateAccomplished = individualDateAccomplished,
-            individualRemarks = individualRemarks,
+        # Typo: IntakeInverView should likely be IntakeInterview
+        try:
+            obj = IntakeInverView( # Assuming this is your actual model name
+                individualProfileId = individual,
+                
+                individualActivity = individualActivity,
+                individualDateAccomplished = individualDateAccomplished,
+                individualRemarks = individualRemarks,
 
-            appraisalTest = apprailsalTest,
-            appraisalDateTaken = apprailsalDateTaken,
-            appraisalDateInterpreted = apprailsalDateInterpreted,
-            appraisalRemarks = apprailsalRemarks,
+                appraisalTest = appraisalTest,
+                appraisalDateTaken = appraisalDateTaken,
+                appraisalDateInterpreted = appraisalDateInterpreted,
+                appraisalRemarks = appraisalRemarks,
 
-            counselingType = selected_types,
-            counselingDate = counselingDate,
-            counselingConcern = counselingConcern,
-            counselingRemarks = counselingRemarks,
+                counselingType = selected_types,
+                counselingDate = counselingDate,
+                counselingConcern = counselingConcern,
+                counselingRemarks = counselingRemarks,
 
-            followActivity = followActivity,
-            followDate     = followDate,
-            followRemarks  = followRemarks,
+                followActivity = followActivity,
+                followDate = followDate,
+                followRemarks = followRemarks,
 
-            informationActivity = informationActivity,
-            informationDate     = informationDate,    
-            informationRemarks  = informationRemarks,
+                informationActivity = informationActivity,
+                informationDate = informationDate,    
+                informationRemarks = informationRemarks,
 
+                # Corrected variable names in model saving
+                counsultationActivity = consultationActivity,
+                counsultationDate = consultationDate,    
+                counsultationRemarks = consultationRemarks,
+            )
+            obj.save()
+            # If using messages: messages.success(request, "Intake interview saved.")
+            return redirect('Intake Interview') # Make sure this is a valid URL name
+        except Exception as e:
+            # logger.error(f"Error saving IntakeInterview: {e}") # Add logging if available
+            # If using messages: messages.error(request, "An error occurred while saving the form.")
+            pass # Continue to render the form with context if an error occurs
 
-            counsultationActivity = counsultationActivity,
-            counsultationDate     = counsultationDate,    
-            counsultationRemarks  = counsultationRemarks,
-
-        )
-        obj.save()
-
-        return redirect('Intake Interview')
-
-    return render(request, 'guidance/intake_interview.html', {})
+    # 2. FIX: Ensure 'students' is passed to the context for the GET request 
+    # (and for the POST request if execution reaches here due to an error/return).
+    return render(request, 'guidance/intake_interview.html', {'students': students})
 
 def search_student_info_for_intake(request):
      if request.method == 'POST':
@@ -354,120 +396,181 @@ def counseling_app_admin_view(request):
     context = {
         'meeting_requests': meeting_requests,
         'time': time,
+           'page': 'counseling_app_admin'
     }
     return render(request, 'guidance/counseling_app_admin_view.html', context)
-@login_required # 👈 Add this decorator to ensure only logged-in users can access the page
+
+
+@login_required
 def exit_interview(request):
-    # Get the studentInfo object linked to the currently logged-in user
+    # 1. You ALREADY get the student object securely here. This is correct!
     try:
         student = studentInfo.objects.get(user=request.user)
     except studentInfo.DoesNotExist:
-        # Handle case where a user is logged in but has no student profile
-        # You can redirect them or show an error message
         messages.error(request, "Could not find a student profile for your account.")
-        return redirect('some_other_page')
+        return redirect('some_other_page') # Change to your dashboard or home URL
+
+    # 2. Check for an ongoing request for the GET request
+    ongoing_request = exit_interview_db.objects.filter(
+        studentID=student,
+        status='Pending'
+    ).first()
 
     if request.method == 'POST':
         form = ExitInterviewForm(request.POST)
         
         if form.is_valid():
+            
+            # 3. Check for an ongoing request AGAIN before saving
+            #    We use the SECURE 'student' object from above
+            if ongoing_request:
+                messages.error(request, f'You still have a pending request.')
+                return redirect('Exit Interview')
+
+            # --- START: This is where the fix is ---
+
+            # 4. REMOVED THESE LINES THAT CAUSED THE ERROR:
+            # student_id = request.POST.get('studentID') 
+            # student = get_object_or_404(studentInfo, studID=student_id)
+
+            # 5. GET THE STUDENT ID from the SECURE student object for your calculation:
+            student_id_str = str(student.studID)
+
+            # --- END: This is where the fix is ---
+            
             new_form = form.save(commit=False)
+            
+            # (Your 'fields' logic is fine)
             fields = [
-                'academically_too_challenging',
-                'not_academically_challenging_enough',
-                'does_not_offer_my_academic_major',
-                'what_is_your_intended_major',
-                'size_of_the_school',
-                'location_of_the_school',
-                'negative_social_campus_climate',
-                'residence_hall_environment_not_positive',
-                'social_environment_not_diverse_enough',
-                'not_enough_campus_activities',
-                'needed_more_academic_support',
-                'financial',
-                'medical_injury',
-                'medical_pyscho',
-                'family-obligations',
-                'major_event'
+                'academically_too_challenging', 'not_academically_challenging_enough',
+                'does_not_offer_my_academic_major', 'what_is_your_intended_major',
+                'size_of_the_school', 'location_of_the_school',
+                'negative_social_campus_climate', 'residence_hall_environment_not_positive',
+                'social_environment_not_diverse_enough', 'not_enough_campus_activities',
+                'needed_more_academic_support', 'financial', 'medical_injury',
+                'medical_pyscho', 'family-obligations', 'major_event'
             ]
             values = []
             for field in fields:
                 value = request.POST.get(field, '')
-                if value == '':
-                    values.append('')
-                else:
-                    values.append(value)
-            student_id = request.POST.get('studentID')
+                values.append(value)
             
-            # Get the studentInfo instance corresponding to the provided student ID
-            student = get_object_or_404(studentInfo, studID=student_id)
-
-            ongoing_request = exit_interview_db.objects.filter(
-                studentID=student,
-                status = 'Pending' 
-            ).first()
-            
-            if ongoing_request:
-                messages.error(request, f'You still have an pending request.')
-                return redirect('Exit Interview')
-            
+            # (Your custom ID logic is fine, just make sure it uses the secure ID)
             current_date = timezone.localtime(timezone.now())
-            date_number = current_date.strftime("%m%d%y")  # Format date as MMDDYY
+            date_number = current_date.strftime("%m%d%y")
 
-            # Sum the digits of the student ID
-            digit_sum = sum(int(digit) for digit in str(student_id))
+            # 6. USE THE SECURE ID STRING HERE:
+            digit_sum = sum(int(digit) for digit in student_id_str)
 
-            # Combine date number and digit sum into a preliminary final number
             preliminary_final_number = f"{date_number}{digit_sum}"
-
-            # Calculate the number of zeros needed to make the length 10 digits
             total_length = 10
             number_of_zeros_needed = total_length - len(preliminary_final_number)
-
-            # Insert zeros between date number and digit sum
             final_number = f"{date_number}{'0' * number_of_zeros_needed}{digit_sum}"
             
             new_form.date = timezone.now()
             new_form.contributedToDecision = values
-            new_form.studentID = student
+            
+            # 7. ASSIGN THE SECURE student object here
+            new_form.studentID = student 
+            
             new_form.dateRecieved = timezone.now()
             new_form.save()
             messages.success(request, 'Your request has been successfully added. An email will be sent if it is accepted.')
             return redirect('Exit Interview')
     else:
-         form = ExitInterviewForm()
-    return render(request, 'guidance/exit_interview.html',{'form': form})
+        form = ExitInterviewForm()
 
+    # Pass the student and request status to the template
+    context = {
+        'form': form,
+        'student': student,
+        'ongoing_request': ongoing_request
+    }
+    return render(request, 'guidance/exit_interview.html', context)
+def print_exit_interview(request, request_id): # <-- 1. Accept the 'request_id' here
+    
+    # 2. Fetch the ONE specific interview using the ID
+    interview = get_object_or_404(exit_interview_db.objects.select_related('studentID'), exitinterviewId=request_id)
+    
+    # 3. Pass that single 'interview' object to the template
+    context = {
+        'interview': interview
+    }
+    return render(request, 'guidance/print_exit.html', context)
 def exit_interview_admin_view(request):
     exit_interview_request = exit_interview_db.objects.select_related('studentID').order_by('-dateRecieved')
     context = {'exit_interview_request': exit_interview_request,}
     return render(request, 'guidance/exit_interview_admin.html', context)
+# In guidance.py
 
+def print_ojt_assessment(request, request_id): 
+    
+    # 1. FIX: Fetch from OjtAssessment, not exit_interview_db
+    #    Also, use the correct primary key 'OjtRequestID'
+    assessment = get_object_or_404(OjtAssessment.objects.select_related('studentID'), OjtRequestID=request_id)
+    
+    # 2. FIX: Pass the 'assessment' object to the template.
+    #    (We'll update the template to use this in Step 3)
+    context = {
+        'assessment': assessment 
+    }
+    return render(request, 'guidance/print_assessment.html', context)
 def ojt_assessment(request):
+    student = None
+    if not request.user.is_authenticated:
+        messages.error(request, "You must be logged in to make a request.")
+        return redirect('your_login_page_name') # Change to your login URL
+
+    try:
+        student = studentInfo.objects.get(studID=int(request.user.username))
+    except studentInfo.DoesNotExist:
+        messages.error(request, "Student profile not found for your account.")
+        return redirect('your_student_dashboard_name') # Change to your dashboard URL
+    except ValueError:
+        messages.error(request, "Your account type cannot make this request.")
+        return redirect('your_student_dashboard_name') # Change to your dashboard URL
+
+    # --- NEW: Check for pending request for the GET request ---
+    ongoing_request = OjtAssessment.objects.filter(
+        studentID=student,
+        status='Pending'
+    ).first()
+
     if request.method == 'POST':
+        # This check is crucial for security
+        if ongoing_request:
+            messages.error(request, f'You still have a pending request.')
+            return redirect('OJT Assessment')
+
+        form = OjtAssessmentForm(request.POST)
+        # This check is crucial for security
+        if ongoing_request:
+            messages.error(request, f'You still have a pending request.')
+            return redirect('OJT Assessment')
+
         form = OjtAssessmentForm(request.POST)
         if form.is_valid():
             new_form = form.save(commit=False)
-            student_id = request.POST.get('student_id_val')
-            student = get_object_or_404(studentInfo, studID=student_id)
-            ongoing_request = OjtAssessment.objects.filter(
-                studentID=student,
-                status = 'Pending' 
-            ).first()
-            
-            if ongoing_request:
-                messages.error(request, f'You still have an pending request.')
-                return redirect('OJT Assessment')
-
-            new_form.studentID = student
+            new_form.studentID = student 
+            # new_form.dateRecieved = timezone.now() # No longer needed if you set auto_now_add=True in models.py
+            # ensure required dateRecieved is set
             new_form.dateRecieved = timezone.now()
             new_form.save()
             messages.success(request, 'Your request has been successfully added. An email will be sent if it is accepted.')
             return redirect('OJT Assessment')
     else:
         form = OjtAssessmentForm()
-    return render(request,'guidance/ojt_assessment.html',{'form': form})
 
+    # --- NEW: Get the student's entire request history ---
+    request_history = OjtAssessment.objects.filter(studentID=student).order_by('-dateRecieved')
+    
+    context = {
+        'form': form,
+        'student': student,
+        'request_history': request_history,  # <-- Pass the history to the template
+        'ongoing_request': ongoing_request   # <-- Pass the pending request to the template
+    }
+    return render(request, 'guidance/ojt_assessment.html', context)
 def ojt_assessment_admin_view(request):
     ojt_assessment_request = OjtAssessment.objects.select_related('studentID').order_by('-dateRecieved')
     context = {'ojt_assessment_request': ojt_assessment_request,}

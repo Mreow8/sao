@@ -1,199 +1,251 @@
-{% extends 'main.html' %} {% block bodycontent %} {% load static %}
+{% extends 'main.html' %} 
+{% block bodycontent %} 
+{% load static %}
 
 <style>
-  .header-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
+    .header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
 </style>
 <div class="container">
-  <div class="sub-title">
-    <h3>ALUMNI</h3>
-    <p class="hometext">Home</p>
-    <p class="certxt">&gt; Id Request</p>
-  </div>
-  <div class="header-bar"></div>
-  <div class="w-full max-w-3xl mx-auto">
-    <div class="bg-white rounded-2xl p-10 flex flex-col gap-10">
-      {% if messages %}
-      <div class="space-y-2">
-        {% for message in messages %}
-        <div
-          class="{% if message.tags == 'error' %} bg-red-100 border border-red-400 text-red-700 {% elif message.tags == 'success' %} bg-green-100 border border-green-400 text-green-700 {% else %} bg-gray-100 border border-gray-400 text-gray-700 {% endif %} px-4 py-3 rounded-md text-center font-semibold"
-        >
-          {{ message }}
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %} {% if student %}
-      <div
-        style="background-color: hsla(23, 74%, 91%, 0.678)"
-        class="rounded-xl p-6 shadow-inner space-y-4"
-      >
-        <h2 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">
-          Student Information
-        </h2>
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm"
-        >
-          <div>
-            <p class="text-gray-600 font-semibold">Student ID</p>
-            <p class="text-gray-900">{{ student.studID }}</p>
-          </div>
-          <div>
-            <p class="text-gray-600 font-semibold">First Name</p>
-            <p class="text-gray-900">{{ student.firstname }}</p>
-          </div>
-          <div>
-            <p class="text-gray-600 font-semibold">Last Name</p>
-            <p class="text-gray-900">{{ student.lastname }}</p>
-          </div>
-          <div>
-            <p class="text-gray-600 font-semibold">Email</p>
-            <p class="text-gray-900 break-words">{{ student.emailadd }}</p>
-          </div>
-          <div>
-            <p class="text-gray-600 font-semibold">Degree</p>
-            <p class="text-gray-900">{{ student.degree }}</p>
-          </div>
-        </div>
-      </div>
-      {% if alumni %}
-      <div
-        class="bg-orange-100 text-orange-900 border border-orange-300 px-4 py-3 rounded-md shadow-sm"
-      >
-        <p class="font-semibold text-sm">
-          You already submitted a request. Your Alumni ID is:
-          <span class="text-lg font-bold">{{ alumni.alumniID }}</span>
-        </p>
-        {% if alumni.approved %}
-        <p class="text-green-700 mt-1 font-medium">Status: Approved</p>
-        {% else %}
-        <p class="text-yellow-600 mt-1 font-medium">Status: Pending Approval</p>
-        {% endif %}
-      </div>
-      {% else %}
-      <form class="space-y-6" method="post" action="{% url 'add_alumni' %}">
-        {% csrf_token %}
-        <input type="hidden" name="student_id" value="{{ student.studID }}" />
-        <input type="hidden" name="firstname" value="{{ student.firstname }}" />
-        <input type="hidden" name="lastname" value="{{ student.lastname }}" />
-        <input type="hidden" name="email_add" value="{{ student.emailadd }}" />
-        <input type="hidden" name="degree" value="{{ student.degree }}" />
-        <input type="hidden" name="sex" value="{{ student.sex }}" />
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Date Requested</label
-            >
-            <input
-              type="date"
-              name="alumnidate"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-              required
-              min="{{ today|date:'Y-m-d' }}"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Birth Date</label
-            >
-            <input
-              type="date"
-              name="alumnibirthday"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-              required
-              max="{{ sixteen_years_ago|date:'Y-m-d' }}"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Contact No.</label
-            >
-            <input
-              type="text"
-              name="alumnicontact"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >SSS/GSIS</label
-            >
-            <input
-              type="text"
-              name="sssgsis"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >TIN</label
-            >
-            <input
-              type="text"
-              name="tin"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Parent/Guardian</label
-            >
-            <input
-              type="text"
-              name="parentguardian"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Address</label
-            >
-            <input
-              type="text"
-              name="alumniaddress"
-              class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="flex justify-center">
-          <button
-            type="submit"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-10 py-3 rounded-lg shadow-md transition duration-200"
-          >
-            Submit Request
-          </button>
-        </div>
-
-        <div class="hidden">
-          <input
-            type="text"
-            name="alumni_id"
-            value="{{ student_id }}"
-            readonly
-          />
-        </div>
-      </form>
-      {% endif %} {% endif %}
+    <div class="sub-title">
+        <h3>ALUMNI</h3>
+        <p class="hometext">Home</p>
+        <p class="certxt">&gt; Id Request</p>
     </div>
-  </div>
+    <div class="header-bar"></div>
+    <div class="w-full max-w-3xl mx-auto">
+        <div class="bg-white rounded-2xl p-10 flex flex-col gap-10">
+            
+            {% if messages %}
+            <div class="space-y-2">
+                {% for message in messages %}
+                <div
+                    class="{% if message.tags == 'error' %} bg-red-100 border border-red-400 text-red-700 {% elif message.tags == 'success' %} bg-green-100 border border-green-400 text-green-700 {% else %} bg-gray-100 border border-gray-400 text-gray-700 {% endif %} px-4 py-3 rounded-md text-center font-semibold"
+                >
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %} 
+
+            {% if student %}
+          
+           
+            {% if alumni %}
+                
+                {% if not alumni.approved %}
+                <div
+                    class="bg-yellow-100 text-yellow-800 border border-yellow-300 px-4 py-4 rounded-xl shadow-md space-y-2"
+                >
+                    <p class="font-semibold text-lg border-b border-yellow-400 pb-2">
+                        ✅ Request Submitted
+                    </p>
+                    <p class="text-sm">
+                        Your Alumni ID is:
+                        <span class="text-xl font-bold">{{ alumni.student.studID }}</span>
+                    </p>
+                    <p class="text-sm font-medium">Status: Pending Approval</p>
+                    <p class="text-xs italic text-yellow-700">
+                        Please check back here later for approval and claiming instructions.
+                    </p>
+                </div>
+
+                {% else %} 
+                <div
+                    class="bg-green-100 text-green-800 border border-green-300 px-4 py-4 rounded-xl shadow-md space-y-4"
+                >
+                    <p class="font-bold text-xl border-b border-green-400 pb-2">
+                        🎉 YOUR ID IS READY FOR CLAIMING!
+                    </p>
+                    <p class="font-semibold text-lg">
+                        Alumni ID No.: <span class="text-2xl font-bold">{{ alumni.student.studID }}</span>
+                    </p>
+                    
+                    <h3 class="text-base font-bold text-green-900 mt-3">WALK-IN CLAIM SCHEDULE:</h3>
+                    <p class="text-sm">
+                        Issuance is conducted Monday to Thursday, based on your respective course schedule (Starting July 21, 2025).
+                    </p>
+                    <ul class="list-disc list-inside text-sm ml-4 space-y-1">
+                        <li>Monday: CoEd, BS in Info Tech (BSIT)</li>
+                        <li>Tuesday: CAFE, Forestry, Environment, BSHM, BS in Industrial Engineering (BSIE)</li>
+                        <li>Wednesday: CAS, BS in Industrial Engineering (BSIE)</li>
+                        <li>Thursday: BS in Industrial Technology (BIT)</li>
+                    </ul>
+                    <p class="text-sm font-bold">Operating Hours (First-Come, First-Served):</p>
+                    <ul class="list-disc list-inside text-sm ml-4 space-y-1">
+                        <li>Morning Session: 10:00 AM</li>
+                        <li>Afternoon Session: 3:00 PM</li>
+                    </ul>
+
+                    <h3 class="text-base font-bold text-green-900 mt-3 border-t pt-2">CLAIM REQUIREMENTS:</h3>
+                    <ul class="list-decimal list-inside text-sm ml-4 space-y-1">
+                        <li>Membership Fee: Pay Php 250.00 at the Registrar's Office for verification.</li>
+                        <li>Picture: Send a soft copy of your picture (wearing a toga without a cap, or formal attire) via the Facebook page.</li>
+                        <li>An e-signature and a soft copy of the owner's picture must be sent through the Facebook page.</li>
+                    </ul>
+                    <h4 class="text-sm font-semibold mt-2">If claiming by a representative, they must bring:</h4>
+                    <ul class="list-disc list-inside text-xs ml-4 space-y-1">
+                        <li>Authorization Letter</li>
+                        <li>Authorized representative's Valid ID (photocopy only) and Valid ID of the requesting alumnus/Alumna (photocopy only)</li>
+                    </ul>
+                </div>
+                {% endif %}
+
+            {% else %}
+              <div
+                style="background-color: hsla(23, 74%, 91%, 0.678)"
+                class="rounded-xl p-6 shadow-inner space-y-4"
+            >
+                <h2 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">
+                    Student Information
+                </h2>
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm"
+                >
+                    <div>
+                        <p class="text-gray-600 font-semibold">Student ID</p>
+                        <p class="text-gray-900">{{ student.studID }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 font-semibold">First Name</p>
+                        <p class="text-gray-900">{{ student.firstname }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 font-semibold">Last Name</p>
+                        <p class="text-gray-900">{{ student.lastname }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 font-semibold">Email</p>
+                        <p class="text-gray-900 break-words">{{ student.emailadd }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 font-semibold">Degree</p>
+                        <p class="text-gray-900">{{ student.degree }}</p>
+                    </div>
+                </div>
+            </div>
+            {% comment %} --- Alumni ID Request FORM --- {% endcomment %}
+            <form class="space-y-6" method="post" action="{% url 'add_alumni' %}">
+                {% csrf_token %}
+                <h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">
+                    Complete Alumni ID Information
+                </h3>
+                
+                <input type="hidden" name="student_id" value="{{ student.studID }}" />
+                <input type="hidden" name="firstname" value="{{ student.firstname }}" />
+                <input type="hidden" name="lastname" value="{{ student.lastname }}" />
+                <input type="hidden" name="email_add" value="{{ student.emailadd }}" />
+                <input type="hidden" name="degree" value="{{ student.degree }}" />
+                <input type="hidden" name="sex" value="{{ student.sex }}" />
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"
+                            >Date Requested</label
+                        >
+                        <input
+                            type="date"
+                            name="alumnidate"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                            min="{{ today|date:'Y-m-d' }}"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"
+                            >Birth Date</label
+                        >
+                        <input
+                            type="date"
+                            name="alumnibirthday"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                            max="{{ sixteen_years_ago|date:'Y-m-d' }}"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"
+                            >Contact No.</label
+                        >
+                        <input
+                            type="text"
+                            name="alumnicontact"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"
+                            >SSS/GSIS</label
+                        >
+                        <input
+                            type="text"
+                            name="sssgsis"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"
+                            >TIN</label
+                        >
+                        <input
+                            type="text"
+                            name="tin"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"
+                            >Parent/Guardian</label
+                        >
+                        <input
+                            type="text"
+                            name="parentguardian"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"
+                            >Address</label
+                        >
+                        <input
+                            type="text"
+                            name="alumniaddress"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button
+                        type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-10 py-3 rounded-lg shadow-md transition duration-200"
+                    >
+                        Submit Request
+                    </button>
+                </div>
+
+            </form>
+            {% endif %} 
+            
+        </div>
+    </div>
 </div>
+            {% endif %} 
 
 {% endblock %}

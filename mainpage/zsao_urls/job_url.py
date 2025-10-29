@@ -4,53 +4,48 @@ from mainpage import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-
-
 urlpatterns = [
-    path('jobplacement/', views.mainpage, name="home"),
-    # OJT HIRING THINGS
-     path('student-suggestions/', views.student_suggestions, name='student_suggestions'),
-    path('jobplacement/ojthiring/admin', views.ojt_hiring, name="ojt_hiring"),
-    path('jobplacement/ojthiring/admin/assign', views.ojt_assign_student, name='ojthiring_assign'),
-    path('jobplacement/ojthiring/more/<str:id>', views.ojt_hiring_info, name='ojthiring_info'),
-    path('jobplacement/ojt/requirements/tracker/', views.ojtRequirements_tracker, name="ojt_requirements_tracker"),
-    path('jobplacement/ojt/requirements/tracker/update', views.ojt_requirements_accept, name='ojt_requirement_update'),
-    path('jobplacement/ojthiring/clear', views.del_ojt, name="del_ojt"),
-    path('jobplacement/ojt_requirements/download', views.download_zipped_ojt_templates, name="ojt_requiremets_download"),
-    path('jobplacement/ojt/requirements/submit', views.ojt_requirements_submit, name='ojt_requirements_submit'),
-    path('jobplacement/ojthiring/delete/<int:id>', views.ojthiring_delete, name="ojt_hiring_delete"),
+    # The main 'jobplacement/' is in your main urls.py
+    path('', views.mainpage, name="home"), 
+    
+    # OJT HIRING THINGS (removed 'jobplacement/' prefix)
+    path('student-suggestions/', views.student_suggestions, name='student_suggestions'),
+    path('suggestions/', views.search_suggestions.as_view(), name='suggestions'),
+    path('ojthiring/admin', views.ojt_hiring, name="ojt_hiring"),
+    path('ojthiring/admin/assign', views.ojt_assign_student, name='ojthiring_assign'),
+    path('ojthiring/more/<str:id>', views.ojt_hiring_info, name='ojthiring_info'),
+    path('ojt/requirements/tracker/', views.ojtRequirements_tracker, name="ojt_requirements_tracker"),
+    path('ojt/requirements/tracker/update', views.ojt_requirements_accept, name='ojt_requirement_update'),
+    path('ojthiring/clear', views.del_ojt, name="del_ojt"),
+    path('ojt_requirements/download', views.download_zipped_ojt_templates, name="ojt_requiremets_download"),
+    path('ojt/requirements/submit', views.ojt_requirements_submit, name='ojt_requirements_submit'),
+    path('ojthiring/delete/<int:id>', views.ojthiring_delete, name="ojt_hiring_delete"),
+    
+    # Career Guidance THINGS (removed 'jobplacement/' prefix and fixed typo)
+    path('main/', views.seminar, name="seminar_page"), # Fixed 'jobeplacement' typo
+    path('seminar/attendance/manager/<int:id>', views.manage_attendance, name='manage_att'),
+    path('pending_student_att', views.pend_attendance, name='pending_attendance'),
+    path('attendance/cancel/<str:id>', views.cancel_pending, name="cancel_pending"),
    
-    #   Career Guidance THINGS
-    path('jobeplacement/main/', views.seminar, name="seminar_page"),
-    # path('jobplacement/new_seminar/', views.newSeminar, name="new_seminar"), # create new seminar
-    path('jobplacement/seminar/attendance/manager/<int:id>', views.manage_attendance, name='manage_att'), # manage students with attendance
-    path('jobplacement/pending_student_att', views.pend_attendance, name='pending_attendance'), # set attendance to pending
-    path('jobplacement/attendance/cancel/<str:id>', views.cancel_pending, name="cancel_pending"), # cancel pending
-    path('jobplacement/seminar/attendance/manager/jobplacement/attendance/attend_all/<str:id>', views.attend_all_pending),
-    path('jobplacement/attendance/attend_all/<str:id>', views.attend_all_pending, name='attend_all_pending'),
-    path('jobplacement/seminar/delete/<int:id>', views.seminar_delete, name='seminar_delete'),
+    # This is the line you fixed, which was correct.
+    path('attendance/attend_all/<str:id>/', views.attend_all_pending, name='attend_all_pending'),
+    
+    path('seminar/delete/<int:id>', views.seminar_delete, name='seminar_delete'),
 
-    # Suggestions
+    # Suggestions (This one was already correct)
     path('suggestions/', search_suggestions.as_view(), name='search_suggestions'),
     path('suggestions/companies', company_suggestions.as_view(), name='company_suggestions'),
 
-    # Transaction Report
-    path('jobplacement/report/', views.transRep, name="job_trans_rep"), # report page
-    # path('jobplacement/report/creation', views.transaction_creation, name="new_transaction"),
-    path('jobplacement/report/print', views.transRep_print, name="rep_print"), # print report
+    # Transaction Report (removed 'jobplacement/' prefix)
+    path('report/', views.transRep, name="job_trans_rep"),
+    path('report/print', views.transRep_print, name="rep_print"),
 
-    # Non Academic Issuance
-    path('jobplacement/non_acad', views.non_acad_page, name="non_acad"),
+    # Non Academic Issuance (removed 'jobplacement/' prefix)
+    path('non_acad', views.non_acad_page, name="non_acad"),
     
-    # DELETABLE PATHS
-    # path('jobplacement/login/', cu_index, name="student_login"),
-    # path('jobplacement/signup/', views.student_signup_view, name="student_signup"),
-
-    # ---------------------- STUDENTS PATHS ----------------------------------
-    # homescreen sa login og admin    
-
-    path('jobplacement/ojt/requirements/tracker/view/iframe/<int:id>', views.view_pdf, name='view_pdf'),
-    path('jobplacement/upload/', views.file_scrapper, name='scrapper'),
+    # STUDENTS PATHS (removed 'jobplacement/' prefix)
+    path('ojt/requirements/tracker/view/iframe/<int:id>', views.view_pdf, name='view_pdf'),
+    path('upload/', views.file_scrapper, name='scrapper'),
 ]
 
 if settings.DEBUG:

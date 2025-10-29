@@ -1,435 +1,255 @@
-* {
+/* --- Global & Fonts --- */
+body {
+  font-family: "Inter", sans-serif;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-  list-style-type: none;
-}
-/* 📱 Small screens (phones, tablets) */
-@media (max-width: 768px) {
-  body {
-    font-size: 14px;
-  }
-
-  .sub-title h3 {
-    font-size: 16px;
-  }
-
-  .sub-title p,
-  nav.side-nav a,
-  .profile-name,
-  .student-account-info a {
-    font-size: 13px;
-  }
-
-  table th,
-  table td {
-    font-size: 12px;
-    padding: 6px;
-  }
-
-  .search-container input {
-    font-size: 13px;
-  }
+  background-color: #f4f7fa;
+  color: #141414;
 }
 
-/* 📱 Extra small (<=480px) */
-@media (max-width: 480px) {
-  body {
-    font-size: 12px;
-  }
-
-  .sub-title h3 {
-    font-size: 14px;
-  }
-
-  .sub-title p,
-  nav.side-nav a,
-  .profile-name,
-  .student-account-info a {
-    font-size: 12px;
-  }
-
-  table th,
-  table td {
-    font-size: 11px;
-    padding: 4px;
-  }
-
-  .search-container input {
-    font-size: 12px;
-  }
-}
-
-html,
-body {
-  height: 100%;
-  background-color: #f4f6fa;
-  min-height: 100vh;
-}
-
-.custom-search-wrapper .search-icon i {
-  font-size: 18px;
-  color: #444;
-}
-
-.custom-search-wrapper input[type="text"] {
-  flex-grow: 1;
-  max-width: 300px;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* Account info container */
-.custom-search-wrapper .account-info {
-  position: relative;
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-bottom: 8px; /* <-- FIX 1: Added padding for hover "bridge" */
-}
-
-/* Profile summary (shown always) */
-.custom-search-wrapper .profile-summary {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #333;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.custom-search-wrapper .profile-icon {
-  font-size: 28px;
-  color: #007bff;
-}
-
-/* Popup panel - hidden by default */
-.custom-search-wrapper .profile-popup {
-  display: none;
-  position: absolute;
-  top: 100%; /* <-- FIX 2: Changed from 40px to 100% */
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 15px 20px;
-  border-radius: 8px;
-  width: 220px;
-  z-index: 1000;
-  color: #333;
-}
-
-/* Show popup on hover of container */
-.custom-search-wrapper .account-info:hover .profile-popup,
-.custom-search-wrapper .account-info.active .profile-popup {
-  display: block;
-}
-
-/* Logout button */
-.custom-search-wrapper .logout-btn {
-  margin-top: 10px;
-  padding: 8px 0;
-  background-color: #007bff;
-  border: none;
-  border-radius: 6px;
-  text-align: center;
-  font-weight: bold;
-  width: 100%;
-  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.5);
-}
-
-.custom-search-wrapper .logout-btn a {
-  color: white;
-  text-decoration: none;
-  display: block;
-}
-
-.custom-search-wrapper .logout-btn:hover {
-  background-color: #0056b3;
-  box-shadow: 0 4px 12px rgba(0, 86, 179, 0.7);
-}
-
-/* Responsive for small screens: stack */
-@media (max-width: 600px) {
-  .custom-search-wrapper input[type="text"] {
-    max-width: 100%;
-  }
-  .custom-search-wrapper .account-info {
-    width: 100%;
-    justify-content: flex-start;
-  }
-}
-.custom-search-wrapper .search-container {
-  display: flex;
-  /* default vertical stack */
-  gap: 0.5rem;
-  padding: 10px 20px;
-  background-color: #f7f9fc;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  position: relative;
-}
-
-@media (max-width: 640px) {
-  .custom-search-wrapper .search-container {
-    flex-direction: row;
-    align-items: center; /* vertical center */
-    gap: 1rem;
-  }
-  .custom-search-wrapper .search-container input[type="text"] {
-    flex: 1;
-  }
-  .custom-search-wrapper .search-container .account-info {
-    white-space: nowrap;
-  }
-}
-
-body {
-  display: flex;
-  flex-direction: row;
-}
-
+/* --- Main Layout --- */
 .left-side {
-  left: 0;
+  position: fixed;
   top: 0;
+  left: 0;
   height: 100vh;
-  width: 299px;
-  transform: translateX(0);
-  transition: transform 0.3s;
-  box-shadow: none;
-  display: flex; /* Add this */
-  flex-direction: column; /* Add this */
-}
-.side-nav {
-  width: 299px;
-  height: 100vh;
-  background: #4682b4;
-  display: inline-flex;
+  width: 260px; /* Sidebar width */
+  background-color: #1a365d; /* Dark blue */
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.side-nav::-webkit-scrollbar {
-  width: 0;
-  display: none;
-}
-
-.side-nav ul {
-  width: 299px;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
 }
 
 .right-side {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-  flex-direction: column;
-  overflow-y: auto;
+  margin-left: 260px; /* Same as sidebar width */
+  width: calc(100% - 260px);
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
 .main_content {
+  padding: 2rem;
+}
+
+/* --- Sidebar Brand (Logo/Title) --- */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #2a4365;
+}
+
+.sidebar-brand .logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+}
+
+.sidebar-brand .brand-text {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  align-items: center;
-
-  padding: 1rem;
+  line-height: 1.2;
 }
 
-.main_content h2 {
-  color: black;
+.sidebar-brand .brand-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
 }
 
-.orange-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-  padding: 0px 18px;
-  background-color: #ff8000;
-  width: 299px;
+.sidebar-brand .brand-subtitle {
+  font-size: 0.875rem;
+  color: #a0aec0; /* Lighter text */
 }
 
-.logo {
-  height: 55px;
-  margin-left: 15px;
-  margin-top: 3px;
-}
-
-.bars {
-  height: 25px;
-  margin-left: 170px;
-  margin-bottom: 13px;
-}
-
-.custom-search-wrapper .student-account-info a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.custom-search-wrapper .student-account-info a:hover {
-  text-decoration: underline;
-}
-
-input[type="text"] {
-  padding: 9.6px;
-  border: transparent;
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding-left: 10px;
-  align-items: left;
-  color: black;
-  width: 300px;
-}
-
-.side-nav li {
-  line-height: 30px;
-}
-
-.side-nav ul li {
-  line-height: 50px;
-  border-bottom: 1px solid #2b40d1;
-}
-
-.side-nav ul ul {
-  position: static;
-  display: none;
-}
-
-.side-nav ul.studentlife.show {
-  display: block;
-}
-
-.side-nav ul.scholar-show.show2 {
-  display: block;
-}
-
-.side-nav ul.jobplace-show.show3 {
-  display: block;
-}
-
-.side-nav ul.student_disc-show.show4 {
-  display: block;
-}
-
-.side-nav ul.guide-show.show5 {
-  display: block;
-}
-
-.side-nav ul.alumni-show.show6 {
-  display: block;
-}
-
-.side-nav ul.community-show.show7 {
-  display: block;
-}
-
-.side-nav ul.student_org-show.show8 {
-  display: block;
-}
-
-.side-nav ul.medical-show.show9 {
-  display: block;
-}
-
-.side-nav ul ul li {
-  line-height: 40px;
-}
-
-.side-nav ul ul li a {
-  font-size: 15px;
-  padding-left: 60px;
-}
-
-.side-nav ul li a:hover {
-  background: #3e74a0;
-  border-left-color: white;
+/* --- Sidebar Navigation Menu --- */
+.side-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-top: 1rem;
 }
 
 .side-nav ul li a {
-  position: relative;
-  color: white;
-  padding-left: 30px;
-  text-decoration: none;
-  font-size: 14px;
   display: block;
-  width: 100%;
-  border-left: 5px solid transparent;
-}
-
-.side-nav ul li a span {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  font-size: 18px;
-  transition: transform 0.4s;
-}
-
-.side-nav ul li a span.rotate {
-  transform: translateY(-50%) rotate(-180deg);
-}
-
-.body-content h1 {
-  color: black;
-}
-/* Hamburger button styles */
-.sidebar-toggle {
-  display: none;
-  position: fixed;
-  top: 18px;
-  left: 18px;
-  z-index: 2101;
-  background: #ff8000;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 2rem;
-  padding: 8px 14px;
+  padding: 14px 24px;
+  color: #cbd5e0; /* Off-white */
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
   cursor: pointer;
-  box-shadow: 0 2px 8px #ff800044;
+  position: relative;
 }
+
+.side-nav ul li a:hover {
+  background-color: #2a4365; /* Slightly lighter blue */
+  color: #fff;
+}
+
+/* Style for the active (clicked) main link */
+.side-nav > ul > li > a.active {
+  background-color: #2c5282; /* Active blue */
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Caret Icon */
+.side-nav ul li a .fas {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+/* Active (rotated) caret */
+.side-nav ul li a.active .fas {
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+/* --- Sub-Menus (Hidden by default) --- */
+.side-nav ul li ul {
+  list-style: none;
+  padding: 0;
+  background-color: #1c2b41; /* Even darker blue for nesting */
+  display: none; /* JS will handle showing this */
+}
+
+.side-nav ul li ul li a {
+  padding: 12px 24px 12px 48px; /* Indented text */
+  font-size: 0.85rem;
+  color: #a0aec0;
+}
+
+.side-nav ul li ul li a:hover {
+  background-color: #2a4365;
+  color: #fff;
+}
+
+/* --- Header / Right Side Content --- */
+.custom-search-wrapper {
+  background-color: #fff;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Profile Dropdown */
+/* The .account-info container needs to be relative */
+.account-info {
+  position: relative;
+}
+
+.profile-popup {
+  display: none; /* Hidden by default */
+  position: absolute;
+  top: 100%; /* Position below the icon/name */
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 280px;
+  padding: 1rem;
+  margin-top: 8px;
+  z-index: 50;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Show popup on hover of the .account-info container */
+.account-info:hover .profile-popup,
+.profile-summary:focus-within + .profile-popup {
+  display: block;
+}
+
+.profile-popup strong {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.logout-btn {
+  /* Tailwind classes are already doing this, but this is a fallback */
+  width: 100%;
+  text-align: center;
+}
+.logout-btn a {
+  text-decoration: none;
+  color: white;
+}
+
+/* --- Mobile Responsive Toggle --- */
+.sidebar-toggle {
+  display: none; /* Hidden on desktop */
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1001; /* Above the sidebar */
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 24px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* --- Media Query for Mobile (<= 900px) --- */
 @media (max-width: 900px) {
+  .sidebar-toggle {
+    display: block;
+  }
+
   .left-side {
-    position: fixed;
-    left: 0;
-    top: 0;
-    font-size: 12px;
-    z-index: 2000;
-    height: 100vh;
-    width: 299px;
-    transform: translateX(-98%);
-    transition: transform 0.3s ease-in-out;
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
-    background-color: #4682b4;
+    /* Hide sidebar off-screen by default */
+    transform: translateX(-100%);
   }
 
-  .left-side:hover,
-  .left-side:focus-within {
+  /* This class will be added by your inline JS */
+  .left-side.active {
     transform: translateX(0);
-    box-shadow: 4px 0 24px rgba(70, 130, 180, 0.12);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   }
 
-  .left-side::before {
-    content: "";
-    position: absolute;
-    right: -12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 12px;
-    height: 60px;
-    background: #ff8000;
-    border-radius: 0 8px 8px 0;
-    box-shadow: 2px 0 8px #ff800044;
-    cursor: pointer;
-    z-index: 2100;
+  .right-side {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  /* Add padding to header to make room for toggle button */
+  .custom-search-wrapper {
+    padding-left: 60px;
   }
 }
+/* --- --- */
+/* Add these new rules to main.css */
+
+/* This rule makes the submenu visible on page load if Django added the 'active' class */
+.side-nav ul li ul.active {
+  display: block;
+}
+
+/* This rule highlights the specific page link you are on */
+.side-nav ul li ul li a.active-link {
+  background-color: #2a4365; /* Active blue background */
+  color: #fff; /* White text */
+  font-weight: 600;
+  border-radius: 4px;
+  padding-left: 36px; /* Original 48px - 12px margin */
+}
+
+/* This styles the main button when its section is active (already in your CSS) */
+.side-nav > ul > li > a.active {
+  background-color: #2c5282; /* Active blue */
+  color: #fff;
+  font-weight: 600;
+}
+
+/* This rotates the caret (already in your CSS, but good to confirm) */
+.side-nav ul li a .fas.rotate {
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+/* --- --- */

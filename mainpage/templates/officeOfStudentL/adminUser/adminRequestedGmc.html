@@ -24,48 +24,49 @@
       action="{% url 'adminRequestedGmc' %}"
       method="GET"
     ></form>
-
-    <table id="trackerTable">
-      <thead>
-        <tr>
-          <th>Student ID</th>
-          <th>Student Name</th>
-          <th>Course/Program</th>
-          <th>Year Level</th>
-          <th>Reason</th>
-          <th>OR Number</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for request in gmc_requests %}
-        <tr>
-          <td>{{ request.student.studID }}</td>
-          <td>
-            {{ request.student.firstname }} {{ request.student.lastname }}
-          </td>
-          <td>{{ request.student.degree }}</td>
-          <td>{{ request.student.yearlvl }}</td>
-          <td>{{ request.reason }}</td>
-          <td>
-            <input
-              type="text"
-              name="ornum"
-              class="ornum-input"
-              id="ornum"
-              data-request-id="{{ request.id }}"
-              required
-            />
-          </td>
-          <td>
-            <button class="printBtn" data-request-id="{{ request.id }}">
-              Print
-            </button>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="admin-table-wrapper">
+      <table id="trackerTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Student Name</th>
+            <th>Course/Program</th>
+            <th>Year Level</th>
+            <th>Reason</th>
+            <th>OR Number</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for request in gmc_requests %}
+          <tr>
+            <td>{{ request.student.studID }}</td>
+            <td>
+              {{ request.student.firstname }} {{ request.student.lastname }}
+            </td>
+            <td>{{ request.student.degree }}</td>
+            <td>{{ request.student.yearlvl }}</td>
+            <td>{{ request.reason }}</td>
+            <td>
+              <input
+                type="text"
+                name="ornum"
+                class="ornum-input"
+                id="ornum"
+                data-request-id="{{ request.id }}"
+                required
+              />
+            </td>
+            <td>
+              <button class="printBtn" data-request-id="{{ request.id }}">
+                Print
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 <script>

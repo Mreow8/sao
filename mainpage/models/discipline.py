@@ -4,38 +4,145 @@ from datetime import date
 from ..models import studentInfo
 from datetime import datetime
 
+# models.py
+from django.db import models
+from datetime import date
+from ..models import studentInfo
+from datetime import datetime
+
+from django.db import models
+from datetime import date
+
+# Assuming studentInfo is imported/defined elsewhere, e.g.:
+# from .models import studentInfo 
+
 class CaseProfile(models.Model):
+    # Link to the student record
     student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
 
+    # --- OFFENSE CHOICES (Based on CTU Manual Content) ---
     OFFENSE_CHOICES = [
-        ('Bullying', 'Bullying'),
-        ('Cheating', 'Cheating'),
-  
-        ('Others', 'Others'),
+        ('Bullying', 'Bullying/Harassment'),
+        ('Cheating', 'Academic Dishonesty (Cheating/Plagiarism)'),
+        ('Uniform/ID Violation', 'Uniform/ID Violation'),
+        ('Class Disruption', 'Class or Academic Activity Disruption'),
+        ('Drug/Alcohol Use', 'Drug or Alcohol Possession/Use'),
+        ('Theft/Vandalism', 'Theft or Vandalism'),
+        ('Immorality/Lewdness', 'Immorality or Lewd Acts'),
+        ('Deadly Weapon', 'Possession of Deadly Weapon'),
+        ('Hazing', 'Hazing or Initiation Rites'),
+        ('Falsification', 'Falsification of Documents'),
+        ('Unauthorized Use', 'Unauthorized Activity/Collection'),
+        ('Others', 'Other Offense'),
     ]
 
+    # --- ACTION CHOICES (Based on CTU Manual Penalties) ---
     ACTION_CHOICES = [
+        ('Oral Reprimand', 'Oral Reprimand'),
+        ('Written Reprimand', 'Written Reprimand'),
         ('Community Service', 'Community Service'),
         ('Suspension', 'Suspension'),
-        ('Counseling', 'Counseling'),
-        ('Others', 'Others'),
+        ('Expulsion', 'Expulsion'),
+        ('Counseling', 'Counseling/Intervention'),
+        ('Others', 'Other Action/Penalty'),
     ]
 
-    offense_type = models.CharField(max_length=50, choices=OFFENSE_CHOICES)
-    custom_offense = models.CharField(max_length=255, blank=True, null=True)
+    # --- OFFENSE NUMBER ---
+    OFFENSE_NUMBER_CHOICES = [
+        ('1st', '1st Offense'),
+        ('2nd', '2nd Offense'),
+        ('3rd', '3rd Offense'),
+        ('4th', '4th Offense'),
+        ('5th', '5th Offense'),
+        ('Subsequent', 'Subsequent Offense (Beyond 5th)'),
+    ]
+    
+    offense_number = models.CharField(
+        max_length=10, 
+        choices=OFFENSE_NUMBER_CHOICES, 
+        default='1st',
+        verbose_name='Offense Number'
+    )
+    
+    # Offense Details
+    offense_type = models.CharField(
+        max_length=50, 
+        choices=OFFENSE_CHOICES,
+        verbose_name='Offense Type'
+    )
+    custom_offense = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True,
+        verbose_name='Specify Custom Offense'
+    )
+    description = models.TextField(
+        verbose_name='Description of Incident',
+        blank=True,
+        null=True,   # <-- allow NULL so migration can add column safely
+    )
+    # Action/Penalty Details
+    action_taken = models.CharField(
+        max_length=50, 
+        choices=ACTION_CHOICES,
+        verbose_name='Action Taken'
+    )
+    community_service_hours = models.IntegerField(
+        blank=True, 
+        null=True,
+        verbose_name='Community Service Hours'
+    )
+    suspension_duration = models.CharField(
+        max_length=50, 
+        blank=True, 
+        null=True,
+        verbose_name='Suspension Duration (e.g., "5 days")'
+    )
+    custom_action = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True,
+        verbose_name='Specify Custom Action'
+    )
 
-    action_taken = models.CharField(max_length=50, choices=ACTION_CHOICES)
-    community_service_hours = models.IntegerField(blank=True, null=True)
-    suspension_duration = models.CharField(max_length=50, blank=True, null=True)
-    custom_action = models.CharField(max_length=255, blank=True, null=True)
+    # Reporting and Status Fields (Added for completeness)
+    date_reported = models.DateField(
+        default=date.today,
+        verbose_name='Date Reported'
+    )
+    reported_by = models.CharField(
+        max_length=100, 
+        verbose_name='Reported By (User ID/Name)', blank=True,
+        null=True,
+    )
+    
+    STATUS_CHOICES = [
+        ('Pending', 'Pending Review'),
+        ('Under Investigation', 'Under Investigation'),
+        ('Resolved', 'Resolved/Closed'),
+    ]
+    status = models.CharField(
+        max_length=20, 
+        choices=STATUS_CHOICES, 
+        default='Pending',
+        verbose_name='Case Status'
+    )
 
-    date_reported = models.DateField(default=date.today)    
+    # Evidence (File Upload)
+    evidence = models.FileField(
+        upload_to='discipline_evidence/', 
+        blank=True, 
+        null=True,
+        verbose_name='Supporting Evidence (Attachment)'
+    )
 
+    class Meta:
+        verbose_name = "Case Profile"
+        verbose_name_plural = "Case Profiles"
+        ordering = ['-date_reported']
 
     def __str__(self):
-        return f"{self.student} - {self.offense_type}"
-
-
+        return f"{self.student.firstname} {self.student.lastname} - {self.offense_number} {self.get_offense_type_display()}"
 # ...existing code...
 # from ..models import studentInfo  # Add this import at the top
 
@@ -64,7 +171,7 @@ class CommunityServiceTracker(models.Model):
     service_date = models.DateField()
     time_in = models.TimeField()
     time_out = models.TimeField()
-    student_signature = models.ImageField(upload_to='signatures/', blank=True, null=True)
+
     remarks = models.TextField(blank=True)
 
 

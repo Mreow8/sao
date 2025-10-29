@@ -40,6 +40,8 @@ title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
       >Accreditation Application</a
     >
   </div>
+  <!-- prettier-ignore -->
+  {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
   <div class="guidance-form">
     <form method="post">
       <h2>Submit New Financial Record</h2>
@@ -81,6 +83,7 @@ title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
       <button type="submit" class="btn-primary">Submit</button>
     </form>
   </div>
+  {% endif %}
   <!-- Financial Statements Table -->
   <div class="maincontain">
     <div class="subcontain">

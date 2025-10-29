@@ -1,8 +1,163 @@
 {% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
-<link
-  rel="stylesheet"
-  href="{% static 'styles/studentlife/requestgmc.css' %}"
-/>
+<style>
+  /* --- Global, Fonts & Container --- */
+  .sub-title,
+  .gmc-form,
+  .requestBtn {
+    font-family: "Rubik", sans-serif;
+  }
+
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .gmc-form {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 0; /* Remove padding to let table fill */
+    overflow: hidden; /* Clips the table corners */
+  }
+
+  /* --- Table Styles (Based on #historyTable) --- */
+  .gmc-form table {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+  }
+
+  .gmc-form table th,
+  .gmc-form table td {
+    border-bottom: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  .gmc-form table th {
+    background-color: #f9f9f9;
+    color: #2c5282; /* Primary Blue */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .gmc-form table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* --- Status & Button Styles --- */
+
+  /* "Claimed" message (Based on .status-processed) */
+  .success-message {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    background-color: #2ecc71; /* Green */
+    display: inline-block;
+  }
+
+  /* "Approve" button (Based on .requestBtn) */
+  .requestBtn {
+    font-family: "Rubik", sans-serif;
+    background-color: #2c5282; /* Primary Blue */
+    color: white;
+    font-size: 0.875rem; /* Smaller for table */
+    font-weight: 600;
+    padding: 8px 16px; /* Smaller for table */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.2s;
+    width: 100%; /* Make buttons uniform in cells */
+    box-sizing: border-box;
+  }
+
+  .requestBtn:hover {
+    background-color: #2a4365;
+    transform: translateY(-2px);
+  }
+
+  /* "Mark as Claimed" button (Green, like .printBtn) */
+  .requestBtn[action*="claim"] {
+    background-color: #28a745; /* Green */
+  }
+  .requestBtn[action*="claim"]:hover {
+    background-color: #218838; /* Darker Green */
+  }
+
+  /* Ensure forms in cells have no margin */
+  .gmc-form table td form {
+    margin: 0;
+  }
+
+  /* --- Responsive Card View (Based on #historyTable) --- */
+  @media (max-width: 768px) {
+    /* Remove wrapper border on mobile */
+    .gmc-form {
+      border: none;
+      box-shadow: none;
+      overflow: visible;
+      background-color: transparent;
+    }
+
+    .gmc-form table,
+    .gmc-form table thead,
+    .gmc-form table tbody,
+    .gmc-form table th,
+    .gmc-form table td,
+    .gmc-form table tr {
+      display: block;
+      width: 100%;
+    }
+
+    .gmc-form table thead {
+      display: none; /* hide table headers */
+    }
+
+    .gmc-form table tbody tr {
+      margin-bottom: 20px;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .gmc-form table tbody td {
+      position: relative;
+      padding-left: 50%;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+      color: #2c2c2c;
+      min-height: 40px; /* Ensure row height */
+    }
+
+    .gmc-form table tbody td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 16px;
+      top: 12px;
+      font-weight: 600;
+      color: #2c5282; /* Primary Blue */
+      white-space: nowrap;
+    }
+
+    .gmc-form table tbody td:last-child {
+      border-bottom: none;
+    }
+  }
+</style>
 <div class="sub-title">
   <h3>Alumni(Admin)</h3>
   <p class="hometext">Home</p>

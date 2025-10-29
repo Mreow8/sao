@@ -1,56 +1,60 @@
-.sub-title h3 {
-  color: black;
-
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 15px;
-}
-
-.sub-title p {
-  display: inline;
-}
-
-.hometext {
-  color: gray;
-}
-.certxt {
-  margin-left: 5px;
-  color: #ff8000;
-}
-
+/* --- Main Content Card --- */
 .equipmentContents {
-  width: 1155px;
-  margin: 0 auto;
-  padding: 20px;
+  font-family: "Rubik", sans-serif;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  background-color: #f9f9f9;
-  color: black;
-  margin-top: 40px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow-x: auto; /* Add scroll for desktop if needed */
 }
 
-.equipmentContents h2 {
-  color: black;
-}
-
-table {
-  margin-top: 20px;
+/* --- Equipment Table Styles --- */
+.equipmentTable {
   width: 100%;
   border-collapse: collapse;
+  min-width: 800px; /* Force scroll if window is narrow */
 }
 
-table th,
-table td {
-  padding: 8px;
-  text-align: left;
+.equipmentTable th,
+.equipmentTable td {
   border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+  white-space: nowrap; /* Keep content on one line */
 }
 
-table th {
-  background-color: #f2f2f2;
-  color: #ff8000;
+.equipmentTable th {
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-table td {
-  color: black;
+/* Remove bottom border from last row */
+.equipmentTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Mobile Responsive Styles --- */
+/* (These are from your inline <style> block) */
+@media (max-width: 768px) {
+  .equipmentContents {
+    padding: 1.5rem; /* Adjust padding for small screens */
+    width: 100%;
+    overflow-x: auto; /* Enables horizontal scroll */
+  }
+
+  .equipmentTable {
+    min-width: 600px; /* Prevents columns from squishing too much */
+  }
+
+  .equipmentTable th,
+  .equipmentTable td {
+    padding: 8px;
+    font-size: 14px;
+  }
 }

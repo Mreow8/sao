@@ -6,10 +6,38 @@ from django.db.models import Avg
 import socket
 from mainpage.models import studentInfo
 from mainpage.models.alumni import Alumni, graduateForm, Event, JobFair, Yearbook
+from ..decorators import sao_admin_required, alumni_required 
+def admin_tracer_list(request):
+    """
+    Shows the page with the table.
+    The 'selected_form' variable is no longer needed.
+    """
+    all_forms = graduateForm.objects.all().order_by('approval_status', 'dategraduated')
+    context = {
+        'graduate_requests': all_forms,
+    }
+    return render(request, 'alumni/users/admin_gradTracer.html', context)
 
-from mainpage.decorators import sao_admin_required  # Adjust path if your decorator is elsewhere
+
+def update_form_status(request, pk):
+    """
+    Handles the Accept/Decline/Pending button clicks from the modal.
+    """
+    if request.method == 'POST':
+        form_to_update = get_object_or_404(graduateForm, alumniID_id=pk)
+        new_status = request.POST.get('status')
+
+        if new_status in ['Accepted', 'Declined', 'Pending']:
+            form_to_update.approval_status = new_status
+            form_to_update.save()
+            messages.success(request, f"Form status for {form_to_update.firstname} updated to {new_status}.")
+        else:
+            messages.error(request, "Invalid status submitted.")
+            
+    # IMPORTANT: Redirects back to the main LIST page
+    return redirect('admin_tracer_list')
 from datetime import date
-
+@alumni_required  # <-- ADD THIS
 def idRequest(request):
     user = request.user
     student = None
@@ -18,23 +46,26 @@ def idRequest(request):
     if user.is_authenticated:
         try:
             student = studentInfo.objects.get(studID=user.username)
-            alumni = Alumni.objects.filter(student=student).first()
+            
+            # ALL THE CHECKS ARE GONE. The decorator handles them.
+            
+            alumni, created = Alumni.objects.get_or_create(student=student)
+            
         except studentInfo.DoesNotExist:
             student = None
+            messages.error(request, 'Your user account is not linked to a student profile.')
+            return redirect('homepage') 
 
-    # Calculate today and 16 years ago
     today = date.today()
     sixteen_years_ago = date(today.year - 16, today.month, today.day)
 
     context = {
         'student': student,
-        'alumni': alumni,  # Pass alumni object to template
+        'alumni': alumni, 
         'today': today,
         'sixteen_years_ago': sixteen_years_ago,
     }
     return render(request, 'alumni/users/id_alumni.html', context)
-
-
 def search_id(request):
     if request.method == 'GET':
         student_id = request.GET.get('student_id')
@@ -54,74 +85,78 @@ def search_id(request):
         
         return render(request, 'alumni/users/id_alumni.html')
     
-
 def add_alumni(request):
     if request.method == 'POST':
         student_id = request.POST.get('student_id')
-        email_add = request.POST.get('email_add')
-        firstname = request.POST.get('firstname')
-        lastname = request.POST.get('lastname')
-        alumnidate = request.POST.get('alumnidate')
-        alumnibirthday = request.POST.get('alumnibirthday')
-        alumnicontact = request.POST.get('alumnicontact')
-        sssgsis = request.POST.get('sssgsis')
-        tin = request.POST.get('tin')
-        parentguardian = request.POST.get('parentguardian')
-        alumniaddress = request.POST.get('alumniaddress')
-        degree = request.POST.get('degree')
-        sex = request.POST.get('sex')
         
-        if Alumni.objects.filter(student__studID=student_id).exists():
-            messages.error(request, f'You already requested Alumni ID!')
-            return redirect(' idRequest')
-
         student = get_object_or_404(studentInfo, studID=student_id)
-        alumni = Alumni.objects.create(student=student, firstname=firstname, lastname=lastname,
-                               alumnidate=alumnidate, alumnibirthday=alumnibirthday,
-                               alumnicontact=alumnicontact, sssgsis=sssgsis, tin=tin,
-                               parentguardian=parentguardian, alumniaddress=alumniaddress,email_add=email_add,degree=degree,sex=sex)
+
+        # Use update_or_create:
+        # This finds the Alumni record for the student and UPDATES it.
+        # If one somehow doesn't exist, it creates it.
+        alumni, created = Alumni.objects.update_or_create(
+            student=student,  # This is the field to look up
+            defaults={        # These are the fields to update/set
+                'firstname': request.POST.get('firstname'),
+                'lastname': request.POST.get('lastname'),
+                'alumnidate': request.POST.get('alumnidate'),
+                'alumnibirthday': request.POST.get('alumnibirthday'),
+                'alumnicontact': request.POST.get('alumnicontact'),
+                'sssgsis': request.POST.get('sssgsis'),
+                'tin': request.POST.get('tin'),
+                'parentguardian': request.POST.get('parentguardian'),
+                'alumniaddress': request.POST.get('alumniaddress'),
+                'email_add': request.POST.get('email_add'),
+                'degree': request.POST.get('degree'),
+                'sex': request.POST.get('sex')
+            }
+        )
+        
         alumni_id = alumni.alumniID
         
-        messages.success(request, f'Your request is successful! Your alumni ID requested is {alumni_id}')
+        # Updated the message to be more accurate
+        messages.success(request, f'Your alumni information has been successfully updated! Your ID is {alumni_id}')
         
         return redirect('idRequest')
     else:
-        return redirect('idRequest')    
+        return redirect('idRequest')
     
+
+@alumni_required  # <-- ADD THIS
 def graduateTracer(request):
-    # Make sure the user is logged in and linked to a student record
-    if not request.user.is_authenticated:
-        return redirect('login')  # or show an error page
-
+    # No login check needed.
+    
     try:
-        stud_id = request.user.student.studID  # get student ID from logged-in user
-    except AttributeError:
-        # Handle case where logged-in user is not linked to a Student
-        return render(request, 'alumni/users/graduateTracer.html', {
-            'alumni': None,
-            'already_submitted': False,
-            'error': 'No student record found for your account.'
-        })
+        student_id = request.user.username
+        student = get_object_or_404(studentInfo, studID=student_id)
+        
+        # ALL THE CHECKS ARE GONE.
+ 
+        alumni_obj, created = Alumni.objects.get_or_create(student=student)
 
-    try:
-        alumni = Alumni.objects.select_related('student').get(student__studID=stud_id)
-    except Alumni.DoesNotExist:
-        alumni = None
-
-    if alumni:
-        existing_form = graduateForm.objects.filter(alumniID=alumni).first()
+        existing_form = graduateForm.objects.filter(alumniID=alumni_obj).first()
+        
         if existing_form:
             return render(request, 'alumni/users/graduateTracer.html', {
-                'alumni': alumni,
+                'alumni': alumni_obj,
+                'student_id': student_id,
                 'already_submitted': True,
                 'submitted_form': existing_form,
             })
-
-    return render(request, 'alumni/users/graduateTracer.html', {
-        'alumni': alumni,
-        'already_submitted': False,
-    })
-
+        
+        return render(request, 'alumni/users/graduateTracer.html', {
+            'alumni': alumni_obj,
+            'student_id': student_id,
+            'already_submitted': False,
+        })
+        
+    except studentInfo.DoesNotExist:
+        messages.error(request, 'Your user account is not linked to a student profile.')
+        return render(request, 'alumni/users/graduateTracer.html', {'already_submitted': False})
+    
+    except Exception as e:
+        messages.error(request, f'An error occurred: {str(e)}')
+        return render(request, 'alumni/users/graduateTracer.html', {'already_submitted': False})
 def search_id2(request):
     user = request.user
     if not user.is_authenticated:
@@ -151,9 +186,11 @@ def search_id2(request):
     except Exception as e:
         messages.error(request, f'An error occurred: {str(e)}')
         return render(request, 'alumni/users/graduateTracer.html')
-
+    
+@alumni_required
 def graduateTracer_submit(request):
     if request.method == 'POST':
+        # --- Data Retrieval (No Change Here) ---
         student_id = request.POST.get('student_id')
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
@@ -166,6 +203,7 @@ def graduateTracer_submit(request):
         nameoforganization = request.POST.get('nameoforganization')
         employmenttype = request.POST.get('employmentype')
         occupationalClass = request.POST.get('occupationalClass')
+        organizationType = request.POST.get('organizationType')
         gradscholrelated = request.POST.get('gradscholrelated')
         yearscompany = request.POST.get('yearscompany')
         placework = request.POST.get('placework')
@@ -215,6 +253,8 @@ def graduateTracer_submit(request):
         opportunitiesabroad = request.POST.get('opportunitiesabroad')  
         personalitydevelopment = request.POST.get('personalitydevelopment')  
         technologiesvaluesformation = request.POST.get('technologiesvaluesformation')  
+        
+        # --- Core Logic to Fetch Records (No Change) ---
         try:
             student = get_object_or_404(studentInfo, studID=student_id)
         except:
@@ -222,14 +262,18 @@ def graduateTracer_submit(request):
             return redirect('graduateTracer')
 
         try:
+            # Alumni record already exists due to the decorator, so we fetch it.
             alumni = get_object_or_404(Alumni, student=student)
         except:
             messages.error(request, 'No Alumni matches the given query.')
             return redirect('graduateTracer')
+            
         existing_form = graduateForm.objects.filter(alumniID=alumni).first()
         if existing_form:
             messages.error(request, f"A graduate tracer form already exists for Alumni ID {alumni.alumniID}.")
             return redirect('graduateTracer')
+            
+        # --- Create Graduate Form (No Change) ---
         gradform = graduateForm.objects.create( alumniID=alumni,student=student,
                                     degree=degree,
                                     email_add=email_add,
@@ -241,6 +285,7 @@ def graduateTracer_submit(request):
                                     dategraduated=dategraduated,
                                     nameoforganization=nameoforganization,
                                     employmenttype=employmenttype,
+                                    organizationType=organizationType,
                                     occupationalClass=occupationalClass,
                                     gradscholrelated=gradscholrelated,
                                     yearscompany=yearscompany,
@@ -290,19 +335,24 @@ def graduateTracer_submit(request):
                                     personalitydevelopment=personalitydevelopment,
                                     technologiesvaluesformation=technologiesvaluesformation,
                                     
-    )
-        alumni_id = alumni.alumniID
+        )
         
-        messages.success(request, f'Your request is successful! Your alumni ID is {alumni_id}')
+        # --- CRITICAL CHANGE HERE ---
+        # The user successfully completed the TRACER FORM.
+        # We do NOT mention the Alumni ID.
+        messages.success(request, f'Thank you! Your Graduate Tracer Form has been submitted successfully. You can now access other Alumni features.')
         return redirect('graduateTracer')
     else:
-        return redirect('graduateTracer')    
-    
+        return redirect('graduateTracer')
+@alumni_required
 def alumni_events(request):
     events = Event.objects.all()    
     return render(request, 'alumni/users/alumni_events.html', {'events': events})    
+def alumni_events_admin(request):
+    events = Event.objects.all()    
+    return render(request, 'alumni/users/alumni_events_admin.html', {'events': events})    
 
-
+@alumni_required
 def jobfairs(request):
     job_fairs = JobFair.objects.order_by('-posted_date')
     return render(request, 'alumni/users/jobfairs.html', {'job_fairs': job_fairs})
@@ -461,31 +511,28 @@ def admin_gradTracer(request):
     graduate_requests = graduateForm.objects.select_related('alumniID').all()
     return render(request, 'alumni/users/admin_gradTracer.html', {'graduate_requests': graduate_requests})
 # @sao_admin_required
+from ..forms import EventForm
 def admin_events(request):
     if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES)
         
-        eventsName = request.POST.get('eventsName')
-        eventsDate = request.POST.get('eventsDate')
-        eventsLocation = request.POST.get('eventsLocation')
-        eventsDescription = request.POST.get('eventsDescription')
-        eventsImage = request.FILES.get('eventsImage') 
+        if form.is_valid():
+            # SUCCESS: Form is valid, save it
+            form.save()
+            messages.success(request, 'Successfully Added!')
+            return redirect('admin_events')
+        else:
+            # FAIL: Form is invalid. 
+            # We create a new, blank form to hide the errors.
+            form = EventForm()
+    else:
+        # GET Request: Just show a blank form
+        form = EventForm()
 
-        
-        event = Event.objects.create(
-            eventsName=eventsName,
-            eventsDate=eventsDate,
-            eventsLocation=eventsLocation,
-            eventsDescription=eventsDescription,
-            eventsImage=eventsImage
-        )
-        messages.success(request, 'Successfully Added!')
-        
-        return redirect(' admin_events')
-
-    return render(request, 'alumni/users/admin_events.html')
-
-
-
+    # This context will *only* ever contain a blank form.
+    # Error messages are never passed to the template.
+    context = {'form': form}
+    return render(request, 'alumni/users/admin_events.html', context)
 # @sao_admin_required
 def admin_jobfairs(request):
     if request.method == "POST":

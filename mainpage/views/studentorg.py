@@ -314,13 +314,44 @@ def edit_org(request, slug):
     return render(request, 'studentorg/Main/OrgMain.html', {'form': form})
 def view_project_by_slug(request, slug):
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
-
     org = get_object_or_404(Organization, slug=slug)
+
+    # --- START OF NEW CODE ---
+    if request.method == 'POST':
+        # Check if the user is allowed to submit
+        if not (request.user.is_authenticated and (request.user.role == 'superadmin' or (request.user.role == 'org_member' and request.user.organization == org))):
+            messages.error(request, "You are not authorized to submit projects for this organization.")
+            return redirect('view_project_by_slug', slug=slug)
+
+        # Get all the data from the form
+        try:
+            new_project = Project(
+                org=org,  # Link the organization
+                objective=request.POST.get('objective'),
+                activities=request.POST.get('activities'),
+                target=request.POST.get('target'),
+                involved_officer=request.POST.get('involved_officer'),
+                p_budget=request.POST.get('p_budget'),
+                expected_output=request.POST.get('expected_output'),
+                remarks=request.POST.get('remarks'),
+                actual_accomplishment=request.FILES.get('actual_accomplishment')
+                # The 'status' field will use its default value, which is likely 'pending'
+            )
+            new_project.save()
+            messages.success(request, "Project submitted successfully! It is now pending approval.")
+            return redirect('view_project_by_slug', slug=slug)
+
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+
+    # --- END OF NEW CODE ---
+
+    # This part runs on a normal page load (GET request)
     projects = Project.objects.filter(status='approved', org=org)
     return render(request, 'studentorg/Main/view_projects.html', {
         'org': org,
         'projects': projects,
-           'base_template': base_template,
+        'base_template': base_template,
     })
 
 @login_required

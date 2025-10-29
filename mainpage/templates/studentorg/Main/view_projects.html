@@ -5,11 +5,8 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
-<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
-<link rel="stylesheet" href="{% static 'styles/sub-title.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/projects.css' %}" />
+<link rel="stylesheet" href="{% static 'studentorg/css/viewproj.css' %}" />
+
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -19,13 +16,13 @@
 />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %} {% block bodycontent %}
-<div class="container">
-  <div class="sub-title">
-    <h3>{{ org.name|default:"TECHNOCRATS" }}</h3>
-    <p class="hometext"><a href="/Gen_Home">Orgs</a></p>
-    <p class="certxt">&gt; Projects</p>
-  </div>
+<div class="sub-title">
+  <h3>{{ org.name|default:"TECHNOCRATS" }}</h3>
+  <p class="hometext"><a href="/Gen_Home">Orgs</a></p>
+  <p class="certxt">&gt; Projects</p>
+</div>
 
+<div class="container">
   <div class="tabs">
     <a href="{% url 'org_profile' slug=org.slug %}" class="tab">Profiles</a>
     <a href="" class="tab active">Projects</a>

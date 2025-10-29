@@ -1,65 +1,161 @@
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap");
+/* ================================
+   ORGMAIN PAGE STYLES
+   Based on requestgmc.css theme
+   With Circular Div Containers
+================================ */
 
-.nav-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 299px;
-  height: 100vh;
-  background: #ff8000;
-  overflow-y: auto;
-  overflow-x: hidden;
+/* --- Global Font & Base Layout --- */
+.container,
+.sub-title,
+.add-org-btn,
+.image {
+  font-family: "Rubik", sans-serif;
 }
 
+.container {
+  padding: 0 1.5rem;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+/* --- Add Organization Button --- */
+.add-org-btn {
+  background-color: #2c5282;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.add-org-btn:hover {
+  background-color: #2a4365;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-org-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* --- Organization Grid Layout --- */
 .row {
-  display: flex;
-}
-
-.top-text {
-  max-width: 800px;
-  margin-top: 50px;
-  color: black;
-  font-family: "Gotham Rounded", sans-serif;
-  font-size: 60px;
-  text-align: center;
-  margin-left: 100px;
-  -webkit-text-stroke: 2px #ff8000;
-  text-shadow: 2px 2px 4px #ff8000;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  color: #fff;
-}
-
-.row {
-  margin-left: 100px;
-}
-
-.row:last-child .image:first-child {
-  margin-left: 140px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  justify-items: center;
 }
 
 .image {
-  flex: 1;
-  margin: 20px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  max-width: 200px;
-  height: auto;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 8px;
-}
-
-.top-text:hover {
-  transform: scale(1.05);
+  text-decoration: none;
+  background-color: transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .image:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px);
 }
 
-.image img {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 8px;
+/* --- Circle Wrapper for Image --- */
+.org-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #2c5282;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.org-circle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.org-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Organization Name Below Circle --- */
+.image div {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c5282;
+  text-align: center;
+  margin-top: 0.7rem;
+}
+
+/* --- SweetAlert Customization --- */
+.swal2-input,
+.swal2-file {
+  border: 1px solid #ccc !important;
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+  font-family: "Rubik", sans-serif !important;
+}
+
+.swal2-confirm {
+  background-color: #2c5282 !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s ease !important;
+}
+
+.swal2-confirm:hover {
+  background-color: #2a4365 !important;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .sub-title {
+    text-align: center;
+  }
+
+  .sub-title h3 {
+    font-size: 1.5rem;
+  }
+
+  .add-org-btn {
+    display: block;
+    margin: 0 auto 1.5rem;
+    width: 80%;
+  }
+
+  .row {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .org-circle {
+    width: 130px;
+    height: 130px;
+  }
+
+  .image div {
+    font-size: 0.95rem;
+  }
+}
+
+/* --- Divider for sections (optional) --- */
+hr {
+  margin: 2rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
 }

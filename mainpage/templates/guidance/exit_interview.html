@@ -4,45 +4,68 @@
   href="{% static 'styles/guidance/exit_interview.css'%}"
 />
 <link rel="stylesheet" href="{% static 'styles/guidance/consent_form.css'%}" />
-
+<style>
+  .container {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+</style>
 {% endblock %} {% block bodycontent %}
-<div class="showform_container" id="consent_container">
-  <div class="form_container">
-    <h2>Informed Consent Form</h2>
-    <p class="with-indent">
-      By checking the box below, I agree to fill out the Exit Interview Sheet
-      for the Guidance Office. I commit to providing honest and complete
-      information. I trust that the Guidance Staff will handle my personal data
-      with the utmost confidentiality.
-    </p>
-    <div>
-      <label>
-        <input type="checkbox" id="agreeCheck" />
-        I agree.
-      </label>
-    </div>
-    <button class="actionButton disabled" disabled id="proceedBtn">
-      Proceed
-    </button>
-  </div>
+
+<div class="sub-title">
+  <h3>GUIDANCE</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Exit Interview</p>
 </div>
+
 <div class="container">
-  {{form.errors}}
-  <div class="sub-title">
-    <h3>GUIDANCE</h3>
-    <p class="hometext">Home</p>
-    <p class="certxt">&gt; Exit Interview</p>
+  {{form.errors}} {% if ongoing_request %}
+  <div class="alert alert-warning" role="alert">
+    <h4 class="alert-heading">Pending Request Found!</h4>
+    <p>
+      You already have a pending Exit Interview request submitted on
+      <strong>{{ ongoing_request.dateRecieved|date:"F d, Y" }}</strong>.
+    </p>
+    <hr />
+    <p class="mb-0">
+      You cannot submit a new request until your current one has been processed.
+    </p>
   </div>
 
+  {% else %}
+  <div class="showform_container" id="consent_container">
+    <div class="form_container">
+      <h2>Informed Consent Form</h2>
+      <p class="with-indent">
+        By checking the box below, I agree to fill out the Exit Interview Sheet
+        for the Guidance Office. I commit to providing honest and complete
+        information. I trust that the Guidance Staff will handle my personal
+        data with the utmost confidentiality.
+      </p>
+      <div>
+        <label>
+          <input type="checkbox" id="agreeCheck" />
+          I agree.
+        </label>
+      </div>
+      <button class="actionButton disabled" disabled id="proceedBtn">
+        Proceed
+      </button>
+    </div>
+  </div>
   <div class="form-container">
     {% csrf_token %}
-
-    <table id="info_table" class="hidden">
-      <tr id="info_table_head">
-        <th>NAME</th>
-        <th>CONTACT NO.</th>
-      </tr>
-    </table>
+    <div class="gmc-table-wrapper">
+      <table id="info_table" class="hidden">
+        <tr id="info_table_head">
+          <th>NAME</th>
+          <th>CONTACT NO.</th>
+        </tr>
+      </table>
+    </div>
     <form method="post" action="" id="questionForm">
       {% csrf_token %}
       <div id="requestScheduleContainer">
@@ -121,7 +144,7 @@
             <tr>
               <td class="smallarea">Academically too challenging</td>
               <td>
-                <input type="number" name="academically_too_challenging" />
+                <input type="number" name="academically_too_challengING" />
               </td>
             </tr>
             <tr>
@@ -271,7 +294,7 @@
         <div class="twocolumn">
           <label>12. Are you currently employed?</label>
           {{form.currentlyEmployed}}
-          <div class="twocolumn hidden" id="explainationEmployed">
+          <div class="twocolumn hidden" id="explainATIONEmployed">
             <label id="employedYesNo"></label>
             {{form.explainationEmployed}}
           </div>
@@ -282,6 +305,7 @@
       </div>
     </form>
   </div>
+  {% endif %}
 </div>
 <script src="{% static 'scripts/guidance/exit_interview.js'%}"></script>
 {% endblock %}

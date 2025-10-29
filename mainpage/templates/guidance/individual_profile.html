@@ -74,6 +74,7 @@
                         {{form.nickName}}
                         <label>Enter your year level and section.</label>
                         <div class="two_input_container">
+
                             {{form.yearlvl}}
                             {{form.section}}
                         </div>
@@ -135,7 +136,23 @@
                             <label>Enter your email address:</label>
                         </div>
                         <div class="two_input_container">
-                            {{form.mobileNo}}
+                            <div>
+        <label for="{{ form.mobileNo.id_for_label }}">Mobile Number</label>
+        {{ form.mobileNo }}
+        
+        {% if form.mobileNo.errors %}
+            <div class="form-error-message">
+                {{ form.mobileNo.errors.as_text }}
+            </div>
+        {% endif %}
+    </div>
+    <style>
+    .form-error-message {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+</style>
                             {{form.email}}
                         </div>
                         <label>Enter your landline number: <label style="color: rgb(0, 4, 255)">*leave it blank if you don't have any.</label></label>

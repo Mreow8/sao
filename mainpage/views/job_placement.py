@@ -54,7 +54,13 @@ def get_user_backend(user):
     return None
 #deleteable
 from django.contrib.auth.hashers import check_password
-
+import os # <-- Add this import at the top of your file
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+# ... (other imports)
+from ..models import studentInfo, OJTCompany, OJTStudent # Adjust as needed
+from ..forms import OJTStudentForm # Adjust as needed
+# ... (your template path variables)
 
 @login_required(login_url='admin_login')
 def ojt_assign_student(request):
@@ -62,10 +68,10 @@ def ojt_assign_student(request):
     if not (request.user.is_staff or request.user.is_superuser):
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
-    
+
     if not (isinstance(request.user, JobPlacementAdminUser) or request.user.is_superuser):
         messages.info(request, 'Must be Jobplacement staff/admin to access page')
-        return redirect('admin_login')    
+        return redirect('admin_login')
 
     if request.method == 'POST':
         print("Processing OJT assignment...")
@@ -89,50 +95,140 @@ def ojt_assign_student(request):
         try:
             student = studentInfo.objects.get(studID=student_id)
         except studentInfo.DoesNotExist:
-            messages.error(request, "Student not found")
+            messages.error(request, f"Student with ID '{student_id}' not found.")
             return redirect('ojt_hiring')
+        except ValueError:
+             messages.error(request, f"Invalid Student ID format: '{student_id}'.")
+             return redirect('ojt_hiring')
 
         try:
             company = OJTCompany.objects.get(company_id=company_id)
         except OJTCompany.DoesNotExist:
-            messages.error(request, "Company not found")
+            messages.error(request, f"Company with ID '{company_id}' not found.")
             return redirect('ojt_hiring')
+        except ValueError:
+             messages.error(request, f"Invalid Company ID format: '{company_id}'.")
+             return redirect('ojt_hiring')
+
 
         # --- Check slots ---
         n_hired = OJTStudent.objects.filter(company_id=company).count()
         allowed_slots = company.number_of_slots - n_hired
         if allowed_slots < 1:
-            messages.error(request, "There are no slots left for this company")
+            messages.error(request, f"No slots left for {company.company_name}.")
             return redirect('ojt_hiring')
 
         # --- Create OJT assignment ---
         try:
-            new_ojt_form = OJTStudentForm(request.POST)
+            # Check if student is already assigned (optional but good practice)
+            if OJTStudent.objects.filter(studID=student).exists():
+                 messages.warning(request, f"Student {student.firstname} {student.lastname} is already assigned to an OJT.")
+                 # Decide if you want to stop or allow reassignment
+                 # return redirect('ojt_hiring')
+
+            new_ojt_form = OJTStudentForm(request.POST) # Pass request.POST here
             if new_ojt_form.is_valid():
                 new_ojt = new_ojt_form.save(commit=False)
-                new_ojt.student_id = student
+                new_ojt.studID = student # <-- Corrected field name
                 new_ojt.company_id = company
+                # Assign other fields from the form if needed, e.g., duration
+                # new_ojt.duration = duration # Make sure OJTStudent model has this field if needed
                 new_ojt.save()
 
-                messages.success(request, "Student assigned successfully")
+                messages.success(request, f"Student {student.firstname} {student.lastname} assigned successfully to {company.company_name}.")
                 log_activity(user=request.user, action=f"Assigned {student.firstname} {student.lastname} to {company.company_name}")
 
-                # --- Generate documents ---
+                # --- Generate documents with Enhanced Error Trapping ---
+                generation_successful = True # Flag to track if all documents generated
                 try:
+                    print(f"Attempting to generate documents in: {ojtrequirements_template_output_path}")
+                    # Ensure the output directory exists
+                    os.makedirs(ojtrequirements_template_output_path, exist_ok=True) # Create if it doesn't exist
+
+                    print("Generating Application Letter...")
                     gen_application_letter(ojtrequirements_application_letter, ojtrequirements_template_output_path, student_id, company_id)
+
+                    print("Generating Biodata...")
                     gen_biodata(ojtrequirements_biodata, ojtrequirements_template_output_path, student_id, company_id)
+
+                    print("Generating Endorsement Letter...")
                     gen_endorsement_letter(ojtrequirements_endorsement_letter, ojtrequirements_template_output_path, student_id, company_id, duration, **params)
+
+                    print("Generating Medical Clearance...")
                     gen_medical(ojtrequirements_medical, ojtrequirements_template_output_path, student_id)
+
+                    print("Generating MOA...")
                     gen_moa(ojtrequirements_moa, ojtrequirements_template_output_path, student_id=student_id, duration=duration, **params)
-                except Exception as doc_err:
-                    messages.warning(request, f"Student assigned but failed to generate some documents: {doc_err}")
 
-                return redirect('ojt_requiremets_download')
-            else:
-                messages.error(request, "Form data is invalid")
-        except Exception as e:
-            messages.error(request, f"Failed to assign student: {e}")
+                    print("✅ All document generation functions called.")
 
+                # Catch specific errors if possible, fallback to generic Exception
+                except FileNotFoundError as fnf_err:
+                     generation_successful = False
+                     error_message = f"Document generation failed: Template file not found - {fnf_err}. Please check template paths."
+                     print(f"❌ {error_message}")
+                     messages.error(request, error_message)
+                except KeyError as key_err:
+                     generation_successful = False
+                     error_message = f"Document generation failed: Missing data placeholder in template - {key_err}. Check template and data."
+                     print(f"❌ {error_message}")
+                     messages.error(request, error_message)
+                except PermissionError as perm_err:
+                     generation_successful = False
+                     error_message = f"Document generation failed: Permission denied writing to '{ojtrequirements_template_output_path}'. Check folder permissions. Details: {perm_err}"
+                     print(f"❌ {error_message}")
+                     messages.error(request, error_message)
+                except Exception as doc_err: # Catch any other errors during generation
+                    generation_successful = False
+                    error_message = f"An unexpected error occurred during document generation: {doc_err}"
+                    print(f"❌ {error_message}")
+                    messages.error(request, f"Student assigned, but failed to generate documents: {doc_err}")
+
+                # --- Check if files were actually created before redirecting ---
+                if generation_successful:
+                    try:
+                        # List files in the output directory
+                        files_in_output = os.listdir(ojtrequirements_template_output_path)
+                        # Filter for .docx files related to the student (optional, but safer)
+                        generated_docs = [f for f in files_in_output if f.endswith('.docx') and student.lastname in f]
+
+                        if not generated_docs:
+                            warning_message = f"Student assigned, but no documents were found in '{ojtrequirements_template_output_path}'. Zip file will be empty."
+                            print(f"⚠️ {warning_message}")
+                            messages.warning(request, warning_message)
+                            # You might want to redirect back to ojt_hiring here instead of download
+                            # return redirect('ojt_hiring')
+                        else:
+                             print(f"✅ Found generated documents: {generated_docs}")
+                             # Proceed to download page ONLY if files exist
+                             return redirect('ojt_requiremets_download')
+
+                    except FileNotFoundError:
+                        error_message = f"Output directory '{ojtrequirements_template_output_path}' not found after generation attempt."
+                        print(f"❌ {error_message}")
+                        messages.error(request, error_message)
+                    except Exception as check_err:
+                        error_message = f"Error checking output directory: {check_err}"
+                        print(f"❌ {error_message}")
+                        messages.error(request, error_message)
+
+                # If generation failed or no files found, redirect back (or stay on page)
+                return redirect('ojt_hiring') # Redirect back if there were errors
+
+            else: # Form is invalid
+                print("❌ OJT Assignment Form is invalid:")
+                print(new_ojt_form.errors)
+                messages.error(request, f"Failed to assign student: Invalid form data - {new_ojt_form.errors.as_text()}")
+                # It might be better to re-render the ojt_hiring page with the errors
+                # return render(request, 'jobplacement/ojthiring.html', {'form': OjtHiringForm(), 'assign_form': new_ojt_form, 'ojt_list': OJTCompany.objects.all(), 'base_template': "adminmain.html"})
+
+
+        except Exception as assign_err: # Catch errors during OJTStudent creation/saving
+            error_message = f"Failed to save OJT assignment: {assign_err}"
+            print(f"❌ {error_message}")
+            messages.error(request, error_message)
+
+    # If GET request or if POST failed before redirecting
     return redirect('ojt_hiring')
 def student_suggestions(request):
     """Return a JSON list of students matching the query (by ID or name)."""
@@ -616,15 +712,17 @@ def manage_attendance(request, id): # seminar attendance page
     print(attendance)
     context = {'attendance':attendance, 'sem_id':id, 'sem_form':sem_form, 'presents':present_students}
     return render(request, 'jobplacement/sem_att_manager.html', context)
-
-# @login_required(login_url='admin_login')
+# ...existing code...
 def pend_attendance(request):
-    if not request.user.is_authenticated: # prevent alien access
-        messages.info(request, 'Must be logged in to access page')
-        return redirect('admin_login')
-    
+
     # handles student attendance request
     if request.method == 'POST':
+        try:
+          print("pend_attendance POST keys:", dict(request.POST))
+          print("pend_attendance COOKIES:", request.COOKIES.keys())
+        except Exception as _:
+          print("pend_attendance: failed to dump POST data")
+
         stud_id = request.POST.get('student_id')
         sem_id = request.POST.get('seminar_id')
 
@@ -633,8 +731,11 @@ def pend_attendance(request):
             return redirect('manage_att', sem_id)
 
         try:
-            # Check if the attendance record already exists
-            sem_att = SeminarAttendance.objects.get(student_id__studID=stud_id, seminar_id__seminar_id=sem_id)
+            # Try to find existing attendance using the FK field name 'student_id'
+            sem_att = SeminarAttendance.objects.get(
+                student_id__studID=stud_id,
+                seminar_id__seminar_id=sem_id
+            )
             sem_att.ispending = True
             sem_att.save()
             messages.success(request, "Attendance updated successfully.")
@@ -654,19 +755,29 @@ def pend_attendance(request):
                 return redirect('manage_att', id=sem_id)
 
             try:
-                SeminarAttendance.objects.create(
+                # Use the correct FK field names (student_id, seminar_id) and avoid 'studID'
+                att, created = SeminarAttendance.objects.get_or_create(
                     student_id=student_obj,
                     seminar_id=seminar_obj,
-                    ispending=True
+                    defaults={'ispending': True, 'attended': False}
                 )
-                log_activity(request.user, "New attendance recorded")
-                messages.success(request, "New attendance recorded successfully.")
+                if not created:
+                    att.ispending = True
+                    att.save()
+                print(f"pend_attendance: attendance record created={created} id={att.pk}")
+                # verify immediately (debug)
+                qs = SeminarAttendance.objects.filter(seminar_id__seminar_id=sem_id, ispending=True, attended=False)
+                print("pend_attendance: pending queryset count:", qs.count(), qs[:5])
+                log_activity(request.user, "New attendance recorded" if created else "Attendance Updated")
+                messages.success(request, "New attendance recorded successfully." if created else "Attendance updated successfully.")
                 return redirect('manage_att', id=sem_id)
             except Exception as e:
+                print("pend_attendance: error creating attendance:", e)
                 messages.error(request, f"Error creating new attendance: {e}")
                 return redirect('manage_att', id=sem_id)
 
-    return redirect('home')
+    return redirect('seminar')
+# ...existing code...
 
 # @login_required(login_url='admin_login')
 def cancel_pending(request, id): # handles attendance request cancel
@@ -1469,7 +1580,7 @@ def gen_application_letter(template_path, output_path, student_id, company_id):
         '[name_of_company_representative]': f"{company.owner}",
         '[company_name]': f"{company.company_name}",
         '[company_address]': f"{company.address}",
-        '[degree_and_year_of_student]': f"{student.program} as {student.yearlvl}{th} student",
+        '[degree_and_year_of_student]': f"{student.degree} as {student.yearlvl}{th} student",
         '[contact_number_of_student]': f"{student.contact}",
         '[firstname]': f"{student.firstname}",
         '[lastname]': f"{student.lastname}",
@@ -1584,7 +1695,7 @@ def gen_moa(template_path, output_path, student_id, duration, **params):
         '[name_of_coordinator]': params.get('endorser_name'),
         '[firstname]': student.firstname,
         '[lastname]': student.lastname,
-        '[degree_program]': student.program,
+        '[degree_program]': student.degree,
         '[hours]': duration,
     }
     doc = Document(template_path)

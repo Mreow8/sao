@@ -28,6 +28,8 @@ urlpatterns = [
     
     # Equipment Management
     path("addEquipment/", views.addEquipment, name="addEquipment"),
+    path("equipmentborrowed/", views.equipmentborrowed, name="equipmentborrowed"),
+    
     # path("upload/", views.upload_file, name="upload_file"),
     path("display_items/", views.display_items, name="display_items"),
     path("purchased_items/", views.purchased_items, name="purchased_items"),

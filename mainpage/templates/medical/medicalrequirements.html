@@ -1,6 +1,5 @@
 {% extends 'adminmain.html' %} {% load static tailwind_tags %}
 <!-- prettier-ignore -->
-
 {% block title%}HealthHub Connect | Medical Requirements Tracker{% endblock %} 
 {% block bodycontent %}
 {% block extra_css %} {% tailwind_css %}
@@ -68,15 +67,17 @@
     padding-top: 10px; /* Add some space above preview content */
   }
   #previewContainer img,
-  #previewContainer object {
+  #previewContainer object,
+  #previewContainer iframe {
     display: block; /* Prevent extra space below inline elements */
     max-width: 100%;
     height: auto; /* Maintain aspect ratio */
     margin: auto; /* Center image/object */
   }
-  #previewContainer object {
+  #previewContainer object,
+  #previewContainer iframe {
     width: 100%; /* Allow object to take full width of container if needed */
-    height: 100%; /* Allow object to take full height of container if needed */
+    min-height: 60vh; /* Ensure PDF viewer has enough height */
   }
   .zoom-controls {
     margin-top: 10px;
@@ -137,8 +138,6 @@
       </div>
       <div>
         <span class="font-semibold">Name:</span> {{ student.firstname }}
-        <!-- prettier-ignore -->
-
         {{student.lastname }}
       </div>
       <div><span class="font-semibold">Degree:</span> {{ student.degree }}</div>
@@ -156,21 +155,21 @@
       <div>
         <span class="font-semibold">ID Number:</span> {{ faculty.faculty_id }}
       </div>
+      <!-- prettier-ignore -->
       <div>
-        <span class="font-semibold">Name:</span> {{
-        faculty.user.get_full_name|default:faculty.user.username }}
+        <span class="font-semibold">Name:</span> {{  faculty.user.get_full_name|default:faculty.user.username }}
       </div>
+      <!-- prettier-ignore -->
       <div>
-        <span class="font-semibold">Department:</span> {{
-        faculty.department|default:'N/A' }}
+        <span class="font-semibold">Department:</span> {{  faculty.department|default:'N/A' }}
       </div>
+      <!-- prettier-ignore -->
       <div>
-        <span class="font-semibold">Position:</span> {{
-        faculty.position|default:'N/A' }}
+        <span class="font-semibold">Position:</span> {{   faculty.position|default:'N/A' }}
       </div>
+      <!-- prettier-ignore -->
       <div>
-        <span class="font-semibold">Email:</span> {{
-        faculty.user.email|default:'N/A' }}
+        <span class="font-semibold">Email:</span> {{     faculty.user.email|default:'N/A' }}
       </div>
     </div>
   </div>
@@ -185,12 +184,14 @@
       </p>
     </div>
     <form method="POST">
-      {% csrf_token %}
-      <input
-        type="hidden"
-        name="student_id"
-        value="{{ student.student_id|default:'' }}"
-      />
+      {% csrf_token %} {% if student %}
+      <input type="hidden" name="user_type" value="student" />
+      <input type="hidden" name="user_id" value="{{ student.studID }}" />
+      {% elif faculty %}
+      <input type="hidden" name="user_type" value="faculty" />
+      <input type="hidden" name="user_id" value="{{ faculty.faculty_id }}" />
+      {% endif %}
+
       <div class="table-container">
         <div class="overflow-x-auto">
           <table
@@ -210,15 +211,16 @@
                 <td class="p-2">
                   {% if user.is_superuser or user.is_staff %}
                   <textarea
-                    name="x-ray-remark"
+                    name="chest-xray-remark"
                     class="w-full p-2 border rounded-md text-base h-20"
                     placeholder="Enter remarks here..."
                   >
-{{ med_requirements.x_ray_remarks|default:'' }}</textarea
+{{ med_requirements.chest_xray_remarks|default:'' }}</textarea
                   >
                   {% else %}
                   <span
-                    >{{ med_requirements.x_ray_remarks|default:'None' }}</span
+                    >{{ med_requirements.chest_xray_remarks|default:'None'
+                    }}</span
                   >
                   {% endif %}
                 </td>
@@ -233,7 +235,7 @@
                 <td class="p-2 text-center">
                   {% if med_requirements.chest_xray %}<button
                     type="button"
-                    onclick="previewFile('{{ med_requirements.chest_xray.url }}', '{{ student.firstname }} {{ student.lastname }}', 'Chest X-ray')"
+                    onclick="previewFile('{{ med_requirements.chest_xray.url }}', '{% if student %}{{ student.firstname }} {{ student.lastname }}{% elif faculty %}{{ faculty.user.get_full_name|default:faculty.user.username }}{% endif %}', 'Chest X-ray')"
                     class="text-blue-600 hover:underline"
                   >
                     Preview</button
@@ -265,7 +267,7 @@
                 <td class="p-2 text-center">
                   {% if med_requirements.cbc %}<button
                     type="button"
-                    onclick="previewFile('{{ med_requirements.cbc.url }}', '{{ student.firstname }} {{ student.lastname }}', 'Complete Blood Count (CBC)')"
+                    onclick="previewFile('{{ med_requirements.cbc.url }}', '{% if student %}{{ student.firstname }} {{ student.lastname }}{% elif faculty %}{{ faculty.user.get_full_name|default:faculty.user.username }}{% endif %}', 'Complete Blood Count (CBC)')"
                     class="text-blue-600 hover:underline"
                   >
                     Preview</button
@@ -300,7 +302,7 @@
                 <td class="p-2 text-center">
                   {% if med_requirements.drug_test %}<button
                     type="button"
-                    onclick="previewFile('{{ med_requirements.drug_test.url }}', '{{ student.firstname }} {{ student.lastname }}', 'Drug Test')"
+                    onclick="previewFile('{{ med_requirements.drug_test.url }}', '{% if student %}{{ student.firstname }} {{ student.lastname }}{% elif faculty %}{{ faculty.user.get_full_name|default:faculty.user.username }}{% endif %}', 'Drug Test')"
                     class="text-blue-600 hover:underline"
                   >
                     Preview</button
@@ -318,10 +320,9 @@
 {{ med_requirements.stool_examination_remarks|default:'' }}</textarea
                   >
                   {% else %}
+                  <!-- prettier-ignore -->
                   <span
-                    >{{
-                    med_requirements.stool_examination_remarks|default:'None'
-                    }}</span
+                    >{{ med_requirements.stool_examination_remarks|default:'None'   }}</span
                   >
                   {% endif %}
                 </td>
@@ -336,7 +337,7 @@
                 <td class="p-2 text-center">
                   {% if med_requirements.stool_examination %}<button
                     type="button"
-                    onclick="previewFile('{{ med_requirements.stool_examination.url }}', '{{ student.firstname }} {{ student.lastname }}', 'Stool Examination')"
+                    onclick="previewFile('{{ med_requirements.stool_examination.url }}', '{% if student %}{{ student.firstname }} {{ student.lastname }}{% elif faculty %}{{ faculty.user.get_full_name|default:faculty.user.username }}{% endif %}', 'Stool Examination')"
                     class="text-blue-600 hover:underline"
                   >
                     Preview</button
@@ -372,7 +373,7 @@
                   {% if med_requirements.pwd_card %}
                   <button
                     type="button"
-                    onclick="previewFile('{{ med_requirements.pwd_card.url }}', '{{ student.firstname }} {{ student.lastname }}', 'PWD Card')"
+                    onclick="previewFile('{{ med_requirements.pwd_card.url }}', '{% if student %}{{ student.firstname }} {{ student.lastname }}{% elif faculty %}{{ faculty.user.get_full_name|default:faculty.user.username }}{% endif %}', 'PWD Card')"
                     class="text-blue-600 hover:underline"
                   >
                     Preview
@@ -385,8 +386,10 @@
               {% else %}
               <tr>
                 <td colspan="4" class="text-center p-4">
-                  Please search for a student using the search bar above to view
-                  their medical requirements.
+                  {% if user.is_superuser or user.is_staff %} Please search for
+                  a student or faculty using the search bar above to view their
+                  medical requirements. {% else %} Your medical requirements are
+                  not yet available. {% endif %}
                 </td>
               </tr>
               {% endif %}
@@ -394,7 +397,7 @@
           </table>
         </div>
       </div>
-      {% if med_requirements %}
+      {% if med_requirements and user.is_superuser or user.is_staff %}
       <div class="flex gap-4 mt-4 justify-center">
         <button
           type="submit"
@@ -427,15 +430,19 @@
   </div>
 </div>
 
-<!-- Modal Structure -->
 <div id="previewModal" class="modal">
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header">
       <h5 class="modal-title" id="modalTitle">File Preview</h5>
-      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <span
+        class="close-modal"
+        onclick="closeModal()"
+        aria-label="Close Preview"
+        >&times;</span
+      >
     </div>
     <div id="previewContainer"></div>
-    <div class="zoom-controls">
+    <div class="zoom-controls" style="display: none">
       <button onclick="zoomOut()">-</button>
       <button onclick="zoomIn()">+</button>
     </div>
@@ -457,6 +464,9 @@
     previewContainer.innerHTML = ""; // Clear previous content
     currentZoom = 1; // Reset zoom level
 
+    // *** FIX 4: Consolidated zoom logic ***
+    var showZoom = false;
+
     // Determine file type
     var fileExtension = fileUrl.split(".").pop().toLowerCase();
 
@@ -466,33 +476,27 @@
       img.style.transform = `scale(${currentZoom})`;
       img.style.transformOrigin = "top left"; // Set transform origin
       previewContainer.appendChild(img);
+      showZoom = true; // Show zoom for images
     } else if (fileExtension === "pdf") {
-      var obj = document.createElement("object");
-      obj.data = fileUrl;
-      obj.type = "application/pdf";
-      // Use an iframe for better PDF support if object tag fails
+      // *** FIX 3: Removed redundant <object> code ***
+      // Use an iframe for better PDF support
       var iframe = document.createElement("iframe");
       iframe.src = fileUrl;
       iframe.style.width = "100%";
-      iframe.style.height = "100%";
+      iframe.style.height = "100%"; // Use height from CSS
       previewContainer.appendChild(iframe);
-      // Hide zoom controls for PDF
-      document.querySelector(".zoom-controls").style.display = "none";
+      // showZoom remains false
     } else {
       previewContainer.innerHTML =
         "<p>Preview not available for this file type.</p>";
-      // Hide zoom controls for unsupported types
-      document.querySelector(".zoom-controls").style.display = "none";
+      // showZoom remains false
     }
 
+    // *** FIX 4: Set zoom controls visibility ONCE ***
+    document.querySelector(".zoom-controls").style.display = showZoom
+      ? "flex"
+      : "none";
     modal.style.display = "block";
-
-    // Show zoom controls only if it's an image
-    if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
-      document.querySelector(".zoom-controls").style.display = "flex";
-    } else {
-      document.querySelector(".zoom-controls").style.display = "none";
-    }
   }
 
   function closeModal() {
