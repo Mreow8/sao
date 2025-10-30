@@ -1,195 +1,45 @@
-/* Base Layout */
-* {
-  margin: 0;
-}
-/* Tabs Container */
-.tabs {
-  display: flex;
-  border-bottom: 2px solid #e5e7eb;
-  margin: 20px 0;
-  gap: 10px;
-  flex-wrap: wrap; /* allow wrapping if space is small */
-}
-
-/* Each Tab */
-.tab {
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #4b5563;
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-  transition: all 0.3s ease;
-  white-space: nowrap; /* prevent breaking text */
-}
-
-/* Hover Effect */
-.tab:hover {
-  color: #111827;
-  border-bottom: 2px solid #9ca3af;
-}
-
-/* Active Tab */
-.tab.active {
-  color: #ff8000;
-  font-weight: 600;
-  border-bottom: 2px solid #ff8000;
-}
-
-/* 📱 Small screens */
-@media (max-width: 640px) {
-  .tabs {
-    flex-direction: column; /* stack vertically */
-    border-bottom: none;
-    gap: 5px;
-  }
-
-  .tab {
-    display: block;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    text-align: center;
-    padding: 12px;
-  }
-
-  .tab.active {
-    background-color: #ff8000;
-    color: #ffffff;
-    border: 1px solid #ff8000;
-  }
-
-  .tab:hover {
-    border-color: #9ca3af;
-  }
-}
-
-body {
-  background-color: #f4f6fa;
-
-  color: #2c2c2c;
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  padding: 30px 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+/* --- Table Wrapper (for horizontal scrolling) --- */
+/* NOTE: Your .subcontain div already works, just add overflow-x */
 .subcontain {
   width: 100%;
-}
-/* Tabs Section */
-
-/* Table Container */
-.maincontain {
-  background-color: #ffffff;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
 }
 
-/* Table Styling */
+/* --- Main Table Styling (Shared) --- */
 table {
   width: 100%;
+  min-width: 700px; /* Ensures table doesn't cramp */
   border-collapse: collapse;
-  font-size: 14px;
-}
-
-table thead {
-  background-color: #f7f7f7;
+  border: none;
+  font-family: "Rubik", sans-serif;
 }
 
 table th,
 table td {
-  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  vertical-align: middle;
 }
 
 table th {
-  color: #ff8000;
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-table td {
-  color: #444;
+/* Remove bottom border from last row */
+table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-/* Action Buttons */
-.button {
-  padding: 8px 14px;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  margin-right: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.button:hover {
-  filter: brightness(0.9);
-}
-
-/* Status Styling */
-.status-approved {
-  color: green;
-  font-weight: bold;
-}
-
-.status-declined {
-  color: red;
-  font-weight: bold;
-}
-
-.status-pending {
-  color: #ff8000;
-  font-weight: bold;
-}
-
-/* Responsive Table */
-@media (max-width: 768px) {
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
-    display: block;
-  }
-
-  thead {
-    display: none;
-  }
-
-  tbody tr {
-    margin-bottom: 20px;
-    background-color: #fff;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-  }
-
-  tbody td {
-    position: relative;
-    padding-left: 50%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  tbody td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 16px;
-    top: 12px;
-    font-weight: 600;
-    color: #ff8000;
-    white-space: nowrap;
-  }
-
-  tbody td:last-child {
-    border-bottom: none;
-  }
+/* Style for "No records" row */
+table tbody tr td[colspan] {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 2rem;
 }

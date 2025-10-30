@@ -1,23 +1,122 @@
+{%load static %}<style>
+  /* --- Edit Program Modal --- */
+  /* This is the main form container inside the modal */
+  #editProgramForm {
+    padding: 1.5rem;
+    font-family: "Rubik", sans-serif;
+  }
+
+  /* Modal Title */
+  #editProgramForm h3 {
+    font-family: "Rubik", sans-serif;
+    font-size: 1.5rem; /* 24px */
+    font-weight: 600;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  /* --- Django Form Fields ({{ form.as_p }}) --- */
+  #editProgramForm p {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Space between label and input */
+    margin-bottom: 1rem;
+  }
+
+  #editProgramForm label {
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95rem;
+  }
+
+  /* Styled to match theme inputs */
+  #editProgramForm input[type="text"],
+  #editProgramForm textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: "Rubik", sans-serif;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #editProgramForm textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  /* Focus style from requestgmc.css */
+  #editProgramForm input[type="text"]:focus,
+  #editProgramForm textarea:focus {
+    outline: none;
+    border-color: #2c5282; /* Primary Blue */
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+    background-color: #fff;
+  }
+
+  /* --- Modal Button Container --- */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0; /* Divider */
+  }
+
+  /* Base button style for modal */
+  .form-actions button {
+    font-family: "Rubik", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+
+  .form-actions button:hover {
+    transform: translateY(-2px);
+  }
+
+  /* "Cancel" Button (Secondary) */
+  .btn-close-modal {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: #333;
+  }
+
+  .btn-close-modal:hover {
+    background-color: #e0e0e0;
+  }
+
+  /* "Save Changes" Button (Primary) */
+  #editProgramForm button[type="submit"] {
+    background-color: #2c5282; /* Theme Blue */
+    color: white;
+  }
+
+  #editProgramForm button[type="submit"]:hover {
+    background-color: #2a4365;
+  }
+</style>
 <form
   method="post"
   action="{% url 'edit_program' program.id %}"
   id="editProgramForm"
-  class="p-4"
 >
   {% csrf_token %}
-  <h3 class="text-xl font-bold mb-4">Edit Program</h3>
+  <h3>Edit Program</h3>
 
   {{ form.as_p }}
 
-  <div class="flex justify-end mt-4">
-    <button
-      type="button"
-      class="btn-close-modal mr-2 px-4 py-2 bg-gray-300 rounded"
-    >
-      Cancel
-    </button>
-    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
-      Save Changes
-    </button>
+  <div class="form-actions">
+    <button type="button" class="btn-close-modal">Cancel</button>
+    <button type="submit">Save Changes</button>
   </div>
 </form>

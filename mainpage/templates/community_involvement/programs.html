@@ -1,121 +1,98 @@
 {% extends base_template|default:"main.html" %}
-<!-- prettier-ignore -->
-{% block bodycontent %} {% load static %}
-<link rel="stylesheet" href="{% static 'styles/community/program.css' %}" />
+{% block headcontent %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'styles/community/program.css' %}" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  />
+{% endblock %}
 
+{% block bodycontent %}
 <div class="container">
   <div class="sub-title">
     <h3>COMMUNITY INVOLVEMENT</h3>
     <p class="hometext">Home</p>
     <p class="certxt">&gt; Events</p>
   </div>
+
   {% if user.is_staff %}
-
   <div class="post-box">
-    <div class="collapsed" id="collapsedBox">Add Events...</div>
-
-    <form
-      method="post"
-      id="expandedBox"
-      class="expanded"
-      enctype="multipart/form-data"
-      data-add-url="{% url 'add_program' %}"
-    >
-      {% csrf_token %}
-      <textarea
-        id="postText"
-        name="description"
-        rows="3"
-        placeholder="Add Events..."
-      ></textarea>
-
-      <input type="hidden" name="title" value="Community Event" />
-      <input type="hidden" name="caption" value="Auto-caption" />
-
-      <div class="actions">
-        <label class="action-btn" for="imageUpload">📷 Photo/Video</label>
+      <div class="collapsed" id="collapsedBox">Add Events...</div>
+      <form
+        method="post"
+        id="expandedBox"
+        class="expanded"
+        enctype="multipart/form-data"
+        data-add-url="{% url 'add_program' %}"
+      >
+        {% csrf_token %}
         <input
-          type="file"
-          id="imageUpload"
-          name="images"
-          accept="image/*,video/*"
-          multiple
-          style="display: none"
+          type="text"
+          name="caption"
+          placeholder="Caption (e.g., Auto-caption, Event Highlight)"
+          required
         />
-      </div>
-
-      <div id="preview"></div>
-
-      <button type="submit" class="submit" id="submitBtn" disabled>Post</button>
-    </form>
-    <div
-      id="popup"
-      style="
-        display: none;
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4bb543;
-        color: #fff;
-        padding: 10px 15px;
-        border-radius: 6px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      "
-    >
-      ✅ Event added successfully!
+        <textarea
+          id="postText"
+          name="description"
+          rows="3"
+          placeholder="Add Events Description..."
+        ></textarea>
+        <input type="hidden" name="title" value="Community Event" />
+        <div class="actions">
+          <label class="action-btn" for="imageUpload">📷 Photo/Video</label>
+          <input
+            type="file"
+            id="imageUpload"
+            name="images"
+            accept="image/*,video/*"
+            multiple
+            style="display: none"
+          />
+        </div>
+        <div id="preview"></div>
+        <button type="submit" class="submit" id="submitBtn" disabled>Post</button>
+      </form>
     </div>
-  </div>
   {% endif %}
+
   <div class="programs-section flex justify-center">
-    {% if loadPrograms %}
+    {% if page_obj %}
     <div class="program-list max-w-3xl mb-10">
-      {% for program in loadPrograms %}
+      {% for program in page_obj %}
       <div class="program-card relative" id="program-{{ program.id }}">
         <div class="flex justify-between items-start">
           <h3 class="text-lg font-semibold program-title">
             {{ program.title }}
           </h3>
-
           {% if user.is_staff %}
           <div class="relative">
-            <button
-              type="button"
-              class="menu-btn text-gray-600 hover:text-gray-900 focus:outline-none"
-            >
-              ⋮
-            </button>
-            <div
-              class="menu hidden absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-10"
-            >
+            <button type="button" class="menu-btn">⋮</button>
+            <div class="menu hidden">
               <button
                 type="button"
-                class="edit-program-btn block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                class="edit-program-btn menu-item"
                 data-url="{% url 'edit_program' program.id %}"
               >
-                ✏️ Edit
+                <i class="fa fa-pen"></i> Edit
               </button>
-
               <form
                 method="post"
                 action="{% url 'delete_program' program.id %}"
                 class="delete-program-form"
               >
                 {% csrf_token %}
-                <button
-                  type="submit"
-                  class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                >
-                  🗑️ Delete
+                <button type="submit" class="menu-item is-danger">
+                  <i class="fa fa-trash"></i> Delete
                 </button>
               </form>
             </div>
           </div>
           {% endif %}
         </div>
-
         <p class="program-caption">{{ program.caption }}</p>
         <p class="program-description">{{ program.description }}</p>
-
         <div class="fb-gallery count-{{ program.images.count }}">
           {% for img in program.images.all %} {% if forloop.counter <= 5 %}
           <div
@@ -132,23 +109,35 @@
         </div>
       </div>
       {% endfor %}
-    </div>
+
+      <div class="pagination">
+          <span class="step-links">
+              {% if page_obj.has_previous %}
+                  <a href="?page=1">&laquo; First</a>
+                  <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+              {% endif %}
+
+              <span class="current">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+
+              {% if page_obj.has_next %}
+                  <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                  <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+              {% endif %}
+          </span>
+      </div>
+      </div>
     {% else %}
     <p>No programs available.</p>
     {% endif %}
   </div>
 </div>
 
-<div
-  id="editModal"
-  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
->
-  <div
-    id="modalContent"
-    class="bg-white rounded-lg shadow-xl max-w-md w-full"
-  ></div>
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="modalContent" class="bg-white rounded-lg shadow-xl max-w-md w-full"></div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{% static 'scripts/community/programs.js' %}"></script>
+
 {% endblock %}

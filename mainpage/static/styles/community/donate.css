@@ -1,0 +1,273 @@
+/* --- Donate Popup Modal --- */
+.donate-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent overlay */
+  display: none; /* Hidden by default - JS toggles to flex */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it's on top */
+  font-family: "Rubik", sans-serif;
+}
+
+/* Modal Content Card */
+.donation {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px; /* Adjust as needed */
+  position: relative;
+  max-height: 90vh; /* Prevent modal being too tall */
+  overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+/* Close Button */
+.close-popup {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+}
+.close-popup .close {
+  font-size: 1.8rem;
+  color: #aaa;
+  transition: color 0.2s;
+}
+.close-popup .close:hover {
+  color: #333;
+}
+
+/* Modal Title */
+.donation h4 {
+  font-family: "Rubik", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* --- Mode Selector (Radio Buttons) --- */
+.mode {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 1rem;
+}
+
+.mode .flex {
+  display: flex;
+  align-items: center;
+}
+
+.mode input[type="radio"] {
+  display: none; /* Hide default radio */
+}
+
+.mode label {
+  font-family: "Rubik", sans-serif;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 20px; /* Pill shape */
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.mode input[type="radio"]:checked + label {
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  border-color: #2c5282;
+}
+
+.mode label:hover {
+  background-color: #f0f0f0;
+}
+.mode input[type="radio"]:checked + label:hover {
+  background-color: #2a4365; /* Darker Blue */
+}
+
+/* --- Content Sections (Initially Hidden) --- */
+.mode1,
+.mode2,
+.mode3 {
+  display: none; /* Hide sections - JS shows the active one */
+}
+
+/* Common Form Styles within Modes */
+.donation form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.donation h1 {
+  font-family: "Rubik", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c5282;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* --- Input & Select Styling (Theme Override) --- */
+.donation input[type="text"],
+.donation input[type="number"],
+.donation input[type="tel"],
+.donation input[type="file"],
+.donation select {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 0.5rem; /* Add some space below inputs */
+}
+
+.donation input[type="text"]:focus,
+.donation input[type="number"]:focus,
+.donation input[type="file"]:focus,
+.donation input[type="tel"]:focus,
+.donation select:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* File input needs special label handling if desired */
+.donation input[type="file"] {
+  background-color: #fff;
+}
+
+.donation label {
+  font-family: "Rubik", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+/* --- Button Styling (Theme Override) --- */
+.donation button {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  margin-top: 0.5rem;
+}
+
+.donation button:hover {
+  transform: translateY(-2px);
+}
+
+/* Primary Button (Submit, Next) */
+.donation button[type="submit"],
+.donation button.nextGcash,
+.donation button.nextBank {
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.donation button[type="submit"]:hover,
+.donation button.nextGcash:hover,
+.donation button.nextBank:hover {
+  background-color: #2a4365; /* Darker Blue */
+}
+
+/* Cancel Button (Secondary) */
+.donation button.closeBtn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #333;
+}
+.donation button.closeBtn:hover {
+  background-color: #e0e0e0;
+}
+
+/* --- Specific Mode Sections --- */
+
+/* GCash & Bank Image Display */
+.gcash-img,
+.bank-img,
+#qr_bank {
+  text-align: center;
+}
+.gcash-img img,
+.bank-img img,
+#qr_bank img {
+  max-width: 200px; /* Limit QR code size */
+  height: auto;
+  margin: 0 auto 1rem auto;
+  display: block;
+  border: 1px solid #eee;
+}
+.gcash-img label,
+.bank-img label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+  color: #777;
+}
+
+/* Hide initial form/image sections in GCash/Bank */
+.gcash-img,
+.bank-img {
+  display: none; /* JS will show these after "Next" */
+}
+
+/* Admin Upload Specifics */
+.bank-img-admin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.bank-img-admin label img {
+  /* Upload icon */
+  width: 80px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.bank-img-admin label img:hover {
+  opacity: 1;
+}
+.bank-img-admin #outputBanks {
+  /* Preview */
+  max-width: 150px;
+  max-height: 150px;
+  margin-bottom: 1rem;
+}
+
+/* Volunteer Specifics */
+/* JS handles showing/hiding these based on select */
+.volunteer-form .recepient,
+.volunteer-form .volunteer_amount,
+.volunteer-form .recepient_things,
+.volunteer-form .confirmation_label,
+.volunteer-form .confirmation_photo,
+.volunteer-form .date_sched {
+  display: none; /* Initially hidden */
+}

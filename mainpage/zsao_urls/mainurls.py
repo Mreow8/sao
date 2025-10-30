@@ -29,7 +29,7 @@ path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
       path('officer/<slug:slug>/', views.view_officers, name='view_officers'),
         path('projects/<slug:slug>/', views.view_project_by_slug, name='view_project_by_slug'),
     path('register/', views.signupuser, name='signupuser'),
-# path('<slug:slug>_adviserdata/', views.register_adviser, name='register_adviser'),
+    path('<slug:slug>_adviserdata/', views.register_adviser, name='register_adviser'),
 
     path('login/', views.signinuser, name='signinuser'), 
     

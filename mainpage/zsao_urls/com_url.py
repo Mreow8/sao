@@ -9,7 +9,9 @@ urlpatterns = [
     path("crowdfunding/<int:pk>/", views.crowdfunding_detail, name="crowdfunding_detail"),
         path("add-event/", views.add_event, name="add_event"),
 
-    path("donates/<int:pk>/", views.donate, name="donates"),  path("crowdfunding/<int:pk>/edit/", views.edit_project, name="edit_project"),
+    path("donates/<int:pk>/", views.donate, name="donates"),  
+    
+    path("crowdfunding/<int:pk>/edit/", views.edit_project, name="edit_project"),
     path("crowdfunding/<int:pk>/delete/", views.delete_project, name="delete_project"),
       path("donate", views.donate_view, name="donate"), 
 path("program/edit/<int:pk>/", views.edit_program, name="edit_program"),

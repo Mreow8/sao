@@ -1,8 +1,50 @@
-/* --- Global Font --- */
+/* --- Global Font & Container --- */
 /* Establishes the Rubik font, same as requestgmc.css */
-.guidance-form,
-.maincontain h2 {
+body,
+button,
+input,
+select,
+textarea,
+.tab,
+.sub-title,
+table {
   font-family: "Rubik", sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px; /* Optional: sets a max width */
+  margin: 0 auto; /* Centers the container */
+  padding: 0 1.5rem;
+}
+
+/* --- Tabs Navigation --- */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0; /* Aligns with card margin */
+}
+
+.tab {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #555;
+  text-decoration: none;
+  padding: 1rem 1.25rem;
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab:hover {
+  color: #333;
+}
+
+.tab.active {
+  /* Use Primary Blue from requestgmc.css */
+  color: #2c5282;
+  border-bottom-color: #2c5282;
 }
 
 /* --- Main Card Container (for Form and Table) --- */
@@ -61,7 +103,6 @@
 .form-group label {
   font-weight: 500;
   color: #333;
-  font-family: "Rubik", sans-serif;
 }
 
 /* --- Form Inputs --- */
@@ -122,4 +163,48 @@
   background-color: #2a4365; /* Darker Blue */
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Table Styles --- */
+/* Table Wrapper (for horizontal scrolling) */
+.subcontain {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 700px; /* Ensures table doesn't cramp */
+  border-collapse: collapse;
+  border: none;
+}
+
+table th,
+table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+table th {
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Remove bottom border from last row */
+table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Style for "No records" row */
+table tbody tr td[colspan] {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 2rem;
 }

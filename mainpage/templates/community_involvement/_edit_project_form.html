@@ -32,7 +32,9 @@
 
   /* Styled to match theme inputs */
   #editProgramForm input[type="text"],
-  #editProgramForm textarea {
+  #editProgramForm input[type="file"],
+  #editProgramForm textarea,
+  #editProgramForm select {
     width: 100%;
     box-sizing: border-box;
     font-family: "Rubik", sans-serif;
@@ -51,7 +53,9 @@
 
   /* Focus style from requestgmc.css */
   #editProgramForm input[type="text"]:focus,
-  #editProgramForm textarea:focus {
+  #editProgramForm input[type="file"]:focus,
+  #editProgramForm textarea:focus,
+  #editProgramForm select:focus {
     outline: none;
     border-color: #2c5282; /* Primary Blue */
     box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
@@ -107,11 +111,11 @@
 </style>
 <form
   method="post"
-  action="{% url 'edit_program' program.id %}"
+  action="{% url 'edit_project' project.id %}"
   id="editProgramForm"
 >
   {% csrf_token %}
-  <h3>Edit Program</h3>
+  <h3>Edit Crowdfunding Events</h3>
 
   {{ form.as_p }}
 

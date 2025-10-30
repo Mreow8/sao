@@ -1,137 +1,7 @@
 {% load static %}
-<style>
-  /* ===== Modal Container ===== */
-  .donate-popup {
-    display: none; /* hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-  }
-
-  .donation {
-    background: #fff;
-    padding: 25px 30px;
-    border-radius: 12px;
-    max-width: 480px;
-    width: 95%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    animation: fadeInUp 0.3s ease;
-    position: relative;
-  }
-
-  /* ===== Close Button ===== */
-  .close-popup i {
-    position: absolute;
-    top: 12px;
-    right: 15px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #666;
-    transition: 0.3s;
-  }
-  .close-popup i:hover {
-    color: #000;
-  }
-
-  /* ===== Headings ===== */
-  .donation h1,
-  .donation h4 {
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 15px;
-    font-weight: 600;
-  }
-
-  /* ===== Inputs / Select ===== */
-  .donation input[type="text"],
-  .donation input[type="number"],
-  .donation input[type="date"],
-  .donation select {
-    width: 100%;
-    padding: 10px 12px;
-    margin: 8px 0 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    outline: none;
-    transition: border 0.3s;
-  }
-  .donation input:focus,
-  .donation select:focus {
-    border-color: #007bff;
-  }
-
-  /* ===== File Upload Label ===== */
-  .donation label img {
-    width: 35px;
-    cursor: pointer;
-    margin: 10px 0;
-  }
-
-  /* ===== Buttons ===== */
-  button[type="submit"],
-  button.nextGcash,
-  button.nextBank {
-    background-color: #ff8c00;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    margin: 8px 5px 0 0;
-    transition: background 0.3s ease;
-  }
-  button[type="submit"]:hover,
-  button.nextGcash:hover,
-  button.nextBank:hover {
-    background-color: #0056b3;
-  }
-  button.closeBtn {
-    background: #dc3545;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    font-size: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  button.closeBtn:hover {
-    background: #b52a37;
-  }
-
-  /* ===== Image Preview ===== */
-  #outputBanks,
-  #output {
-    max-width: 200px;
-    margin-top: 10px;
-    display: block;
-  }
-
-  /* ===== Animation ===== */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>
-
-<!-- Popup -->
+<link
+  rel="stylesheet"
+  href="{% static 'styles/community/donate.css' %}"/>
 <div class="donate-popup">
   <div class="donation">
     <div class="close-popup">
@@ -140,7 +10,6 @@
 
     <h4 style="text-align: center">Mode of Donation</h4>
 
-    <!-- Mode selector -->
     <div class="mode">
       <div class="flex gcash_mode">
         <input type="radio" name="mode" value="mode1" id="mode1" checked />
@@ -156,11 +25,8 @@
       </div>
     </div>
 
-    <!-- GCash -->
     <div class="mode1">
-      {% if user.is_staff %} {% if qrCodeID %}
-      <!-- prettier-ignore -->
-      {% with qrCodeID.first as qrcode %}
+      {% if user.is_staff %} {% if qrCodeID %} {% with qrCodeID.first as qrcode    %}
       <form
         action="{% url 'gcash_mode_admin' qrcode.qr_id %}"
         method="POST"
@@ -203,22 +69,22 @@
             id="gcash_number"
             name="gcash_number"
             type="number"
-            placeholder="Enter GCash Number"
+            placeholder="Enter GCash Number (11 digits)"
+            pattern="\d{11}"
+            maxlength="11"
+            title="Please enter exactly 11 digits."
             required
           />
-          <select name="amount" class="amount_gcash" required>
-            <option value="" disabled selected>Select Amount</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="150">150</option>
-            <option value="200">200</option>
-            <option value="500">500</option>
-            <option value="1000">1000</option>
-            <option value="5000">5000</option>
-          </select>
+
+        <input
+            type="number"
+            name="amount"
+            class="amount_gcash"
+            placeholder="Enter Amount"
+            min="1"
+            step="0.01"
+            required
+          />
           <button type="button" class="nextGcash">Next</button>
         </div>
 
@@ -243,7 +109,6 @@
       {% endif %}
     </div>
 
-    <!-- Bank -->
     <div class="mode2">
       {% if user.is_staff %} {% if qrCodeID %} {% for qrcode in qrCodeID %}
       <form
@@ -257,11 +122,6 @@
           <select name="banks" class="bank_card" required>
             <option value="" disabled selected>Select Bank</option>
             <option>BPI</option>
-            <option>BDO</option>
-            <option>LANDBANK</option>
-            <option>PNB</option>
-            <option>METRO BANK</option>
-            <option>UNION BANK</option>
             <option>CHINA BANK</option>
           </select>
           <label for="file-banks">
@@ -295,11 +155,6 @@
           <select name="banks" class="bank_card" required>
             <option value="" disabled selected>Select Bank</option>
             <option>BPI</option>
-            <option>BDO</option>
-            <option>LANDBANK</option>
-            <option>PNB</option>
-            <option>METRO BANK</option>
-            <option>UNION BANK</option>
             <option>CHINA BANK</option>
           </select>
           <label for="file-banks">
@@ -341,11 +196,6 @@
           <select name="banks" class="bank_card" required>
             <option value="" disabled selected>Select Bank</option>
             <option>BPI</option>
-            <option>BDO</option>
-            <option>LANDBANK</option>
-            <option>PNB</option>
-            <option>METRO BANK</option>
-            <option>UNION BANK</option>
             <option>CHINA BANK</option>
           </select>
           <input
@@ -355,19 +205,15 @@
             placeholder="Enter Account Number"
             required
           />
-          <select name="amount" class="bank_amount" required>
-            <option value="" disabled selected>Select Amount</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="150">150</option>
-            <option value="200">200</option>
-            <option value="500">500</option>
-            <option value="1000">1000</option>
-            <option value="5000">5000</option>
-          </select>
+        <input
+            type="number"
+            name="amount"
+            class="bank_amount"
+            placeholder="Enter Amount"
+            min="1"
+            step="0.01"
+            required
+          />
           <button type="button" class="nextBank">Next</button>
         </div>
         <div class="bank-img">
@@ -387,7 +233,6 @@
       {% endif %}
     </div>
 
-    <!-- Volunteer -->
     <div class="mode3">
       <form
         action="{% url 'volunteer-mode' %}"
@@ -406,15 +251,18 @@
             required
           />
           <input
-            name="contact_number"
             id="contact_number"
-            type="number"
-            placeholder="Enter Phone Number"
+            name="contact_number"
+            type="tel"
+            placeholder="Enter Phone Number (11 digits)"
             required
+            maxlength="11"
+            pattern="\d{11}"
+            title="Please enter exactly 11 digits."
           />
           <select name="what_kind" class="what_kind" required>
             <option value="" disabled selected>Select type</option>
-            <option>RELIEF GOODS</option>
+         <option>RELIEF GOODS</option>
             <option>BELONGINGS</option>
             <option>MONEY</option>
             <option>EQUIPMENTS</option>
@@ -469,10 +317,12 @@
   </div>
 </div>
 
-<script src="{% static 'community_involvement/jquery.js' %}"></script>
+<script src="{% static 'scripts/community/donate.js' %}"></script>
 
 {% for qrcode in qrCodeID %}
 <script>
+  // This code block is separate because it needs Django's template tags
+  // to render the URLs from the database.
   $(".bank_card").on("change", function () {
     let bank_card = $(this).val();
     let imgMap = {
@@ -490,60 +340,3 @@
   });
 </script>
 {% endfor %}
-
-<script>
-  function loadImage(event) {
-    let img = document.getElementById("output");
-    if (img) img.src = URL.createObjectURL(event.target.files[0]);
-  }
-  function loadImageBanks(event) {
-    let img = document.getElementById("outputBanks");
-    if (img) img.src = URL.createObjectURL(event.target.files[0]);
-  }
-
-  // Toggle volunteer fields
-  $(".what_kind").on("change", function () {
-    let val = $(this).val();
-    $(
-      ".recepient, .confirmation_label, .confirmation_photo, .date_sched, .volunteer_amount, .recepient_things"
-    ).hide();
-
-    if (
-      val === "RELIEF GOODS" ||
-      val === "BELONGINGS" ||
-      val === "EQUIPMENTS"
-    ) {
-      $(".confirmation_label, .confirmation_photo, .recepient_things").show();
-    } else if (val === "MONEY") {
-      $(
-        ".recepient, .confirmation_label, .confirmation_photo, .volunteer_amount"
-      ).show();
-    } else if (val === "SERVICE") {
-      $(".date_sched").show();
-    }
-  });
-
-  // Switch modes
-  $(document).ready(function () {
-    $(".mode1, .mode2, .mode3").hide();
-    $(".mode1").show();
-
-    $('input[name="mode"]').on("change", function () {
-      $(".mode1, .mode2, .mode3").hide();
-      $("." + $(this).val()).show();
-    });
-
-    // Popup open/close
-    $(".show-donate").on("click", function () {
-      $(".donate-popup").css("display", "flex");
-    });
-    $(".close, .closeBtn").on("click", function () {
-      $(".donate-popup").hide();
-    });
-    $(window).on("click", function (e) {
-      if ($(e.target).hasClass("donate-popup")) {
-        $(".donate-popup").hide();
-      }
-    });
-  });
-</script>

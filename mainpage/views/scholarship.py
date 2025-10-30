@@ -54,48 +54,73 @@ def logoutuser(request):
 
 User = get_user_model()
 def signupuser(request):
-    error_message = None
+    # Use a context dictionary to hold all template variables
+    context = {}
 
     if request.method == 'POST':
-        user_id = request.POST.get('studID').strip()  # could be studentID or staffID
+        user_id = request.POST.get('studID').strip()
         email = request.POST.get('email').strip()
         password = request.POST.get('password')
         cpassword = request.POST.get('cpassword')
 
         if cpassword != password:
-            error_message = "Passwords do not match."
+            context['error_message'] = "Passwords do not match."
+            # Keep both values
+            context['studID_value'] = user_id
+            context['email_value'] = email
+        
         elif len(password) < 8:
-            error_message = "Password must be at least 8 characters."
+            context['error_message'] = "Password must be at least 8 characters."
+            # Keep both values
+            context['studID_value'] = user_id
+            context['email_value'] = email
+        
         elif User.objects.filter(email=email).exists():
-            error_message = "Email already exists."
+            context['error_message'] = "Email already exists."
+            # Per your request, only keep the ID
+            context['studID_value'] = user_id
+            # Do not pass back email_value
+        
         else:
             # Try student first
             try:
                 student_obj = studentInfo.objects.get(studID=user_id)
                 if User.objects.filter(username=user_id).exists():
-                    error_message = "Student ID already exists."
+                    context['error_message'] = "Student ID already exists."
+                    # ID is bad, only keep the email
+                    context['email_value'] = email
                 else:
+                    # SUCCESS - Create Student User
                     user = User.objects.create_user(username=user_id, email=email, password=password)
                     student_obj.user = user
                     student_obj.save()
                     messages.success(request, "Student account created successfully. Please log in.")
                     return redirect('signinuser')
+            
             except studentInfo.DoesNotExist:
                 # Try staff
                 try:
                     staff_obj = staffInfo.objects.get(staffID=user_id)
                     if User.objects.filter(username=user_id).exists():
-                        error_message = "Staff ID already exists."
+                        context['error_message'] = "Staff ID already exists."
+                        # ID is bad, only keep the email
+                        context['email_value'] = email
                     else:
+                        # SUCCESS - Create Staff User
                         user = User.objects.create_user(username=user_id, email=email, password=password)
                         staff_obj.user = user
                         staff_obj.save()
                         messages.success(request, "Staff account created successfully. Please log in.")
                         return redirect('signinuser')
+                
                 except staffInfo.DoesNotExist:
-                    error_message = "Invalid ID. No matching student or staff found."
+                    context['error_message'] = "Invalid ID. No matching student or staff found."
+                    # ID is bad, only keep the email
+                    context['email_value'] = email
 
-    return render(request, 'scholarship/register.html', {'error_message': error_message})
+    # Render the template with the context (which is empty on GET,
+    # or contains error/values on a failed POST)
+    return render(request, 'scholarship/register.html', context)
 # from django.shortcuts import render, redirect
 # from django.contrib import messages
 # from django.contrib.auth import authenticate, login, get_user_model

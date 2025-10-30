@@ -1,0 +1,380 @@
+{% load static %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+
+<style>
+  /* --- Global Font --- */
+  /* Establishes the Rubik font, same as requestgmc.css */
+  body,
+  form,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: "Rubik", sans-serif;
+  }
+
+  /* --- Main Card Container --- */
+  /* This is styled just like .gmc-form from requestgmc.css */
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  /* --- Form Headings --- */
+  .container h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .container h3 {
+    font-family: "Rubik", sans-serif;
+    font-size: 1.25rem;
+    color: #2c5282; /* Primary Blue from requestgmc.css */
+    font-weight: 600;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 8px;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* --- Form Structure --- */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between form rows */
+  }
+
+  /* --- Formset Section Grouping --- */
+  /* Styled with light bg from requestgmc.css inputs */
+  .form-section {
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    border-radius: 8px; /* Matches input radius */
+    background-color: #f9f9f9; /* Light grey from inputs */
+  }
+
+  .form-section h4 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+
+  /* --- Django .as_p Grid Layout --- */
+  /* This is the grid layout from your <style> block */
+  form p {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Label 1 part, Input 2 parts */
+    gap: 10px; /* Space between label and input */
+    align-items: center; /* Vertically center label and input */
+    margin: 0; /* Override default <p> margin */
+  }
+
+  /* --- Form Labels --- */
+  form label {
+    font-weight: 500;
+    color: #333;
+    text-align: right;
+    padding-right: 10px;
+  }
+
+  /* --- Form Inputs --- */
+  /* Styled just like #comboBox and .ornum-input */
+  form input,
+  form select,
+  form textarea {
+    width: 100%;
+    box-sizing: border-box; /* Important for 100% width */
+    font-family: "Rubik", sans-serif;
+    font-size: 0.95rem;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #ffffff; /* Inputs should be white */
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  /* Focus style from requestgmc.css */
+  form input:focus,
+  form select:focus,
+  form textarea:focus {
+    outline: none;
+    border-color: #2c5282; /* Primary Blue */
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  }
+
+  /* --- Submit Button --- */
+  /* Styled just like .requestBtn from requestgmc.css */
+  button[type="submit"] {
+    font-family: "Rubik", sans-serif;
+    background-color: #2c5282; /* Primary Blue */
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.2s;
+    margin-top: 20px;
+    align-self: center; /* Center the button */
+    width: 50%;
+    max-width: 300px;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #2a4365; /* Darker Blue */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* --- [NEW] Add Formset Button --- */
+  .add-form-btn {
+    font-family: "Rubik", sans-serif;
+    background-color: #f0f6ff; /* Light blue */
+    color: #2c5282; /* Primary Blue */
+    border: 1px dashed #2c5282; /* Dashed blue border */
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    margin-top: 0px; /* Aligns with the 15px gap of the form */
+    width: 100%; /* Make it full width */
+  }
+
+  .add-form-btn:hover {
+    background-color: #e6f0ff;
+    color: #2a4365;
+  }
+
+  .add-form-btn .fa-plus {
+    margin-right: 8px;
+  }
+</style>
+
+<div class="container">
+  <h1>Adviser Data for {{ organization.name }}</h1>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <h3>A. Personal Data</h3>
+    <div class="form-section">{{ adviser_form.as_p }}</div>
+
+    <h3>Education</h3>
+    {{ education_formset.management_form }}
+    <div id="education-form-list">
+      {% for form in education_formset %} 
+        {% comment %} 
+          Check if form is bound (has errors) or has an instance (is existing data).
+          If NOT, it's an "extra" form and should be hidden.
+        {% endcomment %} 
+        {% if not form.is_bound and not form.instance.pk %}
+          <div class="form-section is-extra-form" style="display: none">
+            <h4>Education Entry {{ forloop.counter }}</h4>
+            {{ form.as_p }}
+          </div>
+        {% else %}
+          <div class="form-section">
+            <h4>Education Entry {{ forloop.counter }}</h4>
+            {{ form.as_p }}
+          </div>
+        {% endif %} 
+      {% endfor %}
+    </div>
+    <div id="education-empty-template" style="display: none">
+      <div class="form-section new-form-section">
+        <h4>New Education Entry</h4>
+        {{ education_formset.empty_form.as_p }}
+      </div>
+    </div>
+    <button
+      type="button"
+      class="add-form-btn"
+      data-prefix="education"
+      data-label="Education"
+    >
+      <i class="fa fa-plus"></i> Add Another Education Entry
+    </button>
+
+    <h3>Work Experience</h3>
+    {{ work_formset.management_form }}
+    <div id="work-form-list">
+      {% for form in work_formset %} 
+        {% if not form.is_bound and not form.instance.pk %}
+          <div class="form-section is-extra-form" style="display: none">
+            <h4>Work Entry {{ forloop.counter }}</h4>
+            {{ form.as_p }}
+          </div>
+        {% else %}
+          <div class="form-section">
+            <h4>Work Entry {{ forloop.counter }}</h4>
+            {{ form.as_p }}
+          </div>
+        {% endif %} 
+      {% endfor %}
+    </div>
+    <div id="work-empty-template" style="display: none">
+      <div class="form-section new-form-section">
+        <h4>New Work Entry</h4>
+        {{ work_formset.empty_form.as_p }}
+      </div>
+    </div>
+    <button
+      type="button"
+      class="add-form-btn"
+      data-prefix="work"
+      data-label="Work"
+    >
+      <i class="fa fa-plus"></i> Add Another Work Entry
+    </button>
+
+    <h3>Membership in Other Organizations</h3>
+    {{ org_formset.management_form }}
+    <div id="org-form-list">
+      {% for form in org_formset %} 
+        {% if not form.is_bound and not form.instance.pk %}
+          <div class="form-section is-extra-form" style="display: none">
+            <h4>Organization Entry {{ forloop.counter }}</h4>
+            {{ form.as_p }}
+          </div>
+        {% else %}
+          <div class="form-section">
+            <h4>Organization Entry {{ forloop.counter }}</h4>
+            {{ form.as_p }}
+          </div>
+        {% endif %} 
+      {% endfor %}
+    </div>
+    <div id="org-empty-template" style="display: none">
+      <div class="form-section new-form-section">
+        <h4>New Organization Entry</h4>
+        {{ org_formset.empty_form.as_p }}
+      </div>
+    </div>
+    <button
+      type="button"
+      class="add-form-btn"
+      data-prefix="org"
+      data-label="Organization"
+    >
+      <i class="fa fa-plus"></i> Add Another Organization Entry
+    </button>
+
+    <h3>Advisory History</h3>
+    {{ advisory_formset.management_form }}
+    <div id="advisory-form-list">
+      {% for form in advisory_formset %} 
+        {% if not form.is_bound and not form.instance.pk %}
+          <div class="form-section is-extra-form" style="display: none">
+            <h4>Advisory Entry {{ forloop.counter }}</h4>
+            {{ form.as_p }}
+          </div>
+        {% else %}
+          <div class="form-section">
+            <h4>Advisory Entry {{ forloop.counter }}</h4>
+            {{ form.as_p }}
+          </div>
+        {% endif %} 
+      {% endfor %}
+    </div>
+    <div id="advisory-empty-template" style="display: none">
+      <div class="form-section new-form-section">
+        <h4>New Advisory Entry</h4>
+        {{ advisory_formset.empty_form.as_p }}
+      </div>
+    </div>
+    <button
+      type="button"
+      class="add-form-btn"
+      data-prefix="advisory"
+      data-label="Advisory"
+    >
+      <i class="fa fa-plus"></i> Add Another Advisory Entry
+    </button>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find all "Add" buttons
+      const addFormButtons = document.querySelectorAll(".add-form-btn");
+
+      addFormButtons.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          // Get the prefix (e.g., "education", "work") from the data-attribute
+          const prefix = this.dataset.prefix;
+          const label = this.dataset.label; // e.g., "Education"
+
+          // Find the management form's TOTAL_FORMS input
+          const totalFormsInput = document.querySelector(
+            `input[name="${prefix}-TOTAL_FORMS"]`
+          );
+          if (!totalFormsInput) {
+            console.error(
+              `Could not find TOTAL_FORMS input for prefix ${prefix}`
+            );
+            return;
+          }
+
+          // Get the current number of forms
+          let currentFormCount = parseInt(totalFormsInput.value);
+
+          // Get the HTML from the hidden empty-form template
+          const emptyTemplate = document.getElementById(
+            `${prefix}-empty-template`
+          ).innerHTML;
+
+          // Create the new form HTML by replacing the __prefix__ placeholder
+          const newFormHTML = emptyTemplate.replace(
+            /__prefix__/g,
+            currentFormCount
+          );
+
+          // Find the list container where the new form should be added
+          const formList = document.getElementById(`${prefix}-form-list`);
+
+          // Add the new form to the end of the list
+          formList.insertAdjacentHTML("beforeend", newFormHTML);
+
+          // Update the <h4> text for the newly added form
+          // We find it by looking for the last ".new-form-section" inside the list
+          const newFormSection = formList.querySelector(
+            ".new-form-section:last-of-type"
+          );
+          if (newFormSection) {
+            const h4 = newFormSection.querySelector("h4");
+            if (h4) {
+              // [MODIFIED] Count only visible forms (not the hidden "extra" ones)
+              // to get the correct entry number.
+              const totalVisibleEntries = formList.querySelectorAll(
+                ".form-section:not(.is-extra-form)"
+              ).length;
+              h4.textContent = `${label} Entry ${totalVisibleEntries}`;
+            }
+          }
+
+          // Increment the TOTAL_FORMS value
+          totalFormsInput.value = currentFormCount + 1;
+        });
+      });
+    });
+  </script>
+</div>

@@ -107,11 +107,11 @@
 </style>
 <form
   method="post"
-  action="{% url 'edit_program' program.id %}"
+  action="{% url 'edit_project' project.id %}"
   id="editProgramForm"
 >
   {% csrf_token %}
-  <h3>Edit Program</h3>
+  <h3>Edit Crowdfunding Events</h3>
 
   {{ form.as_p }}
 

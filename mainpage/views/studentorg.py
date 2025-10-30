@@ -111,7 +111,98 @@ def view_financial(request, slug):
     })
 
 
+# Add these imports at the top of studentorg.py
+from django.forms import inlineformset_factory
+from django.contrib import messages
+from ..models import (
+    Organization, Adviser, AdviserEducation, AdviserWorkExperience, 
+    AdviserOrganization, AdviserAdvisory
+)
+from ..forms import (
+    AdviserForm, AdviserEducationForm, AdviserWorkExperienceForm, 
+    AdviserOrganizationForm, AdviserAdvisoryForm
+)
 
+def register_adviser(request, slug):
+    organization = get_object_or_404(Organization, slug=slug)
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
+    # --- Create the Formsets ---
+    # We tell each formset how many "extra" (blank) forms to create
+    # This matches your old HTML (5 education slots, 5 work slots, etc.)
+    EducationFormSet = inlineformset_factory(
+        Adviser, AdviserEducation, form=AdviserEducationForm, 
+        extra=5, can_delete=False
+    )
+    WorkFormSet = inlineformset_factory(
+        Adviser, AdviserWorkExperience, form=AdviserWorkExperienceForm, 
+        extra=5, can_delete=False
+    )
+    OrgFormSet = inlineformset_factory(
+        Adviser, AdviserOrganization, form=AdviserOrganizationForm, 
+        extra=2, can_delete=False
+    )
+    AdvisoryFormSet = inlineformset_factory(
+        Adviser, AdviserAdvisory, form=AdviserAdvisoryForm, 
+        extra=3, can_delete=False
+    )
+
+    if request.method == 'POST':
+        # Bind all forms and formsets with the POST data
+        adviser_form = AdviserForm(request.POST, request.FILES)
+        education_formset = EducationFormSet(request.POST, prefix='education')
+        work_formset = WorkFormSet(request.POST, prefix='work')
+        org_formset = OrgFormSet(request.POST, prefix='org')
+        advisory_formset = AdvisoryFormSet(request.POST, prefix='advisory')
+
+        # Check if all forms are valid
+        if (adviser_form.is_valid() and education_formset.is_valid() and 
+            work_formset.is_valid() and org_formset.is_valid() and 
+            advisory_formset.is_valid()):
+            
+            # Save the main adviser form
+            adviser = adviser_form.save(commit=False)
+            adviser.organization = organization
+            adviser.save() # Save the adviser to get a PK
+
+            # Link the formsets to the new adviser instance
+            education_formset.instance = adviser
+            work_formset.instance = adviser
+            org_formset.instance = adviser
+            advisory_formset.instance = adviser
+
+            # Save all the formsets
+            education_formset.save()
+            work_formset.save()
+            org_formset.save()
+            advisory_formset.save()
+
+            messages.success(request, "Adviser successfully registered!")
+            return redirect('register_adviser', slug=slug)
+        else:
+            # If any form is invalid, show the errors
+            messages.error(request, "Please correct the errors below.")
+
+    else:
+        # GET Request: Create all blank forms
+        adviser_form = AdviserForm()
+        education_formset = EducationFormSet(prefix='education')
+        work_formset = WorkFormSet(prefix='work')
+        org_formset = OrgFormSet(prefix='org')
+        advisory_formset = AdvisoryFormSet(prefix='advisory')
+
+    context = {
+        'organization': organization,
+        'base_template': base_template,
+        'slug': slug,
+        'adviser_form': adviser_form,
+        'education_formset': education_formset,
+        'work_formset': work_formset,
+        'org_formset': org_formset,
+        'advisory_formset': advisory_formset,
+    }
+    # Use the *new* template name
+    return render(request, 'studentorg/Main/register_adviser_new.html', context)
 def adviser_form(request, slug):
     organization = get_object_or_404(Organization, slug=slug)
 

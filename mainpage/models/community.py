@@ -19,43 +19,45 @@ class ProgramImage(models.Model):
     image = models.ImageField(upload_to="project_images/")
 
     def __str__(self):
-        return f"Image for {self.project.title}"
-
+        # FIX: Changed self.project.title to self.program.title
+        return f"Image for {self.program.title}"
 
 
 class CrowdfundingProject(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    date_time = models.DateTimeField(auto_now_add=True)
-    
+    # FIX: Removed redundant date_time field. Use created_at instead.
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
 
-    
 
 class DonationChannel(models.Model):
     project = models.ForeignKey(
         CrowdfundingProject, related_name="channels", on_delete=models.CASCADE
     )
-    
+    # FIX: Added the missing 'name' field used in your template and __str__
+    name = models.CharField(max_length=100, default="Payment Channel")
     imageCrowdfunding = models.ImageField(upload_to="imageCrowdfunding/")
 
     def __str__(self):
         return f"{self.name} for {self.project.title}"
 
+
 class Donation(models.Model):
     project = models.ForeignKey(
         CrowdfundingProject, related_name="donations", on_delete=models.CASCADE
     )
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
-    donor_name = models.CharField(max_length=255, blank=True, null=True)  # optional
+    amount = models.DecimalField(max_digits=12, decimal_places=2) # This is correct
+    donor_name = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Donation {self.amount} to {self.project.title}"
+
+
 class MOD(models.Model):  # Money/Other Donations
     donated = models.CharField(max_length=255)
     name = models.CharField(max_length=150)
@@ -69,12 +71,15 @@ class MOD(models.Model):  # Money/Other Donations
     image_details = models.ImageField(upload_to="images/", blank=True, null=True)
     status = models.CharField(max_length=10, null=True, blank=True)
 
-    amount = models.IntegerField(default=0)
+    # FIX: Changed from IntegerField to DecimalField to handle cents
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date = models.DateField(auto_now_add=True)
 
     what_kind = models.CharField(max_length=20, blank=True, null=True)
     recepient = models.CharField(max_length=20, default="", blank=True, null=True)
-    recepient_things = models.CharField(max_length=20, default="", blank=True, null=True)
+    recepient_things = models.CharField(
+        max_length=20, default="", blank=True, null=True
+    )
     contact_number = models.CharField(max_length=11, blank=True, null=True)
     date_sched = models.CharField(max_length=20, default="", blank=True, null=True)
 
@@ -83,7 +88,7 @@ class MOD(models.Model):  # Money/Other Donations
 
 
 class QrDonation(models.Model):
-    qr_id = models.AutoField(primary_key=True)
+    # FIX: Removed redundant qr_id. Django auto-creates an 'id' field.
     gcash = models.ImageField(upload_to="images/")
     bpi = models.ImageField(upload_to="images/")
     bdo = models.ImageField(upload_to="images/")
@@ -94,4 +99,5 @@ class QrDonation(models.Model):
     china = models.ImageField(upload_to="images/")
 
     def __str__(self):
-        return f"{self.qr_id}"
+        # Use the auto-generated 'id' field
+        return f"QR Set {self.id}"

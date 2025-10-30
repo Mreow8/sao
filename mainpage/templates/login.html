@@ -5,8 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Student Login - CTU</title>
-
     <style>
+      /* --- [NEW] Import Rubik Font --- */
+      @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
       /* --- Base & Typography --- */
       * {
         box-sizing: border-box;
@@ -18,9 +20,10 @@
       html {
         height: 100%;
         width: 100%;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
-        background-color: #f8f9fa; /* Light background */
+        /* [THEME] Use Rubik Font */
+        font-family: "Rubik", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f8f9fa;
       }
 
       /* --- Main Layout --- */
@@ -34,8 +37,7 @@
       /* --- Left Section (Branding) --- */
       .left-section {
         flex: 1;
-        background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
-          center center;
+        background: url("{% static 'imgs/CTU.jpg' %}") no-repeat center center;
         background-size: cover;
         position: relative;
         display: flex;
@@ -46,7 +48,6 @@
         text-align: center;
       }
 
-      /* Dark overlay for better text contrast */
       .left-section::before {
         content: "";
         position: absolute;
@@ -54,7 +55,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+        background: rgba(0, 0, 0, 0.5);
         z-index: 1;
       }
 
@@ -65,29 +66,33 @@
       }
 
       .left-section img {
-        width: 150px; /* Logo size */
+        width: 150px;
         margin-bottom: 25px;
       }
 
       .left-section p {
         color: white;
-        font-size: 48px; /* Welcome text size */
+        font-size: 48px;
         font-weight: 700;
         letter-spacing: 1px;
       }
 
-      /* --- Right Section (Login Form) --- */
+      /* --- Right Section (Form) --- */
       .right-section {
         flex: 1;
-        background-color: #3e74a0; /* Consistent light background */
+        /* [THEME] Use Primary Blue from requestgmc.css */
+        background-color: #2c5282;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 40px;
+        overflow-y: auto;
       }
 
-      /* Login Box (styled like .gmc-form) */
-      .login-box {
+      /* [THEME] Shared style for .login-box and .register-box
+*/
+      .login-box,
+      .register-box {
         background: #ffffff;
         padding: 40px;
         border-radius: 12px;
@@ -97,15 +102,28 @@
         color: #333;
       }
 
-      .login-box h3 {
-        font-size: 18px;
-        color: #1a1a1a;
-        font-weight: 600;
-      }
-      .login-box h5 {
+      /* --- Headings --- */
+      .register-box h2 {
         font-size: 24px;
         color: #1a1a1a;
         font-weight: 700;
+        margin-bottom: 25px;
+        text-align: center;
+      }
+
+      /* [NEW] Styles for Login Page Headings */
+      .login-box h3 {
+        font-size: 20px;
+        color: #1a1a1a;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 5px; /* Less margin */
+      }
+      .login-box h5 {
+        font-size: 16px;
+        color: #6c757d; /* Grayer */
+        font-weight: 500;
+        text-align: center;
         margin-bottom: 25px;
       }
 
@@ -114,53 +132,67 @@
         margin-bottom: 20px;
       }
 
+      /* [THEME] Styled like #comboBox */
       input[type="text"],
+      input[type="email"],
       input[type="password"] {
         width: 100%;
-        padding: 12px 15px; /* Consistent padding */
-        background: #f0f2f5; /* Light input background */
+        padding: 12px 15px;
+        background: #f9f9f9; /* Light input background */
         border: 1px solid #ccc;
         border-radius: 8px;
         font-size: 14px;
+        font-family: "Rubik", sans-serif; /* Ensure font */
         color: #333;
         transition: all 0.3s ease;
       }
 
+      /* [THEME] Focus style from requestgmc.css */
       input:focus {
         outline: none;
-        border-color: #ff8000; /* Orange focus border */
+        border-color: #2c5282; /* Primary Blue */
         background-color: #fff;
+        box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
       }
 
       input::placeholder {
         color: #adb5bd;
       }
 
-      /* Google reCAPTCHA */
+      /* [NEW] reCAPTCHA Styling */
       .g-recaptcha {
         margin-bottom: 20px;
+        /* Center the reCAPTCHA box */
         display: flex;
-        justify-content: center; /* Center the captcha */
+        justify-content: center;
       }
 
-      .btn-login {
+      /* [THEME] Shared style for .btn-login and .btn-register
+*/
+      .btn-login,
+      .btn-register {
         width: 100%;
         padding: 12px;
-        background-color: #ff8000; /* Orange button */
+        background-color: #2c5282; /* Primary Blue */
         color: white;
         border: none;
         font-weight: 600;
         font-size: 16px;
+        font-family: "Rubik", sans-serif;
         border-radius: 8px;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: background-color 0.2s, transform 0.2s;
       }
 
-      .btn-login:hover {
-        background-color: #e67300; /* Darker orange on hover */
+      .btn-login:hover,
+      .btn-register:hover {
+        background-color: #2a4365; /* Darker Blue */
+        transform: translateY(-2px); /* Added for consistency */
       }
 
-      /* --- Footer & Error Messages --- */
+      /* --- Footer & Messages --- */
       .footer {
         margin-top: 20px;
         text-align: center;
@@ -168,7 +200,8 @@
         color: #6c757d;
       }
       .footer a {
-        color: #ff8000; /* Orange link */
+        /* [THEME] Use Primary Blue for link */
+        color: #2c5282;
         text-decoration: none;
         font-weight: 600;
       }
@@ -176,55 +209,52 @@
         text-decoration: underline;
       }
 
-      .error {
-        color: #dc3545; /* Red error text */
-        background-color: #f8d7da; /* Light red background */
-        border: 1px solid #f5c6cb;
-        padding: 10px;
-        border-radius: 6px;
+      /* [THEME] Error message (Red)
+Styles both the hardcoded .error and .error-message
+*/
+      .error,
+      .error-message {
+        color: #c53030; /* Dark Red */
+        background-color: #fff5f5; /* Light Red */
+        border: 1px solid #fc8181; /* Red border */
+        border-left: 5px solid #c53030; /* Red accent */
+        padding: 1rem;
+        border-radius: 8px;
         font-size: 14px;
         margin-bottom: 15px;
-        text-align: center;
+        text-align: left;
+      }
+
+      /* [THEME] Success message (Green)
+Copied from register.html
+*/
+      .success-message {
+        color: #2f855a; /* Dark Green */
+        background-color: #f0fff4; /* Light Green */
+        border: 1px solid #9ae6b4; /* Green border */
+        border-left: 5px solid #2f855a; /* Green accent */
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 14px;
+        margin-bottom: 15px;
+        text-align: left;
       }
 
       /* --- Responsive Design --- */
       @media (max-width: 900px) {
-        .left-section {
-          display: none; /* Hide image section on smaller screens */
-        }
-
-        .right-section {
-          flex: 1; /* Take full width */
-          background-color: #f8f9fa; /* Keep background light */
-          padding: 20px; /* Reduce padding */
-          align-items: center; /* Center the box */
-        }
-
-        .login-box {
-          max-width: 90%; /* Allow box to be wider on tablets */
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05); /* Keep shadow */
-        }
-      }
-
-      @media (max-width: 480px) {
-        .login-box {
-          padding: 30px; /* Slightly more padding for very small screens */
-        }
-      }
-      @media (max-width: 900px) {
         .container {
-          /* Apply the background image to the container itself */
           background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
             center center;
           background-size: cover;
-          position: relative; /* Needed for the overlay */
-          display: flex; /* Re-enable flex to center the right section */
+          position: relative;
+          display: flex;
           justify-content: center;
           align-items: center;
-          padding: 20px; /* Add some padding */
+          padding: 20px;
+          height: auto;
+          min-height: 100vh;
         }
 
-        /* Add an overlay to the container for readability */
         .container::before {
           content: "";
           position: absolute;
@@ -232,39 +262,52 @@
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+          background: rgba(0, 0, 0, 0.5);
           z-index: 1;
         }
 
         .left-section {
-          display: none; /* Hide the original left section div */
+          display: none;
         }
 
         .right-section {
-          flex: none; /* Override the desktop flex setting */
+          flex: none;
           width: 90%;
           max-width: 400px;
-          background-color: transparent; /* Make it transparent */
-          padding: 0; /* Remove padding, handled by login-box */
-          position: relative; /* Ensure it's above the overlay */
+          background-color: transparent;
+          padding: 0;
+          position: relative;
           z-index: 2;
         }
 
-        .login-box {
+        .login-box,
+        .register-box {
           background-color: rgba(
             255,
             255,
             255,
-            0.9
-          ); /* White with slight transparency */
+            0.95
+          ); /* Slightly less transparent */
           padding: 30px;
           border-radius: 12px;
           width: 100%;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Keep a subtle shadow */
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+          margin: 20px 0;
         }
 
         .footer {
-          color: #4d4d4d; /* Keep footer text readable */
+          color: #4d4d4d;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .login-box,
+        .register-box {
+          padding: 25px;
+        }
+        .right-section {
+          padding: 10px;
+          width: 100%; /* Use full width */
         }
       }
     </style>
@@ -284,6 +327,14 @@
         <div class="login-box">
           <h3>Cebu Technological University</h3>
           <h5>Sign In</h5>
+          <!-- prettier-ignore -->
+          {% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' %}
+          <div class="success-message">{{ message }}</div>
+          {% else %}
+          <div class="error-message">{{ message }}</div>
+          {% endif %} {% endfor %} {% endif %}
 
           <form method="POST" action="{% url 'signinuser' %}">
             {% csrf_token %} {% if form.errors %}
@@ -316,10 +367,7 @@
 
             <button type="submit" class="btn-login">Login</button>
           </form>
-
-          {% if messages %} {% for message in messages %}
-          <div class="error">{{ message }}</div>
-          {% endfor %} {% endif %}
+          <!-- prettier-ignore -->
 
           <div class="footer">
             Don't have an account? Contact your administrator.

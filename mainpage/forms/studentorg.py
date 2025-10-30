@@ -112,7 +112,9 @@ class AdviserForm(forms.ModelForm):
             'status',
         ]
 
-
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+        }
 class AdviserEducationForm(forms.ModelForm):
     class Meta:
         model = AdviserEducation
