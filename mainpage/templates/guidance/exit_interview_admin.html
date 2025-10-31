@@ -1,115 +1,177 @@
-<!-- prettier-ignore -->
+{% extends "adminmain.html" %} {% load static %} 
+{% block title %}Exit Interview{% endblock %} 
 
-{% extends "adminmain.html" %} {% load static %} {% block title %}Exit
-Interview{% endblock %} {% block headcontent %}
+{% block headcontent %}
 <link
   rel="stylesheet"
-  type="text/css"
-  href="{% static 'styles/guidance/counseling_app_admin.css'%}"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
-<style>
-  .admin-table-wrapper {
-    overflow-y: auto;
-  }
-</style>
 <link
   rel="stylesheet"
   type="text/css"
   href="{% static 'styles/guidance/exit_form.css'%}"
 />
 <script src="{% static 'scripts/guidance/html2pdf.js'%}"></script>
-{% endblock %} {% block bodycontent %}
- 
+{% endblock %} 
+
+{% block bodycontent %}
+ 
 <div class="container">
-  {{form.errors}}
   <div class="sub-title">
     <h3>GUIDANCE (Admin)</h3>
     <p class="hometext">Home</p>
     <p class="certxt">&gt; Exit Interview</p>
   </div>
+
   <div class="form-container">
     {% csrf_token %}
-    <h2>Exit Interview Request List</h2>
-    <label>Enter ID number:</label>
-    <span id="search_id">
+
+    
+    <form id="search_id" method="GET" action="">
+      
       <input
         type="text"
-        name="studentID"
-        placeholder="search"
-        required=""
+        name="search"
+        placeholder="Search by Student ID or Name"
         id="studentIDBox"
+        value="{{ request.GET.search }}"
       />
-      <button class="OrangeButton" id="searchButton">Search</button>
+      <button class="OrangeButton" id="searchButton" type="submit">Search</button>
+
       <ul class="messages">
         {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
+          {% if 'exit_interview_admin' in message.tags %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+          {% endif %}
         {% endfor %}
       </ul>
-    </span>
+    </form>
+
     <div class="admin-table-wrapper">
       <table id="info_table">
-        <tr id="info_table_head">
-          <th>DATE RECEIVED</th>
-          <th>STUDENT ID</th>
-          <th>NAME</th>
-          <th colspan="3">STATUS</th>
-        </tr>
-        {% for interview_request in exit_interview_request %}
-        <tr>
-          <!-- prettier-ignore -->
-          <input
-          type="hidden"
-          name="exitinterviewId"
-          class="exitinterviewId"
-          value="{{ interview_request.exitinterviewId }}"
-        />
-          <td>{{ interview_request.dateRecieved }}</td>
-          <td>{{ interview_request.studentID.studID }}</td>
-          <td>
-            {{ interview_request.studentID.lastname }},
-            {{interview_request.studentID.firstname }}
-          </td>
-          <td>
-            {% if interview_request.status == 'Accepted' %}
-            <span class="accepted">{{ interview_request.status }}</span>
-            {% elif interview_request.status == 'Declined' %}
-            <span class="declined">{{ interview_request.status }}</span>
-            {% elif interview_request.status == 'Pending' %}
-            <span class="pending">{{ interview_request.status }}</span>
-            {% elif interview_request.status == 'Expired' %}
-            <span class="expired">{{ interview_request.status }}</span>
-            {% endif %}
-          </td>
-          <td>
-            <!-- prettier-ignore -->
-
-            <div class="horizontal">
-            {% if interview_request.status != 'Expired' %} 
-            {% if interview_request.status != 'Accepted' %} 
-            {% if interview_request.status != 'Declined' %}
-            <button class="accept" id="acceptButton">ACCEPT</button>
-            <button class="decline" id="declineButton">DECLINE</button>
-            {% endif %} {% endif %} {% endif %}
-            <button class="delete" id="delete">DELETE</button>
-          </div>
-          </td>
-          <td>
-            {% csrf_token %} {% if interview_request.status == 'Accepted' %}
-              <a 
-                href="{% url 'print_exit_interview' interview_request.exitinterviewId %}" 
-                class="showformButton" 
-                target="_blank"
-              >
-                SHOW FORM
-              </a>
-            {% else %}
-              <a href="#" class="showformButton hidden">SHOW FORM</a>
-            {% endif %}
+        <thead>
+  <tr id="info_table_head">
+    
+    <th class="sortable">
+      {% if current_sort == 'dateRecieved' %}
+        <a href="?sort=dateRecieved&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+           class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Received</a>
+      {% else %}
+        <a href="?sort=dateRecieved&order=asc{{ search_params }}">Date Received</a>
+      {% endif %}
+    </th>
+    
+    <th class="sortable">
+      {% if current_sort == 'studentID__studID' %}
+        <a href="?sort=studentID__studID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+           class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student ID</a>
+      {% else %}
+        <a href="?sort=studentID__studID&order=asc{{ search_params }}">Student ID</a>
+      {% endif %}
+    </th>
+    
+    <th class="sortable">
+      {% if current_sort == 'studentID__lastname' %}
+        <a href="?sort=studentID__lastname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+           class="sorted {% if current_order == 'desc' %}desc{% endif %}">Name</a>
+      {% else %}
+        <a href="?sort=studentID__lastname&order=asc{{ search_params }}">Name</a>
+      {% endif %}
+    </th>
+    
+    <th class="sortable">
+      {% if current_sort == 'status' %}
+        <a href="?sort=status&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+           class="sorted {% if current_order == 'desc' %}desc{% endif %}">Status</a>
+      {% else %}
+        <a href="?sort=status&order=asc{{ search_params }}">Status</a>
+      {% endif %}
+    </th>
+    
+    <th>ACTION</th>
+    <th>FORM</th>
+  </tr>
+</thead>
+        <tbody>
+          {% for interview_request in page_obj %}
+          <tr>
+            <input
+              type="hidden"
+              name="exitinterviewId"
+              class="exitinterviewId"
+              value="{{ interview_request.exitinterviewId }}"
+            />
+            <td data-label="Date Received">{{ interview_request.dateRecieved }}</td>
+            <td data-label="Student ID">{{ interview_request.studentID.studID }}</td>
+            <td data-label="Name">
+              {{ interview_request.studentID.lastname }},
+              {{interview_request.studentID.firstname }}
             </td>
-        </tr>
-        {% endfor %}
+            <td data-label="Status">
+              {% if interview_request.status == 'Accepted' %}
+              <span class="accepted">{{ interview_request.status }}</span>
+              {% elif interview_request.status == 'Declined' %}
+              <span class="declined">{{ interview_request.status }}</span>
+              {% elif interview_request.status == 'Pending' %}
+              <span class="pending">{{ interview_request.status }}</span>
+              {% elif interview_request.status == 'Expired' %}
+              <span class="expired">{{ interview_request.status }}</span>
+              {% endif %}
+            </td>
+            <td data-label="Action">
+              <div class="horizontal">
+                {% if interview_request.status != 'Expired' %} 
+                {% if interview_request.status != 'Accepted' %} 
+                {% if interview_request.status != 'Declined' %}
+                <button class="accept" id="acceptButton">ACCEPT</button>
+                <button class="decline" id="declineButton">DECLINE</button>
+                {% endif %} {% endif %} {% endif %}
+                <button class="delete" id="delete">DELETE</button>
+              </div>
+            </td>
+            <td data-label="Form">
+              {% if interview_request.status == 'Accepted' %}
+                <a 
+                  href="{% url 'print_exit_interview' interview_request.exitinterviewId %}" 
+                  class="showformButton" 
+                  target="_blank"
+                >
+                  SHOW FORM
+                </a>
+              {% else %}
+                <a href="#" class="showformButton hidden" aria-hidden="true">SHOW FORM</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="no-items-found">
+              No exit interview requests found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&search={{ request.GET.search }}&sort={{ current_sort }}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}&sort={{ current_sort }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}&sort={{ current_sort }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&search={{ request.GET.search }}&sort={{ current_sort }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

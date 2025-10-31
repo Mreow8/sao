@@ -1,0 +1,255 @@
+/* --- Import Font (from requestgmc.css) --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.gmc-form,
+input,
+select,
+button,
+table {
+  font-family: "Rubik", sans-serif;
+}
+
+body {
+  background-color: #f8f9fa; /* Light grey background */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
+}
+
+/* --- Main Card (from requestgmc.css) --- */
+.gmc-form {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Search Bar --- */
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+/* Styled like #comboBox */
+.search-input {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #333;
+  flex-grow: 1;
+}
+.search-input:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* Styled like .requestBtn */
+.search-btn {
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.search-btn:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+}
+
+/* --- Table (Responsive Style from #historyTable) --- */
+.gmc-table-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+table th {
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Sortable Headers */
+table th a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+table th a:hover {
+  text-decoration: underline;
+}
+table th a::after {
+  font-family: "Font Awesome 5 Free";
+  content: "\f0dc"; /* fa-sort */
+  font-weight: 900;
+  opacity: 0.5;
+}
+table th a.sorted::after {
+  opacity: 1;
+  content: "\f0d8"; /* fa-sort-up (ascending) */
+}
+table th a.sorted.desc::after {
+  opacity: 1;
+  content: "\f0d7"; /* fa-sort-down (descending) */
+}
+
+/* Table Button (smaller .requestBtn) */
+.requestBtn {
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 0.2s;
+}
+.requestBtn:hover {
+  background-color: #2a4365;
+}
+
+/* "Claimed" Badge (like .status-processed) */
+.success-message {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  background-color: #2ecc71; /* Green */
+  display: inline-block;
+}
+
+/* "No applicants" message */
+.no-applicants {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* --- Pagination --- */
+.pagination {
+  margin: 2rem 0 1rem;
+  text-align: center;
+}
+.step-links a,
+.step-links .current {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 4px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+}
+.step-links a {
+  background-color: #f0f0f0;
+  color: #333;
+}
+.step-links a:hover {
+  background-color: #e0e0e0;
+}
+.step-links .current {
+  background-color: #2c5282;
+  color: white;
+  border-color: #2c5282;
+}
+
+/* --- Responsive Table (from #historyTable) --- */
+@media (max-width: 900px) {
+  .gmc-table-wrapper {
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100%;
+  }
+  thead {
+    display: none;
+  }
+  tr {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  td {
+    position: relative;
+    padding-left: 50% !important;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    min-height: 40px;
+  }
+  td:last-child {
+    border-bottom: none;
+  }
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    font-weight: 600;
+    color: #2c5282;
+    white-space: nowrap;
+  }
+}

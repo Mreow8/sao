@@ -86,24 +86,26 @@
 
           <!-- Three dots menu -->
           <div class="relative">
+  {% if user.is_staff %}
+
             <button
               type="button"
               class="menu-btn text-gray-600 hover:text-gray-900 focus:outline-none"
             >
               ⋮
             </button>
+
             <div
               class="menu hidden absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-10"
             >
-             <!-- ...existing code... -->
-<button
-  type="button"
-  class="edit-project-btn block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-  data-url="{% url 'edit_project' project.id %}">
-   <i class="fa fa-pen"></i> Edit
-</button>
-<!-- ...existing code... -->
-                
+                          <!-- ...existing code... -->
+                <button
+                type="button"
+                class="edit-project-btn block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                data-url="{% url 'edit_project' project.id %}">
+                <i class="fa fa-pen"></i> Edit
+              </button>
+
               <form
                 method="post"
                 action="{% url 'delete_project' project.id %}"
@@ -118,10 +120,11 @@
                 </button>
               </form>
             </div>
+{% endif %}
+
             <!-- ✅ Donate Button -->
           </div>
         </div>
-
         <!-- Description -->
         <div class="mt-4 flex items-center justify-between">
           <!-- Left side: description + date -->

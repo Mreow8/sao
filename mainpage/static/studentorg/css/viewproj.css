@@ -23,37 +23,33 @@ body {
   padding: 0 1.5rem; /* From requestgmc.css */
 }
 
+/* --- Tabs Navigation --- */
 .tabs {
   display: flex;
-  flex-wrap: wrap; /* Allow tabs to wrap on small screens */
+  flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0; /* Aligns with card margin */
 }
 
 .tab {
-  text-decoration: none;
-  color: #555;
   font-weight: 500;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px 8px 0 0;
-  border: 1px solid transparent;
-  border-bottom: none;
-  transform: translateY(2px); /* Sits on top of the border line */
-  transition: all 0.2s ease;
+  font-size: 1rem;
+  color: #555;
+  text-decoration: none;
+  padding: 1rem 1.25rem;
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
 }
 
 .tab:hover {
-  background-color: #f9f9f9;
   color: #333;
 }
 
 .tab.active {
-  background-color: #ffffff;
-  color: #2c5282; /* Primary blue */
-  border-color: #e0e0e0;
-  border-bottom: 2px solid #ffffff; /* "Cuts out" the main border */
-  font-weight: 600;
+  /* Use Primary Blue from requestgmc.css */
+  color: #2c5282;
+  border-bottom-color: #2c5282;
 }
 
 /* --- Base Card Style (for Table) --- */

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-
+from django.core.paginator import Paginator
+from django.db.models import Q
 
 @login_required(login_url='signinuser')  # or the URL name of your login page
 
@@ -32,13 +33,44 @@ User = get_user_model()
 
 def is_admin(user):
     return user.is_authenticated and user.is_superuser
-
 @login_required
 @user_passes_test(is_admin)
 def assign_role(request):
-    users = CustomUser.objects.all()
-    organizations = Organization.objects.all()
+    # --- Get parameters for Search, Sort, and Pagination ---
+    
+    # 1. Search query
+    query = request.GET.get('q', '')
+    
+    # 2. Sort column and direction
+    # Default sort is username ascending
+    sort_by = request.GET.get('sort', 'username')
+    direction = request.GET.get('dir', 'asc')
 
+    # --- Build the QuerySet ---
+    
+    # Start with all users
+    users_list = CustomUser.objects.all()
+
+    # 1. Apply Search Filter (if a query exists)
+    if query:
+        users_list = users_list.filter(
+            Q(username__icontains=query) | Q(email__icontains=query)
+        )
+
+    # 2. Apply Sorting
+    valid_sort_fields = ['username', 'email', 'role']
+    if sort_by not in valid_sort_fields:
+        sort_by = 'username' # Default to username if invalid
+        
+    order_field = f"{'-' if direction == 'desc' else ''}{sort_by}"
+    users_list = users_list.order_by(order_field)
+
+    # 3. Apply Pagination
+    paginator = Paginator(users_list, 25)  # Show 25 users per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # --- Handle POST request (no change here) ---
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         role = request.POST.get('role')
@@ -48,7 +80,6 @@ def assign_role(request):
             user = CustomUser.objects.get(id=user_id)
             user.role = role
             
-            # Set organization to None if the role is not 'org_admin'
             if role == 'org_admin' and org_id:
                 user.organization_id = org_id
             else:
@@ -59,17 +90,25 @@ def assign_role(request):
         except CustomUser.DoesNotExist:
             messages.error(request, "User not found.")
         
-        return redirect('assign_role')
+        # Redirect back to the same page, preserving search/sort/page
+        # request.get_full_path() keeps all GET parameters
+        return redirect(request.get_full_path())
 
-    # This context dictionary is what gets passed to the template
+    # --- Prepare Context for Template ---
+    organizations = Organization.objects.all()
+    
     context = {
-        'users': users,
+        'page_obj': page_obj,  # Pass the page object (not 'users')
         'organizations': organizations,
-        'role_choices': CustomUser.ROLE_CHOICES,  # This is the line to add
+        'role_choices': CustomUser.ROLE_CHOICES,
+        
+        # Pass back search/sort state to the template
+        'query': query,
+        'sort_by': sort_by,
+        'direction': direction,
     }
     
     return render(request, 'assign_role.html', context)
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.conf import settings # Import Django settings

@@ -41,7 +41,33 @@
     flex-direction: column;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   }
+/* Add this to your orgfinal.css */
 
+/* This wrapper holds the "Edit" button and places it 
+  in the top-right corner of the card *before* the content.
+*/
+.button-edit-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem; /* Adds space before the content below it */
+}
+
+/* This is the new style for the edit button itself */
+.button.button-edit {
+  background: #f9f9f9;
+  background-image: none;
+  color: #2c5282;
+  border: 1px solid #ddd;
+  box-shadow: none;
+}
+.button.button-edit:hover {
+  background: #f0f4f8;
+  color: #2a4365;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  filter: brightness(100%);
+  transform: translateY(-2px);
+  border-color: #ccc;
+}
   .modal-header {
     padding: 15px 20px;
     border-bottom: 1px solid #ddd;
@@ -116,14 +142,22 @@
     <div class="subcontain">
       <div class="text-content">
         <div class="f1">
-          <h1>{{ org.name }} LOGO SYMBOLISM</h1>
+          <h2>{{ org.name }} LOGO SYMBOLISM</h2>
           <img src="{{ org.logo.url }}" alt="{{ org.name }}" class="logoimg" />
         </div>
-        {% if user.is_authenticated %} {% if user.role == 'superadmin' %}
-        <a href="?edit=true" class="button">Edit</a>
-        {% elif user.role == 'org_member' and user.organization == org %}
-        <a href="?edit=true" class="button">Edit</a>
-        {% endif %} {% endif %} {% if is_edit %}
+       {% if user.is_authenticated and not is_edit %}
+  {% if user.role == 'superadmin' or user.role == 'org_member' and user.organization == org %}
+    
+    <div class="button-edit-wrapper">
+      <a href="?edit=true" class="button button-edit">
+        <i class="fas fa-edit"></i> Edit Page
+      </a>
+    </div>
+
+  {% endif %}
+{% endif %}
+
+{% if is_edit %}
         <!-- Edit Mode -->
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %} {{ form.as_p }}

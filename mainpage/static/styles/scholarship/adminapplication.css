@@ -1,169 +1,301 @@
-/* Container Enhancements */
+/* --- Import Font (from requestgmc.css) --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.sub-title,
+.gmc-form,
+#search-box,
+#scholar_type,
+#search-btn,
+#requirements-table {
+  font-family: "Rubik", sans-serif;
+}
 
 body {
-  background-color: #f4f6fa;
+  background-color: #f8f9fa; /* Light grey background */
 }
+
 .container {
-  background: #ffffff;
-  padding: 40px 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   max-width: 1200px;
-  margin: 50px auto;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
 }
 
-/* Heading */
-h1 {
-  text-align: center;
-  color: #1a1a1a;
-  font-size: 28px;
-  margin-bottom: 30px;
-  font-weight: 600;
+/* --- Main Card (from requestgmc.css) --- */
+.gmc-form {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Search + Filter Section */
+/* --- Search & Filter Bar --- */
+.form_div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
 .search_id_container {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  margin-bottom: 30px;
+  gap: 1rem;
+  flex-grow: 1;
 }
 
-#search-box {
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 14px;
-  width: 220px;
-  background: #f9f9f9;
-}
-
-#search-btn {
-  background: #ff8000;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-#search-btn:hover {
-  background: #e67300;
-}
-
+/* Styled like #comboBox from requestgmc.css */
+#search-box,
 #scholar_type {
-  padding: 10px 15px;
+  font-size: 1rem;
+  padding: 10px 12px;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 14px;
-  background: #f9f9f9;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #333;
+  flex-grow: 1;
 }
 
-/* Table Styling */
+#search-box:focus,
+#scholar_type:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* Styled like .requestBtn from requestgmc.css */
+#search-btn {
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+#search-btn:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+}
+
+/* --- Table (from requestgmc.css) --- */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
 #requirements-table {
   width: 100%;
+  min-width: 1000px; /* Force scroll */
   border-collapse: collapse;
-  margin-top: 20px;
 }
 
 #requirements-table th,
 #requirements-table td {
-  padding: 12px 14px;
-  border: 1px solid #eee;
-  text-align: center;
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
   vertical-align: middle;
 }
 
 #requirements-table th {
-  background-color: #f4f6fa;
-  color: #ff8000;
-  font-size: 14px;
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-#requirements-table td {
-  font-size: 13px;
-  color: #333;
+/* [NEW] Sortable Header Links */
+#requirements-table th a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+#requirements-table th a:hover {
+  text-decoration: underline;
+}
+/* Sort icon */
+#requirements-table th a::after {
+  font-family: "Font Awesome 5 Free";
+  content: "\f0dc"; /* fa-sort */
+  font-weight: 900;
+  opacity: 0.5;
 }
 
-/* Images in table */
+/* --- Table Content --- */
 #requirements-table td img {
-  max-width: 80px;
-  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-
 #requirements-table td img:hover {
   transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Comment box */
+/* Note input (from .ornum-input) */
 .comment-box {
-  width: 100%;
-  padding: 6px 10px;
-  border-radius: 8px;
   border: 1px solid #ccc;
+  width: 100%;
+  min-width: 150px;
+  height: 35px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-family: "Rubik", sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.comment-box:focus {
+  outline: none;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
 }
 
-/* Buttons */
-#btnsss button {
-  display: block;
-  width: 100%;
-  margin: 5px 0;
-  padding: 8px;
-  font-size: 13px;
+.note-check {
+  color: #28a745; /* Green */
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* Action Buttons */
+#btnsss {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100px;
+}
+
+#btn-accept,
+#btn-reject,
+#btn-update {
+  font-family: "Rubik", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 12px;
   border: none;
   border-radius: 8px;
-  color: #fff;
   cursor: pointer;
+  color: white;
+  transition: background-color 0.2s;
 }
 
+/* Green (like .printBtn) */
 #btn-accept {
   background-color: #28a745;
 }
+#btn-accept:hover {
+  background-color: #218838;
+}
 
+/* Red (New) */
 #btn-reject {
   background-color: #dc3545;
 }
+#btn-reject:hover {
+  background-color: #c82333;
+}
 
+/* Blue (like .requestBtn) */
 #btn-update {
-  background-color: #007bff;
+  background-color: #2c5282;
+}
+#btn-update:hover {
+  background-color: #2a4365;
 }
 
-#btnsss button:hover {
-  opacity: 0.9;
+/* "No applicants" message */
+.no-applicants {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
 
-/* Modal */
+/* --- Image Modal --- */
 .modal {
   display: none;
   position: fixed;
-  z-index: 999;
-  padding-top: 80px;
+  z-index: 1001;
+  padding-top: 50px;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.9);
 }
-
 .modal-content {
-  display: block;
   margin: auto;
-  max-width: 90%;
-  max-height: 80%;
+  display: block;
+  width: 80%;
+  max-width: 700px;
 }
-
 .close {
   position: absolute;
-  top: 40px;
-  right: 60px;
-  color: white;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
   font-size: 40px;
   font-weight: bold;
+  transition: 0.3s;
   cursor: pointer;
+}
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+}
+
+/* --- Pagination --- */
+.pagination {
+  margin: 2rem 0 1rem;
+  text-align: center;
+  font-family: "Rubik", sans-serif;
+}
+.step-links a,
+.step-links .current {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 4px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.step-links a {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s;
+}
+.step-links a:hover {
+  background-color: #e0e0e0;
+}
+.step-links .current {
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  border: 1px solid #2c5282;
 }

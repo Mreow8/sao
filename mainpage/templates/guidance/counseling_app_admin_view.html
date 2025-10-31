@@ -1,137 +1,151 @@
-<!-- prettier-ignore -->
-{% extends "adminmain.html" %} {% load static %} {% block title %}Counseling App
-With Scheduler{% endblock %} {% block headcontent %}
-<style>
-  .messages {
-    list-style: none;
-    margin: 10px 0;
-    padding: 0;
-  }
+{% extends "adminmain.html" %} {% load static %} 
+{% block title %}Counseling App With Scheduler{% endblock %} 
 
-  .messages li {
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 5px;
-  }
-
-  .messages li.error {
-    background-color: #ffe5e5;
-    color: #a30000;
-  }
-
-  .messages li.success {
-    background-color: #e7ffe7;
-    color: #007a00;
-  }
-</style>
+{% block headcontent %}
 <link
   rel="stylesheet"
   type="text/css"
   href="{% static 'styles/guidance/counseling_app_admin.css'%}"
 />
-{% endblock %} {% block bodycontent %}
-<style>
-  body {
-    font-size: 14px;
-  }
-</style>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+{% endblock %} 
+
+{% block bodycontent %}
 <div class="container">
-  {{form.errors}}
   <div class="sub-title">
     <h3>GUIDANCE(Admin)</h3>
     <p class="hometext">Home</p>
     <p class="certxt">&gt; Counseling App with Schedule</p>
   </div>
 
-  <div class="form-container">
+  <div class="gmc-form">
     {% csrf_token %}
-    <span id="search_id">
+    
+    <form id="search_id" method="GET" action="">
       <input
         type="text"
-        name="studentID"
+        name="search"
         placeholder="Enter ID number"
-        required=""
         id="studentIDBox"
+        value="{{ request.GET.search }}"
       />
-      <button class="OrangeButton" id="searchButton">Search</button>
-      {% if page == 'counseling_app_admin' %}
-      <ul class="messages">
-        {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </span>
+      <button class="OrangeButton" id="searchButton" type="submit">Search</button>
+      
+   {% for message in messages %}
+  {% if 'counseling_app_admin' in message.tags %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+  {% endif %}
+{% endfor %}
+    </form>
+    
     <div class="table-responsive-wrapper">
       <table id="info_table">
         <thead>
           <tr id="info_table_head">
-            <th>Date Received</th>
-            <th>Name</th>
+            <th><a href="?sort=dateRecieved&search={{ request.GET.search }}">Date Received</a></th>
+            <th><a href="?sort=studentID__lastname&search={{ request.GET.search }}">Name</a></th>
             <th>Program/Year</th>
             <th>Contact No</th>
-            <th>Meeting Date</th>
+            <th><a href="?sort=scheduled_date&search={{ request.GET.search }}">Meeting Date</a></th>
             <th>Reason</th>
-            <th>Status</th>
+            <th><a href="?sort=status&search={{ request.GET.search }}">Status</a></th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          {% for schedule_request in meeting_requests %}
-          <tr>
-            <input
-              type="hidden"
-              name="counselingID"
-              class="counselingID"
-              value="{{ schedule_request.counselingID }}"
-            />
-            <!-- Add data-label attributes to each <td> -->
-            <td data-label="Date Received">
-              {{ schedule_request.dateRecieved }}
-            </td>
-            <td data-label="Name">
-              {{ schedule_request.studentID.lastname }},
-              {{schedule_request.studentID.firstname }}
-            </td>
-            <td data-label="Program/Year">
-              {{ schedule_request.studentID.degree }}
-              {{schedule_request.studentID.yearlvl }}
-            </td>
-            <td data-label="Contact No">
-              0{{ schedule_request.studentID.contact }}
-            </td>
-            <td data-label="Meeting Date">
-              {{ schedule_request.scheduled_date }}
-              {{time|get_formatted_time:schedule_request.scheduled_time }}
-            </td>
-            <td data-label="Reason">{{ schedule_request.reason }}</td>
-            <td data-label="Status">
-              {% if schedule_request.status == 'Accepted' %}
-              <span class="accepted">{{ schedule_request.status }}</span>
-              {% elif schedule_request.status == 'Declined' %}
-              <span class="declined">{{ schedule_request.status }}</span>
-              {% elif schedule_request.status == 'Pending' %}
-              <span class="pending">{{ schedule_request.status }}</span>
-              {% elif schedule_request.status == 'Expired' %}
-              <span class="expired">{{ schedule_request.status }}</span>
-              {% else %} {{ schedule_request.status }} {% endif %}
-            </td>
-            <td data-label="Action">
-              <!-- prettier-ignore -->
-              <div class="horizontal">
-        {% if schedule_request.status != 'Expired' and schedule_request.status != 'Accepted' and schedule_request.status != 'Declined' %}
-        <button class="accept">ACCEPT</button>
-        <button class="decline">DECLINE</button>
+       <tbody>
+  {% for item in page_obj %}
+  <tr>
+    <input
+      type="hidden"
+      name="counselingID"
+      class="counselingID"
+      value="{{ item.item_pk }}" />
+    <td data-label="Date Received">
+      {{ item.sort_date|date:"Y-m-d" }} </td>
+    <td data-label="Name">
+      {{ item.student_lastname }}, {{ item.student_firstname }}
+    </td>
+    <td data-label="Program/Year">
+      {{ item.student_degree }} {{ item.student_yearlvl }}
+    </td>
+    <td data-label="Contact No">
+      0{{ item.student_contact }}
+    </td>
+    <td data-label="Meeting Date">
+      {{ item.display_date|date:"Y-m-d" }}
+      
+      {% if item.item_type == 'counseling' and item.display_time %}
+        {{ time|get_formatted_time:item.display_time }}
+      {% endif %}
+    </td>
+    <td data-label="Reason">
+        {{ item.display_reason }}
+        
+        {% if item.item_type == 'case' %}
+          <span class="pending">(Discipline)</span>
         {% endif %}
-        <button class="delete">DELETE</button>
+    </td>
+    <td data-label="Status">
+      {% if item.display_status == 'Accepted' or item.display_status == 'Resolved' %}
+        <span class="accepted">{{ item.display_status }}</span>
+      {% elif item.display_status == 'Declined' %}
+        <span class="declined">{{ item.display_status }}</span>
+      {% elif item.display_status == 'Pending' or item.display_status == 'Under Investigation' %}
+        <span class="pending">{{ item.display_status }}</span>
+      {% elif item.display_status == 'Expired' %}
+        <span class="expired">{{ item.display_status }}</span>
+      {% else %} 
+        {{ item.display_status }}
+      {% endif %}
+    </td>
+    <td data-label="Action">
+      <div class="horizontal">
+        {% if item.item_type == 'counseling' %}
+          {% if item.display_status != 'Expired' and item.display_status != 'Accepted' and item.display_status != 'Declined' %}
+          <button class="accept">ACCEPT</button>
+          <button class="decline">DECLINE</button>
+          {% endif %}
+          <button class="delete">DELETE</button>
+        {% else %}
+     
+        {% endif %}
       </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
+    </td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="8" class="no-items-found">
+      No meeting requests or counseling cases found.
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
       </table>
     </div>
+
+    
+
   </div>
+  <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&search={{ request.GET.search }}&sort={{ request.GET.sort }}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}&sort={{ request.GET.sort }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}&sort={{ request.GET.sort }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&search={{ request.GET.search }}&sort={{ request.GET.sort }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
 <script src="{% static 'scripts/guidance/counseling_app_admin.js'%}"></script>
 {% endblock %}

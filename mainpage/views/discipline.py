@@ -328,8 +328,6 @@ def update_suspension(request, case_id):
             return JsonResponse({"success": False, "error": "Case not found"})
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
 
-
-# Your original counseling_form_view
 def counseling_form_view(request, case_id):
     case = get_object_or_404(CaseProfile, id=case_id)
     student = case.student 
@@ -356,15 +354,25 @@ def counseling_form_view(request, case_id):
                 }
                 scheduled_date = ongoing_schedule.scheduled_date.strftime('%B %d, %Y')
                 scheduled_time = time.get(ongoing_schedule.scheduled_time, ongoing_schedule.scheduled_time)
-                messages.error(request, f"Student already has a counseling schedule on {scheduled_date} at {scheduled_time}.")
+                
+                # [FIX 1] Add 'counseling_form' tag to the ERROR message
+                messages.error(request, f"Student already has a counseling schedule on {scheduled_date} at {scheduled_time}.", extra_tags='counseling_form')
+                
+                # Redirect back to the form to show the error
                 return redirect("counseling_form", case_id=case.id)
 
             counseling = form.save(commit=False)
             counseling.dateRecieved = current_datetime.strftime('%Y-%m-%d')
             counseling.studentID = student
             counseling.save()
-            messages.success(request, f"Counseling request for {student.firstname} {student.lastname} has been created.")
-            return redirect("counseling_form", case_id=case.id)
+            
+            # [FIX 2] Add 'case_list' tag to the SUCCESS message
+            messages.success(request, f"Counseling request for {student.firstname} {student.lastname} has been created.", extra_tags='case_list')
+            
+            # [FIX 3] Redirect to your case list view
+            # !!! Change 'case_list_view' to your actual URL name for the case list !!!
+            return redirect("case_list") 
+            
     else:
         form = CounselingSchedulerForm()
 
@@ -374,8 +382,6 @@ def counseling_form_view(request, case_id):
         "case": case
     }
     return render(request, "discipline/counseling_form.html", context)
-
-
 # Your original student_hours_view
 def student_hours_view(request, case_id):
     case = get_object_or_404(CaseProfile, pk=case_id)

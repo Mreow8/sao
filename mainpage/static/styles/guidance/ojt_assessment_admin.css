@@ -1,0 +1,292 @@
+/* --- Import Font (from requestgmc.css) --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.container,
+.sub-title,
+input,
+select,
+button,
+table {
+  font-family: "Rubik", sans-serif;
+}
+
+body {
+  background-color: #f8f9fa; /* Light grey background */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
+}
+
+/* --- Main Card (from requestgmc.css) --- */
+.form-container {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form-container h2 {
+  font-family: "Rubik", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+/* --- Search Bar --- */
+#search_id {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+#search_id label {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Styled like #comboBox */
+#studentIDBox {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #333;
+  flex-grow: 1;
+}
+#studentIDBox:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* Orange button (as per your HTML) */
+.OrangeButton {
+  font-family: "Rubik", sans-serif;
+  background-color: #2a4365;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.OrangeButton:hover {
+  background-color: #2c5282; /* Darker Orange */
+  transform: translateY(-2px);
+}
+
+/* --- Django Messages (Themed) --- */
+.messages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-basis: 100%; /* Make it take full width on wrap */
+  order: 3;
+}
+.messages li {
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  margin-top: 1rem;
+}
+.messages li.error {
+  color: #c53030;
+  background-color: #fff5f5;
+  border: 1px solid #fc8181;
+  border-left: 5px solid #c53030;
+}
+.messages li.success {
+  color: #2f855a;
+  background-color: #f0fff4;
+  border: 1px solid #9ae6b4;
+  border-left: 5px solid #2f855a;
+}
+
+/* --- Table (from requestgmc.css) --- */
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+#info_table {
+  width: 100%;
+  min-width: 900px; /* Force scroll */
+  border-collapse: collapse;
+}
+
+#info_table th,
+#info_table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+#info_table th {
+  background-color: #f9f9f9;
+  color: #2c5282; /* Primary Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Sortable Headers */
+#info_table th a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+#info_table th a:hover {
+  text-decoration: underline;
+}
+#info_table th a::after {
+  font-family: "Font Awesome 5 Free";
+  content: "\f0dc"; /* fa-sort */
+  font-weight: 900;
+  opacity: 0.5;
+}
+
+/* Active Sort Headers */
+#info_table th.sortable a.sorted::after {
+  opacity: 1;
+  content: "\f0d8"; /* fa-sort-up (ascending) */
+}
+#info_table th.sortable a.sorted.desc::after {
+  opacity: 1;
+  content: "\f0d7"; /* fa-sort-down (descending) */
+}
+
+/* Status Badges */
+.accepted,
+.declined,
+.pending,
+.expired,
+.showformButton {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+.accepted {
+  background-color: #2ecc71;
+} /* Green */
+.pending {
+  background-color: #f39c12;
+} /* Orange */
+.declined,
+.expired {
+  background-color: #dc3545;
+} /* Red */
+
+/* Action Buttons */
+.horizontal {
+  display: flex;
+  flex-direction: column; /* Stacks buttons vertically */
+  gap: 6px;
+  width: 120px; /* Give them a uniform width */
+}
+.accept,
+.decline,
+.delete {
+  font-family: "Rubik", sans-serif;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s;
+  text-align: center;
+  text-decoration: none;
+}
+.accept {
+  background-color: #28a745;
+} /* Green */
+.accept:hover {
+  background-color: #218838;
+}
+.decline {
+  background-color: #ffc107;
+} /* Yellow/Orange */
+.decline:hover {
+  background-color: #e0a800;
+}
+.delete {
+  background-color: #dc3545;
+} /* Red */
+.delete:hover {
+  background-color: #c82333;
+}
+.showformButton {
+  background-color: #2c5282;
+} /* Blue */
+.showformButton:hover {
+  background-color: #2a4365;
+}
+.showformButton.hidden {
+  display: none;
+}
+
+/* "No items" message */
+.no-items-found {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* --- Pagination (from requestgmc.css theme) --- */
+.pagination {
+  margin: 2rem 0 1rem;
+  text-align: center;
+}
+.step-links a,
+.step-links .current {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 4px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+}
+.step-links a {
+  background-color: #f0f0f0;
+  color: #333;
+}
+.step-links a:hover {
+  background-color: #e0e0e0;
+}
+.step-links .current {
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  border-color: #2c5282;
+}

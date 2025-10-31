@@ -4,182 +4,39 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
 />
-<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/general.css' %}" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{% endblock %} {% block bodycontent %}
+<link rel="stylesheet" href="{% static 'studentorg/css/officerform.css' %}" />
 <style>
-  /* Overlay */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    padding: 1rem;
-  }
+  /* ... your existing styles ... */
 
-  /* Form card */
-  .form-card {
-    position: relative;
-    background: #fff;
-    padding: 2rem 2.5rem;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 900px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-    animation: fadeInScale 0.35s ease-out;
-    font-family: "Segoe UI", sans-serif;
+  /* ADD THIS */
+  .errorlist {
+    color: red;
+    font-weight: bold;
+    list-style-type: none; /* Removes bullets */
+    padding: 0;
+    margin: 5px 0 0 0;
   }
-
-  /* Close button */
-  .close-btn {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    font-size: 26px;
-    color: #888;
-    background: #f1f1f1;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-
-  .close-btn:hover {
-    color: #fff;
-    background: #ff4d4d;
-  }
-
-  /* Section Headings */
-  .section-title {
-    font-size: 1.25rem;
-    margin: 1.5rem 0 0.75rem;
-    color: #222;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .section-title i {
-    color: #ff8000;
-  }
-
-  /* Labels & Inputs */
-  label {
-    font-weight: 600;
-    margin-top: 12px;
-    display: block;
-    color: #444;
-  }
-
-  input,
-  select {
-    width: 100%;
-    padding: 0.7rem 0.9rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-top: 6px;
-    font-size: 0.95rem;
-    transition: 0.2s;
-  }
-
-  input:focus,
-  select:focus {
-    border-color: #ff8000;
-    box-shadow: 0 0 0 3px rgba(255, 128, 0, 0.2);
-    outline: none;
-  }
-
-  /* Buttons */
-  .button,
-  button[type="submit"] {
-    display: inline-block;
-    margin-top: 1rem;
-    background: linear-gradient(135deg, #ff8000, #e66a00);
-    color: #fff;
-    font-weight: 600;
-    padding: 0.8rem 1.6rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.25s ease;
-    font-size: 0.95rem;
-  }
-
-  .button:hover,
-  button[type="submit"]:hover {
-    background: linear-gradient(135deg, #e66a00, #cc5900);
-    transform: translateY(-2px);
-  }
-
-  .button:active {
-    transform: translateY(0);
-  }
-  .popup-message {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 14px 20px;
-    border-radius: 8px;
-    font-weight: 500;
-    color: #fff;
-    z-index: 2000;
-    animation: fadeIn 0.5s ease, fadeOut 0.5s ease 3.5s forwards;
-  }
-  .popup-message.success {
-    background: #28a745;
-  } /* green */
-  .popup-message.error {
-    background: #dc3545;
-  } /* red */
-  .popup-message.warning {
-    background: #ffc107;
-    color: #222;
-  }
-  .popup-message.info {
-    background: #17a2b8;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes fadeOut {
-    to {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-  }
-
-  /* Animation */
-  @keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+  .errorlist li {
+    padding: 2px 0;
   }
 </style>
+<link
+  rel="stylesheet"
+  href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css"
+/>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+<style>
+  form p {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    align-items: center;
+    margin: 0;
+  }
+</style>
+{% endblock %} {% block bodycontent %}
+<style></style>
 {% if messages %}
 <div id="popup-messages">
   {% for message in messages %}
@@ -189,7 +46,7 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
 {% endif %}
 
 <div class="overlay" id="overlay">
-  <div class="form-card">
+  <div class="form-card" id="offcier-modal-container">
     <a href="{% url 'org_profile' slug=organization.slug %}" class="close-btn"
       >&times;</a
     >
@@ -198,34 +55,32 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
       <h1>{{ organization.name }}</h1>
     </div>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data" id="officer-main-form">
       {% csrf_token %}
 
-      <!-- Officer -->
-      <h3 class="section-title">
-        <i class="fas fa-user-tie"></i> Officer Info
-      </h3>
-      {{ officer_form.as_p }}
+      <div class="form-section">
+        <h3 class="section-title"><i></i> Officer Info</h3>
 
-      <!-- Membership -->
-      <h3 class="section-title"><i class="fas fa-users"></i> Membership</h3>
-      <p>If none, leave the form blank</p>
-      <div id="membership-container">{{ membership_form.as_p }}</div>
+        {{ officer_form.as_p }}
+      </div>
+
+      <h3 class="section-title"><i></i> Membership</h3>
+      <div class="form-section">
+        <p>If none, leave the form blank</p>
+        <div id="membership-container">{{ membership_form.as_p }}</div>
+      </div>
       <button type="button" id="add-membership" class="button">
         + Add Membership
       </button>
 
-      <!-- Seminar -->
-      <h3 class="section-title">
-        <i class="fas fa-chalkboard-teacher"></i> Seminar
-      </h3>
+      <h3 class="section-title"><i></i> Seminar</h3>
+
       <div id="seminar-container">{{ seminar_form.as_p }}</div>
       <button type="button" id="add-seminar" class="button">
         + Add Seminar
       </button>
 
-      <!-- Save -->
-      <button type="submit" class="button">💾 Save</button>
+      <button type="submit" class="button">Save</button>
     </form>
   </div>
 </div>
@@ -254,6 +109,7 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
   });
 </script>
 <script>
+  // Age calculation
   document.addEventListener("DOMContentLoaded", function () {
     const dobInput = document.getElementById("id_date_of_birth");
     const ageInput = document.getElementById("id_age");
@@ -281,12 +137,50 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
   });
 </script>
 <script>
+  // Message fade out
   document.addEventListener("DOMContentLoaded", function () {
     const messages = document.querySelectorAll(".popup-message");
     messages.forEach((msg) => {
       setTimeout(() => {
         msg.remove();
       }, 4000); // auto remove after 4s
+    });
+  });
+</script>
+
+<script>
+  $(function () {
+    // 1. Target the search box from our forms.py
+    $("#id_student_search").autocomplete({
+      source: "{% url 'search_students' %}", // Use our search view
+      minLength: 2,
+
+      // 2. This runs when you select a student
+      select: function (event, ui) {
+        event.preventDefault(); // Stop it from just pasting the label
+
+        // --- AUTOFILL THE FORM ---
+        $(this).val(ui.item.label); // Fill search box
+        $("#id_student").val(ui.item.id); // Fill hidden student ID
+        $("#id_firstname").val(ui.item.firstname); // Fill firstname
+        $("#id_surname").val(ui.item.surname); // Fill surname
+        $("#id_year").val(ui.item.year); // Fill year dropdown
+      },
+    });
+
+    // 3. Clear fields if the search box is cleared
+    $("#id_student_search").on("keyup", function () {
+      if ($(this).val() === "") {
+        $("#id_student").val("");
+        $("#id_firstname").val("");
+        $("#id_surname").val("");
+        $("#id_year").val("");
+      }
+    });
+
+    // 4. IMPORTANT: Re-enable disabled fields just before submitting
+    $("#officer-main-form").on("submit", function () {
+      $("#id_year").prop("disabled", false);
     });
   });
 </script>

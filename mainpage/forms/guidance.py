@@ -6,8 +6,21 @@ class UploadFileForm(forms.Form):
     file = forms.FileField()
 
 
-
 class CounselingSchedulerForm(forms.ModelForm):
+
+    # By defining the field here, we can set 'required' and 'error_messages'
+    # without needing an __init__ method.
+    email = forms.EmailField(
+        required=True,  # Makes the field mandatory
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'Enter your email address.'
+        }),
+        error_messages={
+            'required': 'Please enter your email address.',
+            'invalid': 'Please enter a valid email format (e.g., user@example.com).'
+        }
+    )
+
     class Meta:
         model = counseling_schedule
         fields = ['reason', 'scheduled_date', 'scheduled_time', 'email']
@@ -15,16 +28,13 @@ class CounselingSchedulerForm(forms.ModelForm):
             'reason': forms.TextInput(attrs={
                 'placeholder': 'Enter a reason for counseling'
             }),
-            'email': forms.EmailInput(attrs={
-                'placeholder': 'Enter your email address.'
-            }),
             'scheduled_date': forms.DateInput(attrs={
                 'type': 'date',
                 'min': date.today().isoformat(),
                 'placeholder': 'Select a date'
             }),
            'scheduled_time': forms.Select()
-
+           # No 'email' widget needed here, as it's defined above
         }
 class OjtAssessmentForm(forms.ModelForm):
     class Meta:

@@ -1,20 +1,28 @@
-/* --- Global, Fonts & Layout --- */
-body {
+/* --- Import Font (from requestgmc.css) --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.container,
+.sub-title,
+input,
+select,
+button,
+table {
   font-family: "Rubik", sans-serif;
-  background-color: #f4f7f6; /* Light gray background */
+}
+
+body {
+  background-color: #f8f9fa; /* Light grey background */
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem 2rem 1.5rem;
+  padding: 0 1.5rem 2rem;
 }
 
-.hidden {
-  display: none;
-}
-
-/* --- Main Form Card --- */
+/* --- Main Card (from requestgmc.css) --- */
 .form-container {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
@@ -23,57 +31,47 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* --- Form Headers --- */
-.form-container h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 2rem;
-  text-align: center;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 1rem;
-}
-
-/* Section labels (I, II, III...) */
-#intakeForm > label {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #2c5282;
-  margin: 2.5rem 0 1rem 0;
-}
-
 /* --- Search Bar --- */
+.form-container > form:first-of-type {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 #search_id {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
-  margin-bottom: 1.5rem;
+}
+#search_id label {
+  font-weight: 500;
+  color: #333;
 }
 
+/* Styled like #comboBox */
 #studentIDBox {
   font-family: "Rubik", sans-serif;
   font-size: 1rem;
   padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  flex-grow: 1; /* Takes available space */
   background-color: #f9f9f9;
   transition: border-color 0.2s, box-shadow 0.2s;
+  color: #333;
+  flex-grow: 1;
 }
-
 #studentIDBox:focus {
   outline: none;
-  border-color: #2c5282;
+  border-color: #2c5282; /* Primary Blue */
   box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
   background-color: #fff;
 }
 
-/* --- All Buttons (based on .requestBtn) --- */
+/* Orange button (as per your HTML) */
 .OrangeButton {
   font-family: "Rubik", sans-serif;
-  background-color: #2c5282; /* Primary Blue */
+  background-color: #ff8000;
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -86,121 +84,173 @@ body {
   transition: background-color 0.2s, transform 0.2s;
 }
 .OrangeButton:hover {
-  background-color: #2a4365; /* Darker Blue */
+  background-color: #e67300; /* Darker Orange */
   transform: translateY(-2px);
 }
 
-.center_object {
-  display: flex;
-  justify-content: flex-end; /* Aligns submit button to the right */
-  margin-top: 2rem;
-}
-
-/* --- Messages --- */
+/* --- Django Messages (Themed) --- */
 .messages {
   list-style: none;
-  margin: 10px 0 0 0;
   padding: 0;
-  width: 100%;
+  margin: 0;
+  flex-basis: 100%;
+  order: 3;
 }
 .messages li {
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 5px;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 500;
+  text-align: left;
+  margin-top: 1rem;
 }
 .messages li.error {
-  background-color: #ffe5e5;
-  color: #a30000;
-  border: 1px solid #a30000;
-}
-.messages li.success {
-  background-color: #e7ffe7;
-  color: #007a00;
-  border: 1px solid #007a00;
+  color: #c53030;
+  background-color: #fff5f5;
+  border: 1px solid #fc8181;
+  border-left: 5px solid #c53030;
 }
 
-/* --- Table Styling (General) --- */
-/* This styles ALL tables in the form */
-.form-container table {
+/* --- Student Search Results Table --- */
+#info_table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
   border: 1px solid #ddd;
   border-radius: 8px;
-  overflow: hidden; /* Clips the table corners */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
-
-.form-container table th,
-.form-container table td {
+#info_table th,
+#info_table td {
   border-bottom: 1px solid #ddd;
-  padding: 10px 12px;
+  padding: 12px 15px;
   text-align: left;
   font-size: 14px;
   vertical-align: middle;
 }
-
-.form-container table th {
+#info_table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
-.form-container table tbody tr:last-child td {
+#info_table tr:last-child td {
   border-bottom: none;
 }
-
-/* --- Student Details Bar --- */
-#student_details_row td {
-  background-color: #ebf8ff; /* Light blue background */
-}
 #student_details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  font-size: 1rem;
+  background-color: #ebf8ff; /* Light blue info box */
+  padding: 1rem;
+  border-radius: 6px;
 }
 #student_details p {
   margin: 0;
+  color: #2b6cb0;
 }
 
-/* --- Form Inputs (Inside Tables) --- */
+.hidden {
+  display: none;
+}
+
+/* --- Intake Form (#intakeForm) --- */
+#intakeForm {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Section Labels (e.g., "I. Individual Inventory Service") */
+#intakeForm > label {
+  font-family: "Rubik", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c5282;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+/* All tables within the form */
+#intakeForm table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+#intakeForm th {
+  background-color: #f9f9f9;
+  color: #2c5282;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+#intakeForm td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+#intakeForm tr:last-child td {
+  border-bottom: none;
+}
+
+/* All inputs within the form tables */
 .field_container input[type="text"],
 .field_container input[type="date"] {
   width: 100%;
-  box-sizing: border-box; /* Critical for 100% width */
+  box-sizing: border-box;
   font-family: "Rubik", sans-serif;
-  font-size: 14px;
+  font-size: 0.9rem;
   padding: 8px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  background-color: #fff;
-  transition: border-color 0.2s;
+  background-color: #fff; /* White for in-table inputs */
 }
-
-.field_container input[type="text"]:focus,
-.field_container input[type="date"]:focus {
+.field_container input:focus {
   outline: none;
-  border-color: #2c5282; /* Primary Blue focus */
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
 }
 
-/* Radio Button Styling */
+/* Counseling Radio Buttons */
 .side-way {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
+  padding: 4px 0;
 }
 .side-way label {
+  font-weight: normal;
+  font-size: 0.9rem;
+  color: #333;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 14px;
-  margin: 0;
+  gap: 0.5rem;
 }
 .side-way input[type="radio"] {
   margin: 0;
+  /* Modern radio button style */
+  appearance: none;
+  width: 1.15em;
+  height: 1.15em;
+  border: 2px solid #2c5282;
+  border-radius: 50%;
+  transition: 0.1s all ease-in-out;
 }
+.side-way input[type="radio"]:checked {
+  background-color: #2c5282;
+  border: 4px solid #fff;
+  box-shadow: 0 0 0 2px #2c5282;
+}
+
+/* Final Submit Button */
+.center_object {
+  text-align: center;
+  margin-top: 2rem;
+}
+/* This button uses .OrangeButton, which is already styled */

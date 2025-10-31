@@ -201,27 +201,37 @@
 
 /* --- Pagination --- */
 .pagination {
+  margin: 2rem 0; /* Space above/below */
+  text-align: center;
   font-family: "Rubik", sans-serif;
-  margin-top: 2rem;
   font-size: 0.9rem;
-  color: #4a5568;
 }
-.pagination span {
-  font-weight: 600;
-}
-.pagination .page-links a {
-  color: #2c5282;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
+
+.step-links a,
+.step-links .current {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0 4px;
   border-radius: 6px;
-  margin: 0 2px;
-  transition: background-color 0.2s;
-}
-.pagination .page-links a:hover {
-  background-color: #ebf8ff; /* Light blue */
   text-decoration: none;
+}
+
+.step-links a {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.step-links a:hover {
+  background-color: #e0e0e0;
+}
+
+.step-links .current {
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-weight: 600;
+  border: 1px solid #2c5282;
 }
 
 /* --- Responsive --- */
@@ -317,45 +327,59 @@
       </table>
 
       <!-- Pagination Controls -->
-      <div class="pagination">
-        <span>Page: </span>
-        <span class="page-links">
-          {% for i in page_obj.paginator.page_range %}
-            <a href="?page={{ i }}&sort={{ sort_by }}">{{ i }}</a>
-          {% endfor %}
-        </span>
-      </div>
+    
     </div>
+      <div class="pagination">
+          <span class="step-links">
+              {% if page_obj.has_previous %}
+                  <a href="?page=1">&laquo; First</a>
+                  <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+              {% endif %}
+
+              <span class="current">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+
+              {% if page_obj.has_next %}
+                  <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                  <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+              {% endif %}
+          </span>
+      </div>
   </div>
+  
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".returnBtn").forEach(function (button) {
+      button.addEventListener("click", function () {
+        const recordId = this.getAttribute("data-record-id");
+        const button = this;
+        const row = button.closest("tr");
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      document.querySelectorAll(".returnBtn").forEach(function (button) {
-        button.addEventListener("click", function () {
-          const recordId = this.getAttribute("data-record-id");
-          const button = this;
-          const row = button.closest("tr");
-
-          if (confirm("Are you sure you want to mark this item as returned?")) {
-            fetch("{% url 'update_return_status' %}", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}",
-              },
-              body: JSON.stringify({ record_id: recordId }),
-            })
+        if (confirm("Are you sure you want to mark this item as returned?")) {
+          fetch("{% url 'update_return_status' %}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({ record_id: recordId }),
+          })
             .then((response) => response.json())
             .then((data) => {
               if (data.status === "success") {
-                // Update the button text to "Returned"
+                // 1. Update the status cell
                 const statusCell = button.parentElement;
-                statusCell.innerHTML = "Returned";
+                // Replace button with "Returned" badge
+                statusCell.innerHTML =
+                  '<span class="status-badge status-processed">Returned</span>';
 
-                // Update the date returned cell
-                const dateReturnedCell = row.querySelector("td:nth-child(7)");
+                // 2. Update the date returned cell (FIXED: was 7, now 8)
+                const dateReturnedCell = row.querySelector("td:nth-child(8)");
                 dateReturnedCell.textContent = data.date_returned;
 
+                // You can replace the alert with a less disruptive message
+                // (e.g., using your success-message logic)
                 alert("Item marked as returned.");
               } else {
                 alert("Failed to update return status: " + data.message);
@@ -365,10 +389,10 @@
               console.error("Error:", error);
               alert("An error occurred while updating the return status.");
             });
-          }
-        });
+        }
       });
     });
-  </script>
+  });
+</script>
 
 {% endblock %}

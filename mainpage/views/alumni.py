@@ -7,6 +7,72 @@ import socket
 from mainpage.models import studentInfo
 from mainpage.models.alumni import Alumni, graduateForm, Event, JobFair, Yearbook
 from ..decorators import sao_admin_required, alumni_required 
+from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+
+
+def admin_id_request(request):
+    
+    # 1. Get parameters from URL
+    search_query = request.GET.get('search', None)
+    sort_by = request.GET.get('sort', 'alumnidate') # Default field to sort by
+    order = request.GET.get('order', 'desc')         # Default order (newest first)
+    
+    # 2. Start with base query (using select_related for efficiency)
+    alumni_list = Alumni.objects.select_related('student').all()
+
+    # 3. Apply Search Filter (based on your template's fields)
+    if search_query:
+        alumni_list = alumni_list.filter(
+            Q(student__studID__icontains=search_query) |     # Search Student ID
+            Q(student__lastname__icontains=search_query) |    # Search Last Name
+            Q(student__firstname__icontains=search_query) | # Search First Name
+            Q(alumniID__icontains=search_query)           # Search Alumni ID
+        )
+
+    # 4. Apply Sorting
+    # Whitelist of valid fields to sort by (from your template)
+    valid_sort_map = {
+        'alumniID': 'alumniID',
+        'student__studID': 'student__studID',
+        'student__firstname': 'student__firstname',
+        'student__lastname': 'student__lastname',
+        'alumnidate': 'alumnidate',
+        'claimed_date': 'claimed_date',
+    }
+    
+    sort_field = valid_sort_map.get(sort_by, 'alumnidate')
+    
+    # Add '-' prefix if order is descending
+    if order == 'desc':
+        sort_field = f"-{sort_field}"
+        
+    alumni_list = alumni_list.order_by(sort_field)
+        
+    # 5. Apply Pagination
+    paginator = Paginator(alumni_list, 10) # Show 10 items per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 6. Build Context
+    context = {
+        'page_obj': page_obj, # This replaces 'alumni_requests'
+        'user': request.user,
+        
+        # Pass sort/order info back to the template
+        'current_sort': sort_by,
+        'current_order': order,
+        'search_params': f"&search={search_query}" if search_query else ""
+    }
+    
+    return render(request, 'alumni/users/admin_idRequest.html', context)
 def admin_tracer_list(request):
     """
     Shows the page with the table.
@@ -471,9 +537,6 @@ def transac_search(request):
 
 # admin alumni
 # @sao_admin_required
-def admin_id_request(request):
-    alumni_requests = Alumni.objects.all()
-    return render(request, 'alumni/users/admin_idRequest.html', {'alumni_requests': alumni_requests})
 
 def approve_alumni_request(request, alumni_id):
     if request.method == 'POST':

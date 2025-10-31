@@ -1,46 +1,94 @@
-{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+{% extends 'adminmain.html' %} {% load static %} 
 
-<link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
+{% block headcontent %}
+<link rel="stylesheet" href="{% static 'studentorg/css/Manage.css' %}" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+{% endblock %} 
+
+{% block bodycontent %}
 <div class="sub-title">
   <h3>Student Organization(Admin)</h3>
   <p class="hometext">Home</p>
   <p class="certxt">&gt; Adviser Management</p>
 </div>
+
 <div class="container">
   <div class="tabs">
-    <div class="tabs">
-      <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
-      <a href="{% url 'admin_manageadviser' %}" class="tab active"
-        >Manage Adviser</a
-      >
-      <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
-      <a href="{% url 'admin_managefinancial' %}" class="tab"
-        >Manage Financial</a
-      >
-      <a href="{% url 'admin_manage_accreditations' %}" class="tab"
-        >Manage Applications</a
-      >
-      <a href="/admin_transactionreport" class="tab">Manage Transactions </a>
-    </div>
+    <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
+    <a href="{% url 'admin_manageadviser' %}" class="tab active"
+      >Manage Adviser</a
+    >
+    <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
+    <a href="{% url 'admin_managefinancial' %}" class="tab"
+      >Manage Financial</a
+    >
+    <a href="{% url 'admin_manage_accreditations' %}" class="tab"
+      >Manage Applications</a
+    >
+    <a href="/admin_transactionreport" class="tab">Manage Transactions </a>
   </div>
-  <div class="maincontain" style="width: 1200px">
+
+  <div class="maincontain gmc-form">
+  
+    <form class="search-form" method="GET" action="">
+      <input
+        type="text"
+        name="search"
+        class="search-input"
+        placeholder="Search by Adviser ID, Name, or Department"
+        value="{{ request.GET.search }}"
+      >
+      <select class="filter-select" name="status" id="status-filter">
+          <option value="">All Statuses</option>
+          <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+      </select>
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+    
+    <script>
+        $(document).ready(function() {
+            $('#status-filter').change(function() {
+                $(this).closest('form').submit();
+            });
+        });
+    </script>
+
     <div class="subcontain">
+      <form method="POST">
+      {% csrf_token %}
       <table>
         <thead>
           <tr>
-            <th>Officer ID</th>
+            <th class="sortable">
+              <a href="?sort=id&order={% if current_sort == 'id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Officer ID</a>
+            </th>
             <th>Profile Picture</th>
-            <th>Last Name</th>
-            <th>First Name</th>
+            <th class="sortable">
+              <a href="?sort=surname&order={% if current_sort == 'surname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Last Name</a>
+            </th>
+            <th class="sortable">
+              <a href="?sort=firstname&order={% if current_sort == 'firstname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">First Name</a>
+            </th>
             <th>Middle Name</th>
-            <th>Department</th>
-            <th>Position</th>
-            <th>Status</th>
+            <th class="sortable">
+              <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Department</a>
+            </th>
+            <th class="sortable">
+              <a href="?sort=position&order={% if current_sort == 'position' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Position</a>
+            </th>
+            <th class="sortable">
+              <a href="?sort=status&order={% if current_sort == 'status' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Status</a>
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {% for adviser in advisers %}
+          {% for adviser in page_obj %}
           <tr>
             <td>{{ adviser.id }}</td>
             <td>
@@ -57,7 +105,7 @@
             <td>{{ adviser.position }}</td>
             <td>{{ adviser.get_status_display }}</td>
             <td>
-              <form method="post" style="display: inline">
+              <form method="post">
                 {% csrf_token %}
                 <input
                   type="hidden"
@@ -80,12 +128,34 @@
               </form>
             </td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="no-applicants">No advisers found.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
-       </div>
-</div>
+      </form>
     </div>
-    {% endblock bodycontent %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
   </div>
 </div>
+{% endblock bodycontent %}

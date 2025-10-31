@@ -6,7 +6,7 @@
 
 <link
     rel="stylesheet"
-    href="{% static 'styles/discipline/case_profile.css' %}"
+    href="{% static 'styles/discipline/case_list.css' %}"
 />
 <style>
     /* ... (existing pagination styles) ... */
@@ -151,16 +151,10 @@
                             href="#"
                             class="editBtn"
                             data-id="{{ case.id }}"
-                            style="color: rgb(71, 255, 47)"
+                            style="color: rgb(121, 213, 77)"
                             >Edit</a
                         >
-                        <a
-                            href="#"
-                            class="deleteBtn"
-                            data-id="{{ case.id }}"
-                            style="color: red"
-                            >Delete</a
-                        >
+                       
                          {% endif %}
                     </td>
                 </tr>

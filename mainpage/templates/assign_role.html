@@ -3,6 +3,67 @@
 
 {% block headcontent %}
   <link rel="stylesheet" href="{% static 'styles/role.css' %}">
+  <style>/* --- Custom Pagination Styles (to match image) --- */
+
+/* Main container */
+.pagination {
+  margin: 2rem 0;
+  text-align: center;
+  font-family: "Rubik", sans-serif;
+  font-size: 0.9rem;
+  /* Ensure it behaves like a flex container */
+  display: flex;
+  justify-content: center;
+  padding-left: 0;
+  list-style: none;
+}
+
+/* Remove default Bootstrap li styles */
+.page-item {
+  margin: 0 4px; /* Creates space between buttons */
+}
+
+/* Base style for all items (links and spans) */
+.page-link {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px; /* Rounded corners */
+  text-decoration: none;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Style for clickable links (First, Previous, Next, Last) */
+.page-item a.page-link {
+  background-color: #f0f0f0; /* Light gray background */
+  color: #333; /* Dark text */
+}
+
+/* Hover effect for clickable links */
+.page-item a.page-link:hover {
+  background-color: #e0e0e0; /* Darker gray on hover */
+}
+
+/* Style for the CURRENT page text ("Page X of Y")
+  This targets the <li class="page-item disabled"><span class="page-link">...
+*/
+.page-item.disabled .page-link {
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  font-weight: 600;
+  border-color: #2c5282; /* Match background */
+  cursor: default;
+}
+
+/* This rule ensures that if Bootstrap's .active class is used,
+  it also gets the primary blue style.
+*/
+.page-item.active .page-link {
+  background-color: #2c5282;
+  color: white;
+  font-weight: 600;
+  border-color: #2c5282;
+}</style>
 {% endblock headcontent %}
 
 {% block bodycontent %}
@@ -13,33 +74,59 @@
 </div>
 
 <div class="container mt-5">
-  <input
-    type="text"
-    id="userSearch"
-    onkeyup="filterTable()"
-    placeholder="Search for usernames..."
-    class="form-control mb-3"
-  />
+  
+  <form method="GET" class="mb-3">
+    <div class="input-group">
+      <input
+        type="text"
+        id="userSearch"
+        name="q"
+        value="{{ query }}"
+        placeholder="Search for usernames or emails..."
+        class="form-control"
+      />
+      <input type="hidden" name="sort" value="{{ sort_by }}">
+      <input type="hidden" name="dir" value="{{ direction }}">
+      <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+  </form>
 
   <div class="table-responsive">
     <table class="table table-bordered" id="userTable">
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Current Role</th>
+          <th>
+            <a href="?sort=username&dir={% if sort_by == 'username' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">
+              Username
+              {% if sort_by == 'username' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+            </a>
+          </th>
+          
+          <th>
+            <a href="?sort=email&dir={% if sort_by == 'email' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">
+              Email
+              {% if sort_by == 'email' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+            </a>
+          </th>
+          
+          <th>
+            <a href="?sort=role&dir={% if sort_by == 'role' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">
+              Current Role
+              {% if sort_by == 'role' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+            </a>
+          </th>
+          
           <th>Assign Role</th>
         </tr>
       </thead>
       <tbody>
-        {% for user in users %}
+        {% for user in page_obj %}
         <tr>
           <form method="post">
             {% csrf_token %}
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
-            <!-- prettier-ignore -->
-            <td>{{ user.get_role_display }}</td> {# Use get_role_display for a clean name #}
+            <td>{{ user.get_role_display }}</td>
             <td>
               <input type="hidden" name="user_id" value="{{ user.id }}" />
 
@@ -72,6 +159,34 @@
     </table>
   </div>
 
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}">&laquo; First</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}">Previous</a>
+        </li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+      </li>
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}">Next</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}">Last &raquo;</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+
   {% if messages %}
   <div class="alert alert-info mt-3">
     {% for message in messages %}
@@ -82,24 +197,9 @@
 </div>
 
 <script>
-function filterTable() {
-  var input = document.getElementById("userSearch");
-  var filter = input.value.toLowerCase();
-  var table = document.getElementById("userTable");
-  var trs = table.getElementsByTagName("tr");
-
-  for (var i = 1; i < trs.length; i++) {
-    var td = trs[i].getElementsByTagName("td")[0]; // Username column
-    if (td) {
-      var txtValue = td.textContent || td.innerText;
-      trs[i].style.display = txtValue.toLowerCase().includes(filter) ? "" : "none";
-    }
-  }
-}
-
+// This function is still needed.
 function toggleOrgDropdown(roleSelect) {
   const orgDropdown = roleSelect.closest('td').querySelector('.org-dropdown');
-  // CORRECTED: This now checks for the new 'org_admin' role
   if (roleSelect.value === 'org_admin') {
     orgDropdown.style.display = 'block';
   } else {
@@ -108,5 +208,8 @@ function toggleOrgDropdown(roleSelect) {
     if (select) select.value = "";
   }
 }
+
+// The filterTable() JavaScript function is no longer needed
+// as searching is now done on the server.
 </script>
 {% endblock %}

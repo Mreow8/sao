@@ -1,57 +1,104 @@
-{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+{% extends 'adminmain.html' %} {% load static %} 
 
-<link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
+{% block headcontent %}
+<link rel="stylesheet" href="{% static 'studentorg/css/Manage.css' %}" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+{% endblock %} 
 
+{% block bodycontent %}
 <div class="sub-title">
   <h3>Student Organization(Admin)</h3>
   <p class="hometext">Home</p>
   <p class="certxt">&gt; Financial Management</p>
 </div>
+
 <div class="container">
   <div class="tabs">
-    <div class="tabs">
-      <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
-      <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
-      <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
-      <a href="{% url 'admin_managefinancial' %}" class="tab active"
-        >Manage Financial</a
-      >
-      <a href="{% url 'admin_manage_accreditations' %}" class="tab"
-        >Manage Applications</a
-      >
-      <a href="/admin_transactionreport" class="tab">Manage Transactions </a>
-    </div>
+    <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
+    <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
+    <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
+    <a href="{% url 'admin_managefinancial' %}" class="tab active"
+      >Manage Financial</a
+    >
+    <a href="{% url 'admin_manage_accreditations' %}" class="tab"
+      >Manage Applications</a
+    >
   </div>
 
-  <div class="maincontain">
+  <div class="maincontain gmc-form">
+  
+    <form class="search-form" method="GET" action="">
+      <input
+        type="text"
+        name="search"
+        class="search-input"
+        placeholder="Search by ID, Purpose, or Organization"
+        value="{{ request.GET.search }}"
+      >
+      <select class="filter-select" name="status" id="status-filter">
+          <option value="">All Statuses</option>
+          <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+          <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
+      </select>
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+    
+    <script>
+        $(document).ready(function() {
+            // Submit form on filter change
+            $('#status-filter').change(function() {
+                $(this).closest('form').submit();
+            });
+        });
+    </script>
+
     <div class="subcontain">
+      <form method="POST">
+      {% csrf_token %}
       <table>
         <thead>
           <tr>
-            <th>Financial ID</th>
-            <th>Date</th>
-            <th>Purpose</th>
+            <th class="sortable">
+              <a href="?sort=financial_id&order={% if current_sort == 'financial_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Financial ID</a>
+            </th>
+            <th class="sortable">
+              <a href="?sort=date&order={% if current_sort == 'date' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Date</a>
+            </th>
+            <th class="sortable">
+              <a href="?sort=purpose&order={% if current_sort == 'purpose' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Purpose</a>
+            </th>
             <th>Source of Funds</th>
-            <th>Organizations</th>
-            <th>Amount</th>
+            <th class="sortable">
+              <a href="?sort=org&order={% if current_sort == 'org' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Organizations</a>
+            </th>
+            <th class="sortable">
+              <a href="?sort=amount&order={% if current_sort == 'amount' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Amount</a>
+            </th>
             <th>Remarks</th>
-            <th>Status</th>
+            <th class="sortable">
+              <a href="?sort=status&order={% if current_sort == 'status' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Status</a>
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {% for statement in statements %}
+          {% for statement in page_obj %}
           <tr>
             <td>{{ statement.financial_id }}</td>
             <td>{{ statement.date }}</td>
             <td>{{ statement.purpose }}</td>
             <td>{{ statement.source_of_funds }}</td>
-            <td>{{statement.org}}</td>
+            <td>{{ statement.org }}</td>
             <td>{{ statement.amount }}</td>
             <td>{{ statement.remarks }}</td>
             <td>{{ statement.get_status_display }}</td>
             <td>
-              <form method="post" style="display: inline">
+              <form method="post">
                 {% csrf_token %}
                 <input
                   type="hidden"
@@ -59,21 +106,14 @@
                   value="{{ statement.financial_id }}"
                 />
                 {% if statement.status == 'pending' %}
-                <button
-                  type="submit"
-                  style="background-color: #66bb6a"
-                  class="button"
-                  name="action"
-                  value="approve"
-                >
+                <button type="submit" name="action" value="approve">
                   Approve
                 </button>
                 <button
                   type="submit"
-                  style="background-color: #ef5350"
-                  class="button"
                   name="action"
                   value="decline"
+                  class="decline"
                 >
                   Decline
                 </button>
@@ -81,10 +121,34 @@
               </form>
             </td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="no-applicants">No financial statements found.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
+      </form>
     </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
   </div>
 </div>
 {% endblock bodycontent %}

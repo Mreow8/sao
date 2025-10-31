@@ -378,10 +378,100 @@ def counseling_app(request):
         'student': student,
     }
     return render(request, 'guidance/counseling_app.html', context)
+from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q, F, Value, CharField, DateField
+# Make sure to import all 3 models
+from ..models import counseling_schedule, CaseProfile, studentInfo 
 
 def counseling_app_admin_view(request):
-    meeting_requests = counseling_schedule.objects.select_related('studentID').order_by('-dateRecieved')
+    
+    # 1. Get parameters from URL
+    search_query = request.GET.get('search', None)
+    sort_by = request.GET.get('sort', '-sort_date') # Default sort by the new common date field
 
+    # --- Define a common set of fields for the UNION ---
+    # These are the new field names we will use in the template
+    common_fields = [
+        'student_studID', 'student_lastname', 'student_firstname', 
+        'student_degree', 'student_yearlvl', 'student_contact',
+        'sort_date', 'display_date', 'display_time', 'display_reason', 
+        'display_status', 'item_type', 'item_pk'
+    ]
+
+    # 2. Get Counseling Schedules (from student requests)
+    counseling_requests = counseling_schedule.objects.select_related('studentID').annotate(
+        student_studID=F('studentID__studID'),
+        student_lastname=F('studentID__lastname'),
+        student_firstname=F('studentID__firstname'),
+        student_degree=F('studentID__degree'),
+        student_yearlvl=F('studentID__yearlvl'),
+        student_contact=F('studentID__contact'),
+        sort_date=F('dateRecieved'),          # Used for sorting by "Date Received"
+        display_date=F('scheduled_date'),     # The actual meeting date to show
+        display_time=F('scheduled_time'),     # The meeting time to show
+        display_reason=F('reason'),
+        display_status=F('status'),
+        item_type=Value('counseling', output_field=CharField()), # Identifier
+        item_pk=F('counselingID')             # Primary Key
+    ).values(*common_fields).order_by() # <-- Fix for DatabaseError
+
+    # 3. Get Case Profiles where action is 'Counseling' (from discipline)
+    case_profiles = CaseProfile.objects.filter(action_taken='Counseling').select_related('student').annotate(
+        # Create matching common field names
+        student_studID=F('student__studID'),
+        student_lastname=F('student__lastname'),
+        student_firstname=F('student__firstname'),
+        student_degree=F('student__degree'),
+        student_yearlvl=F('student__yearlvl'),
+        student_contact=F('student__contact'),
+        sort_date=F('date_reported'),         # Used for sorting by "Date Received"
+        display_date=F('date_reported'),      # No meeting date, so show report date
+        display_time=Value(None, output_field=CharField()), # No time
+        display_reason=F('offense_type'),     # Use offense as the "reason"
+        display_status=F('status'),
+        item_type=Value('case', output_field=CharField()), # Identifier
+        item_pk=F('id')                       # Primary Key
+    ).values(*common_fields).order_by() # <-- Fix for DatabaseError
+
+    # 4. Combine the two QuerySets
+    combined_list = counseling_requests.union(case_profiles)
+
+    # 5. Apply Search Filter
+    if search_query:
+        combined_list = combined_list.filter(
+            Q(student_studID__icontains=search_query) |
+            Q(student_lastname__icontains=search_query) |
+            Q(student_firstname__icontains=search_query)
+        )
+        
+    # 6. Apply Sorting (AFTER the union)
+    valid_sort_map = {
+        'dateRecieved': 'sort_date',
+        '-dateRecieved': '-sort_date',
+        'studentID__lastname': 'student_lastname',
+        '-studentID__lastname': '-student_lastname',
+        'scheduled_date': 'display_date',
+        '-scheduled_date': '-display_date',
+        'status': 'display_status',
+        '-status': '-display_status',
+    }
+    
+    sort_field = valid_sort_map.get(sort_by, '-sort_date') 
+    combined_list = combined_list.order_by(sort_field)
+        
+    # 7. Apply Pagination
+    paginator = Paginator(combined_list, 10) # Show 10 items per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # Your original 'time' dictionary
     time = {
         '8-9': '8:00 AM - 9:00 AM',
         '9-10': '9:00 AM - 10:00 AM',
@@ -393,13 +483,16 @@ def counseling_app_admin_view(request):
         '4-5': '4:00 PM - 5:00 PM'
     }
 
+    # 8. Build Context
     context = {
-        'meeting_requests': meeting_requests,
+        'page_obj': page_obj,
         'time': time,
-           'page': 'counseling_app_admin'
+        'page': 'counseling_app_admin',
+        'user': request.user,
+        'current_sort': sort_by,
     }
+    
     return render(request, 'guidance/counseling_app_admin_view.html', context)
-
 
 @login_required
 def exit_interview(request):
@@ -498,11 +591,69 @@ def print_exit_interview(request, request_id): # <-- 1. Accept the 'request_id' 
     }
     return render(request, 'guidance/print_exit.html', context)
 def exit_interview_admin_view(request):
-    exit_interview_request = exit_interview_db.objects.select_related('studentID').order_by('-dateRecieved')
-    context = {'exit_interview_request': exit_interview_request,}
-    return render(request, 'guidance/exit_interview_admin.html', context)
-# In guidance.py
+    
+    # --- GET Logic (To display the data) ---
+    
+    # 1. Get parameters from URL
+    search_query = request.GET.get('search', None)
+    
+    # [FIX] Get 'sort' and 'order' separately
+    sort_by = request.GET.get('sort', 'dateRecieved') # Default field to sort by
+    order = request.GET.get('order', 'desc')         # Default order (descending for newest first)
 
+    # 2. Start with base query
+    exit_list = exit_interview_db.objects.select_related('studentID').all()
+
+    # 3. Apply Search Filter
+    if search_query:
+        exit_list = exit_list.filter(
+            Q(studentID__studID__icontains=search_query) |
+            Q(studentID__lastname__icontains=search_query) |
+            Q(studentID__firstname__icontains=search_query)
+        )
+
+    # 4. Apply Sorting
+    valid_sort_map = {
+        'dateRecieved': 'dateRecieved',
+        'studentID__studID': 'studentID__studID',
+        'studentID__lastname': 'studentID__lastname',
+        'status': 'status',
+    }
+    
+    sort_field = valid_sort_map.get(sort_by, 'dateRecieved')
+    
+    # [FIX] Add '-' prefix if order is descending
+    if order == 'desc':
+        sort_field = f"-{sort_field}"
+        
+    exit_list = exit_list.order_by(sort_field)
+        
+    # 5. Apply Pagination
+    paginator = Paginator(exit_list, 10) # 10 items per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 6. Build Context
+    context = {
+        'page_obj': page_obj, 
+        'user': request.user, 
+        'page': 'exit_interview_admin',
+        
+        # [NEW] Pass sort/order info back to the template
+        'current_sort': sort_by,  # e.g., 'dateRecieved'
+        'current_order': order,   # e.g., 'desc'
+        
+        # Pass search query back to all links
+        'search_params': f"&search={search_query}" if search_query else ""
+    }
+    
+    return render(request, 'guidance/exit_interview_admin.html', context)
 def print_ojt_assessment(request, request_id): 
     
     # 1. FIX: Fetch from OjtAssessment, not exit_interview_db
@@ -572,10 +723,71 @@ def ojt_assessment(request):
     }
     return render(request, 'guidance/ojt_assessment.html', context)
 def ojt_assessment_admin_view(request):
-    ojt_assessment_request = OjtAssessment.objects.select_related('studentID').order_by('-dateRecieved')
-    context = {'ojt_assessment_request': ojt_assessment_request,}
-    return render(request, 'guidance/ojt_assessment_admin.html', context)
+    
+    # --- GET Logic (To display the data) ---
+    
+    # 1. Get parameters from URL
+    search_query = request.GET.get('search', None)
+    sort_by = request.GET.get('sort', 'dateRecieved') # Default field to sort by
+    order = request.GET.get('order', 'desc') # Default order (descending)
+    
+    # 2. Start with base query
+    ojt_list = OjtAssessment.objects.select_related('studentID').all()
 
+    # 3. Apply Search Filter
+    if search_query:
+        # Searches Student ID, Last Name, or First Name
+        ojt_list = ojt_list.filter(
+            Q(studentID__studID__icontains=search_query) |
+            Q(studentID__lastname__icontains=search_query) |
+            Q(studentID__firstname__icontains=search_query)
+        )
+
+    # 4. Apply Sorting
+    # Whitelist valid sort fields from your template
+    valid_sort_map = {
+        'dateRecieved': 'dateRecieved',
+        'studentID__studID': 'studentID__studID',
+        'studentID__lastname': 'studentID__lastname',
+        'schoolYear': 'schoolYear',
+        'status': 'status',
+    }
+    
+    # Get the correct model field from the map, default to 'dateRecieved'
+    sort_field = valid_sort_map.get(sort_by, 'dateRecieved')
+    
+    # Add '-' prefix if order is descending
+    if order == 'desc':
+        sort_field = f"-{sort_field}"
+        
+    ojt_list = ojt_list.order_by(sort_field)
+        
+    # 5. Apply Pagination
+    paginator = Paginator(ojt_list, 10) # Show 10 items per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 6. Build Context
+    context = {
+        'page_obj': page_obj, # Pass this instead of 'ojt_assessment_request'
+        'user': request.user,
+        'page': 'ojt_admin', # For tagged messages
+        
+        # Pass sort/order info back to the template
+        'current_sort': sort_by,
+        'current_order': order,
+        'search_params': f"&search={search_query}" if search_query else ""
+    }
+    
+    return render(request, 'guidance/ojt_assessment_admin.html', context)
 #Checker/Getter
 
 def check_date_time_validity(request):
@@ -868,7 +1080,7 @@ def update_ojt_assessment(request):
             return JsonResponse({'message': 'Value updated successfully'})       
 def delete_ojt_assessment(request):
     if request.method == 'POST':
-        requestID = request.POST.get('exitinterviewId', '')
+        requestID = request.POST.get('OjtRequestID', '')
         obj = get_object_or_404(OjtAssessment, OjtRequestID=requestID)
         obj.delete()
         return JsonResponse({'message': 'Value updated successfully'})  

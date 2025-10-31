@@ -267,6 +267,46 @@ from django.shortcuts import render, redirect, get_object_or_404
 from ..forms import OfficerForm, OfficerMembershipForm, OfficerSeminarForm
 from ..models import Organization,studentInfo
 
+# Make sure you have all these imports at the top of your views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.http import JsonResponse
+#
+# ADD THIS NEW VIEW TO YOUR views.py
+#
+def search_students(request):
+    """
+    This view is called by the JavaScript autocomplete.
+    It returns a JSON list of students matching the search 'term'.
+    """
+    term = request.GET.get("term")
+    
+    if term:
+        # Search for students whose studID *starts with* the term
+        students = studentInfo.objects.filter(studID__startswith=term)[:10]
+    else:
+        students = studentInfo.objects.none()
+
+    results = []
+    for student in students:
+        # Check for 'surname' or 'lastname' on your student model
+        student_surname = getattr(student, 'surname', getattr(student, 'lastname', 'N/A'))
+        
+        results.append({
+            "id": student.pk,  # The studentInfo primary key (e.g., 1, 2, 3)
+            "label": f"{student.studID} - {student_surname}, {student.firstname}",
+            "value": student.studID,
+            
+            # --- Extra data for autofill ---
+            "firstname": student.firstname,
+            "surname": student_surname,
+            "year": student.yearlvl    # Assumes your student model has 'yearlvl'
+        })
+
+    return JsonResponse(results, safe=False)
+#
+# THIS IS YOUR MAIN VIEW, UPDATED
+#
 def officer_form(request, slug=None):
     base_template = (
         "adminmain.html"
@@ -278,12 +318,13 @@ def officer_form(request, slug=None):
     if slug:
         organization = get_object_or_404(Organization, slug=slug)
 
+    # This block finds the student record for the LOGGED-IN USER
     student = None
     if request.user.is_authenticated:
         try:
             student = studentInfo.objects.get(studID=int(request.user.username))
-        except studentInfo.DoesNotExist:
-            messages.error(request, "Student record not found. Please contact admin.")
+        except (studentInfo.DoesNotExist, ValueError):
+            # Admin or unlinked user. 'student' remains None.
             student = None
 
     if request.method == "POST":
@@ -291,29 +332,32 @@ def officer_form(request, slug=None):
         membership_form = OfficerMembershipForm(request.POST)
         seminar_form = OfficerSeminarForm(request.POST)
 
+        # The is_valid() check now also fails if the hidden 'student'
+        # field is empty, because it's a required model field.
         if officer_form.is_valid():
             officer = officer_form.save(commit=False)
 
-            # ✅ Set organization
             if organization:
                 officer.organization = organization
 
-            # ✅ Link logged-in student
+            # --- KEY LOGIC ---
             if student:
+                # If the logged-in user IS a student, link them
+                # This overrides any admin search.
                 officer.student = student
-            else:
-                messages.error(request, "No student record linked to your account.")
-                return redirect("officer_form", slug=organization.slug if organization else None)
-
+            
+            # If the user is an admin ('student' is None),
+            # 'officer.student' was already set from the form.
+            # We can now safely save.
+            
             officer.save()
 
-            # ✅ Membership
+            # --- Save related forms ---
             if membership_form.is_valid() and membership_form.cleaned_data:
                 membership = membership_form.save(commit=False)
                 membership.officer = officer
                 membership.save()
 
-            # ✅ Seminar
             if seminar_form.is_valid() and seminar_form.cleaned_data:
                 seminar = seminar_form.save(commit=False)
                 seminar.officer = officer
@@ -322,15 +366,19 @@ def officer_form(request, slug=None):
             messages.success(request, "Officer has been successfully added!")
 
             if organization:
-                return redirect("officer_form", slug=organization.slug)
-            else:
+                # Redirect to the org profile on success
                 return redirect("org_profile", slug=organization.slug)
+            else:
+                return redirect("home") # Or your admin dashboard
 
         else:
+            # Form was invalid (e.g., admin didn't select a student,
+            # or mobile number was wrong)
             print(officer_form.errors)
             messages.error(request, "There was an error. Please check the form fields.")
 
     else:
+        # GET request: show blank forms
         officer_form = OfficerForm()
         membership_form = OfficerMembershipForm()
         seminar_form = OfficerSeminarForm()
@@ -346,7 +394,6 @@ def officer_form(request, slug=None):
             "base_template": base_template,
         },
     )
-
 # def officer_forms(request):
 #     organizations = Organization.objects.all()  # list of all orgs
 
@@ -683,67 +730,359 @@ def admin_transactionreport(request):
 #     return render(request, 'studentorg/ADMIN/officer_login.html', {'form': form})
 
 def admin_manageofficer(request):
-    officers = Officer.objects.all()
-    org = Organization.objects.first()  # or filter based on user/session
+
     if request.method == 'POST':
-        officer_id = request.POST.get('officer_id')
+        officer_pk = request.POST.get('officer_id')
         action = request.POST.get('action')
-        officer = get_object_or_404(Officer, id=officer_id)
+        
+        officer = get_object_or_404(Officer, officer_id=officer_pk)
+        
         if action == 'approve':
             officer.status = 'approved'
         elif action == 'decline':
             officer.status = 'declined'
         officer.save()
-        return redirect('admin_manageofficer')
-    return render(request, 'studentorg/ADMIN/admin_manageofficer.html', {
-        'officers': officers,
-        'org': org,   # ✅ now org.slug is available
-    })
+        
+        return redirect(request.get_full_path())
 
+    
+    search_query = request.GET.get('search', None)
+    org_filter = request.GET.get('org', None)
+    sort_by = request.GET.get('sort', 'officer_id')
+    order = request.GET.get('order', 'asc')
 
+    officer_list = Officer.objects.select_related('organization').all()
+
+    if search_query:
+        officer_list = officer_list.filter(
+            Q(officer_id__icontains=search_query) |
+            Q(surname__icontains=search_query) |
+            Q(firstname__icontains=search_query) |
+            Q(course__icontains=search_query) |
+            Q(position__icontains=search_query) |
+            Q(organization__name__icontains=search_query)
+        )
+    
+    if org_filter:
+        officer_list = officer_list.filter(organization__slug=org_filter)
+
+    valid_sort_map = {
+        'officer_id': 'officer_id',
+        'surname': 'surname',
+        'firstname': 'firstname',
+        'course': 'course',
+        'position': 'position',
+        'organization': 'organization__name', 
+        'status': 'status',
+    }
+    
+    sort_field = valid_sort_map.get(sort_by, 'officer_id')
+    
+    if order == 'desc':
+        sort_field = f"-{sort_field}"
+        
+    officer_list = officer_list.order_by(sort_field)
+        
+    paginator = Paginator(officer_list, 10)
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    search_params = ""
+    if search_query:
+        search_params += f"&search={search_query}"
+        
+    if org_filter:
+        search_params += f"&org={org_filter}"
+
+    all_orgs = Organization.objects.all()
+
+    context = {
+        'page_obj': page_obj, 
+        'user': request.user,
+        'current_sort': sort_by,
+        'current_order': order,
+        'search_params': search_params,
+        'all_organizations': all_orgs, 
+    }
+    
+    return render(request, 'studentorg/ADMIN/admin_manageofficer.html', context)
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+from ..models import Adviser # Assumes your model is named Adviser
 def admin_manageadviser(request):
-    advisers = Adviser.objects.all()
+
+    # --- POST Logic (for Approve/Decline) ---
     if request.method == 'POST':
-        adviser_id = request.POST.get('adviser_id')
+        # [FIX] Use adviser_id here, which your template sends
+        adviser_pk = request.POST.get('adviser_id') 
         action = request.POST.get('action')
-        adviser = get_object_or_404(Adviser, id=adviser_id)
+        
+        # [FIX] Filter by the primary key 'adviser_id'
+        adviser = get_object_or_404(Adviser, adviser_id=adviser_pk)
+        
         if action == 'approve':
             adviser.status = 'approved'
+            # TODO: Add logic here to create a user account for the adviser
+            # user = User.objects.create_user(...)
         elif action == 'decline':
             adviser.status = 'declined'
         adviser.save()
-        return redirect('admin_manageadviser')
-    return render(request, 'studentorg/ADMIN/admin_manageadviser.html', {'advisers': advisers})
+        
+        return redirect(request.get_full_path())
 
+    # --- GET Logic (for Display, Sort, Filter, Paginate) ---
+    
+    # 1. Get parameters from URL
+    search_query = request.GET.get('search', None)
+    status_filter = request.GET.get('status', None)
+    
+    # [FIX] Default sort field is now 'adviser_id'
+    sort_by = request.GET.get('sort', 'adviser_id') 
+    order = request.GET.get('order', 'asc')
 
+    # 2. Start with base query
+    adviser_list = Adviser.objects.all()
+
+    # 3. Apply Filters
+    if search_query:
+        # [FIX] Search by 'adviser_id' instead of 'id'
+        adviser_list = adviser_list.filter(
+            Q(adviser_id__icontains=search_query) | 
+            Q(surname__icontains=search_query) |
+            Q(firstname__icontains=search_query) |
+            Q(department__icontains=search_query)
+        )
+    
+    if status_filter:
+        adviser_list = adviser_list.filter(status=status_filter)
+
+    # 4. Apply Sorting
+    # [FIX] Use 'adviser_id' in the map
+    valid_sort_map = {
+        'adviser_id': 'adviser_id',
+        'surname': 'surname',
+        'firstname': 'firstname',
+        'department': 'department',
+        'position': 'position',
+        'status': 'status',
+    }
+    
+    # [FIX] Default sort field is 'adviser_id'
+    sort_field = valid_sort_map.get(sort_by, 'adviser_id')
+    
+    if order == 'desc':
+        sort_field = f"-{sort_field}"
+        
+    adviser_list = adviser_list.order_by(sort_field)
+        
+    # 5. Apply Pagination
+    paginator = Paginator(adviser_list, 10) # 10 items per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 6. Build Search/Sort parameters string for template links
+    search_params = ""
+    if search_query:
+        search_params += f"&search={search_query}"
+    if status_filter:
+        search_params += f"&status={status_filter}"
+
+    # 7. Build Context
+    context = {
+        'page_obj': page_obj, 
+        'user': request.user,
+        'current_sort': sort_by,
+        'current_order': order,
+        'search_params': search_params
+    }
+    
+    return render(request, 'studentorg/ADMIN/admin_manageadviser.html', context)
 
 def admin_manageproject(request):
-    projects = Project.objects.all()
+
+    # --- POST Logic (for Approve/Decline) ---
     if request.method == 'POST':
         project_id = request.POST.get('project_id')
         action = request.POST.get('action')
+        
         project = get_object_or_404(Project, project_id=project_id)
+        
         if action == 'approve':
             project.status = 'approved'
         elif action == 'decline':
             project.status = 'declined'
         project.save()
-        return redirect('admin_manageproject')
-    return render(request, 'studentorg/ADMIN/admin_manageproject.html', {'projects': projects})
+        
+        # [FIX] Redirect back to the same page, preserving any filters/sort
+        return redirect(request.get_full_path())
+
+    # --- GET Logic (for Display, Sort, Filter, Paginate) ---
+    
+    # 1. Get parameters from URL
+    search_query = request.GET.get('search', None)
+    status_filter = request.GET.get('status', None)
+    sort_by = request.GET.get('sort', 'project_id') 
+    order = request.GET.get('order', 'asc')
+
+    # 2. Start with base query (use select_related for foreign keys)
+    project_list = Project.objects.select_related('org').all()
+
+    # 3. Apply Filters
+    if search_query:
+        project_list = project_list.filter(
+            Q(project_id__icontains=search_query) |
+            Q(objective__icontains=search_query) |
+            Q(org__name__icontains=search_query) |
+            Q(involved_officer__icontains=search_query)
+        )
+    
+    if status_filter:
+        project_list = project_list.filter(status=status_filter)
+
+    # 4. Apply Sorting
+    valid_sort_map = {
+        'project_id': 'project_id',
+        'objective': 'objective',
+        'org': 'org__name', # Sort by the organization's name
+        'target': 'target',
+        'p_budget': 'p_budget',
+        'status': 'status',
+    }
+    
+    sort_field = valid_sort_map.get(sort_by, 'project_id')
+    
+    if order == 'desc':
+        sort_field = f"-{sort_field}"
+        
+    project_list = project_list.order_by(sort_field)
+        
+    # 5. Apply Pagination
+    paginator = Paginator(project_list, 10) # 10 items per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 6. Build Search/Sort parameters string for template links
+    search_params = ""
+    if search_query:
+        search_params += f"&search={search_query}"
+    if status_filter:
+        search_params += f"&status={status_filter}"
+
+    # 7. Build Context
+    context = {
+        'page_obj': page_obj, # This replaces 'projects'
+        'user': request.user,
+        'current_sort': sort_by,
+        'current_order': order,
+        'search_params': search_params
+    }
+    
+    return render(request, 'studentorg/ADMIN/admin_manageproject.html', context)
+
 
 def admin_managefinancial(request):
-    statements = FinancialStatement.objects.all()
+
+    # --- POST Logic (for Approve/Decline) ---
     if request.method == 'POST':
         financial_id = request.POST.get('financial_id')  
         action = request.POST.get('action')
-        statement = get_object_or_404(FinancialStatement, financial_id=financial_id)  # Corrected variable name
+        statement = get_object_or_404(FinancialStatement, financial_id=financial_id)
+        
         if action == 'approve':
             statement.status = 'approved'
         elif action == 'decline':
             statement.status = 'declined'
         statement.save()
-        return redirect('admin_managefinancial')
-    return render(request, 'studentorg/ADMIN/admin_managefinancial.html', {'statements': statements})
+        
+        # [FIX] Redirect back to the same page, preserving filters/sort
+        return redirect(request.get_full_path())
+
+    # --- GET Logic (for Display, Sort, Filter, Paginate) ---
+    
+    # 1. Get parameters from URL
+    search_query = request.GET.get('search', None)
+    status_filter = request.GET.get('status', None)
+    sort_by = request.GET.get('sort', 'financial_id') 
+    order = request.GET.get('order', 'asc')
+
+    # 2. Start with base query (use select_related for foreign keys)
+    statement_list = FinancialStatement.objects.select_related('org').all()
+
+    # 3. Apply Filters
+    if search_query:
+        statement_list = statement_list.filter(
+            Q(financial_id__icontains=search_query) |
+            Q(purpose__icontains=search_query) |
+            Q(org__name__icontains=search_query)
+        )
+    
+    if status_filter:
+        statement_list = statement_list.filter(status=status_filter)
+
+    # 4. Apply Sorting
+    valid_sort_map = {
+        'financial_id': 'financial_id',
+        'date': 'date',
+        'purpose': 'purpose',
+        'org': 'org__name', # Sort by the organization's name
+        'amount': 'amount',
+        'status': 'status',
+    }
+    
+    sort_field = valid_sort_map.get(sort_by, 'financial_id')
+    
+    if order == 'desc':
+        sort_field = f"-{sort_field}"
+        
+    statement_list = statement_list.order_by(sort_field)
+        
+    # 5. Apply Pagination
+    paginator = Paginator(statement_list, 10) # 10 items per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 6. Build Search/Sort parameters string for template links
+    search_params = ""
+    if search_query:
+        search_params += f"&search={search_query}"
+    if status_filter:
+        search_params += f"&status={status_filter}"
+
+    # 7. Build Context
+    context = {
+        'page_obj': page_obj, # This replaces 'statements'
+        'user': request.user,
+        'current_sort': sort_by,
+        'current_order': order,
+        'search_params': search_params
+    }
+    
+    return render(request, 'studentorg/ADMIN/admin_managefinancial.html', context)
 
 def admin_manage_accreditations(request):
     accreditations = Accreditation.objects.all() 

@@ -1,120 +1,155 @@
-{% extends "adminmain.html" %} {% load static %} {% block title %}OJT
-Assessments/Psychological Issuance Admin{% endblock %} {% block headcontent %}
+{% extends "adminmain.html" %} {% load static %} 
+{% block title %}OJT Assessments/Psychological Issuance Admin{% endblock %} 
+
+{% block headcontent %}
+
 <link
   rel="stylesheet"
-  type="text/css"
-  href="{% static 'styles/guidance/counseling_app_admin.css'%}"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
 <link
   rel="stylesheet"
   type="text/css"
   href="{% static 'styles/guidance/ojt_gmc.css'%}"
 />
-<script src="{% static 'scripts/guidance/html2pdf.js'%}"></script>
-<style>.admin-table-wrapper {
-    overflow-y: auto;
-}</style>
-{% endblock %} {% block bodycontent %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'styles/guidance/ojt_assessment_admin.css'%}"
+/>
 
+<script src="{% static 'scripts/guidance/html2pdf.js'%}"></script>
+{% endblock %} 
+
+{% block bodycontent %}
 <div class="container">
-  {{form.errors}}
   <div class="sub-title">
     <h3>GUIDANCE(Admin)</h3>
     <p class="hometext">Home</p>
     <p class="certxt">&gt; OJT Assessments/Psychological Issuance</p>
   </div>
+
   <div class="form-container">
     {% csrf_token %}
-    <h2>OJT Assessments/Psychological Issuance Request List</h2>
-    <label>Enter ID number:</label>
-    <span id="search_id">
+    
+    <form id="search_id" method="GET" action="">
+      <label for="studentIDBox">Enter ID number:</label>
       <input
         type="text"
-        name="studentID"
-        placeholder="search"
-        required=""
+        name="search"
+        placeholder="Search by Student ID or Name"
         id="studentIDBox"
+        value="{{ request.GET.search }}"
       />
-      <button class="OrangeButton" id="searchButton">Search</button>
+      <button class="OrangeButton" id="searchButton" type="submit">Search</button>
+
       <ul class="messages">
         {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
+          {% if 'ojt_admin' in message.tags %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+          {% endif %}
         {% endfor %}
       </ul>
-    </span>
+    </form>
+
     <div class="admin-table-wrapper">
-    <table id="info_table">
-      <tr id="info_table_head">
-        <th>DATE RECEIVED</th>
-        <th>STUDENT ID</th>
-        <th>NAME</th>
-        <th>School Year</th>
-        <th colspan="3">STATUS</th>
-      </tr>
-      {% for ojt_request in ojt_assessment_request reversed %}
-      <tr>
-        <input
-          type="hidden"
-          name="OjtRequestID"
-          class="OjtRequestID"
-          value="{{ ojt_request.OjtRequestID }}"
-        />
-
-        <td>{{ ojt_request.dateRecieved }}</td>
-        <td>{{ ojt_request.studentID.studID }}</td>
-        <td>
-          {{ ojt_request.studentID.lastname }},
-           {{ojt_request.studentID.firstname }}
-        </td>
-        <td>{{ ojt_request.schoolYear }}</td>
-
-        <td>
-          {% if ojt_request.status == 'Accepted' %}
-          <span class="accepted">{{ ojt_request.status }}</span>
-          {% elif ojt_request.status == 'Declined' %}
-          <span class="declined">{{ ojt_request.status }}</span>
-          {% elif ojt_request.status == 'Pending' %}
-          <span class="pending">{{ ojt_request.status }}</span>
-          {% elif ojt_request.status == 'Expired' %}
-          <span class="expired">{{ ojt_request.status }}</span>
-         {% endif %}
-</td>
-<td>
-  <div class="horizontal">
-    {% if ojt_request.status != 'Expired' %}
-      {% if ojt_request.status != 'Accepted' %}
-        {% if ojt_request.status != 'Declined' %}
-          <button class="accept">ACCEPT</button>
-          <button class="decline">DECLINE</button>
-        {% endif %}
-      {% endif %}
-    {% endif %}
-    <button class="delete">DELETE</button>
-  </div>
-</td>
-<td>
-    {% csrf_token %} 
+      <table id="info_table">
+        <thead>
+          <tr id="info_table_head">
+            <th><a href="?sort=-dateRecieved&search={{ request.GET.search }}">DATE RECEIVED</a></th>
+            <th><a href="?sort=studentID__studID&search={{ request.GET.search }}">STUDENT ID</a></th>
+            <th><a href="?sort=studentID__lastname&search={{ request.GET.search }}">NAME</a></th>
+            <th><a href="?sort=schoolYear&search={{ request.GET.search }}">School Year</a></th>
+            <th><a href="?sort=status&search={{ request.GET.search }}">STATUS</a></th>
+            <th>ACTION</th>
+            <th>FORM</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ojt_request in page_obj %}
+          <tr>
+            <input
+              type="hidden"
+              name="OjtRequestID"
+              class="OjtRequestID"
+              value="{{ ojt_request.OjtRequestID }}"
+            />
+            <td data-label="Date Received">{{ ojt_request.dateRecieved }}</td>
+            <td data-label="Student ID">{{ ojt_request.studentID.studID }}</td>
+            <td data-label="Name">
+              {{ ojt_request.studentID.lastname }},
+              {{ojt_request.studentID.firstname }}
+            </td>
+            <td data-label="School Year">{{ ojt_request.schoolYear }}</td>
+            <td data-label="Status">
+              {% if ojt_request.status == 'Accepted' %}
+              <span class="accepted">{{ ojt_request.status }}</span>
+              {% elif ojt_request.status == 'Declined' %}
+              <span class="declined">{{ ojt_request.status }}</span>
+              {% elif ojt_request.status == 'Pending' %}
+              <span class="pending">{{ ojt_request.status }}</span>
+              {% elif ojt_request.status == 'Expired' %}
+              <span class="expired">{{ ojt_request.status }}</span>
+              {% endif %}
+            </td>
+            <td data-label="Action">
+              <div class="horizontal">
+                {% if ojt_request.status != 'Expired' %} 
+                {% if ojt_request.status != 'Accepted' %} 
+                {% if ojt_request.status != 'Declined' %}
+                <button class="accept">ACCEPT</button>
+                <button class="decline">DECLINE</button>
+                {% endif %} {% endif %} {% endif %}
+                <button class="delete">DELETE</button>
+              </div>
+            </td>
+            <td data-label="Form">
+              {% if ojt_request.status == 'Accepted' %}
+              <a
+                href="{% url 'print_ojt_assessment' ojt_request.OjtRequestID %}"
+                class="showformButton"
+                target="_blank"
+              >
+                SHOW FORM
+              </a>
+              {% else %}
+              <a href="#" class="showformButton hidden" aria-hidden="true">SHOW FORM</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="no-items-found">
+              No OJT assessment requests found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
     
-    {% if ojt_request.status == 'Accepted' %}
-      <a 
-        href="{% url 'print_ojt_assessment' ojt_request.OjtRequestID %}" 
-        class="showformButton" 
-        target="_blank"
-      >
-        SHOW FORM
-      </a>
-    {% else %}
-      <a href="#" class="showformButton hidden">SHOW FORM</a>
-    {% endif %}
-</td>
-      </tr>
-      {% endfor %}
-    </table>
-    </div>  
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
 <script src="{% static 'scripts/guidance/ojt_assessment_admin.js'%}"></script>
 <script src="{% static 'scripts/guidance/intake.js'%}"></script>
-
 {% endblock %}

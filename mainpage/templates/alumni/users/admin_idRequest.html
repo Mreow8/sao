@@ -1,163 +1,11 @@
-{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
-<style>
-  /* --- Global, Fonts & Container --- */
-  .sub-title,
-  .gmc-form,
-  .requestBtn {
-    font-family: "Rubik", sans-serif;
-  }
+{% extends 'adminmain.html' %} {% load static %} 
 
-  .container {
-    padding: 0 1.5rem;
-  }
+{% block headcontent %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="{% static 'styles/alumni/admin_id_request.css' %}"> 
+{% endblock %}
 
-  .gmc-form {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 0; /* Remove padding to let table fill */
-    overflow: hidden; /* Clips the table corners */
-  }
-
-  /* --- Table Styles (Based on #historyTable) --- */
-  .gmc-form table {
-    width: 100%;
-    border-collapse: collapse;
-    border: none;
-  }
-
-  .gmc-form table th,
-  .gmc-form table td {
-    border-bottom: 1px solid #ddd;
-    padding: 12px 15px;
-    text-align: left;
-    font-size: 14px;
-    vertical-align: middle;
-  }
-
-  .gmc-form table th {
-    background-color: #f9f9f9;
-    color: #2c5282; /* Primary Blue */
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .gmc-form table tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  /* --- Status & Button Styles --- */
-
-  /* "Claimed" message (Based on .status-processed) */
-  .success-message {
-    padding: 5px 12px;
-    border-radius: 15px;
-    font-size: 12px;
-    font-weight: 600;
-    color: white;
-    text-transform: uppercase;
-    background-color: #2ecc71; /* Green */
-    display: inline-block;
-  }
-
-  /* "Approve" button (Based on .requestBtn) */
-  .requestBtn {
-    font-family: "Rubik", sans-serif;
-    background-color: #2c5282; /* Primary Blue */
-    color: white;
-    font-size: 0.875rem; /* Smaller for table */
-    font-weight: 600;
-    padding: 8px 16px; /* Smaller for table */
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: background-color 0.2s, transform 0.2s;
-    width: 100%; /* Make buttons uniform in cells */
-    box-sizing: border-box;
-  }
-
-  .requestBtn:hover {
-    background-color: #2a4365;
-    transform: translateY(-2px);
-  }
-
-  /* "Mark as Claimed" button (Green, like .printBtn) */
-  .requestBtn[action*="claim"] {
-    background-color: #28a745; /* Green */
-  }
-  .requestBtn[action*="claim"]:hover {
-    background-color: #218838; /* Darker Green */
-  }
-
-  /* Ensure forms in cells have no margin */
-  .gmc-form table td form {
-    margin: 0;
-  }
-
-  /* --- Responsive Card View (Based on #historyTable) --- */
-  @media (max-width: 768px) {
-    /* Remove wrapper border on mobile */
-    .gmc-form {
-      border: none;
-      box-shadow: none;
-      overflow: visible;
-      background-color: transparent;
-    }
-
-    .gmc-form table,
-    .gmc-form table thead,
-    .gmc-form table tbody,
-    .gmc-form table th,
-    .gmc-form table td,
-    .gmc-form table tr {
-      display: block;
-      width: 100%;
-    }
-
-    .gmc-form table thead {
-      display: none; /* hide table headers */
-    }
-
-    .gmc-form table tbody tr {
-      margin-bottom: 20px;
-      padding: 12px;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      background-color: #ffffff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .gmc-form table tbody td {
-      position: relative;
-      padding-left: 50%;
-      padding-top: 12px;
-      padding-bottom: 12px;
-      border: none;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 14px;
-      color: #2c2c2c;
-      min-height: 40px; /* Ensure row height */
-    }
-
-    .gmc-form table tbody td::before {
-      content: attr(data-label);
-      position: absolute;
-      left: 16px;
-      top: 12px;
-      font-weight: 600;
-      color: #2c5282; /* Primary Blue */
-      white-space: nowrap;
-    }
-
-    .gmc-form table tbody td:last-child {
-      border-bottom: none;
-    }
-  }
-</style>
+{% block bodycontent %}
 <div class="sub-title">
   <h3>Alumni(Admin)</h3>
   <p class="hometext">Home</p>
@@ -166,67 +14,135 @@
 
 <div class="container">
   <div class="gmc-form">
-    <table>
-      <thead>
-        <tr>
-          <th>Alumni ID</th>
-          <th>Student ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Date Requested</th>
-          <th>Date Released</th>
-          <th>Confirmation</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for alumni_request in alumni_requests %}
-        <tr>
-          <td data-label="Alumni ID">{{ alumni_request.alumniID }}</td>
-          <td data-label="Student ID">{{ alumni_request.student.studID }}</td>
-          <td data-label="First Name">
-            {{ alumni_request.student.firstname }}
-          </td>
-          <td data-label="Last Name">{{ alumni_request.student.lastname }}</td>
-          <td data-label="Date Requested">{{ alumni_request.alumnidate }}</td>
+    
+    <form class="search-form" method="GET" action="">
+      <input
+        type="text"
+        name="search"
+        class="search-input"
+        placeholder="Search by Student ID or Name"
+        value="{{ request.GET.search }}"
+      >
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+    
+    <div class="gmc-table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="sortable">
+              {% if current_sort == 'alumniID' %}
+                <a href="?sort=alumniID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Alumni ID</a>
+              {% else %}
+                <a href="?sort=alumniID&order=asc{{ search_params }}">Alumni ID</a>
+              {% endif %}
+            </th>
+            <th class="sortable">
+              {% if current_sort == 'student__studID' %}
+                <a href="?sort=student__studID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student ID</a>
+              {% else %}
+                <a href="?sort=student__studID&order=asc{{ search_params }}">Student ID</a>
+              {% endif %}
+            </th>
+            <th class="sortable">
+              {% if current_sort == 'student__firstname' %}
+                <a href="?sort=student__firstname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">First Name</a>
+              {% else %}
+                <a href="?sort=student__firstname&order=asc{{ search_params }}">First Name</a>
+              {% endif %}
+            </th>
+            <th class="sortable">
+              {% if current_sort == 'student__lastname' %}
+                <a href="?sort=student__lastname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Last Name</a>
+              {% else %}
+                <a href="?sort=student__lastname&order=asc{{ search_params }}">Last Name</a>
+              {% endif %}
+            </th>
+            <th class="sortable">
+              {% if current_sort == 'alumnidate' %}
+                <a href="?sort=alumnidate&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Requested</a>
+              {% else %}
+                <a href="?sort=alumnidate&order=asc{{ search_params }}">Date Requested</a>
+              {% endif %}
+            </th>
+            <th class="sortable">
+              {% if current_sort == 'claimed_date' %}
+                <a href="?sort=claimed_date&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Released</a>
+              {% else %}
+                <a href="?sort=claimed_date&order=asc{{ search_params }}">Date Released</a>
+              {% endif %}
+            </th>
+            <th>Confirmation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for alumni_request in page_obj %}
+          <tr>
+            <td data-label="Alumni ID">{{ alumni_request.alumniID }}</td>
+            <td data-label="Student ID">{{ alumni_request.student.studID }}</td>
+            <td data-label="First Name">
+              {{ alumni_request.student.firstname }}
+            </td>
+            <td data-label="Last Name">{{ alumni_request.student.lastname }}</td>
+            <td data-label="Date Requested">{{ alumni_request.alumnidate }}</td>
 
-          <td data-label="Date Released">
-            {% if alumni_request.claimed_date %}
-            <!-- prettier-ignore -->
-            {{ alumni_request.claimed_date|date:"Y-m-d" }}
-      {% else %}
-        --
-      {% endif %}
-          </td>
+            <td data-label="Date Released">
+              {% if alumni_request.claimed_date %}
+              {{ alumni_request.claimed_date|date:"Y-m-d" }}
+              {% else %}
+              --
+              {% endif %}
+            </td>
 
-          <td data-label="Confirmation">
-            {% if alumni_request.claimed_date %}
-            <span class="success-message">Claimed</span>
-            {% else %} {% if alumni_request.approved %}
-            <form
-              action="{% url 'claim_alumni_id' alumni_request.alumniID %}"
-              method="post"
-            >
-              {% csrf_token %}
-              <button type="submit" class="requestBtn">Mark as Claimed</button>
-            </form>
-            {% else %}
-            <form
-              action="{% url 'approve_alumni_request' alumni_request.alumniID %}"
-              method="post"
-            >
-              {% csrf_token %}
-              <button type="submit" class="requestBtn">Approve</button>
-            </form>
-            {% endif %} {% endif %}
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="7" style="text-align: center">No applicants found.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+            <td data-label="Confirmation">
+              {% if alumni_request.claimed_date %}
+              <span class="success-message">Claimed</span>
+              {% else %} {% if alumni_request.approved %}
+              <form
+                action="{% url 'claim_alumni_id' alumni_request.alumniID %}"
+                method="post"
+              >
+                {% csrf_token %}
+                <button type="submit" class="requestBtn">Mark as Claimed</button>
+              </form>
+              {% else %}
+              <form
+                action="{% url 'approve_alumni_request' alumni_request.alumniID %}"
+                method="post"
+              >
+                {% csrf_token %}
+                <button type="submit" class="requestBtn">Approve</button>
+              </form>
+              {% endif %} {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="no-applicants">No applicants found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
   </div>
 </div>
 

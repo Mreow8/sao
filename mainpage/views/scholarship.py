@@ -241,12 +241,14 @@ def studentapplicationform(request):
     return render(request, 'scholarship/studentapplicationform.html', context)
 
 
-    
+from django.shortcuts import render, redirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+from ..models import applicants # Make sure this import is correct
+
 def adminapplication(request):
 
-    scholar_type = request.GET.get('scholar_type')
-    context = {}
-
+    # --- POST Logic (To handle form submissions) ---
     if request.method == 'POST':
         for key, value in request.POST.items():
             if key.startswith('action'):
@@ -264,23 +266,71 @@ def adminapplication(request):
                         application_data.save()
                         print("Application accepted")
                     elif action == 'REJECTED':
-                        application_data.delete()
+                        # Consider setting status = "REJECTED" instead of deleting
+                        application_data.delete() 
                         print("Application rejected and deleted")
                 except applicants.DoesNotExist:
                     print("Applicant not found")
+        
+        # After a POST, redirect back to the same page (with GET params)
+        # This prevents re-submission on refresh
+        return redirect(request.get_full_path()) 
+
+    # --- GET Logic (To display the data) ---
     
-    # Filter applicant_data based on scholar_type
-    if scholar_type:
-        if scholar_type == 'all':
-            applicant_data = applicants.objects.filter(status='PENDING')
-        else:
-            applicant_data = applicants.objects.filter(status='PENDING', scholar_type=scholar_type)
-    else:
-        applicant_data = applicants.objects.filter(status='PENDING')
+    # 1. Get filter/sort parameters from the URL
+    scholar_type = request.GET.get('scholar_type', None)
+    search_query = request.GET.get('search', None)
+    sort_by = request.GET.get('sort', 'studID') # Default sort from your HTML
+    
+    # 2. Start with the base query
+    applicant_list = applicants.objects.filter(status='PENDING')
 
-    context = {'applicant_data': applicant_data}
+    # 3. Apply filters
+    if scholar_type and scholar_type != 'all':
+        applicant_list = applicant_list.filter(scholar_type=scholar_type)
+        
+    if search_query:
+        # Search by Student ID (from table) or Application ID (from placeholder)
+        applicant_list = applicant_list.filter(
+            Q(studID__studID__icontains=search_query) |
+            Q(application_id__icontains=search_query)
+        )
+
+    # 4. Apply sorting
+    # Map URL parameters to the actual model fields (including joins)
+    valid_sort_map = {
+        'studID': 'studID__studID',
+        'firstname': 'studID__firstname',
+        'lastname': 'studID__lastname',
+        'gpa': 'gpa',
+        'scholar_type': 'scholar_type',
+    }
+    
+    # Get the correct field name from the map, or default to 'studID__studID'
+    order_field = valid_sort_map.get(sort_by, 'studID__studID')
+    applicant_list = applicant_list.order_by(order_field)
+
+    # 5. Apply Pagination
+    paginator = Paginator(applicant_list, 10) # Show 10 applicants per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 6. Build the context
+    context = {
+        'page_obj': page_obj, # The template loops over 'page_obj'
+        'user': request.user, # For admin-only sections
+    }
+    
     return render(request, 'scholarship/adminapplication.html', context)
-
 
 
 import re

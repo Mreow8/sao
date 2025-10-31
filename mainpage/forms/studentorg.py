@@ -29,35 +29,81 @@ class FinancialStatementForm(forms.ModelForm):
 
 from django import forms
 from ..models.studentorg import Officer, OfficerMembership, OfficerSeminar
-
+from django import forms
+from django.core.exceptions import ValidationError
 class OfficerForm(forms.ModelForm):
+
+    # 1. This is the search box the admin will see
+    student_search = forms.CharField(
+        label="Search Student by ID",
+        required=False, # Not required itself
+        widget=forms.TextInput(attrs={
+            "id": "id_student_search",  # <-- The ID our script looks for
+            "placeholder": "Start typing student ID..."
+        })
+    )
+
+    # 2. Your mobile number validation (this is correct)
+    def clean_mobile_number(self):
+        mobile_number = self.cleaned_data.get("mobile_number")
+        if mobile_number:
+            if not mobile_number.isdigit():
+                raise ValidationError("Mobile number must contain only digits.")
+            if len(mobile_number) != 11:
+                raise ValidationError("Mobile number must be exactly 11 digits.")
+        return mobile_number
+
+
     class Meta:
         model = Officer
         fields = [
-            "firstname",
-            "middlename",
-            "surname",
+            # --- FIELDS YOU MUST ADD ---
+            "student",      # This fixes the NOT NULL error
+            "firstname",    # For autofill
+            "surname",      # For autofill
+            "course",
+            "profile_picture",
+            # --- Your existing fields ---
             "sex",
             "date_of_birth",
             "age",
             "civil_status",
             "nationality",
-            "mobile_number",
+            "mobile_number", 
             "position",
-            "course",
             "year",
             "home_address",
         ]
+        
+        # 3. Set up widgets for autofill and your existing ones
         widgets = {
+            # --- WIDGETS YOU MUST ADD ---
+            "student": forms.HiddenInput(attrs={"id": "id_student"}),
+            "firstname": forms.TextInput(attrs={"readonly": "readonly"}),
+            "surname": forms.TextInput(attrs={"readonly": "readonly"}),
+            "course": forms.TextInput(attrs={"readonly": "readonly"}),
+
+            # --- Your existing widgets ---
             "date_of_birth": forms.DateInput(attrs={"type": "date", "id": "id_date_of_birth"}),
             "age": forms.NumberInput(attrs={"id": "id_age", "readonly": "readonly"}),
             "sex": forms.Select(),
             "civil_status": forms.Select(),
-            "course": forms.Select(),
-            "year": forms.Select(),
+          # Added readonly/disabled for autofill
         }
 
-
+    # 4. Re-order the fields to put the search box on top
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Define the order
+        new_order = ['student_search', 'student', 'firstname', 'surname', 'year']
+        
+        # Add all other fields
+        for field in self.fields:
+            if field not in new_order:
+                new_order.append(field)
+                
+        self.order_fields(new_order)
 # Officer Membership Form
 class OfficerMembershipForm(forms.ModelForm):
     class Meta:

@@ -1,17 +1,26 @@
 {% extends "adminmain.html" %} {% load static %} {% block title %}Counseling App
-With Scheduler{% endblock %} {% block bodycontent %}
+With Scheduler{% endblock %} {% block headcontent %}
 <link
   rel="stylesheet"
   type="text/css"
   href="{% static 'styles/guidance/counseling_app.css'%}"
 />
+{% endblock %} {% block bodycontent %}
 <div class="sub-title">
   <h3>Admin Counseling Request</h3>
+
   <p class="hometext">Home</p>
+
   <p class="certxt">&gt; Counseling Form</p>
 </div>
 
 <div class="container">
+  <ul class="messages">
+    {% for message in messages %} {% if 'counseling_form' in message.tags %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endif %} {% endfor %}
+  </ul>
+
   <h2>
     Create Counseling Schedule for {{ student.firstname }} {{ student.lastname
     }}

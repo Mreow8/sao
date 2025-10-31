@@ -34,13 +34,13 @@ Assessments/Psychological Issuance{% endblock %} {% block headcontent %}
       {% else %}
       <h4>New Request Form</h4>
       <p>Please fill out the form below to request your OJT Assessment.</p>
-
+      <!-- prettier-ignore -->
       <form method="post" action="" id="requestForm">
-              {% csrf_token %}       <label>School Year:</label>       {{
-        form.schoolYear }} {{ form.schoolYear.errors }}      
-        <label>Email Address:</label>       {{ form.emailadd }} {{
-        form.emailadd.errors }}      
-        <button type="submit" class="OrangeButton">Request</button>    
+        {% csrf_token %} <label>School Year:</label>
+        {{form.schoolYear }} {{ form.schoolYear.errors }}
+        <label>Email Address:</label> {{ form.emailadd }} {{form.emailadd.errors }}
+        
+        <button type="submit" class="OrangeButton">Request</button>
       </form>
       {% endif %}
     </div>

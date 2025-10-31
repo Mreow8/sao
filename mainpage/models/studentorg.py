@@ -28,6 +28,11 @@ class Organization(models.Model):
         
 class Officer(models.Model):
     officer_id = models.AutoField(primary_key=True)
+    profile_picture = models.ImageField(
+        upload_to='officer_profiles/',  # Saves to 'media/officer_profiles/'
+        blank=True, 
+        null=True
+    )
     student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
 
     firstname = models.CharField(max_length=100)
@@ -64,26 +69,8 @@ class Officer(models.Model):
         related_name="officers"
     )
     
-    course = models.CharField(max_length=50, choices=[
-        ('BSIT', 'BSIT'),
-        ('BSIE', 'BSIE'),
-        ('BIT-CT', 'BIT-COMPTECH'),
-        ('BIT-GARMENTS', 'BIT-GARMENTS'),
-        ('BIT-AUTOMOTIVE', 'BIT-AUTOMOTIVE'),
-        ('BIT-DRAFTING', 'BIT-DRAFTING'),
-        ('BIT-ELECTRONICS', 'BIT-ELECTRONICS'),
-        ('BEED','BEED'),
-        ('BSED-MATH','BSED-MATH'),
-        ('BSED-ENGLISH','BSED-ENGLISH'),
-        ('BTLED','BTLED'),
-        ('BSF','BSF'),
-        ('BSA','BSA'),
-        ('BAL','BAL'),
-        ('BAEL','BAEL'),
-        ('BS-PSYCHOLOGY','BS-PSYCHOLOGY'),
-        ('BSHM','BSHM'),
-        ('BSTM','BSTM'),
-    ])
+    course = models.CharField(max_length=50 )
+      
     
     year = models.CharField(max_length=50, choices=[
         ('1st', '1st'),
@@ -392,15 +379,12 @@ class FinancialStatement(models.Model):
     purpose = models.CharField(max_length=255)
     source_of_funds = models.CharField(max_length=255)
     
-    org_choices = [
-        ('SSG', 'SSG'),
-        ('FSTLP', 'FSTLP'),
-        ('SI++', 'SI++'),
-        ('THE EQUATIONERS', 'THE EQUATIONERS'),
-        ('TECHNOCRATS', 'TECHNOCRATS'),
-    ]
-    org = models.CharField(max_length=15, choices=org_choices, default='')
-
+    org = models.ForeignKey(
+    Organization, 
+    on_delete=models.SET_NULL,  # Keeps statement if org is deleted
+    null=True,                 # Allows the field to be empty
+    related_name="financial_statements"
+)
     amount = models.DecimalField(max_digits=15, decimal_places=2)
     remarks = models.TextField()
     
