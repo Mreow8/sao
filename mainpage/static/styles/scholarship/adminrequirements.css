@@ -4,7 +4,307 @@
   margin: 20px auto;
   padding: 20px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9; /* --- Import Font --- */
+  @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+  /* --- Global, Container, & Font --- */
+  body,
+  .content,
+  table,
+  button,
+  input,
+  select {
+    font-family: "Rubik", sans-serif;
+  }
+
+  body {
+    background-color: #f8f9fa; /* Light grey background */
+  }
+
+  /* This .content block will act as your main .container.
+  If you have a .container class in adminmain.html, you can remove this.
+*/
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem 2rem;
+  }
+
+  /* --- Top Control Card --- */
+  .form_div {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+  }
+
+  .form_div h1 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    color: #2c5282;
+    font-weight: 600;
+    font-size: 1.75rem;
+  }
+
+  .search_id_container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  /* Style all forms inside the top card to be flex containers */
+  .search_id_container form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    flex-grow: 1; /* Allow forms to grow */
+  }
+
+  /* --- Inputs & Selects (like .search-input, .filter-select) --- */
+  #semester,
+  #search-box,
+  #scholar_type {
+    font-family: "Rubik", sans-serif;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: #333;
+    flex-grow: 1;
+    box-sizing: border-box; /* Ensure padding doesn't break layout */
+  }
+
+  #semester:focus,
+  #search-box:focus,
+  #scholar_type:focus {
+    outline: none;
+    border-color: #2c5282; /* Primary Blue */
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+    background-color: #fff;
+  }
+
+  /* The <select> needs its black color */
+  #semester,
+  #semester option,
+  #scholar_type,
+  #scholar_type option {
+    color: black;
+  }
+
+  /* --- Control Buttons (like .search-btn) --- */
+  #req-btn,
+  #close-btn,
+  #grant-btn {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.2s;
+    color: white;
+    text-decoration: none; /* For <a> tags */
+    display: inline-block; /* For <a> tags */
+  }
+
+  /* Primary "Request" button */
+  #req-btn {
+    background-color: #2c5282; /* Primary Blue */
+  }
+  #req-btn:hover {
+    background-color: #2a4365; /* Darker Blue */
+    transform: translateY(-2px);
+  }
+
+  /* "Close" button (styled like decline) */
+  #close-btn {
+    background-color: #dc3545; /* Red */
+  }
+  #close-btn:hover {
+    background-color: #c82333;
+  }
+
+  /* "Grant" button (styled like approve) */
+  #grant-btn {
+    background-color: #28a745; /* Green */
+    margin-top: 1.5rem; /* Space above the button */
+  }
+  #grant-btn:hover {
+    background-color: #218838;
+  }
+
+  /* Text for "Requesting Requirements..." */
+  .search_id_container h4 {
+    color: #2c5282;
+    font-weight: 500;
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  /* --- Table Card --- */
+  /* We apply card styles to the form wrapping the table */
+  form[method="POST"]:not(#yearsemester) {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow-x: auto; /* Makes the table scrollable */
+  }
+
+  /* --- Table Styling --- */
+  #requirements-table {
+    width: 100%;
+    min-width: 1200px; /* Force scroll */
+    border-collapse: collapse;
+  }
+  #requirements-table th,
+  #requirements-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  #requirements-table th {
+    background-color: #f9f9f9;
+    color: #2c5282; /* Theme Blue */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  #requirements-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* --- Table Content: Images --- */
+  #requirements-table img {
+    width: 100px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  #requirements-table img:hover {
+    opacity: 0.8;
+  }
+
+  /* --- Table Content: Note Input --- */
+  .comment-box {
+    font-family: "Rubik", sans-serif;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: #333;
+    width: 100%;
+    min-width: 150px;
+    box-sizing: border-box;
+  }
+  .comment-box:focus {
+    outline: none;
+    border-color: #2c5282;
+    box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.3);
+    background-color: #fff;
+  }
+  .commentbox p {
+    color: #28a745; /* Green checkmark */
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-align: center;
+    margin: 0;
+  }
+
+  /* --- Table Content: Action Buttons --- */
+  #btns3 {
+    text-align: center;
+    min-width: 120px; /* Give buttons space */
+  }
+  #btns3 > div {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  #btns3 button {
+    font-family: "Rubik", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.2s;
+    width: 100%;
+    flex-grow: 1;
+  }
+
+  #btn-accept {
+    background-color: #28a745; /* Green */
+  }
+  #btn-accept:hover {
+    background-color: #218838;
+  }
+
+  #btn-reject {
+    background-color: #dc3545; /* Red */
+  }
+  #btn-reject:hover {
+    background-color: #c82333;
+  }
+
+  #btn-update {
+    background-color: #007bff; /* Standard Blue */
+  }
+  #btn-update:hover {
+    background-color: #0069d9;
+  }
+
+  /* --- Image Modal (from your JS) --- */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+  .modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+  }
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  .close:hover,
+  .close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+  }
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }

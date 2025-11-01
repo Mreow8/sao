@@ -2,6 +2,41 @@
 <link
   rel="stylesheet"
   href="{% static 'styles/community/donate.css' %}"/>
+
+<style>
+  /* This style is for the warning message */
+  .qr-warning {
+    padding: 1rem;
+    border: 1px solid #f5c6cb;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .qr-warning h4 {
+    color: #721c24;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+  }
+  .qr-warning p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  /* --- 1. NEW CSS FOR INLINE ERRORS --- */
+  .input-error-message {
+    display: none; /* Hide by default */
+    color: #dc3545; /* Bootstrap's danger color */
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: -8px; /* Pulls it closer to the input */
+    margin-bottom: 8px;
+    text-align: left;
+    padding-left: 4px;
+  }
+</style>
+
 <div class="donate-popup">
   <div class="donation">
     <div class="close-popup">
@@ -26,210 +61,229 @@
     </div>
 
     <div class="mode1">
-      {% if user.is_staff %} {% if qrCodeID %} {% with qrCodeID.first as qrcode    %}
-      <form
-        action="{% url 'gcash_mode_admin' qrcode.qr_id %}"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        {% csrf_token %}
-        <h1>Replace GCash QR</h1>
-        <input type="file" name="images" multiple />
-        <button type="submit">Upload</button>
-      </form>
-      {% endwith %} {% else %}
-      <form
-        action="{% url 'gcash_mode_admin' 0 %}"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        {% csrf_token %}
-        <h1>Upload First GCash QR</h1>
-        <input type="file" name="images" multiple />
-        <button type="submit">Upload</button>
-      </form>
-      {% endif %} {% else %}
-      <form
-        action="{% url 'gcash-mode' %}"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        {% csrf_token %}
-        <div class="gcash-form">
-          <h1>GCash Details</h1>
-          <input class="title" name="title" type="hidden" value="" />
-          <input
-            id="gcash_name"
-            name="name"
-            type="text"
-            placeholder="Enter Name"
-            required
-          />
-          <input
-            id="gcash_number"
-            name="gcash_number"
-            type="number"
-            placeholder="Enter GCash Number (11 digits)"
-            pattern="\d{11}"
-            maxlength="11"
-            title="Please enter exactly 11 digits."
-            required
-          />
+      {% if user.is_staff %} 
+        {% if qrCodeID %} {% with qrCodeID.first as qrcode    %}
+        <form
+          action="{% url 'gcash_mode_admin' qrcode.qr_id %}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <h1>Replace GCash QR</h1>
+          <input type="file" name="images" multiple />
+          <button type="submit">Upload</button>
+        </form>
+        {% endwith %} {% else %}
+        <form
+          action="{% url 'gcash_mode_admin' 0 %}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <h1>Upload First GCash QR</h1>
+          <input type="file" name="images" multiple />
+          <button type="submit">Upload</button>
+        </form>
+        {% endif %} 
+      
+      {% else %} 
+        <form
+          action="{% url 'gcash-mode' %}"
+          method="POST"
+          enctype="multipart/form-data"
+          novalidate
+        >
+          {% csrf_token %}
+          <div class="gcash-form">
+            <h1>GCash Details</h1>
+            <input class="title" name="title" type="hidden" value="" />
+            <input
+              id="gcash_name"
+              name="name"
+              type="text"
+              placeholder="Enter Name"
+              required
+            />
+            <input
+              id="gcash_number"
+              name="gcash_number"
+              type="tel"
+              placeholder="Enter GCash Number (11 digits)"
+              pattern="\d{11}"
+              maxlength="11"
+              title="Please enter exactly 11 digits."
+              required
+            />
+            <!-- --- 2. NEW HTML ERROR MESSAGE --- -->
+            <p class="input-error-message" id="gcash_error">Please enter exactly 11 digits.</p>
 
-        <input
-            type="number"
-            name="amount"
-            class="amount_gcash"
-            placeholder="Enter Amount"
-            min="1"
-            step="0.01"
-            required
-          />
-          <button type="button" class="nextGcash">Next</button>
-        </div>
+            <input
+              type="number"
+              name="amount"
+              class="amount_gcash"
+              placeholder="Enter Amount"
+              min="1"
+              step="0.01"
+              required
+            />
+            <button type="button" class="nextGcash">Next</button>
+          </div>
 
-        <div class="gcash-img">
-          <h1>Scan to Donate</h1>
-          {% for qrcode in qrCodeID %}
-          <img src="{{ qrcode.gcash.url }}" alt="" />
-          {% endfor %}
-          <label>Take screenshot of your receipt.</label>
-          <input
-            type="file"
-            accept="image/*"
-            name="images"
-            id="file-input"
-            onchange="loadImage(event)"
-            required
-          />
-          <button type="submit">Submit</button>
-          <button type="button" class="closeBtn">Cancel</button>
-        </div>
-      </form>
+          <div class="gcash-img">
+            <h1>Scan to Donate</h1>
+            
+            <div id="project-qr-container-gcash">
+              {% for qrcode in qrCodeID %}
+                {% if qrcode.gcash %}
+                  <img src="{{ qrcode.gcash.url }}" alt="GCash QR Code" />
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <label>Take screenshot of your receipt.</label>
+            <input
+              type="file"
+              accept="image/*"
+              name="images"
+              id="file-input"
+              onchange="loadImage(event)"
+              required
+            />
+            <button type="submit">Submit</button>
+            <button type="button" class="closeBtn">Cancel</button>
+          </div>
+        </form>
       {% endif %}
     </div>
 
     <div class="mode2">
-      {% if user.is_staff %} {% if qrCodeID %} {% for qrcode in qrCodeID %}
-      <form
-        action="{% url 'bank_mode_admin' qrcode.qr_id %}"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        {% csrf_token %}
-        <h1>Bank QR Upload</h1>
-        <div class="bank-img-admin">
-          <select name="banks" class="bank_card" required>
-            <option value="" disabled selected>Select Bank</option>
-            <option>BPI</option>
-            <option>CHINA BANK</option>
-          </select>
-          <label for="file-banks">
-            <img src="/static/community_involvement/img/upload.png" />
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            name="images"
-            id="file-banks"
-            onchange="loadImageBanks(event)"
-            style="display: none"
-            required
-          />
-          <div>
-            <img id="outputBanks" />
+      {% if user.is_staff %} 
+        {% if qrCodeID %} {% for qrcode in qrCodeID %}
+        <form
+          action="{% url 'bank_mode_admin' qrcode.qr_id %}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <h1>Bank QR Upload</h1>
+          <div class="bank-img-admin">
+            <select name="banks" class="bank_card" required>
+              <option value="" disabled selected>Select Bank</option>
+              <option>BPI</option>
+              <option>CHINA BANK</option>
+            </select>
+            <label for="file-banks">
+              <img src="/static/community_involvement/img/upload.png" />
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              name="images"
+              id="file-banks"
+              onchange="loadImageBanks(event)"
+              style="display: none"
+              required
+            />
+            <div>
+              <img id="outputBanks" />
+              <button type="submit">Submit</button>
+              <button type="button" class="closeBtn">Cancel</button>
+            </div>
+          </div>
+        </form>
+        {% endfor %} {% else %}
+        <form
+          action="{% url 'bank_mode_admin' 0 %}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <h1>Bank QR Upload</h1>
+          <div class="bank-img-admin">
+            <select name="banks" class="bank_card" required>
+              <option value="" disabled selected>Select Bank</Toption>
+              <option>BPI</option>
+              <option>CHINA BANK</option>
+            </select>
+            <label for="file-banks">
+              <img src="/static/community_involvement/img/upload.png" />
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              name="images"
+              id="file-banks"
+              onchange="loadImageBanks(event)"
+              style="display: none"
+              required
+            />
+            <div>
+              <img id="outputBanks" />
+              <button type="submit">Submit</button>
+              <button type="button" class="closeBtn">Cancel</button>
+            </div>
+          </div>
+        </form>
+        {% endif %} 
+
+      {% else %} 
+        <form
+          action="{% url 'bank-mode' %}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <h1>Bank Details</h1>
+          <div class="bank-form">
+            <input class="title" name="title" type="hidden" value="" />
+            <input
+              id="bank_name"
+              name="name"
+              type="text"
+              placeholder="Enter Name"
+              required
+            />
+            <select name="banks" class="bank_card" required>
+              <option value="" disabled selected>Select Bank</option>
+              <option>BPI</option>
+              <option>CHINA BANK</option>
+            </select>
+            <input
+              id="bank_number"
+              name="bank_number"
+              type="number"
+              placeholder="Enter Account Number"
+              required
+            />
+            <input
+                type="number"
+                name="amount"
+                class="bank_amount"
+                placeholder="Enter Amount"
+                min="1"
+                step="0.01"
+                required
+              />
+            <button type="button" class="nextBank">Next</button>
+          </div>
+          <div class="bank-img">
+            
+            <div id="project-qr-container-bank">
+              <div id="qr_bank"><img src="" alt="Bank QR Code" /></div>
+            </div>
+
+            <label>Take screenshot of your receipt.</label>
+            <input
+              type="file"
+              accept="image/*"
+              name="images"
+              onchange="loadImage(event)"
+              required
+            />
             <button type="submit">Submit</button>
             <button type="button" class="closeBtn">Cancel</button>
           </div>
-        </div>
-      </form>
-      {% endfor %} {% else %}
-      <form
-        action="{% url 'bank_mode_admin' 0 %}"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        {% csrf_token %}
-        <h1>Bank QR Upload</h1>
-        <div class="bank-img-admin">
-          <select name="banks" class="bank_card" required>
-            <option value="" disabled selected>Select Bank</option>
-            <option>BPI</option>
-            <option>CHINA BANK</option>
-          </select>
-          <label for="file-banks">
-            <img src="/static/community_involvement/img/upload.png" />
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            name="images"
-            id="file-banks"
-            onchange="loadImageBanks(event)"
-            style="display: none"
-            required
-          />
-          <div>
-            <img id="outputBanks" />
-            <button type="submit">Submit</button>
-            <button type="button" class="closeBtn">Cancel</button>
-          </div>
-        </div>
-      </form>
-      {% endif %} {% else %}
-      <form
-        action="{% url 'bank-mode' %}"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        {% csrf_token %}
-        <h1>Bank Details</h1>
-        <div class="bank-form">
-          <input class="title" name="title" type="hidden" value="" />
-          <input
-            id="bank_name"
-            name="name"
-            type="text"
-            placeholder="Enter Name"
-            required
-          />
-          <select name="banks" class="bank_card" required>
-            <option value="" disabled selected>Select Bank</option>
-            <option>BPI</option>
-            <option>CHINA BANK</option>
-          </select>
-          <input
-            id="bank_number"
-            name="bank_number"
-            type="number"
-            placeholder="Enter Account Number"
-            required
-          />
-        <input
-            type="number"
-            name="amount"
-            class="bank_amount"
-            placeholder="Enter Amount"
-            min="1"
-            step="0.01"
-            required
-          />
-          <button type="button" class="nextBank">Next</button>
-        </div>
-        <div class="bank-img">
-          <div id="qr_bank"><img src="" /></div>
-          <label>Take screenshot of your receipt.</label>
-          <input
-            type="file"
-            accept="image/*"
-            name="images"
-            onchange="loadImage(event)"
-            required
-          />
-          <button type="submit">Submit</button>
-          <button type="button" class="closeBtn">Cancel</button>
-        </div>
-      </form>
+        </form>
       {% endif %}
     </div>
 
@@ -238,6 +292,7 @@
         action="{% url 'volunteer-mode' %}"
         method="POST"
         enctype="multipart/form-data"
+        novalidate 
       >
         {% csrf_token %}
         <h1>Volunteer Details</h1>
@@ -260,9 +315,12 @@
             pattern="\d{11}"
             title="Please enter exactly 11 digits."
           />
+          <!-- --- 2. NEW HTML ERROR MESSAGE --- -->
+          <p class="input-error-message" id="contact_error">Please enter exactly 11 digits.</p>
+
           <select name="what_kind" class="what_kind" required>
             <option value="" disabled selected>Select type</option>
-         <option>RELIEF GOODS</option>
+            <option>RELIEF GOODS</option>
             <option>BELONGINGS</option>
             <option>MONEY</option>
             <option>EQUIPMENTS</option>
@@ -319,24 +377,80 @@
 
 <script src="{% static 'scripts/community/donate.js' %}"></script>
 
-{% for qrcode in qrCodeID %}
+{% if qrCodeID %}
+  {% for qrcode in qrCodeID %}
+  <script>
+    // This code block is separate because it needs Django's template tags
+    // to render the URLs from the database.
+    $(".bank_card").on("change", function () {
+      let bank_card = $(this).val();
+      let imgMap = {
+        BPI: "{{qrcode.bpi.url}}",
+        BDO: "{{qrcode.bdo.url}}",
+        LANDBANK: "{{qrcode.landbank.url}}",
+        PNB: "{{qrcode.pnb.url}}",
+        "METRO BANK": "{{qrcode.metro.url}}",
+        "UNION BANK": "{{qrcode.union.url}}",
+        "CHINA BANK": "{{qrcode.china.url}}",
+      };
+      if (imgMap[bank_card]) {
+        $("#qr_bank img").attr("src", imgMap[bank_card]);
+      }
+    });
+  </script>
+  {% endfor %}
+{% endif %}
+
+
+<!-- --- 3. NEW JAVASCRIPT FOR CUSTOM VALIDATION --- -->
 <script>
-  // This code block is separate because it needs Django's template tags
-  // to render the URLs from the database.
-  $(".bank_card").on("change", function () {
-    let bank_card = $(this).val();
-    let imgMap = {
-      BPI: "{{qrcode.bpi.url}}",
-      BDO: "{{qrcode.bdo.url}}",
-      LANDBANK: "{{qrcode.landbank.url}}",
-      PNB: "{{qrcode.pnb.url}}",
-      "METRO BANK": "{{qrcode.metro.url}}",
-      "UNION BANK": "{{qrcode.union.url}}",
-      "CHINA BANK": "{{qrcode.china.url}}",
-    };
-    if (imgMap[bank_card]) {
-      $("#qr_bank img").attr("src", imgMap[bank_card]);
-    }
+document.addEventListener('DOMContentLoaded', (event) => {
+  
+  // Helper function to handle validation
+  function setupInputValidation(inputId, errorId) {
+    const input = document.getElementById(inputId);
+    const error = document.getElementById(errorId);
+
+    if (!input || !error) return; // Exit if elements don't exist
+
+    // Show/hide error message in real-time as user types
+    input.addEventListener('input', function(e) {
+      if (input.validity.valid || input.value === '') {
+        error.style.display = 'none'; // Hide error if valid or empty
+      } else {
+        error.style.display = 'block'; // Show error if invalid
+      }
+    });
+
+    // This runs when the form tries to submit but the input is invalid
+    input.addEventListener('invalid', function(e) {
+      e.preventDefault(); // IMPORTANT: Stops the default browser validation bubble
+      error.style.display = 'block'; // Show our custom error message
+    });
+    
+    // Hide the error when the user clears the input
+    input.addEventListener('change', function(e) {
+      if (input.value === '') {
+        error.style.display = 'none';
+      }
+    });
+  }
+
+  // Setup validation for GCash number
+  setupInputValidation('gcash_number', 'gcash_error');
+
+  // Setup validation for Volunteer contact number
+  setupInputValidation('contact_number', 'contact_error');
+
+  // Also, find all close buttons and add a listener to hide errors when popup closes
+  const closeButtons = document.querySelectorAll('.donate-popup .close, .donate-popup .closeBtn');
+  closeButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.input-error-message').forEach(err => {
+        err.style.display = 'none';
+      });
+    });
   });
+
+});
 </script>
-{% endfor %}

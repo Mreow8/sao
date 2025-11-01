@@ -7,3 +7,4 @@ from .alumni import *
 from .discipline import *
 from .main import *
 from .studentlife import *
+from .community import *

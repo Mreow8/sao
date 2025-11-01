@@ -1,92 +1,130 @@
 {% extends 'main.html' %} {% block bodycontent %}
-
 <style>
+  /* ===================================================================
+   1. :ROOT VARIABLES (Your Project's Design System)
+   =================================================================== */
+  :root {
+    /* --- Colors --- */
+    --primary: #2c5282;
+    --primary-dark: #2a4365;
+    --primary-light: #ebf8ff;
+    --white: #ffffff;
+    --gray-100: #f9f9f9;
+    --gray-200: #f4f7f6;
+    --gray-300: #e0e0e0;
+    --gray-400: #ddd;
+    --gray-700: #555;
+    --gray-900: #333;
+
+    /* --- Typography --- */
+    --font-family-base: "Rubik", sans-serif;
+
+    /* --- Sizing & Spacing --- */
+    --spacer-1: 0.5rem; /* 8px */
+    --spacer-2: 1rem; /* 16px */
+    --spacer-3: 1.5rem; /* 24px */
+    --spacer-4: 2.5rem; /* 40px */
+
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-color: var(--gray-400);
+
+    /* --- Shadows --- */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  h2 {
+    color: #2c5282;
+  }
+
+  /* ===================================================================
+   2. ALUMNI EVENT PAGE STYLES
+   =================================================================== */
+
+  /* --- General & Container --- */
   section {
-    justify-content: center;
-    align-items: center;
-    background-color: #f7f7f7;
-    min-height: 100vh;
-    color: #222;
+    font-family: var(--font-family-base);
+    padding: var(--spacer-4) var(--spacer-2);
+    background-color: var(--gray-200); /* Light gray background for the page */
   }
 
   .container {
     max-width: 1200px;
-    width: 100%;
     margin: 0 auto;
+    padding: 0 15px;
   }
 
-  .event-wrapper {
-    background-color: #ffffff;
-    padding: 40px 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
-
-  .event-wrapper h1 {
-    font-size: 30px;
-    font-weight: 600;
-    margin-bottom: 25px;
-    text-align: center;
-    color: #333333;
-  }
-
+  /* --- Event Grid Layout --- */
   .event-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 25px;
+    /* This is the key for a responsive grid:
+    - It creates as many columns as can fit (auto-fit).
+    - Each column will be a minimum of 300px.
+    - They will all stretch equally to fill the space (1fr).
+  */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacer-3);
   }
 
+  /* --- Event Card Styling --- */
   .event-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    overflow: hidden;
-    background: #fff;
-    transition: box-shadow 0.3s ease;
+    /* This is your .card component style */
+    background-color: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden; /* Ensures image corners are rounded */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .event-card:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   }
 
   .event-img {
     width: 100%;
-    height: 220px;
-    object-fit: cover;
-    background-color: #f0f0f0;
+    height: 200px; /* Fixed height for all event images */
+    object-fit: cover; /* Ensures image covers the area without distortion */
+    display: block;
   }
 
   .event-details {
-    padding: 16px 20px;
+    padding: var(--spacer-3);
   }
 
   .event-details h2 {
-    font-size: 18px;
-    color: #444;
-    font-weight: 500;
-    margin: 0 0 6px;
-  }
-
-  .event-details h2:hover {
-    text-decoration: underline;
-    cursor: pointer;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2c5282;
+    margin-top: 0;
+    margin-bottom: var(--spacer-2);
   }
 
   .event-details p {
-    font-size: 14px;
-    color: #666;
-    margin: 2px 0;
-    line-height: 1.4;
+    font-size: 0.95rem;
+    color: var(--gray-700);
+    margin-bottom: var(--spacer-1);
+    line-height: 1.5;
   }
 
+  /* Style date and location (first two <p> tags) to be more prominent */
+  .event-details p:nth-of-type(1),
+  .event-details p:nth-of-type(2) {
+    font-weight: 500;
+    color: var(--gray-900);
+  }
+
+  /* --- Fallback Message --- */
   .no-events {
-    font-size: 18px;
-    font-weight: 400;
+    font-size: 1.1rem;
+    color: var(--gray-700);
     text-align: center;
-    margin-top: 30px;
-    color: #999;
+    padding: var(--spacer-4);
+    background-color: var(--white);
+    border-radius: var(--border-radius-md);
+    border: 1px dashed var(--border-color);
   }
 </style>
-
 <section>
   <div class="container">
     <div class="sub-title">

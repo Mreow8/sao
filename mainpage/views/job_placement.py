@@ -836,15 +836,13 @@ def attend_all_pending(request, id): # handle attend all button
     return redirect('manage_att', id=id)
 
     # NON-ACADEMIC AWARD ISSUANCE
+
 def non_acad_page(request):
-    if not (request.user.is_staff or request.user.is_superuser): # prevent student/alien access
+    if not (request.user.is_staff or request.user.is_superuser):
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
     
-    if not ( isinstance(request.user, JobPlacementAdminUser) or request.user.is_superuser): # prevent other admin access
-
-        messages.info(request, 'Must be Jobplacement staff/admin to access page')
-        return redirect('admin_login')    
+     
     
     def fill_placeholders(doc, data): # replace placeholders from template
         for p in doc.paragraphs:
@@ -866,12 +864,20 @@ def non_acad_page(request):
 
     # Processes Non-Academic Award
     if request.method == 'POST':
+        student_id = request.POST.get('student_id')
+        date_issued_str = request.POST.get('date_issued') # <-- MOVED HERE
+        
         try:
-            student_id = request.POST.get('student_id')
-            student = studentInfo.objects.get(studID = student_id)
-            date_issued_str = request.POST.get('date_issued')
-        except: 
-            messages.error(request, "failed to get inputs")
+            # --- TRY ONLY THE CODE THAT CAN FAIL ---
+            student = studentInfo.objects.get(studID=student_id)
+            
+        except studentInfo.DoesNotExist: 
+            messages.error(request, f"Student with ID '{student_id}' not found. Please select a valid student.")
+            return redirect('non_acad_page') # <-- ADD THIS to stop the function
+        except Exception as e:
+            # Catch other errors (like if student_id is None)
+            messages.error(request, f"Failed to get inputs: {e}")
+            
             
         # Default value if date_issued_str is None or empty
         default_date = datetime.now()   

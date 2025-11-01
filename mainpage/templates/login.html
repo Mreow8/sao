@@ -346,6 +346,7 @@ Copied from register.html
                 type="text"
                 placeholder="Enter your email"
                 name="email"
+                value="{{ email|default:'' }}"
                 required
               />
             </div>
@@ -376,5 +377,34 @@ Copied from register.html
         </div>
       </div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Select the inputs
+        const emailInput = document.querySelector('input[name="email"]');
+        const passwordInput = document.querySelector('input[name="password"]');
+
+        // Select all possible error messages
+        const errorMessages = document.querySelectorAll(
+          ".error-message, .error"
+        );
+
+        // Function to hide all error messages
+        function hideErrors() {
+          errorMessages.forEach(function (msg) {
+            // Hide the message
+            msg.style.display = "none";
+          });
+        }
+
+        // Add an event listener to both inputs
+        // 'focus' fires when the user clicks into the input
+        if (emailInput) {
+          emailInput.addEventListener("focus", hideErrors);
+        }
+        if (passwordInput) {
+          passwordInput.addEventListener("focus", hideErrors);
+        }
+      });
+    </script>
   </body>
 </html>

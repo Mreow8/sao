@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ..models import (
     Program, ProgramImage, MOD, QrDonation,
     CrowdfundingProject, Donation, DonationChannel
@@ -308,15 +308,40 @@ def gcash_mode(request):
     return redirect("programs")
 
 def gcash_mode_admin(request, id):
+    # It's good practice to ensure this is a POST request
+    if request.method != "POST":
+        messages.error(request, "Invalid request.")
+        return redirect("crowdfunding_list")
+
     qr = request.FILES.getlist("images")
-    for image in qr:
-        if QrDonation.objects.count() == 0 or id == 0:
-            qrCode = QrDonation(gcash=image)
-        else:
-            qrCode = QrDonation.objects.get(pk=id) # Use pk, not qr_id
-            qrCode.gcash = image
-        qrCode.save()
-    return redirect("programs")
+
+    # --- Check if any file was uploaded ---
+    if not qr:
+        messages.warning(request, "No file was selected. Please choose an image.")
+        return redirect("crowdfunding_list")
+
+    try:
+        for image in qr:
+            if QrDonation.objects.count() == 0 or id == 0:
+                qrCode = QrDonation(gcash=image)
+            else:
+                # Get the existing object to update it
+                qrCode = QrDonation.objects.get(pk=id) 
+                qrCode.gcash = image
+            
+            qrCode.save() # Save the object
+
+        # --- Add Success Message ---
+        messages.success(request, "GCash QR code uploaded successfully!")
+
+    except QrDonation.DoesNotExist:
+        messages.error(request, f"Upload failed: Could not find a QR object with ID {id}.")
+    except Exception as e:
+        # --- Add Generic Error Message ---
+        messages.error(request, f"An error occurred: {e}")
+
+    # This will redirect and the message will be displayed on the next page
+    return redirect("crowdfunding_list")
 
 def bank_mode(request):
     if request.method == "POST":
@@ -486,8 +511,33 @@ def archive_program(request, id):
     return redirect("programs") # Changed from "program" to "programs"
 
 def donation_validate(request):
-    loadDonations = MOD.objects.filter(status=None)
-    context = {"url": "report", "loadDonations": loadDonations}
+  
+    
+    filter_status = request.GET.get('filterStatus')
+
+    if filter_status in ['Accepted', 'Declined']:
+        donation_list = MOD.objects.filter(status=filter_status).order_by('-date')
+    else:
+        donation_list = MOD.objects.filter(status=None).order_by('-date')
+
+    paginator = Paginator(donation_list, 10) 
+
+    page_number = request.GET.get('page')
+
+    try:
+        loadDonations = paginator.page(page_number)
+    except PageNotAnInteger:
+        loadDonations = paginator.page(1)
+    except EmptyPage:
+        loadDonations = paginator.page(paginator.num_pages)
+
+    context = {
+        "url": "report", 
+        "loadDonations": loadDonations,
+    
+        "selected_status": filter_status 
+    }
+    
     return render(
         request,
         "community_involvement/admin/donation-validate.html",

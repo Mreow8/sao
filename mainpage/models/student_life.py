@@ -37,14 +37,13 @@ class Schedule(models.Model):
     sched_Id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    start_datetime = models.DateTimeField()
-    end_datetime = models.DateTimeField()
+    start_date = models.DateField()
+    end_date = models.DateField()
 
     def __str__(self):
         return f"{self.sched_Id} {self.title}"
 
 
-# EQUIPMENT TRACKER
 class Equipment(models.Model):
     itemId = models.AutoField(primary_key=True)
     equipmentName = models.CharField(max_length=255)

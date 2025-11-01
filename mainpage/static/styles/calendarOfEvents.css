@@ -1,123 +1,209 @@
-/* --- Global & Fonts --- */
-#calendar,
-#calendar .fc-button {
+/* --- Import Font --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.container,
+.sub-title,
+input,
+select,
+button,
+table {
   font-family: "Rubik", sans-serif;
 }
-
-/* --- Main Page Container --- */
-/* This creates the white card and centers it */
-#page-container {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-
-  /* This centers the card and gives it a max width */
-  max-width: 1200px; /* Adjust as needed */
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: #87caee !important; /* Light blue highlight */
+}
+.container {
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1.5rem 2rem;
 }
 
-/* --- FullCalendar Style Overrides --- */
+/* --- SweetAlert (Add Schedule) Theming --- */
+.swal2-popup label {
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  color: #333;
+  text-align: left;
+  display: block;
+  margin: 1rem 0 0.25rem;
+  font-size: 0.9rem;
+}
 
-/* Header Toolbar */
-#calendar .fc-header-toolbar {
-  margin-bottom: 2rem !important; /* !important to override inline styles */
+.swal2-input,
+.swal2-textarea {
+  font-family: "Rubik", sans-serif !important;
+  font-size: 1rem !important;
+  border: 1px solid #ccc !important;
+  border-radius: 8px !important;
+  background-color: #f9f9f9 !important;
+  /* Make inputs wider */
+  width: 90% !important;
+  box-sizing: border-box !important;
+}
+
+.swal2-input:focus,
+.swal2-textarea:focus {
+  border-color: #2c5282 !important;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3) !important;
+}
+
+/* --- Bootstrap Modal (View Event) Theming --- */
+.modal {
   font-family: "Rubik", sans-serif;
 }
-
-/* Toolbar Title (e.g., "October 2025") */
-#calendar .fc-toolbar-title {
-  font-size: 1.75rem; /* Larger title */
+.modal-content {
+  border-radius: 12px !important;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.modal-header {
+  background-color: #f9f9f9;
+  color: #2c5282;
+  border-bottom: 1px solid #e0e0e0;
+}
+.modal-header .modal-title {
   font-weight: 600;
-  color: #1a202c;
+}
+.modal-body dl {
+  margin-bottom: 0;
+}
+.modal-body dt {
+  font-weight: 600;
+  color: #2c5282;
+}
+.modal-body dd {
+  margin-left: 0.5rem;
+  margin-bottom: 1rem;
+}
+.modal-footer {
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+}
+.btn-primary {
+  background-color: #2c5282;
+  border-color: #2c5282;
+}
+.btn-primary:hover {
+  background-color: #2a4365;
+  border-color: #2a4365;
+}
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #c82333;
 }
 
-/* Toolbar Buttons (Prev, Next, Today, Month/Week/Day) */
-#calendar .fc-button-primary {
-  background-color: #2c5282; /* Primary Blue */
+/*
+=========================================
+--- NEW: FullCalendar Theme Overrides ---
+=========================================
+*/
+
+/* --- Main Calendar Font & Border --- */
+.fc {
+  font-family: "Rubik", sans-serif;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+  padding: 1.5rem;
+  background: #ffffff;
+}
+
+/* --- Toolbar / Header --- */
+.fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+}
+
+/* --- "Today" Button --- */
+.fc .fc-today-button {
+  background-color: #2c5282;
+  border-color: #2c5282;
   color: white;
-  border: none;
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  opacity: 1; /* Make it solid */
+}
+.fc .fc-today-button:hover {
+  background-color: #2a4365; /* Darker blue */
+  border-color: #2a4365;
+}
+.fc .fc-today-button:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
 }
 
-/* Button Hover State */
-#calendar .fc-button-primary:hover {
-  background-color: #2a4365; /* Darker Blue */
-}
-
-/* Active Button (e.g., the current view) */
-#calendar .fc-button-primary:not(:disabled).fc-button-active,
-#calendar .fc-button-primary:not(:disabled):active {
-  background-color: #2a4365; /* Darker Blue */
+/* --- Prev/Next Buttons --- */
+.fc .fc-button {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  color: #555; /* Icon color */
   box-shadow: none;
 }
-
-/* Remove focus shadow */
-#calendar .fc-button:focus {
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
+.fc .fc-button:hover {
+  background: #ebf8ff;
+  border-color: #2c5282;
+  color: #2c5282;
 }
 
-/* --- Calendar Grid --- */
-
-/* Day Headers (Sun, Mon, Tue) */
-#calendar .fc-col-header-cell-cushion {
-  font-size: 0.9rem;
+/* --- Day Headers (Sun, Mon, Tue) --- */
+.fc .fc-col-header-cell {
+  background: #f9f9f9;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #2c5282; /* Primary Blue */
+  color: #555;
+  border: none;
+}
+.fc .fc-col-header-cell-cushion {
+  /* The link inside the header */
   text-decoration: none;
-  padding: 8px 4px;
+  color: #555;
+  padding: 0.5rem;
 }
 
-/* Day background for "Today" */
-#calendar .fc-day-today {
-  background-color: #ebf8ff; /* Light Blue */
+/* --- Day Cells --- */
+.fc .fc-daygrid-day {
+  background: #f9f9f9;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
+}
+.fc .fc-daygrid-day:hover {
+  background: #ebf8ff;
 }
 
-/* Day Numbers */
-#calendar .fc-daygrid-day-number {
-  color: #2d3748; /* Dark Gray */
-  font-weight: 500;
+/* --- "Today" Cell Highlight --- */
+.fc .fc-day-today {
+  background-color: #ebf8ff; /* Light blue highlight */
+}
+
+/* --- "Other Month" Day Cells --- */
+.fc .fc-day-other {
+  background: #fff;
+  border-color: #f1f1f1;
+}
+
+/* --- Day Number (1, 2, 3) --- */
+.fc .fc-daygrid-day-number {
   text-decoration: none;
-  padding: 4px;
+  color: #374151;
+  padding: 0.5rem;
+}
+.fc .fc-day-today .fc-daygrid-day-number {
+  color: #2c5282;
+  font-weight: 700;
 }
 
-/* --- Calendar Events --- */
-#calendar .fc-event {
+/* --- Event Bar Styles --- */
+.fc .fc-event {
   background-color: #2c5282; /* Primary Blue */
   border-color: #2c5282;
   color: white;
   font-weight: 500;
   padding: 3px 5px;
   border-radius: 4px;
-}
-
-/* Event Title Text */
-#calendar .fc-event-title {
-  font-weight: 500;
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-  #page-container {
-    padding: 1.5rem;
-  }
-
-  /* Stack toolbar on mobile */
-  #calendar .fc-header-toolbar {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  #calendar .fc-toolbar-title {
-    font-size: 1.5rem;
-  }
-}
-.col-md-9 {
-  width: 80%;
-  margin: 0 auto;
 }

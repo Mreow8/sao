@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime, parse_date
+from datetime import timedelta
 import io
 import os
 import platform
@@ -232,35 +234,38 @@ def processed_gmc_transactions(request):
         'transaction_records': processed_gmcs
     })
 
-
 # Calendar Of Activities Student Side 
 def monthlyCalendar(request):
     schedules = Schedule.objects.all()
     sched_res = {}
 
     for schedule in schedules:
+        
+        # ⬇️ START OF CHANGES ⬇️
+        # Add 1 day to the end date to make it exclusive for FullCalendar
+        exclusive_end_date = schedule.end_date + timedelta(days=1)
+    
         sched_res[schedule.sched_Id] = {
             'id': schedule.sched_Id,
             'title': schedule.title,
             'description': schedule.description,
-            'start_datetime': schedule.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
-            'end_datetime': schedule.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
-            'sdate': schedule.start_datetime.strftime("%B %d, %Y %I:%M %p"),
-            'edate': schedule.end_datetime.strftime("%B %d, %Y %I:%M %p")
+            'start_datetime': schedule.start_date.strftime("%Y-%m-%d"), # FullCalendar reads this
+            'end_datetime': exclusive_end_date.strftime("%Y-%m-%d"), # Use the new exclusive date
+            'sdate': schedule.start_date.strftime("%B %d, %Y"),
+            'edate': schedule.end_date.strftime("%B %d, %Y")
         }
+     
 
     context = {
         'sched_json': json.dumps(sched_res)
     }
     return render(request, "officeOfStudentL/monthlyCalendar.html", context)
-
 # Calendar of Activities Admin 
 # @sao_admin_required
 
 import json
 from django.shortcuts import render
 from ..models import Schedule  # adjust import path if needed
-
 def monthlyCalendarAdmin(request):
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
@@ -268,16 +273,21 @@ def monthlyCalendarAdmin(request):
     sched_res = {}
 
     for schedule in schedules:
+        
+        # ⬇️ START OF CHANGES ⬇️
+        # Add 1 day to the end date to make it exclusive for FullCalendar
+        exclusive_end_date = schedule.end_date + timedelta(days=1)
+        
         sched_res[schedule.sched_Id] = {
             'id': schedule.sched_Id,
             'title': schedule.title,
             'description': schedule.description,
-            'start': schedule.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),  # FullCalendar expects 'start'
-            'end': schedule.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),      # FullCalendar expects 'end'
-            'sdate': schedule.start_datetime.strftime("%B %d, %Y %I:%M %p"),
-            'edate': schedule.end_datetime.strftime("%B %d, %Y %I:%M %p")
+            'start': schedule.start_date.strftime("%Y-%m-%d"),
+            'end': exclusive_end_date.strftime("%Y-%m-%d"), # Use the new exclusive date
+            'sdate': schedule.start_date.strftime("%B %d, %Y"),
+            'edate': schedule.end_date.strftime("%B %d, %Y") # Keep this for display
         }
-
+        # ⬆️ END OF CHANGES ⬆️
     context = {
         'sched_json': json.dumps(sched_res),
            'is_admin': request.user.is_authenticated and request.user.is_staff, 
@@ -285,65 +295,105 @@ def monthlyCalendarAdmin(request):
 
     }
     return render(request, 'officeOfStudentL/adminUser/monthlyCalendarAdmin.html', context)
-
 # Save Schedule\
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import make_aware
-from django.utils.dateparse import parse_datetime
 from django.http import JsonResponse
 import json
 
-@csrf_exempt  # Optional: if you're manually adding CSRF token in headers
+# ...
+@csrf_exempt
 def save_schedule(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             title = data.get('title')
             description = data.get('description')
-            start = parse_datetime(data.get('start_datetime'))
-            end = parse_datetime(data.get('end_datetime'))
+            
+            # ⬇️ START OF CHANGES ⬇️
+            start_str = data.get('start_date')
+            end_str = data.get('end_date')
 
-            if start and start.tzinfo is None:
-                start = make_aware(start)
-            if end and end.tzinfo is None:
-                end = make_aware(end)
+            # 1. Convert strings to date objects
+            start_obj = parse_date(start_str)
+            end_obj = parse_date(end_str)
 
+            # 2. Check if parsing worked
+            if not start_obj or not end_obj:
+                raise ValueError("Invalid date format. Expected YYYY-MM-DD.")
+            
             sched = Schedule.objects.create(
                 title=title,
                 description=description,
-                start_datetime=start,
-                end_datetime=end
+                start_date=start_obj,  # 3. Save the date OBJECT
+                end_date=end_obj        # 4. Save the date OBJECT
             )
 
             return JsonResponse({
                 'status': 'success',
-                'id': sched.sched_Id,  # use sched_Id if that's your primary key
+                'id': sched.sched_Id,
                 'title': sched.title,
-                'start': sched.start_datetime.isoformat(),
-                'end': sched.end_datetime.isoformat()
+                'description': sched.description,
+                'start': sched.start_date.isoformat(), # 5. This will now work
+                'end': sched.end_date.isoformat()       # 6. This will now work
             }, status=200)
+            # ⬆️ END OF CHANGES ⬆️
 
         except Exception as e:
+            logger.error(f"Error in save_schedule: {e}") 
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=405)
-
+@csrf_exempt  # Add this to allow POST requests from JavaScript
 def update_schedule(request, schedule_id):
     if request.method == 'POST':
-        schedule = get_object_or_404(Schedule, pk=schedule_id)
-        start_datetime = request.POST.get('start_datetime')
-        end_datetime = request.POST.get('end_datetime')
+        try:
+            # 1. Find the schedule object first
+            schedule = get_object_or_404(Schedule, pk=schedule_id)
+            
+            # 2. Load the JSON data from the request.body
+            data = json.loads(request.body)
 
-        if start_datetime and end_datetime:
-            schedule.start_datetime = start_datetime
-            schedule.end_datetime = end_datetime
+            # 3. Get the data from the dictionary
+            start_str = data.get('start_date')
+            end_str = data.get('end_date')
+            title = data.get('title')
+            description = data.get('description')
+
+            # 4. Check if we have the required date strings
+            if not start_str or not end_str:
+                return JsonResponse({'status': 'error', 'message': 'Invalid data: start_date or end_date missing.'}, status=400)
+
+            # 5. Convert the date strings into real date objects
+            start_obj = parse_date(start_str)
+            end_obj = parse_date(end_str)
+
+            if not start_obj or not end_obj:
+                 return JsonResponse({'status': 'error', 'message': 'Invalid date format. Expected YYYY-MM-DD.'}, status=400)
+
+            # 6. Update the schedule object with all new data
+            schedule.title = title
+            schedule.description = description
+            schedule.start_date = start_obj
+            schedule.end_date = end_obj  # <-- FIXED TYPO (was 'end_datet')
             schedule.save()
-            return JsonResponse({'status': 'success'})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Invalid data provided.'}, status=400)
-    else:
-        return JsonResponse({'status': 'error', 'message': 'Method not allowed.'}, status=405)
+            
+            # 7. Send back a full success response
+            return JsonResponse({
+                'status': 'success',
+                'id': schedule.sched_Id,
+                'title': schedule.title,
+                'description': schedule.description,
+                'start': schedule.start_date.isoformat(),
+                'end': schedule.end_date.isoformat()
+            })
 
+        except Exception as e:
+            logger.error(f"Error in update_schedule: {e}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
+    # If the request method is not POST
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed.'}, status=405)
 # Delete Schedule
 def delete_schedule(request, schedule_id):
     schedule = get_object_or_404(Schedule, pk=schedule_id)

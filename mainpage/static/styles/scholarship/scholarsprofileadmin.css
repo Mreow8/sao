@@ -1,187 +1,250 @@
-/* GENERAL LAYOUT */
-body {
-  background-color: #f4f6fa;
+/* --- Import Font --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
 
-  color: #2c2c2c;
-  margin: 0;
-  padding: 0;
+/* --- Global, Container, & Font --- */
+body,
+.container,
+table,
+button,
+input,
+select {
+  font-family: "Rubik", sans-serif;
+}
+
+body {
+  background-color: #f8f9fa; /* Light grey background */
 }
 
 .container {
-  max-width: 1100px;
-  margin: 3rem auto;
-  background: #ffffff;
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
 }
 
-/* PAGE TITLE */
-h1 {
-  text-align: center;
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  color: #0b3d91;
-}
-
-/* FORM CONTROLS */
-.search_id_container {
+/* --- Search Form Card --- */
+.form_div {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-bottom: 2rem;
   align-items: center;
-  justify-content: space-between;
+
+  /* Card Styles (from .gmc-form) */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem; /* Space between this card and the table */
 }
 
+/* --- Search Inputs (like .search-input, .filter-select) --- */
 #search-box,
 #scholar_type {
-  background-color: #f0f2f5;
-  color: #333;
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
   border: 1px solid #ccc;
-  padding: 10px 14px;
   border-radius: 8px;
-  font-size: 14px;
-  flex: 1;
-  min-width: 200px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #333;
+  flex-grow: 1; /* Make them grow */
 }
 
 #search-box:focus,
 #scholar_type:focus {
-  border-color: #ff8000;
-  background-color: #fff;
   outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
 }
 
+/* The <select> needs its black color */
+#scholar_type,
+#scholar_type option {
+  color: black;
+}
+
+/* --- Search/Update Buttons (like .search-btn) --- */
+/* This styles BOTH the <button> and the <a> tag */
 #search-btn {
-  background-color: #ff8000;
+  background-color: #2c5282; /* Primary Blue */
   color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
   border: none;
-  padding: 10px 20px;
-  font-size: 14px;
   border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+
+  /* For the <a> tag version */
+  text-decoration: none;
+  display: inline-block; /* To make padding work */
+  box-sizing: border-box; /* Ensures padding is consistent */
 }
 
 #search-btn:hover {
-  background-color: #e67300;
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
 }
 
-/* TABLE STYLING */
-#requirements-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 30px;
-  font-size: 14px;
+/* Fix for the <a> tag being inside a <div> */
+.search_id_container > a {
+  text-decoration: none;
 }
 
-#requirements-table th,
-#requirements-table td {
-  padding: 14px 18px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-#requirements-table th {
-  background-color: #f7f7f7;
-  color: #ff8000;
-  font-weight: 600;
-  text-align: left;
-}
-
-#requirements-table td {
-  color: #2c2c2c;
-  vertical-align: middle;
-}
-
-#requirements-table input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 13px;
-}
-
-#requirements-table input:focus {
-  border-color: #ff8000;
-  outline: none;
-}
-
-/* BUTTONS IN TABLE */
-#btnsss button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  font-size: 13px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-#btnsss button:hover {
-  background-color: #449d48;
-}
-
-/* ALERT MESSAGES (SweetAlert handles most now) */
+/* --- Django Messages --- */
 .messages {
   list-style: none;
   padding: 0;
   margin-bottom: 1.5rem;
+  /* These will appear inside the table card */
 }
-
 .messages li {
-  background-color: #e74c3c;
-  color: white;
-  padding: 10px 15px;
-  margin-bottom: 8px;
-  border-radius: 6px;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
   font-weight: 500;
+  border: 1px solid;
+  margin-bottom: 1rem;
+}
+.messages li.success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+.messages li.error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+.messages li.info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
 }
 
-/* RESPONSIVE TABLE */
-@media (max-width: 768px) {
-  #requirements-table,
-  #requirements-table thead,
-  #requirements-table tbody,
-  #requirements-table th,
-  #requirements-table td,
-  #requirements-table tr {
-    display: block;
-  }
+/* --- Table Card --- */
+/* We apply the card style to the form wrapping the table */
+form[method="POST"] {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow-x: auto; /* Makes the table scrollable */
+}
 
-  #requirements-table thead {
-    display: none;
-  }
+/* --- Table Styling --- */
+#requirements-table {
+  width: 100%;
+  min-width: 1000px; /* Force scroll */
+  border-collapse: collapse;
+}
+#requirements-table th,
+#requirements-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  vertical-align: middle;
+}
+#requirements-table th {
+  background-color: #f9f9f9;
+  color: #2c5282; /* Theme Blue */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+#requirements-table tr:last-child td {
+  border-bottom: none;
+}
 
-  #requirements-table tbody tr {
-    margin-bottom: 20px;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #ffffff;
-  }
+/* --- Table Inputs --- */
+#requirements-table input[type="text"] {
+  font-family: "Rubik", sans-serif;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #333;
+  width: 100%; /* Make them fill the cell */
+  min-width: 100px; /* Stop them from getting too small */
+  box-sizing: border-box; /* Include padding in width */
+}
 
-  #requirements-table td {
-    position: relative;
-    padding-left: 50%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-  }
+#requirements-table input[type="text"]:focus {
+  outline: none;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
 
-  #requirements-table td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 16px;
-    top: 12px;
-    font-weight: 600;
-    color: #ff8000;
-  }
+/* --- Table Action Buttons --- */
+#btnsss button {
+  font-family: "Rubik", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s;
+  width: 100%;
+}
 
-  #requirements-table td:last-child {
-    border-bottom: none;
-  }
+/* Style for the "ADD" button (like "approve") */
+#btnsss button[value="ADD"] {
+  background-color: #28a745; /* Green */
+}
+#btnsss button[value="ADD"]:hover {
+  background-color: #218838;
+}
+
+/* --- "No applicants" message (inside the card) --- */
+/* This targets the div you have in your {% else %} block */
+form[method="POST"] > div[style*="text-align: center"] {
+  color: #777;
+  font-style: italic;
+  padding: 2rem 0;
+}
+
+/* --- Image Modal (from your JS) --- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+}
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
 }

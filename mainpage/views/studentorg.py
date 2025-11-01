@@ -61,12 +61,15 @@ def upload_accreditation(request, slug):
 # 2. Show details of a single accreditation
 def accreditation_detail(request, accreditation_id):
     accreditation = get_object_or_404(Accreditation, pk=accreditation_id)
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
 
     return render(request, "main/accreditation_detail.html", {
         "accreditation": accreditation,
     })
 def view_financial(request, slug):
     print("🔍 view_financial called with slug:", slug)
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
     try:
         org_obj = Organization.objects.get(slug=slug)
@@ -107,7 +110,8 @@ def view_financial(request, slug):
         'form': form,
         'statements': approved_statements,
         'org': org_obj,
-        'slug': slug
+        'slug': slug,
+        'base_template': base_template,
     })
 
 

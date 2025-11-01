@@ -11,7 +11,12 @@ urlpatterns = [
     path("equipmenttrackerAdmin/", views.equipmentTrackerAdmin, name="equipmentTrackerAdmin"),
     path("save_equipment_borrowing/", views.save_equipment_borrowing, name="save_equipment_borrowing"),
     path("update_return_status/", views.update_return_status, name="update_return_status"),
+    path('save_schedule/', views.save_schedule, name='save_schedule'),
     
+    # Path for UPDATING an existing schedule
+
+    
+
     # GMC
     path("requested-gmc/", views.adminRequestedGmc, name="adminRequestedGmc"),
     path("gmc-form/", views.gmcform, name="gmcform"),

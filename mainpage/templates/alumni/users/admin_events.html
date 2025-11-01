@@ -10,7 +10,17 @@
   textarea {
     font-family: "Rubik", sans-serif;
   }
-
+  /* ... add this to your existing <style> tag ... */
+  .error-message {
+    color: #d8000c; /* Red */
+    background-color: #ffd2d2; /* Light red */
+    border: 1px solid #d8000c;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
   /* Base body styles for a clean look */
   body {
     background-color: #f4f7f6; /* A very light gray, adjust as needed */
@@ -124,7 +134,7 @@
   /* --- Form Grid Layout --- */
   .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
   }
 
@@ -222,39 +232,74 @@
       {% if messages %} {% for message in messages %}
       <div class="success-message">{{ message }}</div>
       {% endfor %} {% endif %}
-
       <form
         method="post"
         action="{% url 'admin_events' %}"
         enctype="multipart/form-data"
       >
-        {% csrf_token %}
+        {% csrf_token %} {% if form.non_field_errors %}
+        <div class="error-message">
+          {% for error in form.non_field_errors %}
+          <span>{{ error }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
 
         <div class="form-grid">
           <div>
             <label>Event Name</label>
-            <input type="text" name="eventsName" required />
+            {{ form.eventsName }} {% if form.eventsName.errors %}
+            <div class="error-message">
+              {% for error in form.eventsName.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div>
             <label>Event Date</label>
-            <input type="date" name="eventsDate" required />
+            {{ form.eventsDate }} {% if form.eventsDate.errors %}
+            <div class="error-message">
+              {% for error in form.eventsDate.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div>
             <label>Event Location</label>
-            <input type="text" name="eventsLocation" required />
+            {{ form.eventsLocation }} {% if form.eventsLocation.errors %}
+            <div class="error-message">
+              {% for error in form.eventsLocation.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
         </div>
 
         <div>
           <label>Event Description</label>
-          <textarea name="eventsDescription" required></textarea>
+          {{ form.eventsDescription }} {% if form.eventsDescription.errors %}
+          <div class="error-message">
+            {% for error in form.eventsDescription.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
 
         <div>
           <label>Upload Image</label>
-          <input type="file" name="eventsImage" required />
+          {{ form.eventsImage }} {% if form.eventsImage.errors %}
+          <div class="error-message">
+            {% for error in form.eventsImage.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
 
         <div class="submit-container">

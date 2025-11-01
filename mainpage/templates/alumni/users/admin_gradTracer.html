@@ -20,7 +20,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  overflow: hidden; /* Clips the table corners */
+  overflow-x: auto; /* Clips the table corners */
   background: #fff;
 }
 
@@ -195,6 +195,13 @@
     text-align: left;
   }
 }
+.body-content {
+background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
 </style>
 
 <div class="sub-title">
@@ -204,6 +211,8 @@
 </div>
 
 <div class="container">
+
+  <div class="body-content">
   <div class="admin-table-wrapper">
       <table id="trackerTable">
     <thead>
@@ -444,6 +453,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
   </div>
 </div><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

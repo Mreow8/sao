@@ -1,16 +1,14 @@
 from django import forms
 from mainpage.models import Schedule, ExcelData, Storage
 
-# MONTHLY CALENDAR OF ACTIVITIES
 class ScheduleForm(forms.ModelForm):
     class Meta:
         model = Schedule
-        fields = ['title', 'description', 'start_datetime', 'end_datetime']
+        fields = ['title', 'description', 'start_date', 'end_date']
         widgets = {
-            'start_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'end_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
-
 # PPMP TRACKER FORMS
 from django import forms
 from ..models import PPMPDocument

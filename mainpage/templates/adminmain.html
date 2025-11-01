@@ -198,20 +198,21 @@
     </div>
 
     <div class="right-side">
-      <div class="custom-search-wrapper">
-        <div class="search-container flex items-center justify-between">
-          <div class="flex items-center flex-1 max-w-md">
-            <div class="search-icon mr-2">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </div>
-            <input
-              type="text"
-              placeholder="Search..."
-              class="w-full border rounded-lg px-3 py-1"
-            />
-          </div>
+     <div class="custom-search-wrapper sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200">
+    <div class="search-container flex items-center justify-between px-6 py-4">
+      
+      <div class="relative flex-1 max-w-md">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+          <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+        </span>
+        <input 
+          type="text" 
+          placeholder="Search..." 
+          class="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
+        />
+      </div>
 
-          <div class="flex items-center space-x-4 ml-4">
+      <div class="account-info flex items-center ml-6 relative">
             <a
               href="{% url 'upload_files' %}"
               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700 transition"
@@ -229,8 +230,8 @@
 
               <div class="profile-popup">
                 <strong>Student ID:</strong> {{ user.username }}<br />
-                <strong>Name:</strong> {{ user.first_name }} {{ user.last_name
-                }}<br />
+                <!-- prettier-ignore -->
+                <strong>Name:</strong> {{ user.first_name }} {{ user.last_name  }}<br />
                 <button class="logout-btn">
                   <a href="{% url 'logout' %}">Logout</a>
                 </button>

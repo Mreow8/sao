@@ -203,10 +203,13 @@
         <div class="con bot">
           <a href="/main/{{ org.slug }}_CBL" class="button">View CBL</a>
 {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
+ <a href="{% url 'view_adviser' org.slug %}" class="button"
+            >List Officers</a
+          >
           <a href="{% url 'officer_form' slug=org.slug %}" class="button"
             >Register Officer</a
           >{%endif%}
-
+          
           <a href="{% url 'view_adviser' org.slug %}" class="button"
             >List Advisers</a
           >

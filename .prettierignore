@@ -18,3 +18,4 @@ mainpage/templates/community_involvement/crowdfunding_list.html
 mainpage/templates/community_involvement/programs.html
 mainpage/templates/community_involvement/donate.html
 mainpage/templates/studentorg/Main/register_adviser_new.html
+mainpage/templates/officeOfStudentL/adminUser/monthlyCalendarAdmin.html

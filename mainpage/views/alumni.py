@@ -575,25 +575,27 @@ def admin_gradTracer(request):
     return render(request, 'alumni/users/admin_gradTracer.html', {'graduate_requests': graduate_requests})
 # @sao_admin_required
 from ..forms import EventForm
+from ..forms import EventForm
+# @sao_admin_required
 def admin_events(request):
     if request.method == 'POST':
+        # 1. Bind the form to the POST data
         form = EventForm(request.POST, request.FILES)
         
         if form.is_valid():
-            # SUCCESS: Form is valid, save it
+            # 2. SUCCESS: Save and redirect
             form.save()
             messages.success(request, 'Successfully Added!')
             return redirect('admin_events')
-        else:
-            # FAIL: Form is invalid. 
-            # We create a new, blank form to hide the errors.
-            form = EventForm()
+        
+        # 3. FAIL: If invalid, the code continues here. 
+        # The 'form' variable now has the data and errors.
+    
     else:
-        # GET Request: Just show a blank form
+        # 4. GET Request: Show a blank form
         form = EventForm()
 
-    # This context will *only* ever contain a blank form.
-    # Error messages are never passed to the template.
+    # 5. Pass the form (either new or with errors) to the template
     context = {'form': form}
     return render(request, 'alumni/users/admin_events.html', context)
 # @sao_admin_required

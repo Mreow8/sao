@@ -346,5 +346,37 @@
         </div>
       </div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Select all the inputs in this form
+        const studIDInput = document.querySelector('input[name="studID"]');
+        const emailInput = document.querySelector('input[name="email"]');
+        const passwordInput = document.querySelector('input[name="password"]');
+        const cpasswordInput = document.querySelector(
+          'input[name="cpassword"]'
+        );
+
+        // Select the error message
+        const errorMessage = document.querySelector(".error-message");
+
+        // Function to hide the error message
+        function hideError() {
+          if (errorMessage) {
+            errorMessage.style.display = "none";
+          }
+        }
+
+        // List of all inputs to monitor
+        const inputs = [studIDInput, emailInput, passwordInput, cpasswordInput];
+
+        // Add an event listener to every input
+        // 'focus' fires when the user clicks into the input
+        inputs.forEach(function (input) {
+          if (input) {
+            input.addEventListener("focus", hideError);
+          }
+        });
+      });
+    </script>
   </body>
 </html>

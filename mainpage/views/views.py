@@ -121,102 +121,96 @@ User = get_user_model()
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
-
 def signinuser(request):
     if request.method == 'POST':
+        # --- GET FORM DATA FIRST ---
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password')
-        recaptcha_response = request.POST.get('g-recaptcha-response') # Get the response token from the form
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+
+        # --- PREPARE CONTEXT FOR ERRORS ---
+        # This context will be passed back to the template to repopulate the email
+        context = {'email': email}
 
         # --- reCAPTCHA Verification Step ---
         if not recaptcha_response:
             messages.error(request, "Please complete the reCAPTCHA.")
-            return render(request, 'login.html')
+            return render(request, 'login.html', context) # Pass context
 
-        # 1. Check if the secret key is configured in settings.py
-        secret_key = getattr(settings, 'RECAPTCHA_SECRET_KEY', None) # Use SECRET_KEY as recommended
+        secret_key = getattr(settings, 'RECAPTCHA_SECRET_KEY', None)
         if not secret_key:
             messages.error(request, "reCAPTCHA is not configured correctly (missing secret key). Please contact the administrator.")
-            # Log a more detailed error for the admin
             logger.error("RECAPTCHA_SECRET_KEY is missing in Django settings.")
-            return render(request, 'login.html')
+            return render(request, 'login.html', context) # Pass context
 
         try:
-            # Prepare data for Google's verification API
             data = {
                 'secret': secret_key,
                 'response': recaptcha_response
             }
-            # Send verification request to Google
-            verify_response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=5) # Added timeout
-            verify_response.raise_for_status() # Raise an error for bad status codes
+            verify_response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data, timeout=5)
+            verify_response.raise_for_status()
             result = verify_response.json()
 
         except requests.exceptions.Timeout:
             messages.error(request, "Could not verify reCAPTCHA (timeout). Please try again.")
             logger.warning("reCAPTCHA verification request timed out.")
-            return render(request, 'login.html')
+            return render(request, 'login.html', context) # Pass context
         except requests.exceptions.RequestException as e:
             messages.error(request, f"Could not connect to reCAPTCHA service. Error: {e}")
             logger.error(f"reCAPTCHA connection error: {e}")
-            return render(request, 'login.html')
-        except Exception as e: # Catch potential JSON errors or other issues
+            return render(request, 'login.html', context) # Pass context
+        except Exception as e:
             messages.error(request, f"An unexpected error occurred during reCAPTCHA verification: {e}")
             logger.error(f"Unexpected reCAPTCHA error: {e}")
-            return render(request, 'login.html')
+            return render(request, 'login.html', context) # Pass context
 
-        # 2. Check Google's response for success AND potential secret key errors
         if not result.get('success'):
             error_codes = result.get('error-codes', [])
-            logger.warning(f"reCAPTCHA verification failed. Error codes: {error_codes}") # Log errors
+            logger.warning(f"reCAPTCHA verification failed. Error codes: {error_codes}")
 
             if 'missing-input-secret' in error_codes:
                 messages.error(request, "reCAPTCHA configuration error (missing secret). Please contact the administrator.")
             elif 'invalid-input-secret' in error_codes:
                  messages.error(request, "reCAPTCHA configuration error (invalid secret). Please contact the administrator.")
             else:
-                 messages.error(request, "Invalid reCAPTCHA. Please try again.") # Generic message for other errors
+                 messages.error(request, "Invalid reCAPTCHA. Please try again.")
 
-            return render(request, 'login.html')
+            return render(request, 'login.html', context) # Pass context
         # --- End reCAPTCHA Validation ---
 
-        # --- User Authentication (Proceed ONLY if reCAPTCHA was successful) ---
+        # --- User Authentication ---
         try:
-            # Find the user by email first
             user_obj = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, "Account does not exist.")
-            return render(request, 'login.html')
+            return render(request, 'login.html', context) # Pass context
 
-        # Check if account is active
         if not user_obj.is_active:
             messages.error(request, "This account is inactive. Contact admin.")
-            return render(request, 'login.html')
+            return render(request, 'login.html', context) # Pass context
 
-        # Authenticate using the username found via email
         user = authenticate(request, username=user_obj.username, password=password)
 
         if user:
             login(request, user)
-            messages.success(request, f"Welcome, {user.first_name or user.username}!") # Optional welcome message
+            messages.success(request, f"Welcome, {user.first_name or user.username}!")
 
-            # Redirect based on user role (Make sure 'role' attribute exists on your User model)
             if user.is_superuser:
-                return redirect('adminmain') # Use your actual admin URL name
+                return redirect('adminmain')
             elif hasattr(user, 'role') and user.role == 'student':
-                 return redirect('homepage') # Use your actual student URL name
-            elif hasattr(user, 'role') and user.role in ['clinic_admin', 'staff', 'guidance', 'scholarship_officer', 'placement_officer', 'discipline_officer', 'alumni_officer', 'student_life_staff']: # Check for any staff role
-                 return redirect('adminmain') # Use your actual staff URL name
+                 return redirect('homepage')
+            elif hasattr(user, 'role') and user.role in ['clinic_admin', 'staff', 'guidance', 'scholarship_officer', 'placement_officer', 'discipline_officer', 'alumni_officer', 'student_life_staff']:
+                 return redirect('adminmain')
             elif hasattr(user, 'role') and user.role == 'guard':
-                return redirect('guard_homepage') # Example: Redirect guard to a specific page
+                return redirect('guard_homepage')
             elif hasattr(user, 'role') and user.role == 'org_admin':
-                return redirect('org_admin_homepage') # Example: Redirect org admin to a specific page
+                return redirect('org_admin_homepage')
             else:
-                 # Fallback for users without specific roles or profiles
-                 return redirect('homepage') # Use your actual default homepage URL name
+                 return redirect('homepage')
         else:
             messages.error(request, "Incorrect password.")
-            return render(request, 'login.html')
+            return render(request, 'login.html', context) # Pass context
 
     # If GET request, just render the login page
     return render(request, 'login.html')

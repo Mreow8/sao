@@ -1,8 +1,7 @@
 {% extends base_template|default:"main.html" %}{% block bodycontent %}
-<!-- prettier-ignore -->
-
 {% load static %}
 {% include "community_involvement/donate.html" %}
+
 <link rel="stylesheet" href="{% static 'styles/community/crowdfunding.css' %}" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -16,10 +15,8 @@
   {% if user.is_staff %}
 
   <div class="post-box">
-    <!-- Collapsed view -->
     <div class="collapsed" id="collapsedBox">Add Events...</div>
 
-    <!-- Expanded form -->
     <form
       method="post"
       id="expandedBox"
@@ -53,25 +50,52 @@
 
       <button type="submit" class="submit" id="submitBtn" disabled>Post</button>
     </form>
-
-    {% if messages %} {% for message in messages %}
-    <div
-      id="popup"
-      style="
-        display: block;
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4bb543;
-        color: #fff;
-        padding: 10px 15px;
-        border-radius: 6px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      "
-    >
-      ✅ {{ message }}
+    
+    {% if messages %}
+    <div class="message-container" style="position: fixed; top: 20px; right: 20px; z-index: 2000; width: 300px;">
+        {% for message in messages %}
+        <div class="message-popup {{ message.tags }}" 
+            style="padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 10px; color: #fff; font-family: 'Rubik', sans-serif; font-size: 0.95rem;">
+            
+            {% if message.tags == 'success' %}
+                <strong style="font-weight: 600;">✅ Success!</strong>
+            {% elif message.tags == 'error' %}
+                <strong style="font-weight: 600;">❌ Error!</strong>
+            {% elif message.tags == 'warning' %}
+                <strong style="font-weight: 600;">⚠️ Warning!</strong>
+            {% else %}
+                <strong style="font-weight: 600;">ℹ️ Notice:</strong>
+            {% endif %}
+            
+            <p style="margin: 4px 0 0 0; line-height: 1.4;">{{ message }}</p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %} {% endif %}
+
+    <style>
+        .message-popup.success { background-color: #28a745; }
+        .message-popup.error { background-color: #dc3545; }
+        .message-popup.warning { background-color: #ffc107; color: #212529; }
+        .message-popup.info { background-color: #17a2b8; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            setTimeout(function() {
+                let messages = document.querySelectorAll('.message-popup');
+                messages.forEach(function(message) {
+                    message.style.transition = 'opacity 0.5s ease';
+                    message.style.opacity = '0';
+                    setTimeout(() => { 
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message); 
+                        }
+                    }, 500);
+                });
+            }, 5000); 
+        });
+    </script>
+    {% endif %}
   </div>
   {% endif %}
 
@@ -79,72 +103,64 @@
     {% if page_obj %}
     <div class="project-list max-w-3xl mb-10">
      {% for project in page_obj %}
-   <div class="program-card relative" id="program-{{ project.id }}">
-        <!-- Title & Menu -->
+     <div class="program-card relative" id="program-{{ project.id }}">
         <div class="flex justify-between items-start">
           <h3 class="text-lg font-semibold">{{ project.title }}</h3>
 
-          <!-- Three dots menu -->
           <div class="relative">
-  {% if user.is_staff %}
-
-            <button
-              type="button"
-              class="menu-btn text-gray-600 hover:text-gray-900 focus:outline-none"
-            >
-              ⋮
-            </button>
-
-            <div
-              class="menu hidden absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-10"
-            >
-                          <!-- ...existing code... -->
-                <button
+            {% if user.is_staff %}
+              <button
                 type="button"
-                class="edit-project-btn block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                data-url="{% url 'edit_project' project.id %}">
-                <i class="fa fa-pen"></i> Edit
+                class="menu-btn text-gray-600 hover:text-gray-900 focus:outline-none"
+              >
+                ⋮
               </button>
 
-              <form
-                method="post"
-                action="{% url 'delete_project' project.id %}"
-                class="delete-project-form"
+              <div
+                class="menu hidden absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-10"
               >
-                {% csrf_token %}
-                <button
-                  type="submit"
-                  class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                >
-                 <i class="fa fa-trash"></i>Delete
+                  <button
+                  type="button"
+                  class="edit-project-btn block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  data-url="{% url 'edit_project' project.id %}">
+                  <i class="fa fa-pen"></i> Edit
                 </button>
-              </form>
-            </div>
-{% endif %}
 
-            <!-- ✅ Donate Button -->
+                <form
+                  method="post"
+                  action="{% url 'delete_project' project.id %}"
+                  class="delete-project-form"
+                >
+                  {% csrf_token %}
+                  <button
+                    type="submit"
+                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  >
+                  <i class="fa fa-trash"></i>Delete
+                  </button>
+                </form>
+              </div>
+            {% endif %}
           </div>
         </div>
-        <!-- Description -->
         <div class="mt-4 flex items-center justify-between">
-          <!-- Left side: description + date -->
           <div>
             <p class="text-sm text-gray-400">{{ project.description }}</p>
             <p class="mt-2 text-gray-600">{{ project.date_time }}</p>
           </div>
 
-          <!-- Right side: donate button -->
           <div>
             <button
               type="button"
               class="show-donate inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
               data-project-id="{{ project.id }}"
+              data-project-title="{{ project.title }}"
+              data-project-channels='[{% for channel in project.channels.all %}"{{ channel.imageCrowdfunding.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
             >
               Donate
             </button>
           </div>
         </div>
-        <!-- Gallery -->
         <div class="fb-gallery count-{{ project.channels.count }} mt-2">
           {% for channel in project.channels.all %}
           <div class="gallery-item">
@@ -189,4 +205,63 @@
 <script src="{% static 'scripts/community/crowdfunding.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
 </script>
+
+<script>
+$(document).ready(function() {
+  
+  // This code runs when any "Donate" button is clicked
+  $('.show-donate').on('click', function() {
+    
+    // 1. Get the specific project data from the button we clicked
+    var projectTitle = $(this).data('project-title');
+    var projectChannels = $(this).data('project-channels');
+    
+    // 2. Find the hidden <input class="title"> in the popup
+    //    and set its value to this project's title.
+    //    This is how the admin knows which project got the donation.
+    $('.donate-popup .title').val(projectTitle);
+
+    // 3. Find the empty containers we just made in donate.html
+    var gcashContainer = $('#project-qr-container-gcash');
+    var bankContainer = $('#project-qr-container-bank');
+
+    // 4. Clear out any QR codes from a previous click
+    gcashContainer.empty();
+    bankContainer.empty();
+
+    // 5. Check if this project has any images in its gallery
+    if (projectChannels && projectChannels.length > 0) {
+      
+      // Loop through the image URLs passed from the button
+      $.each(projectChannels, function(index, imageUrl) {
+        // Create an <img> tag for each QR code
+        var imgTag = '<img src="' + imageUrl + '" alt="Project QR Code" ' +
+                     'style="width: 100%; max-width: 300px; height: auto; margin-bottom: 10px; border-radius: 8px;" />';
+        
+        // Add the project's QR code to both tabs
+        gcashContainer.append(imgTag);
+        bankContainer.append(imgTag);
+      });
+
+    } else {
+      // If the admin forgot to upload a QR, show a warning
+      var warning = '<div class="qr-warning">' +
+                    '<h4>No QR Codes</h4>' +
+                    '<p>No specific QR codes have been uploaded for this project.</p>' +
+                    '</div>';
+      gcashContainer.append(warning);
+      bankContainer.append(warning);
+      
+      // Hide the 'Next' buttons if no QR is present
+      $('.donate-popup .nextGcash').hide();
+      $('.donate-popup .nextBank').hide();
+    }
+  });
+  
+  // Also, make sure the 'Next' buttons are visible when the form is valid
+  // (This might be in your donate.js, but good to ensure)
+  $('.donate-popup .nextGcash, .donate-popup .nextBank').show();
+});
+</script>
+
 {% endblock %}

@@ -11,7 +11,31 @@
   select {
     font-family: "Rubik", sans-serif;
   }
+  /* --- Message Box --- */
+  .form-message {
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 1px solid #e0e0e0;
+  }
 
+  /* Style for 'success' messages */
+  .form-message.success {
+    background-color: #e6f7ec; /* Light green */
+    border-color: #b7e1c7;
+    border-left: 5px solid #28a745; /* Green accent */
+    color: #1e663c; /* Dark green text */
+  }
+
+  /* Style for 'error' messages */
+  .form-message.error {
+    background-color: #fdecea; /* Light red */
+    border-color: #f5c6cb;
+    border-left: 5px solid #dc3545; /* Red accent */
+    color: #721c24; /* Dark red text */
+  }
   /* Use body-content for consistent padding (from requestgmc.css) */
   .body-content {
     padding: 1rem 1.5rem;
@@ -166,6 +190,9 @@
 <div class="body-content">
   <div>
     <div class="form-wrapper">
+      {% if messages %} {% for message in messages %}
+      <div class="form-message {{ message.tags }}">{{ message }}</div>
+      {% endfor %} {% endif %}
       <form method="post" action="{% url 'admin_jobfairs' %}">
         {% csrf_token %}
 
