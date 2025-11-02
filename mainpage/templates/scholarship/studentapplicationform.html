@@ -111,7 +111,7 @@
         formData.append('gradeFile', this.files[0]);
         formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
     
-        fetch("{% url 'process_grade_image' %}", {
+        fetch("{% url '' %}", {
             method: 'POST',
             body: formData
         })

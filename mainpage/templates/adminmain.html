@@ -78,9 +78,11 @@
             </a>
             <ul class="scholar-show {% if current_url in section_urls %}active{% endif %}">
               <li><a href="{% url 'admin_req'%}" class="{% if current_url == 'admin_req' %}active-link{% endif %}">Submission of Requirements Tracker</a></li>
+              <li><a href="{% url "requirement_history" %}" class="{% if current_url == 'requirement_history' %}active-link{% endif %}">Requirement History</a></li>
               <li><a href="{% url 'adminapplication' %}" class="{% if current_url == 'adminapplication' %}active-link{% endif %}">Application tracker</a></li>
+
               <li><a href="{% url 'profile'%}" class="{% if current_url == 'profile' %}active-link{% endif %}">Scholars Profile and Validation</a></li>
-              <li><a href="#">Grade Submission with GPA Computation</a></li>
+       
               <li><a href="{% url 'liquidation'%}" class="{% if current_url == 'liquidation' %}active-link{% endif %}">Admin Cost Liquidation Tracker</a></li>
               <li><a href="{% url 'ched'%}" class="{% if current_url == 'ched' %}active-link{% endif %}">CHED Reports Submission</a></li>
             </ul>

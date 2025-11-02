@@ -4,25 +4,11 @@
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
  
 
-    <div class="content_box">
-        <div class="search-container">
-            <div class="search-icon">
-                <i class="fas fa-search"></i>
-            </div>
-            <input type="text" placeholder="Search..." style="margin-right: 300px;">
-            <button type="submit" id="printButton">Print</button>
-
-            <script>
-                document.getElementById('printButton').addEventListener('click', function() {
-                    window.print();
-                });
-            </script>
-            <a href="{% url 'logout' %}" style="position:relative !important; left:50px;"><button id="logOut" >Log out</button></a>
-        </div>
+  
         <div class="content">
             <div class="form_div"> 
                  <a href="{% url 'ched' %}" style="width:fit-content;">
-                <img src="/static/imgs/back.png" alt="" id="back">
+                <img src="/static/scholar/back.png" alt="" id="back">
                 </a>
                 <form method="GET" id="semesterForm">
                     <label for="semester"><b>Select Semester:</b></label>
@@ -49,7 +35,7 @@
                        <div class="container">
                         <header>
                             <div class="header-left">
-                                <img src="/static/imgs/2logo.png" alt="Logo" class="logo">
+                                <img src="/static/scholar/2logo.png" alt="Logo" class="logo">
                             </div>
                             <div class="header-center">
                                 <p>Republic of the Philippines</p>

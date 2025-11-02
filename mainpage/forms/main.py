@@ -30,3 +30,10 @@ class EventForm(forms.ModelForm):
             'eventsDescription', 
             'eventsImage'
         ]
+        
+        # Add this widgets dictionary
+        widgets = {
+            'eventsDate': forms.DateInput(
+                attrs={'type': 'date'}
+            ),
+        }

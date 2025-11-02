@@ -444,7 +444,6 @@ def adminreqsubmission(request):
     }
 
     return render(request, 'scholarship/adminrequirements.html', context)
-
 def studentreqsubmission(request):
     studID = request.user.username
 
@@ -485,8 +484,25 @@ def studentreqsubmission(request):
 
     # Handle POST request (submission)
     if request.method == 'POST':
-        gpa = request.POST.get('gpa')
-        units = request.POST.get('units')
+        
+        # Get the string values from the form
+        gpa_str = request.POST.get('gpa')
+        units_str = request.POST.get('units')
+
+        # --- THIS IS THE FIX ---
+        # Convert them to numbers. Use 0.0 as a default.
+        try:
+            gpa = float(gpa_str) if gpa_str else 0.0
+        except (ValueError, TypeError):
+            gpa = 0.0 # Default if conversion fails
+
+        try:
+            # We use float() here to handle values like '10.0' or '10.5'
+            units = float(units_str) if units_str else 0.0
+        except (ValueError, TypeError):
+            units = 0.0 # Default if conversion fails
+        # --- END OF FIX ---
+
         cor_file = request.FILES.get('cor_file')
         grade_file = request.FILES.get('grade_file')
         schoolid_file = request.FILES.get('schoolid_file')
@@ -500,10 +516,10 @@ def studentreqsubmission(request):
                     requirement_data.grade_file = grade_file
                 if schoolid_file:
                     requirement_data.schoolid_file = schoolid_file
-                if gpa:
-                    requirement_data.gpa = gpa
-                if units:
-                    requirement_data.units = units
+                
+                # Now gpa and units are correct number types
+                requirement_data.gpa = gpa
+                requirement_data.units = units
                 requirement_data.note = ""
                 requirement_data.save()
             else:
@@ -514,11 +530,11 @@ def studentreqsubmission(request):
                     year=active_request.year,
                     semester=active_request.semester,
                     scholar_type=scholar.scholar_type,
-                    gpa=gpa,
+                    gpa=gpa,                # Now a number
                     cor_file=cor_file,
                     grade_file=grade_file,
                     schoolid_file=schoolid_file,
-                    units=units
+                    units=units               # Now a number
                 )
             return redirect('student_req')
 
@@ -565,107 +581,107 @@ def save_requirements(request):
         student = get_object_or_404(studentInfo, studID=request.user.username)
     return render(request, 'scholarship/studentrequirements.html', {'form': form, 'student': student})
                   
-def calculate_gpa_from_text(text):
-    grades_units = {}
-    total_units = 0
-    total_grade_points = 0
+# def calculate_gpa_from_text(text):
+#     grades_units = {}
+#     total_units = 0
+#     total_grade_points = 0
 
-    # Extract Total Units
-    for line in text.split('\n'):
-        if "Total Units" in line:
-            try:
-                total_units = float(line.split(':')[-1].strip())
-            except ValueError:
-                total_units = 0  # Default to 0 if parsing fails
+#     # Extract Total Units
+#     for line in text.split('\n'):
+#         if "Total Units" in line:
+#             try:
+#                 total_units = float(line.split(':')[-1].strip())
+#             except ValueError:
+#                 total_units = 0  # Default to 0 if parsing fails
 
-    # Extract Grades and their corresponding units
-    lines = text.split('\n')
-    for line in lines:
-        if "COMPL" in line or "CAS3" in line or "GE" in line or "ST" in line or "FIELD" in line:
-            parts = line.split('|') if '|' in line else line.split('/')
-            if len(parts) > 1:
-                grade_str = parts[-1].strip()
-                try:
-                    grade = float(grade_str)
-                    # Assuming each subject has 3 units
-                    grades_units[line] = (grade, 3)
-                except ValueError:
-                    continue
+#     # Extract Grades and their corresponding units
+#     lines = text.split('\n')
+#     for line in lines:
+#         if "COMPL" in line or "CAS3" in line or "GE" in line or "ST" in line or "FIELD" in line:
+#             parts = line.split('|') if '|' in line else line.split('/')
+#             if len(parts) > 1:
+#                 grade_str = parts[-1].strip()
+#                 try:
+#                     grade = float(grade_str)
+#                     # Assuming each subject has 3 units
+#                     grades_units[line] = (grade, 3)
+#                 except ValueError:
+#                     continue
 
-    # Map extracted grades to grade points
-    grade_points_mapping = {
-        1.0: 1.0,
-        1.1: 1.1,
-        1.2: 1.2,
-        1.3: 1.3,
-        1.4: 1.4,
-        1.5: 1.5,
-        1.6: 1.6,
-        1.7: 1.7,
-        1.8: 1.8,
-        1.9: 1.9,
-        2.0: 2.0,
-        2.1: 2.1,
-        2.2: 2.2,
-        2.3: 2.3,
-        2.4: 2.4,
-        2.5: 2.5,
-        2.6: 2.6,
-        2.7: 2.7,
-        2.8: 2.8,
-        2.9: 2.9,
-        3.0: 3.0,
-        3.1: 3.1,
-        3.2: 3.2,
-        3.3: 3.3,
-        3.4: 3.4,
-        3.5: 3.5,
-        3.6: 3.6,
-        3.7: 3.7,
-        3.8: 3.8,
-        3.9: 3.9,
-        4.0: 4.0,
-    }
+#     # Map extracted grades to grade points
+#     grade_points_mapping = {
+#         1.0: 1.0,
+#         1.1: 1.1,
+#         1.2: 1.2,
+#         1.3: 1.3,
+#         1.4: 1.4,
+#         1.5: 1.5,
+#         1.6: 1.6,
+#         1.7: 1.7,
+#         1.8: 1.8,
+#         1.9: 1.9,
+#         2.0: 2.0,
+#         2.1: 2.1,
+#         2.2: 2.2,
+#         2.3: 2.3,
+#         2.4: 2.4,
+#         2.5: 2.5,
+#         2.6: 2.6,
+#         2.7: 2.7,
+#         2.8: 2.8,
+#         2.9: 2.9,
+#         3.0: 3.0,
+#         3.1: 3.1,
+#         3.2: 3.2,
+#         3.3: 3.3,
+#         3.4: 3.4,
+#         3.5: 3.5,
+#         3.6: 3.6,
+#         3.7: 3.7,
+#         3.8: 3.8,
+#         3.9: 3.9,
+#         4.0: 4.0,
+#     }
 
-    for grade, units in grades_units.values():
-        total_grade_points += grade_points_mapping.get(grade, 0) * units
+#     for grade, units in grades_units.values():
+#         total_grade_points += grade_points_mapping.get(grade, 0) * units
 
-    gpa = total_grade_points / total_units if total_units > 0 else 0
+#     gpa = total_grade_points / total_units if total_units > 0 else 0
 
-    return round(gpa, 2), total_units, total_grade_points
+#     return round(gpa, 2), total_units, total_grade_points
 
-def process_grade_image(request):
-    if request.method == 'POST' and request.FILES.get('gradeFile'):
-        grade_file = request.FILES['gradeFile']
-        fs = FileSystemStorage()
-        filename = fs.save(grade_file.name, grade_file)
-        file_path = fs.path(filename)
+# def process_grade_image(request):
+#     if request.method == 'POST' and request.FILES.get('gradeFile'):
+#         grade_file = request.FILES['gradeFile']
+#         fs = FileSystemStorage()
+#         filename = fs.save(grade_file.name, grade_file)
+#         file_path = fs.path(filename)
 
-        # Preprocess the image for better OCR accuracy
-        image = Image.open(file_path)
-        image = image.convert('L')  # Convert to grayscale
-        image = image.filter(ImageFilter.SHARPEN)  # Sharpen the image
-        image = ImageEnhance.Contrast(image).enhance(2)  # Enhance contrast
-        extracted_text = pytesseract.image_to_string(image)
+#         # Preprocess the image for better OCR accuracy
+#         image = Image.open(file_path)
+#         image = image.convert('L')  # Convert to grayscale
+#         image = image.filter(ImageFilter.SHARPEN)  # Sharpen the image
+#         image = ImageEnhance.Contrast(image).enhance(2)  # Enhance contrast
+#         extracted_text = pytesseract.image_to_string(image)
 
-        # Print the extracted text in the terminal
-        print("Extracted Text:")
-        print(extracted_text)
+#         # Print the extracted text in the terminal
+#         print("Extracted Text:")
+#         print(extracted_text)
 
-        # Calculate GPA, total units, and total grade points from the extracted text
-        gpa, total_units, total_grade_points = calculate_gpa_from_text(extracted_text)
+#         # Calculate GPA, total units, and total grade points from the extracted text
+#         gpa, total_units, total_grade_points = calculate_gpa_from_text(extracted_text)
 
-        # Clean up the uploaded file
-        os.remove(file_path)
+#         # Clean up the uploaded file
+#         os.remove(file_path)
 
-        # Print the values in the terminal
-        print("GPA:", gpa)
-        print("Total Units:", total_units)
-        print("Total Grade Points:", total_grade_points)
+#         # Print the values in the terminal
+#         print("GPA:", gpa)
+#         print("Total Units:", total_units)
+#         print("Total Grade Points:", total_grade_points)
 
-        return JsonResponse({'success': True, 'gpa': gpa, 'total_units': total_units})
+#         return JsonResponse({'success': True, 'gpa': gpa, 'total_units': total_units})
 
-    return JsonResponse({'success': False, 'error': 'Invalid request'})
+#     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 def scholars_profile_admin(request):
     scholar_type = request.GET.get('scholar_type', '').strip()
@@ -1030,7 +1046,65 @@ def admingrant(request):
 
     return render(request, 'scholarship/admingrant.html', context)
 # from .models import studentInfo, scholars, SemesterDetails, Requirement
+from django.shortcuts import render
+from django.core.paginator import Paginator # <-- Import Paginator
 
+# Define how many items you want per page
+ITEMS_PER_PAGE = 10 
+
+def requirement_history(request):
+    
+    # Get filter values from the URL
+    search_year = request.GET.get('search_year', '')
+    search_semester = request.GET.get('search_semester', '')
+    search_type = request.GET.get('search_type', '')
+    search_status = request.GET.get('search_status', '')
+
+    # Start with all requirements, ordered by most recent
+    # (Assuming Requirement model is imported or available in this file's scope)
+    requirements_list = Requirement.objects.all().order_by('-year', '-semester') 
+
+    # Apply filters if they exist
+    if search_year:
+        requirements_list = requirements_list.filter(year__icontains=search_year)
+    
+    if search_semester:
+        requirements_list = requirements_list.filter(semester=search_semester)
+    
+    if search_type:
+        requirements_list = requirements_list.filter(scholar_type=search_type)
+    
+    if search_status:
+        requirements_list = requirements_list.filter(status=search_status)
+
+    # --- ADDED PAGINATION LOGIC ---
+    
+    # 1. Create a Paginator instance
+    paginator = Paginator(requirements_list, ITEMS_PER_PAGE) 
+    
+    # 2. Get the current page number from the URL ('page' query parameter)
+    page_number = request.GET.get('page')
+    
+    # 3. Get the Page object for the requested page
+    page_obj = paginator.get_page(page_number)
+    
+    # --- END PAGINATION LOGIC ---
+
+    context = {
+        # Pass the Page object to the template
+        'page_obj': page_obj, 
+        # Pass the current page's list of objects to keep your existing table loop running
+        # NOTE: You must update your loop in the template to use page_obj.object_list
+        'requirements_history': page_obj.object_list, 
+
+        # Pass the filter values back for persistent filtering
+        'search_year': search_year,
+        'search_semester': search_semester,
+        'search_type': search_type,
+        'search_status': search_status,
+    }
+    
+    return render(request, 'scholarship/requirement_history.html', context)
 def scholarupdate(request):
     error = None
     scholar_data = None

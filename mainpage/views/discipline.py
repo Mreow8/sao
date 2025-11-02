@@ -140,7 +140,6 @@ from django.core.paginator import Paginator
 
 # ... (all your other imports) ...
 
-# This is your UPDATED case_list view
 def case_list(request):
     user = request.user
     base_template = (
@@ -149,14 +148,9 @@ def case_list(request):
         else "main.html"
     )
 
-    # --- Start Sorting Logic ---
-    
-    # Get sort parameters from URL, default to 'date' descending
     sort_by = request.GET.get('sort', 'date')
     order = request.GET.get('order', 'desc')
 
-    # Whitelist of valid sort fields to prevent malicious queries
-    # 'key' is the URL parameter, 'value' is the Django model field
     valid_sort_fields = {
         'student': 'student__firstname',
         'offense': 'offense_type',
@@ -164,39 +158,28 @@ def case_list(request):
         'status': 'status',
     }
 
-    # Get the model field, defaulting to 'date_reported' if invalid
     sort_field = valid_sort_fields.get(sort_by, 'date_reported')
 
-    # Add '-' prefix for descending order
     if order == 'desc':
         order_string = f'-{sort_field}'
     else:
         order_string = sort_field
         
-    # --- End Sorting Logic ---
-
-    # Determine case list based on user role
     if user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'):
-        # Apply the dynamic sorting here
         all_cases = CaseProfile.objects.all().order_by(order_string)
         
     elif user.is_authenticated and getattr(user, 'role', None) == 'student':
-        # Apply the dynamic sorting here
         all_cases = CaseProfile.objects.filter(student__studID=user.username).order_by(order_string)
     else:
         all_cases = CaseProfile.objects.none()
 
-    # --- Start Pagination Logic (no changes here) ---
-    paginator = Paginator(all_cases, 10) # 10 items per page
+    paginator = Paginator(all_cases, 10) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    # --- End Pagination Logic ---
 
     context = {
-        'page_obj': page_obj,      
+        'page_obj': page_obj, 
         'base_template': base_template,
-        # --- Add these to the context ---
-        # Pass current sort state to template for building links
         'current_sort': sort_by,
         'current_order': order,
     }

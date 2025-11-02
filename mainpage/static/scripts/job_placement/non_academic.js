@@ -1,4 +1,5 @@
 $("document").ready(function () {
+  // This part is correct and handles the dynamic award dropdowns.
   $("#program_select").change(function () {
     var awards = {
       AGRICULTURE: [
@@ -48,12 +49,16 @@ $("document").ready(function () {
       awardSelect.empty(); // Clear existing options
 
       if (selectedProgram !== "None" && awards[selectedProgram]) {
+        // Add the default 'None' option first
+        awardSelect.append(new Option("----------", "None"));
+
         awards[selectedProgram].forEach(function (award) {
           awardSelect.append(new Option(award, award));
         });
         $("#award_select").trigger("change");
       } else {
-        awardSelect.append(new Option("No awards available", ""));
+        // Add the default 'None' option
+        awardSelect.append(new Option("----------", "None"));
       }
     });
 
@@ -88,39 +93,9 @@ $("document").ready(function () {
     });
   });
 
-  $("#assign_student_id").on("input", function () {
-    console.log("called");
-    let query = $(this).val();
-    if (query.length > 0) {
-      $.ajax({
-        url: "/jobplacement/suggestions/",
-        data: { query: query },
-        success: function (data) {
-          console.log(data);
-          $("#suggestions").html("");
-          for (let i = 0; i < data.length; i++) {
-            text = `${data[i][0]} - ${data[i][1]}, ${data[i][2]}`;
-            $("#suggestions").append(
-              '<li onclick="assign_student(this)" value="' +
-                data[i][0] +
-                '">' +
-                text +
-                "</li>"
-            );
-          }
-        },
-      });
-    } else {
-      $("#suggestions").html("");
-    }
-  });
-
+  // This ensures the dropdowns are set up correctly on page load.
   $("#program_select").val("None").trigger("change");
 });
 
-function assign_student(e) {
-  let element = $(e);
-  $("#stud_id_holder").val(element.val());
-  $("#assign_student_id").val(element.text());
-  $("#suggestions").html("");
-}
+// The old 'assign_student' function and the
+// 'assign_student_id' input listener have been completely removed.

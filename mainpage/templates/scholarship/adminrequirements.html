@@ -4,10 +4,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{% static 'styles/scholarship/adminrequirements.css' %}">
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-
+  <div class="sub-title">
+    <h3>SCHOLARSHIP</h3>
+    <p class="hometext">Home</p>
+    <p class="certxt">&gt;Scholarship Submission Tracker</p>
+  </div>
         <div class="content">
             <div class="form_div">
-                <h1>Scholarship Submission Tracker</h1>
+          
                 <div class="search_id_container">
                     <form method="POST" id="yearsemester">
                         {% csrf_token %}

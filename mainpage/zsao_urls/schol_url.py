@@ -16,14 +16,13 @@ urlpatterns = [
     path('transactionreports/', views.transactionreports, name='transaction'),
     path('chedreports/', views.chedreports, name='ched'),
     path('search_student/', views.search_student, name='search_student'),
-    path('process_grade_image/', views.process_grade_image, name='process_grade_image'),
     path('save_requirements/', views.save_requirements, name='save_requirements'),
     path('add_scholar/', views.add_scholar, name='add_scholar'),
     path('studentapplicationform/', views.studentapplicationform, name='studentapplication'),
     path('adminapplicationform/', views.adminapplication, name='adminapplication'),
     path('admingrant/', views.admingrant, name='admingrant'),
     path('scholarupdate/', views.scholarupdate, name='scholarupdate'),
-
+    path('requirement_history/', views.requirement_history, name='requirement_history'),
 # --------------------------------- dayag code ---------------------------------
 
     path('chedreports/Merit_Scholarship', views.chedreports_merit, name='ched_merit'),

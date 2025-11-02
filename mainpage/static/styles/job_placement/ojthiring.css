@@ -414,3 +414,158 @@ hr#demo {
     gap: 1rem;
   }
 }
+/* === OJT ASSIGNMENT STATUS BOX (for Student View) === */
+.assignment-status-box {
+  max-width: 900px;
+  margin: 2rem auto;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.assignment-status-box h3 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  color: #2c5282; /* Theme Blue */
+  font-weight: 600;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.assignment-status-box h2 {
+  /* This is for the Company Name */
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  color: #2a4365;
+}
+
+.assignment-status-box p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.company-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 30px; /* 10px vertical, 30px horizontal gap */
+  font-size: 0.95rem;
+  color: #718096; /* Gray */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.company-details span {
+  font-weight: 500;
+}
+
+.assignment-status-box .info-note {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: #2f855a; /* Green */
+  background-color: #f0fff4;
+  border: 1px solid #c6f6d5;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 1.5rem;
+}
+
+/* === OJT COMPANY LIST (for Student View) === */
+.company-list-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+}
+.company-list-container h2 {
+  font-weight: 600;
+  color: #333;
+}
+.company-list-container p {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.ojt-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.company-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.company-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.company-card h4 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c5282;
+}
+
+.company-card .slots {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2f855a;
+  background-color: #f0fff4;
+  border: 1px solid #c6f6d5;
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.company-card .details {
+  font-size: 0.9rem;
+  color: #718096;
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+.company-card .shift-tag {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #718096;
+  background-color: #edf2f7;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.messages-container {
+  margin-bottom: 1.5rem;
+}
+
+.message {
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border: 1px solid;
+}
+
+/* Style for the warning you asked for */
+.message.warning {
+  background-color: #fffaf0; /* Light orange */
+  border-color: #feebc8;
+  color: #c05621; /* Dark orange */
+}
+
+.message.success {
+  background-color: #f0fff4; /* Light green */
+  border-color: #c6f6d5;
+  color: #2f855a; /* Dark green */
+}
+
+.message.error {
+  background-color: #fff5f5; /* Light red */
+  border-color: #fed7d7;
+  color: #c53030; /* Dark red */
+}

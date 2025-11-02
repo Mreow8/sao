@@ -1,4 +1,6 @@
 import csv
+import zipfile
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db.models import Q
@@ -61,7 +63,80 @@ from django.contrib import messages
 from ..models import studentInfo, OJTCompany, OJTStudent # Adjust as needed
 from ..forms import OJTStudentForm # Adjust as needed
 # ... (your template path variables)
+from django.db.models import Q
+from django.core.paginator import Paginator
+from urllib.parse import urlencode
 
+@login_required(login_url='admin_login')
+def admin_student_tracker(request):
+    # Check if user is an admin
+    if not (request.user.is_staff or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard'):
+        messages.error(request, "You do not have permission to view this page.")
+        return redirect('admin_login') # Or student home page
+
+    base_template = "adminmain.html"
+    
+    # Get search query
+    search_query = request.GET.get('search', '')
+    
+    # Start with all assigned students
+    assignment_list = OJTStudent.objects.select_related('studID', 'company_id').all()
+
+    # Apply search filter
+    if search_query:
+        assignment_list = assignment_list.filter(
+            Q(studID__studID__icontains=search_query) |
+            Q(studID__firstname__icontains=search_query) |
+            Q(studID__lastname__icontains=search_query) |
+            Q(company_id__company_name__icontains=search_query)
+        ).distinct()
+
+    # Apply ordering
+    assignment_list = assignment_list.order_by('-date_started') # Show most recent first
+
+    # Pagination
+    paginator = Paginator(assignment_list, 15) # 15 assignments per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Prepare query string for pagination links
+    query_params = request.GET.copy()
+    if 'page' in query_params:
+        del query_params['page']
+    base_query_string = query_params.urlencode()
+
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'base_query_string': base_query_string,
+        'base_template': base_template,
+    }
+    return render(request, 'jobplacement/admin_student_tracker.html', context)
+@login_required(login_url='admin_login')
+def ojt_requiremets_download(request):
+    """
+    This page shows a success message and provides the download link 
+    for the zip file created by ojt_assign_student.
+    """
+    # Get the data from the session, using .pop() to clear it
+    download_url = request.session.pop('download_url', None)
+    student_name = request.session.pop('assigned_student_name', 'The student')
+    company_name = request.session.pop('assigned_company_name', 'their company')
+
+    # If the user lands on this page without a file, redirect them
+    if not download_url:
+        messages.warning(request, "No download file specified.")
+        return redirect('ojt_hiring')
+
+    base_template = "adminmain.html" # Or your logic to find the base template
+    
+    context = {
+        'download_url': download_url,
+        'student_name': student_name,
+        'company_name': company_name,
+        'base_template': base_template,
+    }
+    return render(request, 'jobplacement/ojt_download_page.html', context)
 @login_required(login_url='admin_login')
 def ojt_assign_student(request):
     # --- Access control ---
@@ -110,40 +185,30 @@ def ojt_assign_student(request):
              messages.error(request, f"Invalid Company ID format: '{company_id}'.")
              return redirect('ojt_hiring')
 
-
         # --- Check slots ---
-        n_hired = OJTStudent.objects.filter(company_id=company).count()
-        allowed_slots = company.number_of_slots - n_hired
-        if allowed_slots < 1:
+        # Note: Your model's .save() method handles this, but this is a good pre-check.
+        if company.number_of_slots < 1:
             messages.error(request, f"No slots left for {company.company_name}.")
             return redirect('ojt_hiring')
 
         # --- Create OJT assignment ---
         try:
-            # Check if student is already assigned (optional but good practice)
-            if OJTStudent.objects.filter(studID=student).exists():
-                 messages.warning(request, f"Student {student.firstname} {student.lastname} is already assigned to an OJT.")
-                 # Decide if you want to stop or allow reassignment
-                 # return redirect('ojt_hiring')
-
             new_ojt_form = OJTStudentForm(request.POST) # Pass request.POST here
+            
             if new_ojt_form.is_valid():
                 new_ojt = new_ojt_form.save(commit=False)
-                new_ojt.studID = student # <-- Corrected field name
+                new_ojt.studID = student
                 new_ojt.company_id = company
-                # Assign other fields from the form if needed, e.g., duration
-                # new_ojt.duration = duration # Make sure OJTStudent model has this field if needed
-                new_ojt.save()
+                new_ojt.save() # This will trigger your .save() method and subtract the slot
 
                 messages.success(request, f"Student {student.firstname} {student.lastname} assigned successfully to {company.company_name}.")
-                log_activity(user=request.user, action=f"Assigned {student.firstname} {student.lastname} to {company.company_name}")
+                # log_activity(user=request.user, action=f"Assigned {student.firstname} {student.lastname} to {company.company_name}") # Uncomment if log_activity is defined
 
                 # --- Generate documents with Enhanced Error Trapping ---
                 generation_successful = True # Flag to track if all documents generated
                 try:
                     print(f"Attempting to generate documents in: {ojtrequirements_template_output_path}")
-                    # Ensure the output directory exists
-                    os.makedirs(ojtrequirements_template_output_path, exist_ok=True) # Create if it doesn't exist
+                    os.makedirs(ojtrequirements_template_output_path, exist_ok=True) 
 
                     print("Generating Application Letter...")
                     gen_application_letter(ojtrequirements_application_letter, ojtrequirements_template_output_path, student_id, company_id)
@@ -162,66 +227,74 @@ def ojt_assign_student(request):
 
                     print("✅ All document generation functions called.")
 
-                # Catch specific errors if possible, fallback to generic Exception
-                except FileNotFoundError as fnf_err:
-                     generation_successful = False
-                     error_message = f"Document generation failed: Template file not found - {fnf_err}. Please check template paths."
-                     print(f"❌ {error_message}")
-                     messages.error(request, error_message)
-                except KeyError as key_err:
-                     generation_successful = False
-                     error_message = f"Document generation failed: Missing data placeholder in template - {key_err}. Check template and data."
-                     print(f"❌ {error_message}")
-                     messages.error(request, error_message)
-                except PermissionError as perm_err:
-                     generation_successful = False
-                     error_message = f"Document generation failed: Permission denied writing to '{ojtrequirements_template_output_path}'. Check folder permissions. Details: {perm_err}"
-                     print(f"❌ {error_message}")
-                     messages.error(request, error_message)
-                except Exception as doc_err: # Catch any other errors during generation
+                # ... (your existing except blocks for FileNotFoundError, KeyError, etc.) ...
+                except Exception as doc_err: 
                     generation_successful = False
                     error_message = f"An unexpected error occurred during document generation: {doc_err}"
                     print(f"❌ {error_message}")
                     messages.error(request, f"Student assigned, but failed to generate documents: {doc_err}")
 
-                # --- Check if files were actually created before redirecting ---
+                # --- Check if files were created, then ZIP and REDIRECT ---
                 if generation_successful:
                     try:
-                        # List files in the output directory
                         files_in_output = os.listdir(ojtrequirements_template_output_path)
-                        # Filter for .docx files related to the student (optional, but safer)
                         generated_docs = [f for f in files_in_output if f.endswith('.docx') and student.lastname in f]
 
                         if not generated_docs:
                             warning_message = f"Student assigned, but no documents were found in '{ojtrequirements_template_output_path}'. Zip file will be empty."
                             print(f"⚠️ {warning_message}")
                             messages.warning(request, warning_message)
-                            # You might want to redirect back to ojt_hiring here instead of download
-                            # return redirect('ojt_hiring')
-                        else:
-                             print(f"✅ Found generated documents: {generated_docs}")
-                             # Proceed to download page ONLY if files exist
-                             return redirect('ojt_requiremets_download')
+                            return redirect('ojt_hiring')
+                        
+                        # --- 1. ZIP THE FILES ---
+                        zip_file_name = f"{student.studID}_{student.lastname}_OJT_Documents.zip"
+                        
+                        # This dynamically joins your MEDIA_ROOT with 'ojt_files'
+                        zip_dir = os.path.join(settings.MEDIA_ROOT, 'ojt_files')
+                        os.makedirs(zip_dir, exist_ok=True)
+                        
+                        zip_output_path = os.path.join(zip_dir, zip_file_name)
+                        
+                        with zipfile.ZipFile(zip_output_path, 'w') as zipf:
+                            for doc in generated_docs:
+                                file_path = os.path.join(ojtrequirements_template_output_path, doc)
+                                zipf.write(file_path, arcname=doc)
+                        
+                        print(f"✅ Successfully created zip file: {zip_file_name}")
 
-                    except FileNotFoundError:
-                        error_message = f"Output directory '{ojtrequirements_template_output_path}' not found after generation attempt."
+                        # --- 2. STORE INFO IN SESSION ---
+                        request.session['download_url'] = f"{settings.MEDIA_URL}ojt_files/{zip_file_name}"
+                        request.session['assigned_student_name'] = f"{student.firstname} {student.lastname}"
+                        request.session['assigned_company_name'] = company.company_name
+                        
+                        # --- 3. REDIRECT TO THE NEW DOWNLOAD PAGE ---
+                        return redirect('ojt_requiremets_download') # Make sure this URL name is in urls.py
+
+                    except Exception as zip_err:
+                        error_message = f"Student assigned, but failed to create zip file: {zip_err}"
                         print(f"❌ {error_message}")
                         messages.error(request, error_message)
-                    except Exception as check_err:
-                        error_message = f"Error checking output directory: {check_err}"
-                        print(f"❌ {error_message}")
-                        messages.error(request, error_message)
 
-                # If generation failed or no files found, redirect back (or stay on page)
-                return redirect('ojt_hiring') # Redirect back if there were errors
+                # If generation failed or no files found, redirect back
+                return redirect('ojt_hiring')
 
             else: # Form is invalid
                 print("❌ OJT Assignment Form is invalid:")
-                print(new_ojt_form.errors)
-                messages.error(request, f"Failed to assign student: Invalid form data - {new_ojt_form.errors.as_text()}")
-                # It might be better to re-render the ojt_hiring page with the errors
-                # return render(request, 'jobplacement/ojthiring.html', {'form': OjtHiringForm(), 'assign_form': new_ojt_form, 'ojt_list': OJTCompany.objects.all(), 'base_template': "adminmain.html"})
+                if 'studID' in new_ojt_form.errors and any('already exists' in e for e in new_ojt_form.errors['studID']):
+                    student_name = f"{student.firstname} {student.lastname}"
+                    messages.warning(request, f"Warning: Student {student_name} (ID: {student_id}) is already assigned to an OJT company.")
+                else:
+                    print(new_ojt_form.errors)
+                    messages.error(request, f"Failed to assign student: Invalid form data. {new_ojt_form.errors.as_text()}")
 
+                base_template = "adminmain.html" if (request.user.is_staff or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard') else "main.html"
+                context = {
+                    'form': OjtHiringForm(),
+                    'assign_form': new_ojt_form,
+                    'ojt_list': OJTCompany.objects.all(),
+                    'base_template': base_template,
+                }
+                return render(request, 'jobplacement/ojthiring.html', context)
 
         except Exception as assign_err: # Catch errors during OJTStudent creation/saving
             error_message = f"Failed to save OJT assignment: {assign_err}"
@@ -340,10 +413,32 @@ def ojt_hiring(request):
     ojt_hiring_form = OjtHiringForm()
     ojt_assign_form = OJTStudentForm()
     ojt_hiring = OJTCompany.objects.all()
+    student_assignment = None
+    download_url = None # <-- 1. Initialize download_url
 
-    # Decide the layout to extend in the template
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
+    if request.user.is_authenticated and not (request.user.is_staff or request.user.is_superuser):
+        try:
+            student_info = studentInfo.objects.get(user=request.user) 
+        except studentInfo.DoesNotExist:
+            student_info = None
+            
+        if student_info:
+            try:
+                student_assignment = OJTStudent.objects.select_related('company_id').get(studID=student_info)
+              
+                zip_file_name = f"{student_info.studID}_{student_info.lastname}_OJT_Documents.zip"
+                
+                zip_file_path = os.path.join(settings.MEDIA_ROOT, 'ojt_files', zip_file_name)
+                
+                # Check if the file actually exists on the server
+                if os.path.exists(zip_file_path):
+                    # If it exists, create the URL for the template
+                    download_url = f"{settings.MEDIA_URL}ojt_files/{zip_file_name}"
+                
+            except OJTStudent.DoesNotExist:
+                student_assignment = None
     if request.method == 'POST':
         if not (request.user.is_staff or request.user.is_superuser):
             messages.info(request, 'Must be staff/admin to access page')
@@ -368,6 +463,8 @@ def ojt_hiring(request):
         'form': ojt_hiring_form,
         'assign_form': ojt_assign_form,
         'ojt_list': ojt_hiring,
+        'student_assignment': student_assignment,
+        'download_url': download_url,
         'base_template': base_template,
     }
 
@@ -842,6 +939,7 @@ def non_acad_page(request):
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
     
+    students_list = studentInfo.objects.all()
      
     
     def fill_placeholders(doc, data): # replace placeholders from template
@@ -1376,7 +1474,7 @@ def non_acad_page(request):
                     return response
         except:
             messages.error(request, "Failed to create achievement")
-    context = {}
+    context = {'students': students_list,}
     return render(request, 'jobplacement/non_academic.html', context)
 
     # TRANSACTION REPORTS THINGS

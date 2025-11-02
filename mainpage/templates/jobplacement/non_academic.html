@@ -1,15 +1,33 @@
-{% extends 'adminmain.html' %} {% block headcontent %}
-<!--  link, script here-->
+{% extends 'adminmain.html' %} 
 
+{% block headcontent %}
 {% load static %}
 <link
   rel="stylesheet"
   href="{% static 'styles/job_placement/non_acad.css' %}?307"
 />
-{% endblock headcontent %} {% block bodycontent %}
+
+<style>
+  #student_details {
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  #student_details p {
+    margin: 5px 0;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
+{% endblock headcontent %} 
+
+{% block bodycontent %}
 <div class="container">
   <div class="sub-title">
-    <h3>JOB PLACEMENT</h3>
+    <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
     <p class="hometext">Home</p>
     <p class="certxt">&gt;     <p>Non-Academic Award Issuance</p>
 </p>
@@ -19,21 +37,36 @@
   <div class="showbox">
     <form action="" method="POST">
       {% csrf_token %}
+      
       <input id="stud_id_holder" type="hidden" name="student_id" />
-      <!-- real student id-->
 
       <label for="date">Date Issued: </label>
       <input type="date" name="date_issued" required />
 
       <label for="student">Student: </label>
       <div id="suggestions_container">
-        <input
-          id="assign_student_id"
-          name="student_holder"
-          type="text"
-          required
-        />
-        <ul id="suggestions"></ul>
+        <div>
+            <input
+                type="text"
+                name="student_search_box" id="id_student"
+                list="student-options"
+                placeholder="Enter Student ID"
+                required />
+            <datalist id="student-options">
+                {% for student in students %}
+                <option value="{{ student.studID }}">
+                    {{ student.firstname }} {{ student.lastname }}
+                </option>
+                {% endfor %}
+            </datalist>
+        </div>
+
+        <div id="student_details" class="hidden">
+            <p><strong>Name:</strong> <span id="student_name"></span></p>
+            <p><strong>Course:</strong> <span id="student_course"></span></p>
+            <p><strong>Year:</strong> <span id="student_year"></span></p>
+        </div>
+
       </div>
 
       <label for="program">Program/Course:</label>
@@ -111,9 +144,58 @@
         />
       </div>
 
+
       <input type="submit" value="Submit" />
     </form>
   </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Student Search AJAX
+        const studentInput = document.getElementById("id_student");
+        const studentDetails = document.getElementById("student_details");
+        const studentHiddenInput = document.getElementById("stud_id_holder");
+
+        function fetchStudentDetails(studentID) {
+            if (!studentID) {
+                studentDetails.classList.add("hidden");
+                studentHiddenInput.value = ""; // Clear hidden input
+                return;
+            }
+            
+            // This URL is copied from case_profile.html
+            // Make sure it's the correct endpoint for your project!
+            fetch(`/discipline/get-student/${studentID}/`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.found) {
+                        // Populate display fields
+                        document.getElementById("student_name").textContent = data.name;
+                        document.getElementById("student_course").textContent = data.course;
+                        document.getElementById("student_year").textContent = data.year;
+                        studentDetails.classList.remove("hidden");
+
+                        // *** IMPORTANT MODIFICATION ***
+                        // Set the value of the real hidden input for the form
+                        studentHiddenInput.value = studentID;
+
+                    } else {
+                        studentDetails.classList.add("hidden");
+                        studentHiddenInput.value = ""; // Clear hidden input
+                    }
+                });
+        }
+
+        studentInput.addEventListener("input", function () {
+            fetchStudentDetails(this.value.trim());
+        });
+        studentInput.addEventListener("change", function () {
+            fetchStudentDetails(this.value.trim());
+        });
+        
+    });
+</script>
+
 <script src="{% static 'scripts/job_placement/non_academic.js' %}?309"></script>
 {% endblock bodycontent %}

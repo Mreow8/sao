@@ -589,13 +589,31 @@ def donation_dashboard(request):
             "loadVolunteer": loadVolunteer,
         },
     )
-
+# @login_required
 def gcash_dashboard(request):
-    loadGcashDonations = MOD.objects.filter(donation_type="GCash", status="Accepted")
+    # 1. Base QuerySet
+    # Assuming your model has a 'date' field to order by
+    donation_list = MOD.objects.filter(donation_type="GCash", status="Accepted").order_by('-date')
+
+    # 2. Get current page number
+    page_number = request.GET.get('page')
+
+    # 3. Initialize Paginator (15 items per page)
+    paginator = Paginator(donation_list, 15)
+    
+    # 4. Get the Page object
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        # Pass the Page object to the template
+        "page_obj": page_obj,
+        # 'loadGcashDonations' is no longer needed, use page_obj.object_list in the template
+    }
+    
     return render(
         request,
         "community_involvement/admin/gcash-dashboard.html",
-        {"loadGcashDonations": loadGcashDonations},
+        context,
     )
 
 def banks_dashboard(request):

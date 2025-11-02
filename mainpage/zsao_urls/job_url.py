@@ -7,7 +7,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     # The main 'jobplacement/' is in your main urls.py
     path('', views.mainpage, name="home"), 
-    
+    path('admin/student-tracker/', views.admin_student_tracker, name='admin_student_tracker'),
+  
+    # path('admin/unassign-student/<int:assignment_id>/', views.unassign_student_view, name='unassign_student_view'),
+    path('ojt/download-requirements/', views.ojt_requiremets_download, name='ojt_requiremets_download'),
     # OJT HIRING THINGS (removed 'jobplacement/' prefix)
     path('student-suggestions/', views.student_suggestions, name='student_suggestions'),
     path('suggestions/', views.search_suggestions.as_view(), name='suggestions'),

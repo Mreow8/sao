@@ -160,7 +160,12 @@
     letter-spacing: 0.5px;
     transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
   }
-
+  .submit-container {
+    display: flex;
+    justify-content: space-between; /* This pushes the items to the "edges" */
+    align-items: center; /* This ensures they are vertically aligned */
+    margin-top: 20px; /* Optional: Adds spacing above the buttons */
+  }
   .submit-container button[type="submit"]:hover {
     background-color: #2a4365; /* Darker Blue */
     transform: translateY(-2px);
@@ -192,21 +197,13 @@
   /* --- Button Style (from requestgmc.css) --- */
   .requestBtn {
     font-family: "Rubik", sans-serif;
-    background-color: #2c5282; /* Primary Blue */
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 10px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: background-color 0.2s, transform 0.2s;
-
-    /* Add these two lines to make the <a> tag act like a button */
     display: inline-block;
+    padding: 8px 16px;
+    background-color: #4a5568;
+    color: white;
     text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
   }
 
   .requestBtn:hover {

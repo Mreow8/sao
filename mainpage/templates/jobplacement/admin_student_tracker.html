@@ -1,0 +1,249 @@
+{% extends base_template|default:"adminmain.html" %} {% load static %} {% block
+headcontent %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+<style>
+  /* Using the styles from your other admin pages */
+  body {
+    font-family: "Rubik", sans-serif;
+    background-color: #f8f9fa;
+  }
+  .main_container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  /* --- Search Bar --- */
+  .search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  .search-form input[type="text"] {
+    font-family: "Rubik", sans-serif;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    flex-grow: 1;
+  }
+  .search-form button {
+    background-color: #2c5282;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  /* --- Table --- */
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  #studentAssignmentTable {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+  #studentAssignmentTable th,
+  #studentAssignmentTable td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 0.9rem;
+    vertical-align: middle;
+  }
+  #studentAssignmentTable th {
+    background-color: #f9f9f9;
+    color: #2c5282;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  #studentAssignmentTable tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+  .no-data {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 2rem;
+  }
+
+  /* --- Action Buttons --- */
+  .actions .action-btn {
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+    margin-right: 5px;
+    display: inline-block;
+  }
+  .action-btn.view-files {
+    background-color: #17a2b8; /* Info Blue */
+  }
+  .action-btn.view-files:hover {
+    background-color: #138496;
+  }
+  .action-btn.unassign {
+    background-color: #dc3545; /* Red */
+  }
+  .action-btn.unassign:hover {
+    background-color: #c82333;
+  }
+
+  /* --- Pagination --- */
+  .pagination {
+    margin: 2rem 0 1rem;
+    text-align: center;
+  }
+  .step-links a,
+  .step-links .current {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 0 4px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+  }
+  .step-links a {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  .step-links a:hover {
+    background-color: #e0e0e0;
+  }
+  .step-links .current {
+    background-color: #2c5282;
+    color: white;
+    border-color: #2c5282;
+  }
+</style>
+{% endblock headcontent %} {% block bodycontent %}
+<div class="main_container">
+  <h2>OJT Student Assignments</h2>
+  <p>This table shows all students currently assigned to a company.</p>
+
+  <form method="GET" class="search-form">
+    <input
+      type="text"
+      name="search"
+      placeholder="Search by Student Name, ID, or Company..."
+      value="{{ search_query }}"
+    />
+    <button type="submit"><i class="fas fa-search"></i> Search</button>
+  </form>
+
+  {% if messages %}
+  <div class="messages-container">
+    {% for message in messages %}
+    <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="table-wrapper">
+    <table id="studentAssignmentTable">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Student Name</th>
+          <th>Program</th>
+          <th>Company Assigned</th>
+          <th>Date Started</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for assignment in page_obj.object_list %}
+        <tr>
+          <td>{{ assignment.studID.studID }}</td>
+          <td>
+            {{ assignment.studID.firstname }} {{ assignment.studID.lastname }}
+          </td>
+          <td>{{ assignment.studID.degree }}</td>
+          <td>{{ assignment.company_id.company_name }}</td>
+          <td>{{ assignment.date_started|date:"M d, Y" }}</td>
+          <td class="actions">
+            <a
+              href="{% url 'ojt_requirements_tracker' %}?student_id={{ assignment.studID.studID }}"
+              class="action-btn view-files"
+              title="View Submitted Files"
+            >
+              <i class="fas fa-folder-open"></i> View Files
+            </a>
+            <a
+              href="{% url 'unassign_student_view' assignment.ojt_id %}"
+              class="action-btn unassign"
+              onclick="return confirm('Are you sure you want to unassign this student? This will add a slot back to the company.');"
+              title="Unassign Student"
+            >
+              <i class="fas fa-user-minus"></i> Unassign
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="no-data">
+            {% if search_query %} No students found matching your search. {%
+            else %} No students are currently assigned to OJT. {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="pagination">
+    <span class="step-links">
+      {% if base_query_string %} {% with separator='&'|add:base_query_string %}
+      {% if page_obj.has_previous %}
+      <a href="?page=1{{ separator }}">&laquo; First</a>
+      <a href="?page={{ page_obj.previous_page_number }}{{ separator }}"
+        >Previous</a
+      >
+      {% endif %}
+      <span class="current"
+        >Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span
+      >
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{{ separator }}">Next</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}{{ separator }}"
+        >Last &raquo;</a
+      >
+      {% endif %} {% endwith %} {% else %} {% if page_obj.has_previous %}
+      <a href="?page=1">&laquo; First</a>
+      <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+      <span class="current"
+        >Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span
+      >
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Next</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+      {% endif %} {% endif %}
+    </span>
+  </div>
+  {% endif %}
+</div>
+{% endblock bodycontent %}

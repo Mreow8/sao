@@ -1,0 +1,214 @@
+/* === Global & Fonts === */
+body {
+  font-family: "Rubik", sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+/* === Main Card === */
+.form_div {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 1400px; /* Wide for a table */
+  margin: 2rem auto;
+}
+
+.form_div h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+/* === Filter/Search Bar === */
+.search_id_container {
+  display: flex;
+  flex-wrap: wrap; /* Stack on mobile */
+  align-items: center;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+#search-box,
+#scholar_type {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#search-box:focus,
+#scholar_type:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+}
+
+#search-box {
+  flex-grow: 1; /* Takes up available space */
+  min-width: 200px;
+}
+
+#scholar_type {
+  flex-grow: 1;
+  min-width: 200px;
+}
+
+#search-btn {
+  font-family: "Rubik", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 10px 20px;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+#search-btn:hover {
+  background-color: #2a4365; /* Darker Blue */
+}
+
+/* === Error Message === */
+.error {
+  padding: 1rem;
+  background-color: #f8d7da; /* Light Red */
+  border: 1px solid #f5c6cb;
+  border-left: 5px solid #dc3545; /* Red */
+  color: #721c24;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+/* === Table Styles === */
+/* Wrapper for responsiveness */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem; /* Space before the BACK button */
+}
+
+#requirements-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px; /* Forces scroll if container is too small */
+}
+
+#requirements-table th,
+#requirements-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #333;
+  vertical-align: middle;
+}
+
+#requirements-table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #2c5282; /* Primary Blue */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#requirements-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+#requirements-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* === Table Input & Buttons === */
+.amount {
+  width: 100px;
+  padding: 8px 10px;
+  font-family: "Rubik", sans-serif;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #e9ecef; /* Readonly style */
+  color: #495057;
+  text-align: right;
+}
+
+.action-cell .grant-btn {
+  font-family: "Rubik", sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  background-color: #28a745; /* Green */
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.action-cell .grant-btn:hover {
+  background-color: #218838; /* Darker Green */
+  transform: translateY(-1px);
+}
+
+/* === Back Button === */
+.back-link-container {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.back-btn {
+  display: inline-block;
+  font-family: "Rubik", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 10px 24px;
+  background-color: #6c757d; /* Gray */
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.back-btn:hover {
+  background-color: #5a6268; /* Darker Gray */
+  transform: translateY(-1px);
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .form_div {
+    padding: 1.5rem;
+  }
+
+  .search_id_container {
+    flex-direction: column;
+    align-items: stretch; /* Make inputs full-width */
+  }
+
+  #search-box,
+  #scholar_type,
+  #search-btn {
+    width: 100%;
+  }
+}

@@ -2,7 +2,7 @@
 <!-- ignore prettier -->
 {% load static %}
 <link rel="stylesheet" href="{% static 'header.css' %}" />
-
+<style></style>
 <link
   rel="stylesheet"
   href="{% static 'styles/job_placement/ojthiring.css' %}?249 "
@@ -33,10 +33,45 @@
     <p>Find internship opportunities below and get started:</p>
   </div>
 
-  {% if request.user.is_staff %}
+  {% if user.is_authenticated %}
+    
+     {% if student_assignment %}
+    <div class="assignment-status-box">
+      <h3>Your OJT Assignment</h3>
+      <p>You are assigned to:</p>
+      <h2>{{ student_assignment.company_id.company_name }}</h2>
+      <div class="company-details">
+        <span><strong>Address:</strong> {{ student_assignment.company_id.address }}</span>
+        <span><strong>Shift:</strong> {{ student_assignment.company_id.shift }}</span>
+        <span><strong>Date Started:</strong> {{ student_assignment.date_started|date:"M d, Y" }}</span>
+      </div>
 
-  <!-- Add company Form-->
-  <!-- <div class="container">      -->
+      {% if download_url %}
+        <a href="{{ download_url }}" class="download-btn" download>
+            <i class="fas fa-file-archive"></i> Download OJT Documents
+        </a>
+      {% else %}
+         <p class="info-note-error">
+            Generated documents (ZIP file) not found. Please contact an administrator.
+         </p>
+      {% endif %}
+      
+      <p class="info-note">
+        You can now submit your requirements on the "OJT Requirements" page.
+      </p>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {% if request.user.is_staff %} {% if messages %}
+  <div class="messages-container">
+    {% for message in messages %}
+    <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- prettier-ignore -->
 
   <div class="showform_container">
     <div class="form_container">
@@ -44,12 +79,7 @@
       <form action="{% url 'ojt_hiring' %}" method="POST">
         {% csrf_token %}
         <div>
-          <!-- <label for="{{ form.student.name }}">Student ID:</label>
-                                <input type="text" name="stud_id" id="stud_id">
-                                <div class="search">
-                                    <ul id="search_suggestions">
-                                    </ul>
-                                </div> -->
+        
           <label for="company">Company Name:</label>
           <input type="text" name="{{ form.company_name.name }}" />
 
@@ -93,6 +123,7 @@
       <!-- STUDENT ASSIGNING FORM -->
       <form action="{% url 'ojthiring_assign' %}" method="POST">
         {% csrf_token %}
+
         <label for="company">Company:</label>
         <input
           type="text"
@@ -217,6 +248,7 @@
       <button class="close"></button>
     </div>
   </div>
+
   {% endfor %} {% for hiring in ojt_list %}
   <div class="card">
     <div class="card__content">

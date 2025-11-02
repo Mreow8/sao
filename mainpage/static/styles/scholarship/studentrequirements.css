@@ -1,264 +1,213 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-    color: white;
-    list-style-type: none;
-}
-body{
-    display: flex;
-}
-#side_nav_box{
-    height: 100vh;
-    width: fit-content;
-}
-.side-nav
-{
-    width: 299px;
-    height: 533px;
-    background: #4682B4;
-    overflow: auto;
-}
-.side-nav::-webkit-scrollbar{
-    display: none;
-}
-.orange-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 60px;
-    padding: 0px 18px;
-    background-color: #FF8000;
-    width: 299px;
+/* === Global & Fonts === */
+/* Assumes "Rubik" font is imported in main.html */
+body {
+  font-family: "Rubik", sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
 }
 
-.logo{
-    height: 55px;
-}
-.bars{
-    height: 25px;
-}
-.side-nav li
-{
-    line-height: 30px;
+/* === Page Layout === */
+.content_box {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 20px;
 }
 
-
-.side-nav ul li{
-    line-height: 50px;
-    border-bottom: 1px solid #2B40D1;
+/* === Base Card Style === */
+/* This style applies to all main content blocks */
+.form_div,
+.form_div_2 {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+  margin: 2rem auto;
 }
 
-.side-nav ul ul{
-    position: static;
-    display: none;
+/* === Message/Status Card === */
+/* Styles .form_div_2 for messages like "Wait", "Processed", "Accepted" */
+.form_div_2 {
+  text-align: center;
 }
 
-.side-nav ul.studentlife.show{
-    display: block;
+.form_div_2 h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.6;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
 }
 
-.side-nav ul.scholar-show.show2{
-    display: block;
+/* === Buttons === */
+/* Base style for all buttons */
+.checkbtn,
+.submitbtn {
+  font-family: "Rubik", sans-serif;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  text-decoration: none; /* For the <a> tag */
+  display: inline-block;
 }
 
-.side-nav ul.jobplace-show.show3{
-    display: block;
+.checkbtn:hover,
+.submitbtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.side-nav ul.student_disc-show.show4{
-    display: block;
+.checkbtn:active,
+.submitbtn:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
-.side-nav ul.guide-show.show5{
-    display: block;
+/* "Check Profile" Button */
+.checkbtn {
+  background-color: #28a745; /* Green */
 }
 
-.side-nav ul.alumni-show.show6{
-    display: block;
+.checkbtn:hover {
+  background-color: #218838; /* Darker Green */
 }
 
-.side-nav ul.community-show.show7{
-    display: block;
+/* "Submit" Button */
+.submitbtn {
+  background-color: #2c5282; /* Primary Blue */
+  width: 100%;
+  margin-top: 1rem;
 }
 
-.side-nav ul.student_org-show.show8{
-    display: block;
+.submitbtn:hover {
+  background-color: #2a4365; /* Darker Blue */
 }
 
-.side-nav ul.medical-show.show9{
-    display: block;
-}
-
-
-
-.side-nav ul ul li{
-    line-height: 40px;
-}
-
-.side-nav ul ul li a{
-    font-size: 15px;
-    padding-left: 60px;
-}
-
-.side-nav ul li a:hover{
-    background: #3e74a0;
-    border-left-color: white;
-}
-
-.side-nav ul li a
-{
-    position: relative;
-    color: white;
-    padding-left: 30px;
-    text-decoration: none;
-    font-size: 14px;  
-    display: block;
-    width: 100%;
-    border-left: 5px solid transparent;
-}
-
-.side-nav ul li a span{
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    font-size: 18px;
-    transition: transform 0.4s;
-}
-
-.side-nav ul li a span.rotate{
-    transform:  translateY(-50%) rotate(-180deg);
-}
-.search-container {
-    width: 100%;
-    background-color: #f1f1f1; 
-    padding: 12.5px;
-    display: flex;
-    align-items: center;
-}
-
-.search-icon i {
-    margin-right: 10px;
-    cursor: pointer;
-    color: black;
-    font-size: 20px;
-}
-
-input[type="text"] 
-{
-    padding: 9.6px;
-    border: transparent;
-    border-radius: 10px;
-    box-sizing: border-box;
-    padding-left: 10px;
-    align-items:left;
-    color: black;
-    width: 300px;
-    background-color: #fff;
-    
-}
-.content_box{
-    height: 100vh;
-    width: 100%;
-}
-.content{
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    height: 89.5vh;
-    overflow: auto;
-    background-color: #fff;
-}
-.content h1{
-    color: black;
-}
-
-.form_div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: fit-content;
-    width: 88%;
-    padding: 50px 160px;
-    background-color: #f5f5f5;
-    border-radius: 10px;
-}
-.form_div_2{
-    width: fit-content;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    align-items: center;
-    gap: 30px;
-    padding: 50px 190px;
-    height: fit-content;
-    background-color: #f5f5f5;
-    border-radius: 10px;
-}
-.form_div h1{
-    font-size: 30px;
-    margin-bottom: 20px;
-    color: #C66604;
-    text-align: center;
-}
+/* === Form Styles === */
 .form-group {
-    margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
 }
-#requirementsForm{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+
 .form-group label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 5px;
-    color: #555;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
 }
 
 .form-group input[type="text"],
-.form-group input[type="file"],
-.form-group select {
-    width: 600px;
+.form-group input[type="file"] {
+  width: 100%;
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="file"]:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+/* Style for readonly inputs */
+.form-group input[readonly] {
+  background-color: #e9ecef;
+  color: #495057;
+  cursor: not-allowed;
+}
+
+/* Specifics for File Input */
+.form-group input[type="file"] {
+  padding: 8px;
+  color: #333; /* Matches your inline style */
+}
+
+.form-group input[type="file"]::file-selector-button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  background: #2c5282; /* Primary Blue */
+  color: white;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+  background: #2a4365; /* Darker Blue */
+}
+
+/* === Note & GPA Preview Boxes === */
+
+/* Targets the <p> tag with the note */
+form p[style*="color: black"] {
+  color: #333 !important;
+  margin-bottom: 20px !important;
+  font-size: 0.95rem;
+  background-color: #fff8e1; /* Light yellow warning */
+  border: 1px solid #ffe57f;
+  border-left: 5px solid #f39c12; /* Orange */
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Targets the <span> tag inside the note */
+form p[style*="color: black"] span {
+  color: #dc3545 !important; /* Red */
+  font-weight: 600;
+}
+
+/* GPA/Units Preview Box */
+#gpa-result {
+  display: none; /* Controlled by JS */
+  margin-top: 15px !important;
+  color: #333 !important;
+  background-color: #ebf8ff; /* Light blue info */
+  border: 1px solid #bee3f8;
+  border-left: 5px solid #2c5282; /* Primary Blue */
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+#gpa-result p {
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+#gpa-result p span {
+  font-weight: 700;
+  color: #2c5282;
+}
+
+/* === Responsive (Mobile) === */
+@media (max-width: 768px) {
+  .content_box {
     padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
+  }
 
-.submitbtn {
-    background-color: #C66604;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 600px;
-}
-.checkbtn{
-    background-color: #C66604;
-    color: white;
-    border: none;
-    padding: 7px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.submitbtn:hover,
-.checkbtn:hover {
-    background-color: #a55503;
-}
-
-#responseMessage {
-    margin-top: 20px;
-    font-size: 16px;
-    color: green;
+  .form_div,
+  .form_div_2 {
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
 }

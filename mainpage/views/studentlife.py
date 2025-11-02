@@ -5,9 +5,12 @@ from django.utils.dateparse import parse_datetime, parse_date
 from datetime import timedelta
 import io
 import os
+from django.db.models import Q
+from urllib.parse import urlencode
 import platform
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
+from django.core.paginator import Paginator
 from reportlab.lib.pagesizes import A4
 import time
 from django.http import JsonResponse, HttpResponse
@@ -428,57 +431,100 @@ def equipmentTracker(request):
 def equipmentTrackerAdmin(request):
     student = None
     borrowing_records = BorrowingRecord.objects.all()
+    error_message = None  # <-- 1. Initialize error variable
+
     if request.method == "GET" and "search" in request.GET:
         search_id = request.GET.get("search")
         if search_id:
             try:
                 student = studentInfo.objects.get(studID=search_id)
             except studentInfo.DoesNotExist:
-                messages.error(request, "Student not found")
+                # 2. REMOVE this line:
+                # messages.error(request, "Student not found")
+                
+                # 3. ADD this line instead:
+                error_message = "Student not found"
+        # (Optional) You can also handle empty searches
+        # else:
+        #     error_message = "Please enter a Student ID to search."
 
     all_equipment = Equipment.objects.all()
 
     context = {
         'student': student,
         'all_equipment': all_equipment,
-        'borrowing_records': borrowing_records
+        'borrowing_records': borrowing_records,
+        'error_message': error_message,  # <-- 4. Pass the local error to the context
     }
     return render(request, 'officeOfStudentL/adminUser/equipmentTrackerAdmin.html', context)
 from django.core.paginator import Paginator
 # @sao_admin_required (uncomment this if you have your custom decorator)
 def equipmentborrowed(request):
-    student = None
-    borrowing_records = BorrowingRecord.objects.all()
     
-    # Sorting functionality
-    sort_by = request.GET.get('sort', 'date_borrowed')  # Default to sorting by 'date_borrowed'
-    
-    if sort_by in ['name', 'equipment_name', 'date_borrowed', 'status']:
-        borrowing_records = borrowing_records.order_by(sort_by)
-    
-    # Pagination functionality
-    paginator = Paginator(borrowing_records, 10)  # Show 10 items per page
+    # --- 1. GET PARAMETERS ---
+    search_query = request.GET.get('search', '')
+    sort_by = request.GET.get('sort', 'date_borrowed')
+    order = request.GET.get('order', 'desc') # Default order for date is usually descending
     page_number = request.GET.get('page')
+
+    # --- 2. START QUERYSET ---
+    borrowing_records_list = BorrowingRecord.objects.all()
+    
+    # --- 3. APPLY SEARCH FILTER (Combined Name/ID Search) ---
+    if search_query:
+        # Use Q objects to perform a broad search across multiple fields
+        borrowing_records_list = borrowing_records_list.filter(
+            Q(equipment__itemId__icontains=search_query) |
+            Q(student__studID__icontains=search_query) |
+            Q(student__firstname__icontains=search_query) |
+            Q(student__lastname__icontains=search_query) |
+            Q(equipment__equipmentName__icontains=search_query)
+        )
+
+    # --- 4. APPLY SORTING ---
+    # Map sort parameter to correct database field names (including foreign key lookups)
+    sort_fields = {
+        'item_id': 'equipment__itemId',
+        'borrower_name': 'student__lastname', # Sorting by last name
+        'equipment_name': 'equipment__equipmentName',
+        'date_borrowed': 'date_borrowed',
+        'status': 'is_returned',
+    }
+    
+    db_field = sort_fields.get(sort_by, 'date_borrowed') # Use default if key is invalid
+    
+    # Apply direction
+    if order == 'desc':
+        db_field = f'-{db_field}'
+    
+    borrowing_records_list = borrowing_records_list.order_by(db_field)
+
+    # --- 5. PREPARE QUERY STRING FOR PAGINATION LINKS ---
+    query_params = request.GET.copy()
+    
+    # Remove 'page', 'sort', and 'order' so we can add them cleanly in the template
+    for key in ['page', 'sort', 'order']:
+        if key in query_params:
+            del query_params[key]
+            
+    # Encode the remaining search/filter params, prefixed with '&' if not empty
+    search_sort_params = f"&{urlencode(query_params)}" if query_params else ""
+
+    # --- 6. APPLY PAGINATION ---
+    paginator = Paginator(borrowing_records_list, 10) 
     page_obj = paginator.get_page(page_number)
 
-    # Search functionality
-    if request.method == "GET" and "search" in request.GET:
-        search_id = request.GET.get("search")
-        if search_id:
-            try:
-                student = studentInfo.objects.get(studID=search_id)
-                borrowing_records = borrowing_records.filter(student=student)
-            except studentInfo.DoesNotExist:
-                messages.error(request, "Student not found")
-
-    # Get all equipment types for dropdown
-    all_equipment = Equipment.objects.all()
-
     context = {
-        'student': student,
-        'all_equipment': all_equipment,
-        'borrowing_records': page_obj,  # Passing paginated records to the template
-        'sort_by': sort_by,
+        'borrowing_records': page_obj.object_list, # Items for the current page
+        'page_obj': page_obj,                     # Paginator object for controls
+
+        # For link generation and header highlighting
+        'current_sort': sort_by,
+        'current_order': order,
+        'search_sort_params': search_sort_params, # The prepared query string
+        
+        # Original search query for the search box value
+        'search_query': search_query, 
     }
 
     return render(request, 'officeOfStudentL/adminUser/equipmentborrowed.html', context)

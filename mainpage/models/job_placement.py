@@ -1,4 +1,5 @@
 import os
+from django.db.models import F
 from django import forms
 from django.db import models
 from django.template.defaultfilters import truncatechars
@@ -70,19 +71,55 @@ class OJTCompany(models.Model):
 
     def __str__(self):
         return self.company_name
-    
 class OJTStudent(models.Model):
     ojt_id = models.AutoField(primary_key=True)
     studID = models.OneToOneField(studentInfo, on_delete=models.PROTECT, unique=True)
     company_id = models.ForeignKey(OJTCompany, on_delete=models.PROTECT)
     date_started = models.DateField(auto_now=True)
     duration = models.PositiveIntegerField(null=False, blank=False, default=100)
+    
     def __str__(self):
         return f"{self.ojt_id}"
     
     class Meta:
         ordering = ['date_started']
 
+    # --- ADD THIS CUSTOM SAVE METHOD ---
+    def save(self, *args, **kwargs):
+        """
+        Custom save method to auto-subtract or add back company slots.
+        """
+        is_new = self._state.adding
+        old_company = None
+
+        if not is_new:
+            # Get the original company from the database
+            try:
+                original = OJTStudent.objects.get(pk=self.pk)
+                old_company = original.company_id
+            except OJTStudent.DoesNotExist:
+                pass # This is a new object, so old_company stays None
+
+        # Save the object to the database
+        super().save(*args, **kwargs)
+
+        # --- Slot Logic ---
+
+        # Case 1: A new student is assigned to a company
+        if is_new:
+            self.company_id.number_of_slots = F('number_of_slots') - 1
+            self.company_id.save(update_fields=['number_of_slots'])
+
+        # Case 2: An existing student is moved to a DIFFERENT company
+        elif not is_new and self.company_id != old_company:
+            # Add slot back to the old company
+            if old_company:
+                old_company.number_of_slots = F('number_of_slots') + 1
+                old_company.save(update_fields=['number_of_slots'])
+            
+            # Subtract slot from the new company
+            self.company_id.number_of_slots = F('number_of_slots') - 1
+            self.company_id.save(update_fields=['number_of_slots'])
 class OJTRequirements(models.Model):
     
     PENDING = 'Pending'

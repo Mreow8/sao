@@ -3,8 +3,62 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
-<link rel="stylesheet" href="{% static 'css/studentrequirements.css' %}" />
+<link
+  rel="stylesheet"
+  href="{% static 'styles/scholarship/studentrequirements.css' %}"
+/>
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+<style>
+  .grade-table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+  }
+  .grade-table th,
+  .grade-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    color: black;
+    text-align: left;
+  }
+  .grade-table th {
+    background-color: #f2f2f2;
+  }
+  .grade-table input {
+    width: 100%;
+    box-sizing: border-box;
+    color: black; /* Ensures text is visible */
+    padding: 5px;
+  }
+  .add-btn,
+  .remove-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .remove-btn {
+    background-color: #dc3545;
+  }
+  .gwa-results {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+  }
+  .gwa-results h3 {
+    font-size: 1.1em; /* Adjusted size */
+    font-weight: bold;
+    color: black;
+    margin-bottom: 5px;
+  }
+</style>
 {% endblock headcontent %} {% block bodycontent %}
 <div class="content_box">
   <div class="content">
@@ -14,13 +68,11 @@
     </script>
     {% endif %} {% if not is_requesting %}
     <div class="form_div_2">
-      <h3 style="color: #c66604">
-        Wait for the admin to request your requirements
-      </h3>
+      <h3>Wait for the admin to request your requirements</h3>
     </div>
     {% else %} {% if passed and not note %}
     <div class="form_div_2">
-      <h3 style="color: #c66604">
+      <h3>
         Your requirements for this {{ active_request.semester }} year {{
         active_request.year }} are still being processed.
       </h3>
@@ -31,7 +83,7 @@
     {% elif passed_accepted_new %}
     <div class="form_div_2">
       <center>
-        <h3 style="color: #c66604">
+        <h3>
           Your requirements for this {{ active_request.semester }} year {{
           active_request.year }} have already been accepted.
         </h3>
@@ -41,13 +93,12 @@
       >
     </div>
     {% else %}
+    <div class="sub-title">
+      <h3>SCHOLARSHIP</h3>
+      <p class="hometext">Home</p>
+      <p class="certxt">&gt; Submit Scholarship Requirements</p>
+    </div>
     <div class="form_div">
-      <div class="sub-title">
-        <h3>SCHOLARSHIP</h3>
-        <p class="hometext">Home</p>
-        <p class="certxt">&gt; Submit Scholarship Requirements</p>
-      </div>
-
       <form id="requirementsForm" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
@@ -70,18 +121,39 @@
           />
         </div>
 
-        <div class="form-group">
-          <label for="gpa">GPA:</label>
-          <input type="text" id="gpa" name="gpa" value="{{ gpa }}" />
-        </div>
+        <hr style="margin: 20px 0" />
 
         <div class="form-group">
-          <label for="units">UNITS:</label>
-          <input type="text" id="units" name="units" value="{{ units }}" />
+          <label>Enter Grades for GWA Calculation:</label>
+
+          <table id="grade-table" class="grade-table">
+            <thead>
+              <tr>
+                <th>Subject (Optional)</th>
+                <th>Grade</th>
+                <th>Units</th>
+                <th>Remove</th>
+              </tr>
+            </thead>
+            <tbody id="grade-table-body">
+              </tbody>
+          </table>
+          <button type="button" id="add-subject-btn" class="add-btn">
+            Add Subject
+          </button>
         </div>
 
+        <div class="gwa-results">
+          <h3>Total Units: <span id="live_units">0.00</span></h3>
+          <h3>Calculated GWA: <span id="live_gwa">0.00</span></h3>
+        </div>
+
+        <input type="hidden" id="gpa" name="gpa" value="0.00" />
+        <input type="hidden" id="units" name="units" value="0.00" />
+
+        <hr style="margin: 20px 0" />
         <div class="form-group">
-          <label for="gradeFile">Upload Image for Grade:</label>
+          <label for="gradeFile">Upload Image for Grade (Verification):</label>
           <input
             style="color: black"
             type="file"
@@ -118,15 +190,6 @@
         </p>
         {% endif %}
 
-        <!-- GPA extraction preview -->
-        <div
-          id="gpa-result"
-          style="display: none; margin-top: 15px; color: black"
-        >
-          <p>Extracted GPA: <span id="extracted-gpa"></span></p>
-          <p>Total Units: <span id="total-units"></span></p>
-        </div>
-
         <button class="submitbtn" type="submit">Submit</button>
       </form>
     </div>
@@ -135,26 +198,78 @@
 </div>
 
 <script>
-  document.getElementById("gradeFile")?.addEventListener("change", function () {
-    var formData = new FormData();
-    formData.append("gradeFile", this.files[0]);
-    formData.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+  document.addEventListener("DOMContentLoaded", function () {
+    const tableBody = document.getElementById("grade-table-body");
+    const addBtn = document.getElementById("add-subject-btn");
+    
+    // --- 1. Function to add a new subject row ---
+    function addSubjectRow() {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><input type="text" class="subject-input" placeholder="e.g., COMPL 101"></td>
+        <td><input type="number" class="grade-input" step="0.1" min="1.0" max="5.0" placeholder="e.g., 1.5"></td>
+        <td><input type="number" class="units-input" step="0.5" min="0" placeholder="e.g., 3"></td>
+        <td><button type="button" class="remove-btn">Remove</button></td>
+      `;
+      tableBody.appendChild(row);
+    }
 
-    fetch("{% url 'process_grade_image' %}", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          document.getElementById("gpa").value = data.gpa;
-          document.getElementById("units").value = data.total_units;
-          document.getElementById("gpa-result").style.display = "block";
-          document.getElementById("extracted-gpa").textContent = data.gpa;
-          document.getElementById("total-units").textContent = data.total_units;
+    // --- 2. Function to calculate GWA ---
+    function calculateGWA() {
+      let totalUnits = 0;
+      let totalGradePoints = 0;
+      
+      const rows = tableBody.querySelectorAll("tr");
+
+      rows.forEach(row => {
+        const gradeInput = row.querySelector(".grade-input");
+        const unitsInput = row.querySelector(".units-input");
+
+        const grade = parseFloat(gradeInput.value);
+        const units = parseFloat(unitsInput.value);
+
+        // Only calculate if both grade and units are valid numbers
+        if (!isNaN(grade) && !isNaN(units) && units > 0) {
+          totalUnits += units;
+          totalGradePoints += (grade * units);
         }
-      })
-      .catch((error) => console.error("Error:", error));
+      });
+
+      let gwa = 0.0;
+      if (totalUnits > 0) {
+        gwa = totalGradePoints / totalUnits;
+      }
+
+      // --- 3. Update the display and hidden form fields ---
+      
+      // Update the visible GWA/Units display
+      document.getElementById("live_gwa").textContent = gwa.toFixed(2);
+      document.getElementById("live_units").textContent = totalUnits.toFixed(2);
+
+      // Update the HIDDEN input fields that get sent to the server
+      document.getElementById("gpa").value = gwa.toFixed(2);
+      document.getElementById("units").value = totalUnits.toFixed(2);
+    }
+
+    // --- 4. Event Listeners ---
+
+    // Add a new row when "Add Subject" is clicked
+    addBtn.addEventListener("click", addSubjectRow);
+
+    // Recalculate GWA every time the user types in the table
+    // Using 'input' event to capture typing, pasting, etc.
+    tableBody.addEventListener("input", calculateGWA);
+
+    // Handle the "Remove" button
+    tableBody.addEventListener("click", function(e) {
+      if (e.target.classList.contains("remove-btn")) {
+        // Find the closest 'tr' (table row) and remove it
+        e.target.closest("tr").remove();
+        calculateGWA(); // Recalculate after removing a row
+      }
+    });
+
+    // Add one empty row to start with for the user
+    addSubjectRow();
   });
-</script>
-{% endblock %}
+</script>{% endblock %}

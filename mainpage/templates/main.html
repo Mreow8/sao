@@ -92,33 +92,28 @@
                   class="fas fa-caret-down second {% if current_url in section_urls %}rotate{% endif %}"
                 ></span>
               </a>
-              <ul class="scholar-show {% if current_url in section_urls %}active{% endif %}">
-                {% if is_scholar %}
-                <li>
-                  <a
-                    href="{% url 'student_req' %}"
-                    class="{% if current_url == 'student_req' %}active-link{% endif %}"
-                    >Submission of Requirements</a
-                  >
-                </li>
-                {% else %}
-                <li>
-                  <a
-                    href="{% url 'studentapplication' %}"
-                    class="{% if current_url == 'studentapplication' %}active-link{% endif %}"
-                    >Application form</a
-                  >
-                </li>
-                {% endif %}
-                <li>
-                  <a
-                    href="{% url 'profile_student' %}"
-                    class="{% if current_url == 'profile_student' %}active-link{% endif %}"
-                    >Scholars Profile</a
-                  >
-                </li>
-              </ul>
-            </li>
+             <ul class="scholar-show {% if current_url in section_urls %}active{% endif %}">
+    {% if is_scholar %}
+    <li>
+        <a href="{% url 'student_req' %}" class="{% if current_url == 'student_req' %}active-link{% endif %}">
+            Submission of Requirements
+        </a>
+    </li>
+    {% else %}
+    <li>
+        <a href="{% url 'studentapplication' %}" class="{% if current_url == 'studentapplication' %}active-link{% endif %}">
+            Application form
+        </a>
+    </li>
+    {% endif %}
+
+    <li>
+        <a href="{% url 'profile_student' %}" class="{% if current_url == 'profile_student' %}active-link{% endif %}">
+            Scholars Profile
+        </a>
+    </li>
+</ul>
+</li>
             {% endwith %} 
             
             {% with section_urls='ojt_hiring,seminar_page,ojt_requirements_tracker' %}
@@ -173,8 +168,8 @@
               <ul class="student_disc-show {% if current_url in section_urls %}active{% endif %}">
                 <li>
                   <a
-                    href="{% url 'case_profile' %}"
-                    class="{% if current_url == 'case_profile' %}active-link{% endif %}"
+                    href="{% url 'case_list' %}"
+                    class="{% if current_url == 'case_list' %}active-link{% endif %}"
                     >Case Profile</a
                   >
                 </li>

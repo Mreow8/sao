@@ -21,7 +21,7 @@ def is_superadmin(user):
     return user.is_authenticated and user.role == 'superadmin'
 from django.shortcuts import render, redirect, get_object_or_404
 from django.shortcuts import render, redirect, get_object_or_404
-from ..models import Organization, Accreditation, Adviser
+from ..models import Organization, Accreditation, Adviser, Requirement
 from ..forms import AccreditationForm
 
 def view_adviser(request, org_slug):
@@ -495,6 +495,8 @@ def view_project_by_slug(request, slug):
         'projects': projects,
         'base_template': base_template,
     })
+# Add this function to scholarship.py
+from django.db.models import Q # Make sure Q is imported at the top of the file
 
 @login_required
 
