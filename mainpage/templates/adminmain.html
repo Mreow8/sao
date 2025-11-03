@@ -91,6 +91,8 @@
           </li>
           {% endwith %}
           {% endif %}
+
+          
 {% if user.role == 'placement_officer' or user.role == 'superadmin' %}
           {% with section_urls='ojt_hiring,seminar_page,ojt_requirements_tracker' %}
           <li>
@@ -117,36 +119,82 @@
           </li>
           {% endwith %}
           {% endif %}
+
+
+
+
 {% if user.role == 'guidance' or user.role == 'superadmin' %}
-          {% with section_urls='Counseling App With Scheduler Admin View,Intake Interview,Exit Interview Admin View,OJT Assessment Admin View' %}
-          <li>
-            <a href="#" class="guide-btn {% if current_url in section_urls %}active{% endif %}">GUIDANCE
-              <span class="fas fa-caret-down fifth {% if current_url in section_urls %}rotate{% endif %}"></span>
-            </a>
-            <ul class="guide-show {% if current_url in section_urls %}active{% endif %}">
-              <li><a href="{% url 'Counseling App With Scheduler Admin View' %}" class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}">Counseling App with Scheduler</a></li>
-              <li><a href="{% url 'Intake Interview' %}" class="{% if current_url == 'Intake Interview' %}active-link{% endif %}">Intake Interview</a></li>
-              <li><a href="{% url 'Exit Interview Admin View' %}" class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}">Exit Interview</a></li>
-              <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
-            </ul>
-          </li>
-          {% endwith %}
-          {% endif %}
+  {% with section_urls='Counseling App With Scheduler Admin View,Intake Interview,Exit Interview Admin View,OJT Assessment Admin View' %}
+
+    {% if user.role == 'guidance' %}
+    {% comment %} --- SPECIAL VERSION FOR GUIDANCE (ALWAYS OPEN) --- {% endcomment %}
+    <li>
+      <a class="guide-btn active" style="pointer-events: none; cursor: default;">GUIDANCE
+        {% comment %} No caret icon, it's not a dropdown {% endcomment %}
+      </a>
+      <ul class="guide-show active"> {% comment %} <-- Always active (open) {% endcomment %}
+        <li><a href="{% url 'Counseling App With Scheduler Admin View' %}" class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}">Counseling App with Scheduler</a></li>
+        <li><a href="{% url 'Intake Interview' %}" class="{% if current_url == 'Intake Interview' %}active-link{% endif %}">Intake Interview</a></li>
+        <li><a href="{% url 'Exit Interview Admin View' %}" class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}">Exit Interview</a></li>
+        <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
+      </ul>
+    </li>
+
+    {% else %}
+    
+
+
+
+    <li>
+      <a href="#" class="guide-btn {% if current_url in section_urls %}active{% endif %}">GUIDANCE
+        <span class="fas fa-caret-down fifth {% if current_url in section_urls %}rotate{% endif %}"></span>
+      </a>
+      <ul class="guide-show {% if current_url in section_urls %}active{% endif %}">
+        <li><a href="{% url 'Counseling App With Scheduler Admin View' %}" class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}">Counseling App with Scheduler</a></li>
+        <li><a href="{% url 'Intake Interview' %}" class="{% if current_url == 'Intake Interview' %}active-link{% endif %}">Intake Interview</a></li>
+        <li><a href="{% url 'Exit Interview Admin View' %}" class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}">Exit Interview</a></li>
+        <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
+      </ul>
+    </li>
+    {% endif %}
+
+  {% endwith %}
+{% endif %}
+
 {% if user.role == 'alumni_officer' or user.role == 'superadmin' %}
-          {% with section_urls='admin_idRequest,admin_gradTracer,admin_events,admin_jobfairs' %}
-          <li>
-            <a href="#" class="alumni-btn {% if current_url in section_urls %}active{% endif %}">ALUMNI
-              <span class="fas fa-caret-down sixth {% if current_url in section_urls %}rotate{% endif %}"></span>
-            </a>
-            <ul class="alumni-show {% if current_url in section_urls %}active{% endif %}">
-              <li><a href="{% url 'admin_idRequest' %}" class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">Alumni ID Requests</a></li>
-              <li><a href="{% url 'admin_gradTracer' %}" class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">Graduate Tracer</a></li>
-              <li><a href="{% url 'admin_events' %}" class="{% if current_url == 'admin_events' %}active-link{% endif %}">Alumni Reunion and Events</a></li>
-              <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
-            </ul>
-          </li>
-          {% endwith %}
-          {% endif %}
+  {% with section_urls='admin_idRequest,admin_gradTracer,admin_events,admin_jobfairs' %}
+
+    {% if user.role == 'alumni_officer' %}
+    {% comment %} --- SPECIAL VERSION FOR ALUMNI OFFICER (ALWAYS OPEN) --- {% endcomment %}
+    <li>
+      <a class="alumni-btn active" style="pointer-events: none; cursor: default;">ALUMNI
+        {% comment %} No caret icon, it's not a dropdown {% endcomment %}
+      </a>
+      <ul class="alumni-show active"> {% comment %} <-- Always active (open) {% endcomment %}
+        <li><a href="{% url 'admin_idRequest' %}" class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">Alumni ID Requests</a></li>
+        <li><a href="{% url 'admin_gradTracer' %}" class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">Graduate Tracer</a></li>
+        <li><a href="{% url 'admin_events' %}" class="{% if current_url == 'admin_events' %}active-link{% endif %}">Alumni Reunion and Events</a></li>
+        <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
+      </ul>
+    </li>
+    
+    {% else %}
+    {% comment %} --- ORIGINAL VERSION FOR SUPERADMIN (CLICKABLE) --- {% endcomment %}
+    <li>
+      <a href="#" class="alumni-btn {% if current_url in section_urls %}active{% endif %}">ALUMNI
+        <span class="fas fa-caret-down sixth {% if current_url in section_urls %}rotate{% endif %}"></span>
+      </a>
+      <ul class="alumni-show {% if current_url in section_urls %}active{% endif %}">
+        <li><a href="{% url 'admin_idRequest' %}" class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">Alumni ID Requests</a></li>
+        <li><a href="{% url 'admin_gradTracer' %}" class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">Graduate Tracer</a></li>
+        <li><a href="{% url 'admin_events' %}" class="{% if current_url == 'admin_events' %}active-link{% endif %}">Alumni Reunion and Events</a></li>
+        <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
+      </ul>
+    </li>
+    {% endif %}
+
+  {% endwith %}
+{% endif %}
 
           {% if user.role == 'student_life_staff' or user.role == 'superadmin' %}
           {% with section_urls='programs,crowdfunding_list,donation-validate,donation_dashboard' %}
@@ -176,26 +224,54 @@
           </li>
           {% endwith %}
           {% endif %}
+
+
+          {% comment %} --- AFTER --- {% endcomment %}
+
 {% if user.role == 'clinic_admin' or user.role == 'superadmin' %}
-          {% with section_urls='admin_dashboard,viewrequest,medtracker,emergency_asst,pwdlist,dentalrequest,prescription,mental_health' %}
-          <li>
-            <a href="#" class="medical-btn {% if current_url in section_urls %}active{% endif %}">MEDICAL
-              <span class="fas fa-caret-down ninth {% if current_url in section_urls %}rotate{% endif %}"></span>
-            </a>
-            <ul class="medical-show {% if current_url in section_urls %}active{% endif %}">
-              <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
-              <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
-              <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
-              <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
-              <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
-              <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
-              <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
-              <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
-              <br /><br /><br />
-            </ul>
-          </li>
-          {% endwith %}
-          {% endif %}
+  {% with section_urls='admin_dashboard,viewrequest,medtracker,emergency_asst,pwdlist,dentalrequest,prescription,mental_health' %}
+
+    {% if user.role == 'clinic_admin' %}
+    {% comment %} --- SPECIAL VERSION FOR CLINIC ADMIN (ALWAYS OPEN) --- {% endcomment %}
+    <li>
+      <a class'="medical-btn active" style="pointer-events: none; cursor: default;">MEDICAL
+        {% comment %} No caret icon, it's not a dropdown {% endcomment %}
+      </a>
+      <ul class="medical-show active"> {% comment %} <-- Always active (open) {% endcomment %}
+        <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
+        <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
+        <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
+        <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
+        <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
+        <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
+        <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
+        <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
+        <br /><br /><br />
+      </ul>
+    </li>
+    
+    {% else %}
+    {% comment %} --- ORIGINAL VERSION FOR SUPERADMIN (CLICKABLE) --- {% endcomment %}
+    <li>
+      <a href="#" class="medical-btn {% if current_url in section_urls %}active{% endif %}">MEDICAL
+        <span class="fas fa-caret-down ninth {% if current_url in section_urls %}rotate{% endif %}"></span>
+      </a>
+      <ul class="medical-show {% if current_url in section_urls %}active{% endif %}">
+        <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
+        <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
+        <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
+        <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
+        <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
+        <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
+        <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
+        <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
+        <br /><br /><br />
+      </ul>
+    </li>
+    {% endif %}
+    
+  {% endwith %}
+{% endif %}
         </ul>
       </nav>
       {% endwith %}
@@ -212,11 +288,12 @@
             </div>
 
             <div class="right-controls">
+              {% if user.role == 'superadmin' or user.role == 'student_life_staff' %}
                 <a href="#" class="upload-button">
                     <i class="fas fa-upload"></i>
                     <span>Upload</span>
                 </a>
-
+                {% endif %}
                 <div class="account-info-wrapper">
                     
                     <div id="profile-trigger" class="profile-summary">

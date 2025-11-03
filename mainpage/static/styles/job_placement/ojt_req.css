@@ -442,3 +442,183 @@ hr {
   background-color: #2a4365;
   transform: translateY(-2px);
 }
+/* --- STUDENT VIEW STYLES --- */
+
+/* Instruction Box */
+#balo {
+  width: 90%;
+  max-width: 800px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background-color: #f0f4f8; /* Light blue/gray background */
+  border-left: 5px solid #007bff; /* Blue accent border */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#balo p {
+  margin: 0.5rem 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+/* Main Form Container */
+.showbox {
+  width: 90%;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Group (each row) */
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Allows stacking on mobile */
+  padding: 1.25rem 0;
+}
+
+/* Label (e.g., "Non-Disclosure:") */
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  flex-basis: 200px; /* Gives label a consistent base width */
+  flex-grow: 1;
+}
+
+/* File Name (if file exists) */
+p.file_name {
+  font-style: italic;
+  color: #555;
+  flex-basis: 300px;
+  flex-grow: 2;
+  margin: 0 1rem;
+  word-break: break-all;
+}
+
+/* Custom File Input Button */
+input.file-input {
+  flex-basis: 300px;
+  flex-grow: 2;
+  margin: 0 1rem;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+input.file-input::file-selector-button {
+  font-weight: 600;
+  color: #007bff;
+  background-color: #e6f2ff;
+  border: 1px solid #b8d8ff;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+input.file-input::file-selector-button:hover {
+  background-color: #d1e6ff;
+}
+
+/* --- Status Pills --- */
+.pending,
+.accepted,
+.declined,
+.nofile,
+.no_file {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-align: center;
+  min-width: 80px;
+  border: 1px solid transparent;
+}
+
+.pending {
+  background-color: #fff3cd; /* Yellow */
+  color: #856404;
+  border-color: #ffeeba;
+}
+
+.accepted {
+  background-color: #d4edda; /* Green */
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.declined {
+  background-color: #f8d7da; /* Red */
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+.nofile,
+.no_file {
+  background-color: #e2e3e5; /* Gray */
+  color: #383d41;
+  border-color: #d6d8db;
+}
+
+/* Separator Lines */
+.showbox hr {
+  border: 0;
+  height: 1px;
+  background-color: #e9ecef; /* Light gray */
+  margin: 0.5rem 0;
+}
+
+/* Submit Button */
+.submit-button {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 2rem auto 0;
+  padding: 12px 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #2a4365; /* Success Green */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #218838;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+  .showbox {
+    padding: 1.5rem;
+  }
+
+  .form-group {
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align all to the left */
+  }
+
+  .form-group label {
+    margin-bottom: 0.5rem;
+  }
+
+  p.file_name,
+  input.file-input {
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+
+  .pending,
+  .accepted,
+  .declined,
+  .nofile,
+  .no_file {
+    margin-top: 0.5rem;
+  }
+}

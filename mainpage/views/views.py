@@ -13,6 +13,7 @@ def homepage(request):
     return render(request, 'homepage.html', {
         'base_template': base_template
     })
+
 def alumni_main(request):
     return render(request, 'alumni/id_requests.html')
 def calendar(request):

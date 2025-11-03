@@ -359,45 +359,39 @@
         {% endwith %}
       </div>
     </div>
-   <div class="right-side"> <div class="custom-search-wrapper sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200">
-    <div class="search-container flex items-center justify-between px-6 py-4">
-      
-      <div class="relative flex-1 max-w-md">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-          <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-        </span>
-        <input 
-          type="text" 
-          placeholder="Search..." 
-          class="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
-        />
-      </div>
-
-      <div class="account-info flex items-center ml-6 relative">
-        {% if user.is_authenticated %}
-        <div class="profile-summary flex items-center space-x-2 cursor-pointer">
-          <i class="fas fa-user-circle profile-icon text-2xl text-gray-700"></i>
-          <span class="profile-name font-medium text-gray-800">{{ user.first_name }} {{ user.last_name }}</span>
-        </div>
-
-        <div class="profile-popup ">
-          <strong>Student ID:</strong> {{ user.username }}<br />
-          <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br />
-          <button class="logout-btn mt-2 bg-red-500 hover:bg-red-600 text-white w-full py-1 rounded">
-            <a href="{% url 'logout' %}">Logout</a>
-          </button>
-        </div>
-
-        {% else %}
-        <div class="student-account-info">
-          <a href="{% url 'signinuser' %}" class="text-blue-600 hover:underline text-sm">Sign in</a>
-        </div>
-        {% endif %}
-      </div>
+   <div class="right-side"><div class="custom-search-wrapper">
+  <div class="search-container"> <div class="search-box"> 
+      <span class="search-icon">
+        <i class="fa-solid fa-magnifying-glass "></i>
+      </span>
+      <input 
+        type="text" 
+        placeholder="Search..." 
+        class="search-input" 
+      />
     </div>
-  </div>
+ <div class="account-info-wrapper">
+                    
+                    <div id="profile-trigger" class="profile-summary">
+                        <i class="fas fa-user-circle profile-icon"></i>
+                        <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
+                        <i class="fas fa-caret-down caret-icon"></i>
+                    </div>
 
-
+                    <div id="profile-dropdown" class="profile-popup">
+                        <div class="popup-header">
+                            <strong></strong>
+                            <span class="popup-username">{{ user.username }}</span>
+                        </div>
+                        <div class="popup-divider"></div>
+                        <a href="{% url 'logout' %}" class="popup-logout-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                    
+                    </div>
+  </div> </div>
   <main class="main_content"> {% block bodycontent %}{% endblock %}
   </main>
 </div>
@@ -435,6 +429,35 @@
           }
         });
       }
+    </script><script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- Profile Dropdown Functionality ---
+            const profileTrigger = document.getElementById('profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+
+            if (profileTrigger && profileDropdown) {
+                // Toggle dropdown on trigger click
+                profileTrigger.addEventListener('click', function(event) {
+                    event.stopPropagation(); 
+                    profileDropdown.classList.toggle('active');
+                    profileTrigger.classList.toggle('active');
+                });
+
+                // Close dropdown when clicking anywhere else on the page
+                window.addEventListener('click', function() {
+                    if (profileDropdown.classList.contains('active')) {
+                        profileDropdown.classList.remove('active');
+                        profileTrigger.classList.remove('active');
+                    }
+                });
+
+                // Stop the dropdown from closing when clicking inside it
+                profileDropdown.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                });
+            }
+        });
     </script>
   </body>
     
