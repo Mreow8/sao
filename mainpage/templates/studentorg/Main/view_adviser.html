@@ -1,19 +1,152 @@
-{% extends base_template|default:"adminmain.html" %} {% load static %} {% block
-title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
-%}
-<!-- prettier- -->
-{% block headcontent %}
-<link rel="stylesheet" href="{% static 'studentorg/css/main.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/tables.css' %}" />
+{% extends base_template|default:"adminmain.html" %} {% load static %}
+<!-- prettier-ignore -->
+{% block title %}
+Student Organization ({{ org.name|default:"TECHNOCRATS" }})
+{% endblock %}
 
-<link rel="stylesheet" href="{% static 'styles/sub-title.css' %}" />
-<link rel="stylesheet" href="{% static 'studentorg/css/projects.css' %}" />
+{% block headcontent %}
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
 />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+  /* === GLOBAL STYLES === */
+  body {
+    font-family: "Rubik", sans-serif;
+    background-color: #f4f6f9;
+    color: #1a202c;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  /* === MAIN TITLE === */
+  .container h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #1a365d;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 3px solid #2563eb;
+    display: inline-block;
+    padding-bottom: 0.3rem;
+  }
+
+  /* === ADVISER GRID === */
+  .adviser-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* === ADVISER CARD === */
+  .adviser-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    text-align: center;
+    padding: 1.5rem 1rem;
+    transition: all 0.25s ease;
+    position: relative; /* <-- ADDED: So the badge stays inside */
+  }
+
+  .adviser-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* === NEW: ACTIVE BADGE === */
+  .active-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #28a745; /* Green */
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* === INACTIVE OVERLAY (Alternative) === */
+  /* If adviser is not active, make the card slightly transparent */
+  .adviser-card.inactive {
+    opacity: 0.7;
+    background-color: #fafafa;
+  }
+
+  /* === IMAGE === */
+  .adviser-image {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #1e40af;
+    margin-bottom: 1rem;
+  }
+
+  /* === NAME AND DETAILS === */
+  .adviser-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a365d;
+    margin-bottom: 0.3rem;
+  }
+
+  .adviser-department {
+    font-size: 0.95rem;
+    color: #4a5568;
+    margin-bottom: 0.2rem;
+  }
+
+  .adviser-position {
+    font-size: 0.95rem;
+    color: #2563eb;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  /* === VIEW PROFILE BUTTON === */
+  .view-profile {
+    display: inline-block;
+    background-color: #2563eb;
+    color: white;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .view-profile:hover {
+    background-color: #1e40af;
+  }
+
+  /* === RESPONSIVENESS === */
+  @media (max-width: 600px) {
+    .adviser-card {
+      padding: 1rem;
+    }
+    .adviser-image {
+      width: 90px;
+      height: 90px;
+    }
+    .container h1 {
+      font-size: 1.3rem;
+    }
+  }
+</style>
 {% endblock %} {% block bodycontent %}
 <div class="container">
   <div class="sub-title">
@@ -21,40 +154,48 @@ title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
     <p class="hometext">Home</p>
     <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
   </div>
-  <!-- Tabs -->
+
   <h1>Manage Advisers</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Profile Picture</th>
-        <th>Last Name</th>
-        <th>First Name</th>
-        <th>Middle Name</th>
-        <th>Department</th>
-        <th>Position</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for adviser in advisers %}
-      <tr>
-        <td>
-          {% if adviser.Adviser_profile_picture %}<a
-            href="{{ adviser.Adviser_profile_picture.url }}"
-            target="_blank"
-            style="color: blue"
-            >View Profile</a
-          >{% endif %}
-        </td>
 
-        <td>{{ adviser.surname }}</td>
-        <td>{{ adviser.firstname }}</td>
-        <td>{{ adviser.middlename }}</td>
-        <td>{{adviser.department}}</td>
-        <td>{{ adviser.position }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="adviser-container">
+    {% for adviser in advisers %}
+    <div class="adviser-card {% if not adviser.is_active %}inactive{% endif %}">
+      {% if adviser.is_active %}
+      <div class="active-badge">Active</div>
+      {% endif %} {% if adviser.profile_picture %}
+      <img
+        src="{{ adviser.profile_picture.url }}"
+        alt="{{ adviser.firstname }} {{ adviser.surname }}"
+        class="adviser-image"
+      />
+      {% else %}
+      <img
+        src="{% static 'images/default-profile.png' %}"
+        alt="Default Profile"
+        class="adviser-image"
+      />
+      {% endif %}
 
-  {% endblock %}
+      <div class="adviser-name">
+        {{ adviser.firstname }} {{ adviser.middlename }} {{ adviser.surname }}
+      </div>
+      <div class="adviser-department">{{ adviser.department }}</div>
+      <div class="adviser-position">{{ adviser.position }}</div>
+
+      {% if adviser.profile_picture %}
+      <a
+        href="{{ adviser.profile_picture.url }}"
+        target="_blank"
+        class="view-profile"
+        >View Profile</a
+      >
+      {% endif %}
+    </div>
+    {% empty %}
+    <p style="text-align: center; color: #555; font-style: italic">
+      No approved advisers found.
+    </p>
+    {% endfor %}
+  </div>
 </div>
+{% endblock %}

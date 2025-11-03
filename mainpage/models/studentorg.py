@@ -25,7 +25,11 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
-        
+        # No 'timezone' import is needed for this version
+from django.db import models
+# Make sure your other models are imported or defined
+# from .models import studentInfo, Organization
+
 class Officer(models.Model):
     officer_id = models.AutoField(primary_key=True)
     profile_picture = models.ImageField(
@@ -70,7 +74,6 @@ class Officer(models.Model):
     )
     
     course = models.CharField(max_length=50 )
-      
     
     year = models.CharField(max_length=50, choices=[
         ('1st', '1st'),
@@ -89,10 +92,26 @@ class Officer(models.Model):
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
+    # --- NEW FIELDS FOR "YEAR ONLY" ---
+    
+    academic_year = models.CharField(
+        max_length=10,  # For "2024-2025"
+        verbose_name="Academic Year",
+        help_text="The academic year of service (e.g., 2024-2025)",
+        null=True, blank=True
+    )
+    
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Currently Active",
+        help_text="Is this officer currently active? (Uncheck this for past officers)"
+    )
+    
+    # --- NO @property is_active function needed ---
+
     def __str__(self):
         middle = f" {self.middlename}" if self.middlename else ""
         return f"{self.surname}, {self.firstname}{middle}"
-
 class OfficerMembership(models.Model):
     membership_id = models.AutoField(primary_key=True)
     officer = models.ForeignKey(
@@ -277,7 +296,17 @@ class Adviser(models.Model):
         on_delete=models.CASCADE,
         related_name="advisers"
     )
-    position = models.CharField(max_length=100)
+    POSITION_CHOICES = [
+        ('Main', 'Main Adviser'),
+        ('Assistant', 'Assistant Adviser'),
+    ]
+    
+    position = models.CharField(
+        max_length=50,
+        choices=POSITION_CHOICES,
+        default='Main',
+        verbose_name="Adviser Position"
+    )
     date_of_birth = models.DateField()
     place_of_birth = models.CharField(max_length=100)
     sex = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
@@ -297,7 +326,12 @@ class Adviser(models.Model):
         ('approved', 'Approved'),
         ('declined', 'Declined'),
     ], default='pending')
-
+    date_deactivated = models.DateField(
+        null=True, 
+        blank=True, 
+        verbose_name="Date Deactivated",
+        help_text="The date the adviser was set to inactive. If blank, they are active."
+    )
     def __str__(self):
         return f"{self.surname}, {self.firstname} {self.middlename or ''}"
 

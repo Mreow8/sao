@@ -2033,7 +2033,7 @@ def dental_services(request):
         user_name = request.user.get_full_name() or request.user.username
 
         email_subject = 'Dental Services Request Submitted'
-        html_message = render_to_string('email/dental_request_confirmation.html', {
+        html_message = render_to_string('medical/email/dental_request_confirmation.html', {
             'patient_name': user_name,
             'service_type': service_type,
         })

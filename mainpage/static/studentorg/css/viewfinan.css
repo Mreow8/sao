@@ -18,32 +18,35 @@ table {
   padding: 0 1.5rem;
 }
 
-/* --- Tabs Navigation --- */
+/* --- Tabs (Adapted for <button>) --- */
 .tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   border-bottom: 1px solid #ddd;
-  margin-bottom: 0; /* Aligns with card margin */
 }
-
 .tab {
+  font-family: "Rubik", sans-serif;
   font-weight: 500;
   font-size: 1rem;
-  color: #555;
+  color: #2c5282; /* Theme Blue */
   text-decoration: none;
   padding: 1rem 1.25rem;
+  border: none;
   border-bottom: 3px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  background-color: transparent;
+  transition: color 0.2s, background-color 0.2s;
 }
-
 .tab:hover {
-  color: #333;
+  color: #2a4365;
+  background-color: #f0f5fa; /* Light blue hover */
 }
-
 .tab.active {
-  /* Use Primary Blue from requestgmc.css */
-  color: #2c5282;
+  color: #ffffff;
+  font-weight: 600;
+  background-color: #2c5282; /* Active tab has blue background */
   border-bottom-color: #2c5282;
 }
 
@@ -53,10 +56,9 @@ table {
 .maincontain {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
+
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-top: 2rem;
 }
 
 /* --- Form Headings --- */

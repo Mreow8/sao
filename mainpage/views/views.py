@@ -6,10 +6,13 @@ from django.db.models import Q
 @login_required(login_url='signinuser')  # or the URL name of your login page
 
 def homepage(request):
-    if request.user.is_superuser:
-        return render(request, 'adminmain.html')
-    else:
-        return render(request, 'main.html')
+    # This checks if the user is an admin/staff or a regular user
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+    
+    # Pass the base_template variable to the homepage.html
+    return render(request, 'homepage.html', {
+        'base_template': base_template
+    })
 def alumni_main(request):
     return render(request, 'alumni/id_requests.html')
 def calendar(request):
@@ -197,7 +200,7 @@ def signinuser(request):
             messages.success(request, f"Welcome, {user.first_name or user.username}!")
 
             if user.is_superuser:
-                return redirect('adminmain')
+                return redirect('homepage')
             elif hasattr(user, 'role') and user.role == 'student':
                  return redirect('homepage')
             elif hasattr(user, 'role') and user.role in ['clinic_admin', 'staff', 'guidance', 'scholarship_officer', 'placement_officer', 'discipline_officer', 'alumni_officer', 'student_life_staff']:

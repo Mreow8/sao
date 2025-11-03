@@ -127,7 +127,7 @@ def ojt_requiremets_download(request):
     if not download_url:
         messages.warning(request, "No download file specified.")
         return redirect('ojt_hiring')
-
+    
     base_template = "adminmain.html" # Or your logic to find the base template
     
     context = {
@@ -268,7 +268,7 @@ def ojt_assign_student(request):
                         request.session['assigned_company_name'] = company.company_name
                         
                         # --- 3. REDIRECT TO THE NEW DOWNLOAD PAGE ---
-                        return redirect('ojt_requiremets_download') # Make sure this URL name is in urls.py
+                        return redirect('ojt_requiremets_download') 
 
                     except Exception as zip_err:
                         error_message = f"Student assigned, but failed to create zip file: {zip_err}"
@@ -286,7 +286,7 @@ def ojt_assign_student(request):
                 else:
                     print(new_ojt_form.errors)
                     messages.error(request, f"Failed to assign student: Invalid form data. {new_ojt_form.errors.as_text()}")
-
+                return redirect('ojt_hiring')
                 base_template = "adminmain.html" if (request.user.is_staff or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard') else "main.html"
                 context = {
                     'form': OjtHiringForm(),
@@ -406,18 +406,18 @@ def mainpage(request):
 
 #   OJT HIRING THINGS
 # @login_required(login_url='admin_student')
-
-
 def ojt_hiring(request):
     
     ojt_hiring_form = OjtHiringForm()
     ojt_assign_form = OJTStudentForm()
-    ojt_hiring = OJTCompany.objects.all()
+    # This list is for the <datalist> dropdown, which needs ALL companies
+    all_companies_list = OJTCompany.objects.all() 
     student_assignment = None
-    download_url = None # <-- 1. Initialize download_url
+    download_url = None 
 
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
+    # --- Student Assignment Logic (No change) ---
     if request.user.is_authenticated and not (request.user.is_staff or request.user.is_superuser):
         try:
             student_info = studentInfo.objects.get(user=request.user) 
@@ -432,19 +432,18 @@ def ojt_hiring(request):
                 
                 zip_file_path = os.path.join(settings.MEDIA_ROOT, 'ojt_files', zip_file_name)
                 
-                # Check if the file actually exists on the server
                 if os.path.exists(zip_file_path):
-                    # If it exists, create the URL for the template
                     download_url = f"{settings.MEDIA_URL}ojt_files/{zip_file_name}"
                 
             except OJTStudent.DoesNotExist:
                 student_assignment = None
+
+    # --- POST Logic (No change) ---
     if request.method == 'POST':
         if not (request.user.is_staff or request.user.is_superuser):
             messages.info(request, 'Must be staff/admin to access page')
             return redirect('admin_login')
         
-        # Optional: specific role check (e.g., JobPlacementAdminUser)
         if not (isinstance(request.user, JobPlacementAdminUser) or request.user.is_superuser):
             messages.info(request, 'Must be Job Placement staff/admin to access page')
             return redirect('admin_login')
@@ -455,21 +454,60 @@ def ojt_hiring(request):
             newojt.save()
             messages.success(request, "New OJT Hiring created successfully!")
             log_activity(request.user, "Created new OJT hiring")
-            return redirect('ojt_hiring')  # redirect to prevent resubmission
+            return redirect('ojt_hiring')  
         else:
             messages.error(request, "Form invalid")
+
+    # --- GET Logic (Pagination, Search, Sort) ---
+    search_query = request.GET.get('search', '')
+    sort_by = request.GET.get('sort', 'date_desc') # Default sort is now Newest First
+
+    # Start with all companies for filtering/sorting
+    company_list = OJTCompany.objects.all()
+
+    # Apply search filter
+    if search_query:
+        company_list = company_list.filter(
+            Q(company_name__icontains=search_query) |
+            Q(address__icontains=search_query) |
+            Q(position__icontains=search_query) |
+            Q(description__icontains=search_query)
+        ).distinct()
+
+    # Apply sorting
+    if sort_by == 'date_asc':
+        company_list = company_list.order_by('company_id') # Oldest first
+    elif sort_by == 'name_asc':
+        company_list = company_list.order_by('company_name')
+    elif sort_by == 'name_desc':
+        company_list = company_list.order_by('-company_name')
+    elif sort_by == 'slots_asc':
+        company_list = company_list.order_by('number_of_slots')
+    elif sort_by == 'slots_desc':
+        company_list = company_list.order_by('-number_of_slots')
+    else: # Default is 'date_desc'
+        company_list = company_list.order_by('-company_id') # Newest first
+
+    # Apply pagination
+    paginator = Paginator(company_list, 9) # 9 cards per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
         'form': ojt_hiring_form,
         'assign_form': ojt_assign_form,
-        'ojt_list': ojt_hiring,
+        'ojt_list': all_companies_list, # Full list for the datalist
+        'page_obj': page_obj,             # Paginated list for cards
         'student_assignment': student_assignment,
         'download_url': download_url,
         'base_template': base_template,
+        'search_query': search_query,
+        'sort_by': sort_by,
     }
 
     return render(request, 'jobplacement/ojthiring.html', context)
 
+    return render(request, 'jobplacement/ojthiring.html', context)
 @login_required(login_url='admin_login')
 def ojthiring_delete(request, id):
     if not (request.user.is_staff or request.user.is_superuser):  # prevent student access

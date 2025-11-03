@@ -1,0 +1,100 @@
+{% extends base_template|default:"adminmain.html" %} {% load static %} {% block
+headcontent %}
+<title>Download OJT Documents</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+  .download-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+  .download-container h1 {
+    color: #2a8a44; /* Green color */
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .download-container p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  .download-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  .download-btn:hover {
+    background-color: #0056b3;
+  }
+  .redirect-link {
+    display: block;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #555;
+  }
+</style>
+{% endblock headcontent %} {% block bodycontent %}
+
+<div class="sub-title">
+  <h3>JOB PLACEMENT</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; Assignment Success</p>
+</div>
+
+<div class="download-container">
+  <h1>Assignment Successful!</h1>
+
+  <p>
+    You have successfully assigned <strong>{{ student_name }}</strong> to
+    <strong>{{ company_name }}</strong>.
+  </p>
+  <p>
+    The required OJT documents have been generated and zipped. You can download
+    them here:
+  </p>
+
+  <a href="{{ download_url }}" class="download-btn" download>
+    Download Documents (.zip)
+  </a>
+
+  <a href="{% url 'ojt_hiring' %}" class="redirect-link">
+    &larr; Go back to OJT Hiring
+  </a>
+</div>
+
+{% if messages %}
+<script>
+  // Configure the toast's appearance
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end', // Position it in the top-right corner
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer);
+      toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
+  });
+
+  // Loop through messages and show a toast for each one
+  {% for message in messages %}
+  Toast.fire({
+    icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% elif "warning" in message.tags %}warning{% else %}info{% endif %}',
+    title: '{{ message|escapejs }}'
+  });
+  {% endfor %}
+</script>
+{% endif %} {% endblock bodycontent %}

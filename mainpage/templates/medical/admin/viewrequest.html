@@ -1,496 +1,377 @@
-{% extends 'adminmain.html' %} {% load static %} {% block extra_css %}
-<!-- prettier-ignore -->
-{% endblock %} {% block bodycontent %}
-
+{% extends 'adminmain.html' %} 
+{% load static tailwind_tags %} 
+{% block title %}HealthHub Connect | View Request{% endblock %} 
+{% block extra_css %}
+{% tailwind_css %}
+{%block headcontent%}
 <style>
-  /* --- General Body & Font Styling --- */
-  body {
-    background-color: #f8f9fa;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Helvetica, Arial, sans-serif;
-  }
-
-  /* --- Main Content Container (styled like .gmc-form) --- */
-  .main-container {
-    max-width: 1400px; /* Wider for this complex page */
-    margin: 40px auto;
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  }
-
-  /* --- Header --- */
-  .header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 20px;
-    margin-bottom: 30px;
-  }
-  .page-title {
-    font-weight: 700;
-    font-size: 24px;
-    color: #1a1a1a;
-  }
-  .page-subtitle {
-    font-size: 14px;
-    color: #6c757d;
-  }
-
-  /* --- Tab System --- */
-  .top-tabs,
-  .sub-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .top-tab-button,
-  .tab-button {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-  }
-
-  /* Top Tabs (Student/Faculty) */
-  .top-tab-button {
-    background-color: #e9ecef;
-    color: #495057;
-  }
-  .top-tab-button.active {
-    background-color: #212529;
-    color: white;
-  }
-
-  /* Sub Tabs (Pending/Accepted) */
-  .tab-button {
-    background-color: #fff;
-    border-color: #ced4da;
-    color: #495057;
-  }
-  .tab-button:hover {
-    background-color: #f8f9fa;
-  }
-  .tab-button.active {
-    background-color: #ff8000;
-    border-color: #ff8000;
-    color: white;
-  }
-
-  .main-tab-content,
-  .sub-tab-content {
-    display: none;
-  }
-  .main-tab-content.active,
-  .sub-tab-content.active {
-    display: block;
-  }
-
-  /* --- Table Styling (from requestgmc.css) --- */
-  .table-responsive {
-    overflow-x: auto;
-  }
-  .request-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-  .request-table th,
-  .request-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #e0e0e0;
-    text-align: center;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
-  .request-table thead th {
-    background-color: #f7f7f7;
-    color: #ff8000; /* Orange accent */
-    font-weight: 600;
-  }
-  .request-table tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
-  }
-  .request-table tbody tr:hover {
-    background-color: #e9ecef;
-  }
-
-  /* Action Buttons in Table */
-  .btn {
-    border: none;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .btn-accept {
-    background-color: #28a745;
-    color: white;
-  }
-  .btn-reject {
-    background-color: #dc3545;
-    color: white;
-  }
-  .btn-accept:hover {
-    background-color: #218838;
-  }
-  .btn-reject:hover {
-    background-color: #c82333;
-  }
+    .tab-button.active {
+        background-color: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+    .tab-button {
+        transition: all 0.2s ease-in-out;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .top-tab-button.active {
+        background-color: #1f2937;
+        color: white;
+    }
+    .top-tab-button {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease-in-out;
+    }
 </style>
-<div class="main-container">
-  <div class="header">
-    <div>
-      <h2 class="page-title" id="main-heading">Requests</h2>
-      <p class="page-subtitle">View and manage requests</p>
-    </div>
-    <div class="top-tabs">
-      <button
-        type="button"
-        class="top-tab-button active"
-        onclick="showMainTab('students-content', 'Students Requests', 'student-request-tab')"
-      >
-        Students
-      </button>
-      <button
-        type="button"
-        class="top-tab-button"
-        onclick="showMainTab('faculty-content', 'Faculty Requests', 'faculty-request-tab')"
-      >
-        Faculty
-      </button>
-    </div>
-  </div>
+{% endblock %}
+{% endblock %}
 
-  <div class="main-tab-content active" id="students-content">
-    <div class="sub-tabs">
-      <button
-        type="button"
-        class="tab-button active"
-        onclick="showSubTab('students-content', 'student-request-tab')"
-      >
-        Requests
-      </button>
-      <button
-        type="button"
-        class="tab-button"
-        onclick="showSubTab('students-content', 'student-accepted-tab')"
-      >
-        Accepted
-      </button>
-      <button
-        type="button"
-        class="tab-button"
-        onclick="showSubTab('students-content', 'student-completed-tab')"
-      >
-        Completed
-      </button>
-    </div>
+{% block bodycontent %}
 
-    <div class="sub-tab-content active" id="student-request-tab">
-      <h3 class="page-title" style="font-size: 20px; text-align: left">
-        Pending Student Requests
-      </h3>
-      <div class="table-responsive">
-        <table class="request-table">
-          <thead>
-            <tr>
-              <th>Student ID</th>
-              <th>Name</th>
-              <th>Request Type</th>
-              <th>Date Requested</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for request in pending_patient_requests %}
-            <tr>
-              <td>{{ request.patient.user.username }}</td>
-              <td>
-                {{ request.student_first_name|title }} {{
-                request.student_last_name|title }}
-              </td>
-              <td>{{ request.request_type }}</td>
-              <td>{{ request.date_requested|date:'M d, Y' }}</td>
-              <td>
-                <form
-                  method="POST"
-                  style="display: flex; gap: 8px; justify-content: center"
-                >
-                  {% csrf_token %}
-                  <input
-                    type="hidden"
-                    name="request_id"
-                    value="{{ request.request_id }}"
-                  />
-                  <input
-                    type="hidden"
-                    name="request_type_model"
-                    value="PatientRequest"
-                  />
-                  <button
-                    type="submit"
-                    name="action"
-                    value="accept"
-                    class="btn btn-accept"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    type="submit"
-                    name="action"
-                    value="reject"
-                    class="btn btn-reject"
-                  >
-                    Reject
-                  </button>
-                </form>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="5">No pending student requests found</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+<div class="w-full h-screen rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b pb-4">
+        <div>
+            <h2 class="font-bold text-2xl text-gray-800" id="main-heading">Requests</h2>
+            <p class="text-gray-500 text-sm">View and manage requests</p>
+        </div>
+        <div class="flex gap-2">
+            <button type="button" class="top-tab-button bg-gray-200 active text-sm md:text-base" onclick="showMainTab('students-content', 'Students Requests', 'student-request-tab')">Students</button>
+            <button type="button" class="top-tab-button bg-gray-200 text-sm md:text-base" onclick="showMainTab('faculty-content', 'Faculty Requests', 'faculty-request-tab')">Faculty</button>
+        </div>
     </div>
+    <div class="h-full w-full overflow-auto">
+        <div class="h-fit max-h-full w-full main-tab-content" id="students-content">
+            <div class="flex gap-2 mb-4">
+                <button type="button" class="tab-button border border-[#cccccc] p-2 xs:w-full md:w-[10rem] rounded-md active text-sm md:text-base" onclick="showSubTab('students-content', 'student-request-tab')">Requests</button>
+                <button type="button" class="tab-button border border-[#cccccc] p-2 xs:w-full md:w-[10rem] rounded-md text-sm md:text-base" onclick="showSubTab('students-content', 'student-accepted-tab')">Accepted</button>
+            </div>
+            <div class="h-fit max-h-full w-full sub-tab-content" id="student-request-tab">
+                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Pending Student Requests</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Student ID</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Requested</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in pending_patient_requests %}
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                    <td class="text-center p-4"><span class="text-black">{{ request.student_id }}</span></td>
+                                    <td class="text-center p-4"><span class="text-black">{{ request.student_first_name|title }} {{ request.student_last_name|title }}</span></td>
+                                    <td class="text-center p-4"><span class="text-black">{{ request.request_type }}</span></td>
+                                    <td class="text-center p-4"><span class="text-black">{{ request.date_requested|date:'M d, Y' }}</span></td>
+                                    <td class="text-center p-4">
+                                        <form action="" method="POST" class="flex gap-2 justify-center">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="request_id" value="{{ request.request_id }}">
+                                            <input type="hidden" name="request_type_model" value="PatientRequest">
+                                            <button type="submit" name="action" value="accept" class="bg-green-600 text-white text-sm rounded-md p-2 hover:bg-green-700 transition-colors">Accept</button>
+                                            <button type="submit" name="action" value="reject" class="bg-red-600 text-white text-sm rounded-md p-2 hover:bg-red-700 transition-colors">Reject</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center p-4 text-gray-500">No pending student requests found</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="h-full w-full sub-tab-content" id="student-accepted-tab" style="display:none;">
+                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Accepted Student Requests</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Student ID</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Accepted</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in accepted_patient_requests %}
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                    <td class="text-center p-4">{{ request.student_id }}</td>
+                                    <td class="text-center p-4">{{ request.student_first_name|title }} {{ request.student_last_name|title }}</td>
+                                    <td class="text-center p-4">
+                                         {% comment %} Link only if relevant and student exists {% endcomment %}
+                                         {% if request.student_id and request.student_id|length > 0 %}
+                                             {% if request.request_type == 'Eligibility Form' %}<a href="{% url 'medical:eligibility_form' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                             {% elif request.request_type == 'Medical Clearance for OJT/Practicum' %}<a href="{% url 'medical:medicalclearance' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                             {% elif request.request_type == 'Medical Certificate for Intramurals' %}<a href="{% url 'medical:med_cert_for_intrams' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                             {% else %}{{ request.request_type }}{% endif %}
+                                         {% else %}
+                                             {{ request.request_type }}
+                                         {% endif %}
+                                    </td>
+                                    <td class="text-center p-4">{{ request.date_responded|date:'M d, Y' }}</td>
+                                    <td class="text-center p-4">
+                                        <form action="" method="POST" class="flex gap-2 justify-center">
+                                            {% csrf_token %}
+                                             <input type="hidden" name="request_id" value="{{ request.request_id }}">
+                                            <input type="hidden" name="request_type_model" value="PatientRequest">
+                                            <button type="submit" name="action" value="complete" class="bg-green-600 text-white text-sm rounded-md p-2 hover:bg-green-700 transition-colors">Mark As Done</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center p-4 text-gray-500">No accepted student requests found</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+             <div class="h-full w-full sub-tab-content" id="student-completed-tab" style="display:none;">
+                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Completed Student Requests</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Student ID</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Completed</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in completed_patient_requests %}
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                    <td class="text-center p-4">{{ request.student_id }}</td>
+                                    <td class="text-center p-4">{{ request.student_first_name|title }} {{ request.student_last_name|title }}</td>
+                                    <td class="text-center p-4">{{ request.request_type }}</td>
+                                    <td class="text-center p-4">{{ request.date_responded|date:'M d, Y' }}</td>
+                                    <td class="text-center p-4">
+                                        {% comment %} No action needed for completed requests in this view {% endcomment %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center p-4 text-gray-500">No completed student requests found</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="h-full w-full main-tab-content" id="faculty-content" style="display:none;">
+             <div class="flex gap-2 mb-4">
+                <button type="button" class="tab-button border border-[#cccccc] p-2 xs:w-full md:w-[10rem] rounded-md active text-sm md:text-base" onclick="showSubTab('faculty-content', 'faculty-request-tab')">Requests</button>
+                <button type="button" class="tab-button border border-[#cccccc] p-2 xs:w-full md:w-[10rem] rounded-md text-sm md:text-base" onclick="showSubTab('faculty-content', 'faculty-accepted-tab')">Accepted</button>
+             </div>
 
-    <div class="sub-tab-content" id="student-accepted-tab">
-      <h3 class="page-title" style="font-size: 20px; text-align: left">
-        Accepted Student Requests
-      </h3>
-      <div class="table-responsive">
-        <table class="request-table">
-          <thead>
-            <tr>
-              <th>Student ID</th>
-              <th>Name</th>
-              <th>Request Type</th>
-              <th>Date Accepted</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for request in accepted_patient_requests %}
-            <tr>
-              <td>{{ request.student_id }}</td>
-              <td>
-                {{ request.student_first_name|title }} {{
-                request.student_last_name|title }}
-              </td>
-              <!-- prettier-ignore -->
-              <td>
-                            {% if request.request_type == 'Eligibility Form' %}
-                                <a href="{% url 'eligibility_form' request.student_id %}">{{ request.request_type }}</a>
-                            {% elif request.request_type == 'Medical Clearance for OJT/Practicum' %}
-                                <a href="{% url 'medicalclearance' request.student_id %}">{{ request.request_type }}</a>
-                            {% elif request.request_type == 'Medical Certificate for Intramurals' %}
-                                <a href="{% url 'med_cert_for_intrams' request.student_id %}">{{ request.request_type }}</a>
-                            {% else %}
-                                {{ request.request_type }}
-                            {% endif %}
-                        </td>
-              <td>{{ request.date_responded|date:'M d, Y' }}</td>
-              <td>
-                <form method="POST">
-                  {% csrf_token %}
-                  <input
-                    type="hidden"
-                    name="request_id"
-                    value="{{ request.request_id }}"
-                  />
-                  <input
-                    type="hidden"
-                    name="request_type_model"
-                    value="PatientRequest"
-                  />
-                  <button
-                    type="submit"
-                    name="action"
-                    value="complete"
-                    class="btn btn-accept"
-                  >
-                    Mark As Done
-                  </button>
-                </form>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="5">No accepted student requests found</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+             <div class="h-fit max-h-full w-full sub-tab-content" id="faculty-request-tab">
+                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Pending Faculty Requests</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Faculty ID</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Requested</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in pending_faculty_requests %}
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                    <td class="text-center p-4">
+                                        {% if request.faculty and request.faculty.user %}
+                                            <span class="text-black">{{ request.faculty.faculty_id }}</span>
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center p-4">
+                                        {% if request.faculty and request.faculty.user %}
+                                            {{ request.faculty.user.first_name|title }} {{ request.faculty.user.last_name|title }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center p-4"><span class="text-black">{{ request.request_type }}</span></td>
+                                    <td class="text-center p-4"><span class="text-black">{{ request.date_requested|date:'M d, Y' }}</span></td>
+                                    <td class="text-center p-4">
+                                        <form action="" method="POST" class="flex gap-2 justify-center">
+                                            {% csrf_token %}
+                                             <input type="hidden" name="request_id" value="{{ request.request_id }}">
+                                            <input type="hidden" name="request_type_model" value="FacultyRequest">
+                                            <button type="submit" name="action" value="accept" class="bg-green-600 text-white text-sm rounded-md p-2 hover:bg-green-700 transition-colors">Accept</button>
+                                            <button type="submit" name="action" value="reject" class="bg-red-600 text-white text-sm rounded-md p-2 hover:bg-red-700 transition-colors">Reject</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center p-4 text-gray-500">No pending faculty requests found</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                 </div>
+             </div>
 
-  <div class="main-tab-content" id="faculty-content">
-    <div class="sub-tabs">
-      <button
-        type="button"
-        class="tab-button active"
-        onclick="showSubTab('faculty-content', 'faculty-request-tab')"
-      >
-        Requests
-      </button>
-      <button
-        type="button"
-        class="tab-button"
-        onclick="showSubTab('faculty-content', 'faculty-accepted-tab')"
-      >
-        Accepted
-      </button>
-      <button
-        type="button"
-        class="tab-button"
-        onclick="showSubTab('faculty-content', 'faculty-completed-tab')"
-      >
-        Completed
-      </button>
+             <div class="h-full w-full sub-tab-content" id="faculty-accepted-tab" style="display:none;">
+                 <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Accepted Faculty Requests</h3>
+                 <div class="overflow-x-auto">
+                    <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Faculty ID</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Accepted</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in accepted_faculty_requests %}
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                    <td class="text-center p-4">
+                                        <span class="text-black">{{ request.faculty_id_display }}</span>
+                                    </td>
+                                    <td class="text-center p-4">
+                                        {{ request.faculty_first_name|title }} {{ request.faculty_last_name|title }}
+                                    </td>
+                                    <td class="text-center p-4">
+                                        {% if request.request_type == 'Eligibility Form' %}
+                                            <a href="{% url 'medical:physical_exam' request.faculty_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                        {% else %}
+                                            {{ request.request_type }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center p-4">{{ request.date_responded|date:'M d, Y' }}</td>
+                                    <td class="text-center p-4">
+                                        <form action="" method="POST" class="flex gap-2 justify-center">
+                                            {% csrf_token %}
+                                             <input type="hidden" name="request_id" value="{{ request.request_id }}">
+                                            <input type="hidden" name="request_type_model" value="FacultyRequest">
+                                            <button type="submit" name="action" value="complete" class="bg-green-600 text-white text-sm rounded-md p-2 hover:bg-green-700 transition-colors">Mark As Done</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center p-4 text-gray-500">No accepted faculty requests found</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                 </div>
+             </div>
+             <div class="h-full w-full sub-tab-content" id="faculty-completed-tab" style="display:none;">
+                 <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Completed Faculty Requests</h3>
+                 <div class="overflow-x-auto">
+                    <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Faculty ID</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Completed</th>
+                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in completed_faculty_requests %}
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                    <td class="text-center p-4">
+                                        {% if request.faculty and request.faculty.user %}
+                                            <span class="text-black">{{ request.faculty.faculty_id }}</span>
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center p-4">
+                                        {% if request.faculty and request.faculty.user %}
+                                            {{ request.faculty.user.first_name|title }} {{ request.faculty.user.last_name|title }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center p-4">{{ request.request_type }}</td>
+                                    <td class="text-center p-4">{{ request.date_responded|date:'M d, Y' }}</td>
+                                     <td class="text-center p-4">
+                                        {% comment %} No action needed for completed requests in this view {% endcomment %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center p-4 text-gray-500">No completed faculty requests found</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                 </div>
+             </div>
+        </div>
     </div>
-
-    <div class="sub-tab-content active" id="faculty-request-tab">
-      <h3 class="page-title" style="font-size: 20px; text-align: left">
-        Pending Faculty Requests
-      </h3>
-      <div class="table-responsive">
-        <table class="request-table">
-          <thead>
-            <tr>
-              <th>Faculty ID</th>
-              <th>Name</th>
-              <th>Request Type</th>
-              <th>Date Requested</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for request in pending_faculty_requests %}
-            <tr>
-              <td>{{ request.faculty_id_display }}</td>
-              <!-- prettier-ignore -->
-              <td>{{ request.faculty_first_name|title }} {{ request.faculty_last_name|title }}</td>
-              <td>{{ request.request_type }}</td>
-              <td>{{ request.date_requested|date:'M d, Y' }}</td>
-              <td>
-                <form
-                  method="POST"
-                  style="display: flex; gap: 8px; justify-content: center"
-                >
-                  {% csrf_token %}
-                  <input
-                    type="hidden"
-                    name="request_id"
-                    value="{{ request.request_id }}"
-                  />
-                  <input
-                    type="hidden"
-                    name="request_type_model"
-                    value="FacultyRequest"
-                  />
-                  <button
-                    type="submit"
-                    name="action"
-                    value="accept"
-                    class="btn btn-accept"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    type="submit"
-                    name="action"
-                    value="reject"
-                    class="btn btn-reject"
-                  >
-                    Reject
-                  </button>
-                </form>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="5">No pending faculty requests found</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </div>
-{% endblock %} {% block extra_js %}
+{% endblock %}
+{% block extra_js %}
 <script>
-  function showSubTab(mainTabId, subTabIdToShow) {
-    // Hide all sub-tabs within the current main tab
-    document
-      .querySelectorAll(`#${mainTabId} .sub-tab-content`)
-      .forEach((content) => {
-        content.classList.remove("active");
-      });
-    // Deactivate all sub-tab buttons within the current main tab
-    document.querySelectorAll(`#${mainTabId} .tab-button`).forEach((button) => {
-      button.classList.remove("active");
+    function showSubTab(mainTabId, subTabId) {
+        var subTabs = document.querySelectorAll(`#${mainTabId} .tab-button`);
+        var subContents = document.querySelectorAll(`#${mainTabId} .sub-tab-content`);
+        
+        subTabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+        subContents.forEach(function(content) {
+            content.style.display = 'none';
+        });
+
+        document.getElementById(subTabId).style.display = 'block';
+        document.querySelector(`#${mainTabId} .tab-button[onclick="showSubTab('${mainTabId}', '${subTabId}')"]`).classList.add('active');
+    }
+
+    function showMainTab(mainTabId, headingText, initialSubTabId) {
+        var mainTabs = document.querySelectorAll('.main-tab-content');
+        var topTabButtons = document.querySelectorAll('.top-tab-button');
+        
+        mainTabs.forEach(function(tab) {
+            tab.style.display = 'none';
+        });
+        topTabButtons.forEach(function(button) {
+            button.classList.remove('active');
+        });
+
+        document.getElementById(mainTabId).style.display = 'block';
+        document.getElementById('main-heading').innerText = headingText; // Update main heading
+
+        // Find the correct top tab button by iterating and checking the onclick attribute
+        topTabButtons.forEach(function(button) {
+            if (button.getAttribute('onclick').includes(`showMainTab('${mainTabId}'`)) {
+                button.classList.add('active');
+            }
+        });
+
+        // Show the initial sub-tab for the selected main tab
+        showSubTab(mainTabId, initialSubTabId);
+    }
+
+    // Initialize the first tab on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        showMainTab('students-content', 'Students Requests', 'student-request-tab');
     });
-
-    // Show the selected sub-tab
-    document.getElementById(subTabIdToShow).classList.add("active");
-    // Activate the clicked sub-tab button
-    event.currentTarget.classList.add("active");
-  }
-
-  function showMainTab(mainTabIdToShow, headingText, initialSubTabId) {
-    // Hide all main tabs
-    document.querySelectorAll(".main-tab-content").forEach((tab) => {
-      tab.classList.remove("active");
-    });
-    // Deactivate all top tab buttons
-    document.querySelectorAll(".top-tab-button").forEach((button) => {
-      button.classList.remove("active");
-    });
-
-    // Show the selected main tab
-    document.getElementById(mainTabIdToShow).classList.add("active");
-    // Activate the clicked top tab button
-    event.currentTarget.classList.add("active");
-    // Update the main heading
-    document.getElementById("main-heading").innerText = headingText;
-
-    // Show the initial sub-tab for the newly selected main tab
-    // We need to find the button and content within the new main tab
-    document
-      .querySelectorAll(`#${mainTabIdToShow} .sub-tab-content`)
-      .forEach((content) => content.classList.remove("active"));
-    document
-      .querySelectorAll(`#${mainTabIdToShow} .tab-button`)
-      .forEach((button) => button.classList.remove("active"));
-
-    document.getElementById(initialSubTabId).classList.add("active");
-    document
-      .querySelector(
-        `#${mainTabIdToShow} .tab-button[onclick*="'${initialSubTabId}'"]`
-      )
-      .classList.add("active");
-  }
-
-  // Initialize the first tab on page load
-  document.addEventListener("DOMContentLoaded", function () {
-    showMainTab("students-content", "Students Requests", "student-request-tab");
-    // Manually activate the first button since event.currentTarget is not available on load
-    document.querySelector(".top-tab-button").classList.add("active");
-  });
 </script>
 {% endblock %}

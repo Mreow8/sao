@@ -1,0 +1,432 @@
+{% extends base_template %} {% load static %} {% block title %} Homepage - CTU
+Argao {% endblock %} {% block headcontent %}
+<link rel="stylesheet" href="{% static 'styles/homepage.css' %}" />
+{% endblock %} {% block bodycontent %}
+
+<div class="container">
+  <header class="page-header">
+    <h1>Cebu Technological University - Argao Campus</h1>
+    <p>Student Affairs & Campus Services Explorer</p>
+  </header>
+
+  <main>
+    <nav class="tabs" role="tablist" aria-label="Campus Information">
+      <button
+        class="tab active"
+        id="tab-overview"
+        role="tab"
+        aria-selected="true"
+        aria-controls="content-overview"
+        data-target="content-overview"
+      >
+        Overview
+      </button>
+      <button
+        class="tab"
+        id="tab-sao"
+        role="tab"
+        aria-selected="false"
+        aria-controls="content-sao"
+        data-target="content-sao"
+      >
+        Student Affairs (SAO)
+      </button>
+      <button
+        class="tab"
+        id="tab-services"
+        role="tab"
+        aria-selected="false"
+        aria-controls="content-services"
+        data-target="content-services"
+      >
+        Student Services
+      </button>
+      <button
+        class="tab"
+        id="tab-programs"
+        role="tab"
+        aria-selected="false"
+        aria-controls="content-programs"
+        data-target="content-programs"
+      >
+        Academic Programs
+      </button>
+    </nav>
+
+    <div class="main-content-card">
+      <div
+        class="tab-panel"
+        id="content-overview"
+        role="tabpanel"
+        aria-labelledby="tab-overview"
+      >
+        <p>
+          Welcome to the CTU Argao Campus Explorer. This section provides a
+          high-level overview of the university's identity and key campus
+          statistics. Explore other tabs to find specific information about
+          student services and academic programs.
+        </p>
+
+        <h2>University Identity</h2>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>Vision</h3>
+            <p>A premier, multidisciplinary technological university.</p>
+          </div>
+          <div class="info-card">
+            <h3>Mission</h3>
+            <p>
+              The University shall primarily provide advanced professional and
+              technical instruction for special purposes, advanced studies in
+              various fields, and also undertake research and extension
+              services.
+            </p>
+          </div>
+          <div class="info-card">
+            <h3>Goals</h3>
+            <p>
+              The University shall produce scientifically and technologically
+              oriented human capital equipped with appropriate knowledge,
+              skills, and attitudes. It shall also pursue relevant research and
+              strengthen linkages.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="tab-panel"
+        id="content-sao"
+        role="tabpanel"
+        aria-labelledby="tab-sao"
+        hidden
+      >
+        <h2>Office of Student Affairs (SAO)</h2>
+        <p>
+          The Office of Student Affairs (SAO), also referred to as the Office of
+          Student Affairs and Services (OSAS) on campus, is the primary office
+          dedicated to managing and coordinating student welfare, development,
+          and discipline. It serves as the central hub for most non-academic
+          student services, aiming to support students' holistic development in
+          line with the university's mission.
+        </p>
+
+        <div class="contact-callout">
+          <h3>Contact Information</h3>
+          <div>
+            <p>
+              <strong class="font-medium">Director, Student Affairs:</strong
+              ><br />
+              Evangeline C. Rellin
+            </p>
+            <p>
+              <strong class="font-medium">Phone:</strong><br />
+              485-8244
+            </p>
+            <p>
+              <strong class="font-medium">Email:</strong><br />
+              ctuargaosao@gmail.com
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="tab-panel"
+        id="content-services"
+        role="tabpanel"
+        aria-labelledby="tab-services"
+        hidden
+      >
+        <p>
+          The Student Affairs Office coordinates a wide range of services to
+          support students throughout their academic journey. Below are some of
+          the key services available to students at the Argao campus. Click on
+          any service to learn more.
+        </p>
+
+        <div id="servicesAccordion" class="accordion-container">
+          <div class="accordion-item">
+            <button class="accordion-toggle">
+              <span>Guidance and Counseling</span>
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content" hidden>
+              <p>
+                The Guidance Office provides essential services starting from
+                admission. They manage entrance examination applications and
+                offer personal counseling, group testing, and career guidance to
+                help students navigate academic and personal challenges.
+              </p>
+              <p>
+                <strong>Contact:</strong> Michaella Angela G. Bajenting
+                (Guidance Services Coordinator)
+              </p>
+              <p><strong>Email:</strong> guidance.argao@ctu.edu.ph</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-toggle">
+              <span>Scholarship and Financial Assistance</span>
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content" hidden>
+              <p>
+                In line with the university's goal of providing access to
+                education for the underprivileged, the SAO manages and
+                disseminates information about various scholarship programs.
+                These include academic scholarships, government-funded grants
+                (like CHED and DOST), and private scholarships.
+              </p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-toggle">
+              <span>Student Organizations & Activities</span>
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content" hidden>
+              <p>
+                The SAO oversees the accreditation and activities of all campus
+                student organizations, including the Supreme Student Council
+                (SSC). This service fosters leadership, community engagement,
+                and a vibrant campus life through various academic, cultural,
+                and social activities. As of 2020, there were 14 accredited
+                student organizations.
+              </p>
+              <p>
+                <strong>SSC Office Email:</strong>
+                supremestudentcouncil85@gmail.com
+              </p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-toggle">
+              <span>Health Services (KAHIMSUG Center)</span>
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content" hidden>
+              <p>
+                The campus provides for the well-being of its students through
+                the KAHIMSUG Center, which functions as the medical and dental
+                clinic. It handles first-aid, medical check-ups, and
+                health-related concerns.
+              </p>
+              <p><strong>Contact:</strong> Janette S. Puzon</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-toggle">
+              <span>Registrar's Office</span>
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content" hidden>
+              <p>
+                While a distinct office, the Registrar is a key student service
+                point, managing student records, enrollment, graduations, and
+                the issuance of official documents like Transcripts of Records
+                (TOR) and certifications.
+              </p>
+              <p><strong>Contact:</strong> Josephine M. Cabardo</p>
+              <p><strong>Email:</strong> registrar.ctu.argao48@gmail.com</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-toggle">
+              <span>NSTP / CWTS / ROTC</span>
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content" hidden>
+              <p>
+                The National Service Training Program (NSTP) office manages the
+                required Civic Welfare Training Service (CWTS) and Reserve
+                Officers' Training Corps (ROTC) components for students,
+                coordinating community service and national preparedness
+                activities.
+              </p>
+              <p><strong>Contact:</strong> Evangeline C. Rellin</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="tab-panel"
+        id="content-programs"
+        role="tabpanel"
+        aria-labelledby="tab-programs"
+        hidden
+      >
+        <p>
+          CTU Argao offers a diverse range of undergraduate and graduate
+          programs across several colleges. This robust academic environment
+          provides students with numerous pathways for their education and
+          career development.
+        </p>
+
+        <div class="programs-grid">
+          <div class="program-card">
+            <h3>College of Education (COE)</h3>
+          </div>
+          <div class="program-card">
+            <h3>College of Technology and Engineering (COTE)</h3>
+          </div>
+          <div class="program-card">
+            <h3>College of Agriculture (COA)</h3>
+          </div>
+          <div class="program-card">
+            <h3>College of Hospitality Management and Tourism (CHMT)</h3>
+          </div>
+          <div class="program-card">
+            <h3>College of Arts and Sciences (CAS)</h3>
+          </div>
+          <div class="program-card">
+            <h3>College of Forestry</h3>
+          </div>
+          <div class="program-card">
+            <h3>Graduate School</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll(".nav-tab, .tab"); // Targets both just in case
+    const panels = document.querySelectorAll(".tab-panel");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", (event) => {
+        const targetId = event.currentTarget.dataset.target;
+
+        panels.forEach((panel) => {
+          panel.setAttribute("hidden", true);
+        });
+
+        document.getElementById(targetId).removeAttribute("hidden");
+
+        tabs.forEach((t) => {
+          t.setAttribute("aria-selected", "false");
+          // UPDATED: Removes your .active class
+          t.classList.remove("active");
+        });
+
+        event.currentTarget.setAttribute("aria-selected", "true");
+        // UPDATED: Adds your .active class
+        event.currentTarget.classList.add("active");
+      });
+    });
+
+    const accordionToggles = document.querySelectorAll(".accordion-toggle");
+    accordionToggles.forEach((toggle) => {
+      toggle.addEventListener("click", () => {
+        const content = toggle.nextElementSibling;
+        const icon = toggle.querySelector(".icon");
+        const isHidden = content.hasAttribute("hidden");
+
+        content.toggleAttribute("hidden");
+
+        if (isHidden) {
+          icon.textContent = "−";
+          // UPDATED: Adds .active class to the toggle
+          toggle.classList.add("active");
+        } else {
+          icon.textContent = "+";
+          // UPDATED: Removes .active class from the toggle
+          toggle.classList.remove("active");
+        }
+      });
+    });
+
+    // --- Chart.js Script (Unchanged) ---
+    const wrapLabel = (label) => {
+      const maxChars = 16;
+      if (label.length > maxChars) {
+        let wrappedLabel = [];
+        let words = label.split(" ");
+        let currentLine = "";
+        for (let word of words) {
+          if ((currentLine + word).length > maxChars) {
+            wrappedLabel.push(currentLine);
+            currentLine = "";
+          }
+          currentLine += word + " ";
+        }
+        wrappedLabel.push(currentLine.trim());
+        return wrappedLabel;
+      }
+      return label;
+    };
+
+    const ctx = document.getElementById("statsChart").getContext("2d");
+    const statsData = {
+      labels: ["Total Students", "Student Awards (3yrs)", "Accredited Orgs"],
+      datasets: [
+        {
+          label: "Campus Statistics (as of Oct 2020)",
+          data: [3754, 650, 14],
+          backgroundColor: [
+            "rgba(44, 82, 130, 0.7)" /* Theme Blue */,
+            "rgba(59, 130, 246, 0.7)" /* Lighter Blue */,
+            "rgba(147, 197, 253, 0.7)" /* Lightest Blue */,
+          ],
+          borderColor: [
+            "rgba(44, 82, 130, 1)",
+            "rgba(59, 130, 246, 1)",
+            "rgba(147, 197, 253, 1)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    const chartConfig = {
+      type: "bar",
+      data: statsData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Total Count",
+            },
+          },
+          x: {
+            ticks: {
+              callback: function (value) {
+                const label = this.getLabelForValue(value);
+                return wrapLabel(label);
+              },
+            },
+          },
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: "#2a4365" /* Theme Tooltip */,
+            titleColor: "#fff",
+            bodyColor: "#fff",
+            cornerRadius: 4,
+            displayColors: false,
+          },
+        },
+      },
+    };
+
+    new Chart(ctx, chartConfig);
+  });
+</script>
+{% endblock %}

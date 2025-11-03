@@ -253,10 +253,12 @@ hr#demo {
 }
 
 .form_container form input[type="text"],
+.form_container form input[type="tel"],
 .form_container form input[type="number"],
 .form_container form select,
 .form_container form textarea,
 .studentshow form input[type="text"],
+.studentshow form input[type="tel"],
 .studentshow form input[type="number"],
 .studentshow form select {
   font-family: "Rubik", sans-serif;

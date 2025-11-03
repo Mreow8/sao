@@ -1,6 +1,18 @@
-/* --- Global & Fonts --- */
+/* --- Import Font (from requestgmc.css) --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.container,
+.tabs,
+.gmc-form,
+table,
+button,
+input,
+select {
+  font-family: "Rubik", sans-serif;
+}
 body {
-  font-family: "Inter", sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f4f7fa;
@@ -27,10 +39,6 @@ body {
   margin-left: 260px; /* Same as sidebar width */
   width: calc(100% - 260px);
   transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
-}
-
-.main_content {
-  padding: 2rem;
 }
 
 /* --- Sidebar Brand (Logo/Title) --- */
@@ -129,13 +137,12 @@ body {
   color: #fff;
 }
 
-/* --- Header / Right Side Content --- */
-.custom-search-wrapper {
+/* --- Header / Right Side Content --- .custom-search-wrapper {
   background-color: #fff;
 
   border-bottom: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
+} */
 
 /* Profile Dropdown */
 /* The .account-info container needs to be relative */
@@ -253,3 +260,285 @@ body {
 }
 
 /* --- --- */
+/* Apply to the whole page */
+html {
+  /* --- For Firefox --- */
+  scrollbar-width: thin; /* Makes scrollbar "thin" or "auto" */
+  scrollbar-color: #a0bcdc #f0f5fa; /* [Thumb Color] [Track Color] */
+}
+
+/* --- For Chrome, Edge, Safari (WebKit browsers) --- */
+
+/* 1. Sets the overall width of the scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px; /* For horizontal scrollbars */
+}
+
+/* 2. The 'track' (the background the handle slides on) */
+::-webkit-scrollbar-track {
+  background: #f0f5fa; /* Light-blue-white, matches your hover bg */
+  border-radius: 10px;
+}
+
+/* 3. The 'thumb' (the handle itself) */
+::-webkit-scrollbar-thumb {
+  background-color: #a0bcdc; /* A light, subtle blue */
+  border-radius: 10px;
+  border: 2px solid #f0f5fa; /* Creates a nice padding effect */
+}
+
+/* 4. The 'thumb' on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #2c5282; /* Your main theme blue */
+}
+/* --- Global & Fonts --- */
+body {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  /* Using the page background color for demo */
+  background-color: #f8fafc;
+  color: #1e293b;
+  /* Add padding for demo */
+  padding: 2rem;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* --- Header / Right Side Content --- */
+/* .custom-search-wrapper {
+  background-color: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 24px;
+  /* Added for standalone demo */
+/* border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+} */
+
+/* --- STYLES FOR YOUR HEADER HTML --- */
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 300px;
+  flex: 1;
+  max-width: 500px;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid transparent;
+}
+
+.search-box:focus-within {
+  background-color: #fff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.search-icon {
+  color: #64748b;
+  margin-right: 10px;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  width: 100%;
+  color: #1e293b;
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.upload-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.upload-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+}
+
+.upload-button .fa-upload {
+  font-size: 0.9rem;
+}
+
+.account-info-wrapper {
+  position: relative;
+}
+
+#profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+#profile-trigger:hover {
+  background-color: #f1f5f9;
+}
+
+.profile-icon {
+  font-size: 1.5rem;
+  color: #475569;
+}
+
+.profile-name {
+  font-weight: 500;
+  color: #334155;
+  display: none; /* Hidden by default */
+}
+
+.caret-icon {
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+#profile-trigger.active .caret-icon {
+  transform: rotate(180deg);
+}
+
+.profile-popup {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  width: 260px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  z-index: 1000;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.profile-popup.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.popup-header {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.popup-header strong {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.popup-header .popup-username {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.popup-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+}
+
+.popup-logout-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+  transition: background-color 0.2s ease;
+}
+
+.popup-logout-link:hover {
+  background-color: #f8fafc;
+}
+
+.popup-logout-link i {
+  width: 16px;
+  color: #64748b;
+}
+
+.student-account-info .signin-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.student-account-info .signin-link:hover {
+  background-color: #f1f5f9;
+}
+
+/* --- Media Queries --- */
+
+@media (min-width: 640px) {
+  .profile-name {
+    display: inline;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .right-controls {
+    justify-content: space-between;
+    width: 100%;
+  }
+}

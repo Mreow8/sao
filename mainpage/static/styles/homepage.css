@@ -1,0 +1,232 @@
+/* --- Import Font --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.container,
+button,
+input,
+select {
+  font-family: "Rubik", sans-serif;
+}
+
+body {
+  background-color: #f8f9fa; /* Light grey background */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
+}
+
+/* --- Page Header --- */
+.page-header {
+  margin-bottom: 2rem;
+}
+.page-header h1 {
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: #2a4365; /* Dark Theme Blue */
+  margin: 0;
+}
+.page-header p {
+  font-size: 1.15rem;
+  color: #4a5568; /* Grey */
+  margin-top: 0.25rem;
+}
+
+/* --- Tabs (Adapted for <button>) --- */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+.tab {
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #2c5282; /* Theme Blue */
+  text-decoration: none;
+  padding: 1rem 1.25rem;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  background-color: transparent;
+  transition: color 0.2s, background-color 0.2s;
+}
+.tab:hover {
+  color: #2a4365;
+  background-color: #f0f5fa; /* Light blue hover */
+}
+.tab.active {
+  color: #ffffff;
+  font-weight: 600;
+  background-color: #2c5282; /* Active tab has blue background */
+  border-bottom-color: #2c5282;
+}
+
+/* --- Main Content Card (like .gmc-form) --- */
+.main-content-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  /* Rounds bottom and right corners, top-left is sharp */
+  border-radius: 0 12px 12px 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-height: 50vh;
+}
+
+/* --- Content Headers & Text --- */
+.main-content-card h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #2a4365; /* Darker blue */
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+.main-content-card p {
+  color: #4a5568; /* gray-700 */
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+/* --- Overview Tab --- */
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 2rem auto;
+  padding: 1.5rem;
+  background-color: #fdfdfd;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  height: 400px; /* From original HTML */
+  box-sizing: border-box;
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.info-card {
+  background-color: #f0f5fa; /* Light blue (replaces orange-50) */
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #d4e2f3;
+}
+.info-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c5282;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+.info-card p {
+  color: #333;
+  margin-bottom: 0;
+}
+
+/* --- SAO Tab --- */
+.contact-callout {
+  background-color: #f0f5fa; /* Light blue */
+  border-left: 5px solid #2c5282; /* Theme blue */
+  padding: 1.5rem;
+  border-radius: 0 8px 8px 0;
+  max-width: 450px;
+}
+.contact-callout h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2a4365;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+.contact-callout p {
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+.contact-callout strong {
+  font-weight: 600;
+  color: #2c5282;
+}
+
+/* --- Services Tab (Accordion) --- */
+.accordion-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.accordion-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden; /* To contain the rounded corners */
+}
+.accordion-toggle {
+  font-family: "Rubik", sans-serif;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #f9f9f9;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: #2c5282;
+  transition: background-color 0.2s;
+}
+.accordion-toggle:hover {
+  background-color: #f0f0f0;
+}
+.accordion-toggle.active {
+  background-color: #e9ecef; /* Active/open toggle */
+}
+.accordion-toggle .icon {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #555;
+}
+.accordion-content {
+  padding: 1.5rem;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+}
+.accordion-content p {
+  margin-bottom: 1rem;
+}
+.accordion-content p:last-child {
+  margin-bottom: 0;
+}
+.accordion-content strong {
+  font-weight: 600;
+  color: #333;
+}
+
+/* --- Programs Tab --- */
+.programs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+.program-card {
+  background-color: #fff;
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.program-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+.program-card h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2c5282;
+  margin: 0;
+}

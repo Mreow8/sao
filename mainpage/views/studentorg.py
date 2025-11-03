@@ -17,13 +17,85 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, get_object_or_404
 # views.py
 # views.py
+
 def is_superadmin(user):
     return user.is_authenticated and user.role == 'superadmin'
 from django.shortcuts import render, redirect, get_object_or_404
 from django.shortcuts import render, redirect, get_object_or_404
 from ..models import Organization, Accreditation, Adviser, Requirement
 from ..forms import AccreditationForm
+# In your studentorg.py, replace the OLD view_adviser (line 42) with THIS:
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q             
+
+def view_adviser(request, org_slug):                             
+    # 1. Get base objects
+    organization = get_object_or_404(Organization, slug=org_slug)
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
+    # 2. Get parameters from URL
+    search_query = request.GET.get('search', None)
+    sort_by = request.GET.get('sort', 'adviser_id') # Default sort
+    order = request.GET.get('order', 'asc')
+
+    # 3. Start with base query (Filtered by org and status)
+    adviser_list = Adviser.objects.filter(
+        organization=organization, 
+        status='approved',
+    )
+
+    # 4. Apply Search Filter
+    if search_query:
+        adviser_list = adviser_list.filter(
+            Q(adviser_id__icontains=search_query) | 
+            Q(surname__icontains=search_query) |
+            Q(firstname__icontains=search_query) |
+            Q(department__icontains=search_query)
+        )
+
+    # 5. Apply Sorting
+    valid_sort_map = {
+        'adviser_id': 'adviser_id',
+        'surname': 'surname',
+        'firstname': 'firstname',
+        'department': 'department',
+        'position': 'position',
+    }
+    sort_field = valid_sort_map.get(sort_by, 'adviser_id')
+    
+    if order == 'desc':
+        sort_field = f"-{sort_field}"
+        
+    adviser_list = adviser_list.order_by(sort_field)
+        
+    # 6. Apply Pagination
+    paginator = Paginator(adviser_list, 10) # 10 items per page
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 7. Build Search parameters string for template links
+    search_params = ""
+    if search_query:
+        search_params += f"&search={search_query}"
+
+    # 8. Build Context
+    context = {
+        'page_obj': page_obj,  # Use page_obj instead of 'advisers'
+        'organization': organization,
+        'base_template': base_template,
+        'current_sort': sort_by,
+        'current_order': order,
+        'search_params': search_params
+    }
+    
+    return render(request, 'studentorg/VIEW/view_advisers.html', context)
 def view_adviser(request, org_slug):
     # Get the organization by slug
     organization = get_object_or_404(Organization, slug=org_slug)
@@ -300,6 +372,7 @@ def search_students(request):
             "id": student.pk,  # The studentInfo primary key (e.g., 1, 2, 3)
             "label": f"{student.studID} - {student_surname}, {student.firstname}",
             "value": student.studID,
+            "course": student.degree,
             
             # --- Extra data for autofill ---
             "firstname": student.firstname,
@@ -435,15 +508,60 @@ def officer_form(request, slug=None):
 #             return redirect('officer_form', slug=slug)
 
 #     return render(request, 'studentorg/Main/officer_form.html', {'organization': organization,   'base_template': base_template,})
+# Add this import at the top of your file
+from collections import defaultdict
+# ... (other imports like get_object_or_404, Officer, etc.) ...
 
+# Replace your old view_officers function with this one
 def view_officers(request, slug):
     org = get_object_or_404(Organization, slug=slug)
-    statements = Officer.objects.filter(organization=org, status="approved")
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
-    return render(request, 'studentorg/Main/view_officer.html', {
+    # 1. Get the selected year from the URL query
+    selected_year = request.GET.get('year', None)
+
+    # 2. Get the base query for *all* approved officer records
+    base_query = Officer.objects.filter(
+        organization=org, 
+        status="approved"
+    ).select_related('student')
+
+    # 3. Get all unique academic years for the dropdown menu
+    # We get this *before* filtering the main query
+    distinct_years = base_query.exclude(
+        academic_year__isnull=True
+    ).exclude(
+        academic_year__exact=''
+    ).values_list(
+        'academic_year', flat=True
+    ).distinct().order_by('-academic_year') # Newest year first
+
+    # 4. Filter the records if a year is selected
+    if selected_year:
+        final_query = base_query.filter(academic_year=selected_year)
+    else:
+        # If no year is selected, show all records
+        final_query = base_query
+
+    # 5. Order by year to ensure the *most recent* record is first in the list
+    final_query = final_query.order_by('-academic_year')
+
+    # 6. Group the *final, filtered* list by student
+    officers_grouped = defaultdict(list)
+    for record in final_query:
+        officers_grouped[record.student_id].append(record)
+
+    # 7. Pass all the data to the template
+    context = {
         'org': org,
-        'statements': statements
-    })
+        'grouped_officer_lists': officers_grouped.values(),
+        'base_template': base_template,
+        'distinct_years': distinct_years,    # The list of years for the menu
+        'selected_year': selected_year,   # The currently active filter
+    }
+    
+    return render(request, 'studentorg/Main/view_officer.html', context)
+
 def edit_org(request, slug):
     org = get_object_or_404(Organization, slug=slug)
     if request.method == 'POST':
@@ -822,25 +940,78 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from ..models import Adviser # Assumes your model is named Adviser
+
+
 def admin_manageadviser(request):
 
-    # --- POST Logic (for Approve/Decline) ---
+    # --- POST Logic (for Approve/Decline/Activate/Deactivate) ---
     if request.method == 'POST':
-        # [FIX] Use adviser_id here, which your template sends
         adviser_pk = request.POST.get('adviser_id') 
         action = request.POST.get('action')
         
-        # [FIX] Filter by the primary key 'adviser_id'
         adviser = get_object_or_404(Adviser, adviser_id=adviser_pk)
+        organization = adviser.organization  # Get the adviser's organization
         
         if action == 'approve':
+            # --- MODIFIED LOGIC ---
+            # Find other ACTIVE advisers for this org
+            other_active_advisers = Adviser.objects.filter(
+                organization=organization, 
+                status='approved',
+                is_active=True  # <-- Check against *active* advisers
+            ).exclude(adviser_id=adviser_pk) 
+
+            if adviser.position == 'Main':
+                if other_active_advisers.filter(position='Main').exists():
+                    messages.error(request, f"Cannot approve: {organization.name} already has an ACTIVE Main Adviser.")
+                    return redirect(request.get_full_path())
+
+            elif adviser.position == 'Assistant':
+                if other_active_advisers.filter(position='Assistant').exists():
+                    messages.error(request, f"Cannot approve: {organization.name} already has an ACTIVE Assistant Adviser.")
+                    return redirect(request.get_full_path())
+            
+            # If all checks pass, approve and activate the adviser
             adviser.status = 'approved'
-            # TODO: Add logic here to create a user account for the adviser
-            # user = User.objects.create_user(...)
+            adviser.is_active = True  # <-- NEW: Set to active on approval
+            messages.success(request, f"Adviser {adviser.firstname} {adviser.surname} has been approved and set to ACTIVE.")
+            # --- END MODIFIED LOGIC ---
+
         elif action == 'decline':
             adviser.status = 'declined'
-        adviser.save()
+            adviser.is_active = False # <-- NEW: A declined app is not active
+            messages.info(request, f"Adviser {adviser.firstname} {adviser.surname} has been declined.")
         
+        # --- NEW ACTIONS ---
+        elif action == 'deactivate':
+            if adviser.status != 'approved':
+                messages.error(request, "Only approved advisers can be deactivated.")
+            else:
+                adviser.is_active = False
+                messages.warning(request, f"Adviser {adviser.firstname} has been set to INACTIVE.")
+
+        elif action == 'activate':
+            if adviser.status != 'approved':
+                messages.error(request, "Only approved advisers can be activated.")
+            else:
+                # --- Must re-run the position check! ---
+                other_active_advisers = Adviser.objects.filter(
+                    organization=organization, 
+                    status='approved',
+                    is_active=True
+                ).exclude(adviser_id=adviser_pk)
+
+                if adviser.position == 'Main' and other_active_advisers.filter(position='Main').exists():
+                    messages.error(request, f"Cannot activate: {organization.name} already has an ACTIVE Main Adviser.")
+                elif adviser.position == 'Assistant' and other_active_advisers.filter(position='Assistant').exists():
+                        messages.error(request, f"Cannot activate: {organization.name} already has an ACTIVE Assistant Adviser.")
+                else:
+                    # All checks passed, activate the adviser
+                    adviser.is_active = True
+                    messages.success(request, f"Adviser {adviser.firstname} has been set to ACTIVE.")
+        # --- END NEW ACTIONS ---
+
+        adviser.save()
         return redirect(request.get_full_path())
 
     # --- GET Logic (for Display, Sort, Filter, Paginate) ---
@@ -848,8 +1019,8 @@ def admin_manageadviser(request):
     # 1. Get parameters from URL
     search_query = request.GET.get('search', None)
     status_filter = request.GET.get('status', None)
+    active_filter = request.GET.get('active', None) # <-- NEW
     
-    # [FIX] Default sort field is now 'adviser_id'
     sort_by = request.GET.get('sort', 'adviser_id') 
     order = request.GET.get('order', 'asc')
 
@@ -858,7 +1029,6 @@ def admin_manageadviser(request):
 
     # 3. Apply Filters
     if search_query:
-        # [FIX] Search by 'adviser_id' instead of 'id'
         adviser_list = adviser_list.filter(
             Q(adviser_id__icontains=search_query) | 
             Q(surname__icontains=search_query) |
@@ -869,8 +1039,15 @@ def admin_manageadviser(request):
     if status_filter:
         adviser_list = adviser_list.filter(status=status_filter)
 
+    # <-- NEW FILTER LOGIC ---
+    if active_filter:
+        if active_filter == 'true':
+            adviser_list = adviser_list.filter(is_active=True)
+        elif active_filter == 'false':
+            adviser_list = adviser_list.filter(is_active=False)
+    # --- END NEW FILTER LOGIC ---
+
     # 4. Apply Sorting
-    # [FIX] Use 'adviser_id' in the map
     valid_sort_map = {
         'adviser_id': 'adviser_id',
         'surname': 'surname',
@@ -878,9 +1055,9 @@ def admin_manageadviser(request):
         'department': 'department',
         'position': 'position',
         'status': 'status',
+        'is_active': 'is_active', # <-- NEW
     }
     
-    # [FIX] Default sort field is 'adviser_id'
     sort_field = valid_sort_map.get(sort_by, 'adviser_id')
     
     if order == 'desc':
@@ -905,6 +1082,8 @@ def admin_manageadviser(request):
         search_params += f"&search={search_query}"
     if status_filter:
         search_params += f"&status={status_filter}"
+    if active_filter: # <-- NEW
+        search_params += f"&active={active_filter}"
 
     # 7. Build Context
     context = {
@@ -916,6 +1095,7 @@ def admin_manageadviser(request):
     }
     
     return render(request, 'studentorg/ADMIN/admin_manageadviser.html', context)
+
 
 def admin_manageproject(request):
 
@@ -1123,579 +1303,23 @@ def admin_manage_accreditations(request):
     
     return render(request, 'studentorg/ADMIN/manage_accreditation.html', {'accreditations': accreditations})
 
-def FSTLP_certification(request):
-    return render(request, 'studentorg/FSTLP/FSTLP_certification.html')
+def FSTLP_CBL(request):
+    return render (request, "studentorg/FSTLP/FSTLP_CBL.html")
 
-def SI_certification(request):
-    return render(request, 'studentorg/SI++/SI++_certification.html')
-
-def SSG_certification(request):
-    return render(request, 'studentorg/SSG/SSG_certification.html')
-
-def THEEQUATIONERS_certification(request):
-    return render(request, 'studentorg/THEEQUATIONER/THEEQUATIONER_certification.html')
-
-def TECHNOCRATS_certification(request):
-    return render(request, 'studentorg/studentorg/TECHNOCRATS/TECHNOCRATS_certification.html')
+def SI_CBL(request):
+    return render (request, "studentorg/SI++/SI++_CBL.html")
 
 
+def THEEQUATIONERS_CBL(request):
+    return render (request, "studentorg/THEEQUATIONER/CBLTheEquationers.html")
+
+def SSG_CBL(request):
+    return render (request, "studentorg/SSG/SSG_CBL.html")
+
+def TECHNOCRATS_CBL(request):
+    return render (request, "studentorg/TECHNOCRATS/TECHNOCRATS_CBL.html")
 
 
 def admin_view_accreditations(request):
     approved_accreditations= Accreditation.objects.all()
     return render(request, 'studentorg/ADMIN/view_accreditation.html', {'accreditations': approved_accreditations})
-
-#FSLTP
-def FSTLP_profile(request):
-    return render (request, "studentorg/FSTLP/FSTLP_profile.html")
-
-def FSTLP_accreditation(request):
-    if request.method == 'POST':
-        form = AccreditationForm(request.POST, request.FILES)
-        if form.is_valid():
-            accreditation = form.save()
-            return redirect('FSTLP_accreditation')
-        else:
-            print(form.errors)
-    else:
-        form = AccreditationForm()
-
-    context = {'form': form}
-
-    if request.method == 'POST':
-        context['uploaded_files'] = {
-            'letter_of_intent': request.FILES.get('letter_of_intent'),
-            'list_of_officers': request.FILES.get('list_of_officers'),
-            'certificate_of_registration': request.FILES.get('certificate_of_registration'),
-            'list_of_members': request.FILES.get('list_of_members'),
-            'accomplishment_report': request.FILES.get('accomplishment_report'),
-            'calendar_of_activities': request.FILES.get('calendar_of_activities'),
-            'financial_statement': request.FILES.get('financial_statement'),
-            'bank_passbook': request.FILES.get('bank_passbook'),
-            'inventory_of_properties': request.FILES.get('inventory_of_properties'),
-            'organization_bylaws': request.FILES.get('organization_bylaws'),
-            'faculty_adviser_appointment': request.FILES.get('faculty_adviser_appointment'),
-            'other_documents': request.FILES.get('other_documents'),
-        }
-
-    return render (request, "studentorg/FSTLP/FSTLP_accreditation.html", context)
-
-def FSTLP_CBL(request):
-    return render (request, "studentorg/FSTLP/FSTLP_CBL.html")
-
-#FSLTP ADD
-def FSTLP_projects(request):
-    if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('FSTLP_projects') 
-    else:
-        form = ProjectForm()
-    return render(request, "studentorg/FSTLP/FSTLP_projects.html", {'form': form})
-def FSTLP_financial(request):
-    if request.method == 'POST':
-        form = FinancialStatementForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('FSTLP_financial')
-    else:
-        form = FinancialStatementForm()
-    return render (request, "studentorg/FSTLP/FSTLP_financial_statement.html", {'form': form})
-
-def FSTLP_officerdata(request):
-    if request.method == 'POST':
-        form = OfficerForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('FSTLP_officerdata') 
-    else:
-        form = OfficerForm()
-    return render(request, 'studentorg/FSTLP/FSTLP_officerdata.html', {'form': form})
-
-def FSTLP_adviserdata(request):
-    if request.method == 'POST':
-        form = AdviserForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('FSTLP_adviserdata')
-    else:
-        form = AdviserForm()
-    return render(request,'studentorg/FSTLP/FSTLP_adviserdata.html',{'form': form})
-
-#FSLTP VIEW
-def FSTLP_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='FSTLP')
-    return render(request, 'studentorg/FSTLP/FSTLP_viewproject.html', {'projects': approved_projects})
-def FSTLP_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='FSTLP')
-    return render(request, 'studentorg/FSTLP/FSTLP_viewfinancial.html', {'statements': approved_projects})
-def FSTLP_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='FSTLP')
-    return render(request, 'studentorg/FSTLP/FSTLP_viewofficer.html', {'statements': approved_projects})
-def FSTLP_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='FSTLP')
-    return render(request, 'studentorg/FSTLP/FSTLP_viewadviser.html', {'advisers': approved_projects})
-
-
-
-#SI++
-def SI_profile(request):
-    return render (request, "SI++/SI++_profile.html")
-
-def SI_accreditation(request):
-    if request.method == 'POST':
-        form = AccreditationForm(request.POST, request.FILES)
-        if form.is_valid():
-            accreditation = form.save()
-            return redirect('SI_accreditation')
-        else:
-            print(form.errors)
-    else:
-        form = AccreditationForm()
-
-    context = {'form': form}
-
-    if request.method == 'POST':
-        context['uploaded_files'] = {
-            'letter_of_intent': request.FILES.get('letter_of_intent'),
-            'list_of_officers': request.FILES.get('list_of_officers'),
-            'certificate_of_registration': request.FILES.get('certificate_of_registration'),
-            'list_of_members': request.FILES.get('list_of_members'),
-            'accomplishment_report': request.FILES.get('accomplishment_report'),
-            'calendar_of_activities': request.FILES.get('calendar_of_activities'),
-            'financial_statement': request.FILES.get('financial_statement'),
-            'bank_passbook': request.FILES.get('bank_passbook'),
-            'inventory_of_properties': request.FILES.get('inventory_of_properties'),
-            'organization_bylaws': request.FILES.get('organization_bylaws'),
-            'faculty_adviser_appointment': request.FILES.get('faculty_adviser_appointment'),
-            'other_documents': request.FILES.get('other_documents'),
-        }
-    return render (request, "studentorg/SI++/SI++_accreditation.html", context)
-
-def SI_CBL(request):
-    return render (request, "studentorg/SI++/SI++_CBL.html")
-
-#SI++ ADD
-
-def SI_projects(request):
-    if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('SI_projects') 
-    else:
-        form = ProjectForm()
-    return render(request, "studentorg/SI++/SI++_projects.html", {'form': form})
-    
-     
-def SI_financial(request):
-    if request.method == 'POST':
-        form = FinancialStatementForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('SI_financial')
-    else:
-        form = FinancialStatementForm()
-    return render (request, "studentorg/SI++/SI++_financial_statement.html", {'form': form})
-def SI_officerdata(request):
-    if request.method == 'POST':
-        form = OfficerForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('SI_officerdata')
-    else:
-        form = OfficerForm()
-    return render(request, 'studentorg/SI++/SI++_officerdata.html', {'form': form})
-
-def SI_adviserdata(request):
-    if request.method == 'POST':
-        form = AdviserForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('SI_adviserdata')
-    else:
-        form = AdviserForm()
-    return render(request,'studentorg/SI++/SI++_adviserdata.html',{'form': form})
-
-#SI++ VIEW
-def SI_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='SI++')
-    return render(request, 'studentorg/SI++/SI++_viewproject.html', {'projects': approved_projects})
-def SI_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='SI++')
-    return render(request, 'studentorg/SI++/SI++_viewfinancial.html', {'statements': approved_projects})
-def SI_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='SI++')
-    return render(request, 'studentorg/SI++/SI++_viewofficer.html', {'statements': approved_projects})
-def SI_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='SI++')
-    return render(request, 'studentorg/SI++/SI++_viewadviser.html', {'advisers': approved_projects})
-
-
-
-
-#THE EQUATIONERS
-def THEEQUATIONERS_profile(request):
-    return render (request, "THEEQUATIONER/THEEQUATIONER_profile.html")
-
-def THEEQUATIONERS_accreditation(request):
-    if request.method == 'POST':
-        form = AccreditationForm(request.POST, request.FILES)
-        if form.is_valid():
-            accreditation = form.save()
-            return redirect('THEEQUATIONERS_accreditation')
-        else:
-            print(form.errors)
-    else:
-        form = AccreditationForm()
-
-    context = {'form': form}
-
-    if request.method == 'POST':
-        context['uploaded_files'] = {
-            'letter_of_intent': request.FILES.get('letter_of_intent'),
-            'list_of_officers': request.FILES.get('list_of_officers'),
-            'certificate_of_registration': request.FILES.get('certificate_of_registration'),
-            'list_of_members': request.FILES.get('list_of_members'),
-            'accomplishment_report': request.FILES.get('accomplishment_report'),
-            'calendar_of_activities': request.FILES.get('calendar_of_activities'),
-            'financial_statement': request.FILES.get('financial_statement'),
-            'bank_passbook': request.FILES.get('bank_passbook'),
-            'inventory_of_properties': request.FILES.get('inventory_of_properties'),
-            'organization_bylaws': request.FILES.get('organization_bylaws'),
-            'faculty_adviser_appointment': request.FILES.get('faculty_adviser_appointment'),
-            'other_documents': request.FILES.get('other_documents'),
-        }
-    return render (request, "studentorg/THEEQUATIONER/THEEQUATIONER_accreditation.html", context)
-
-def THEEQUATIONERS_CBL(request):
-    return render (request, "studentorg/THEEQUATIONER/CBLTheEquationers.html")
-
-#THE EQUATIONERS ADD
-def THEEQUATIONERS_projects(request):
-    if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('THEEQUATIONERS_projects') 
-    else:
-        form = ProjectForm()
-    return render(request, "studentorg/THEEQUATIONER/THEEQUATIONER_projects.html", {'form': form})
-
-def THEEQUATIONERS_financial(request):
-    if request.method == 'POST':
-        form = FinancialStatementForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('THEEQUATIONERS_financial')
-    else:
-        form = FinancialStatementForm()
-    return render (request, "studentorg/THEEQUATIONER/THEEQUATIONER_financial_statement.html", {'form': form})
-def THEEQUATIONERS_officerdata(request):
-    if request.method == 'POST':
-        form = OfficerForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('THEEQUATIONERS_officerdata')
-    else:
-        form = OfficerForm()
-    return render(request, 'studentorg/THEEQUATIONER/THEEQUATIONER_officerdata.html', {'form': form})
-
-def THEEQUATIONERS_adviserdata(request):
-    if request.method == 'POST':
-        form = AdviserForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('THEEQUATIONERS_adviserdata')
-    else:
-        form = AdviserForm()
-    return render(request,'studentorg/THEEQUATIONER/THEEQUATIONER_adviserdata.html',{'form': form})
-
-
-#THE EQUATIONERS VIEW
-def THEEQUATIONERS_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='THE EQUATIONERS')
-    return render(request, 'studentorg/THEEQUATIONER/THEEQUATIONER_viewproject.html', {'projects': approved_projects})
-def THEEQUATIONERS_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='THE EQUATIONERS')
-    return render(request, 'studentorg/THEEQUATIONER/THEEQUATIONER_viewfinancial.html', {'statements': approved_projects})
-def THEEQUATIONERS_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='THE EQUATIONERS')
-    return render(request, 'studentorg/THEEQUATIONER/THEEQUATIONER_viewofficer.html', {'statements': approved_projects})
-def THEEQUATIONERS_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='THE EQUATIONERS')
-    return render(request, 'studentorg/THEEQUATIONER/THEEQUATIONER_viewadviser.html', {'advisers': approved_projects})
-
-
-
-#SUPREME STUDENT GOV (SSG)
-def SSG_profile(request):
-    return render (request, "studentorg/SSG/SSG_profile.html")
-
-def SSG_accreditation(request):
-    if request.method == 'POST':
-        form = AccreditationForm(request.POST, request.FILES)
-        if form.is_valid():
-            accreditation = form.save()
-            return redirect('SSG_accreditation')
-        else:
-            print(form.errors)
-    else:
-        form = AccreditationForm()
-
-    context = {'form': form}
-
-    if request.method == 'POST':
-        context['uploaded_files'] = {
-            'letter_of_intent': request.FILES.get('letter_of_intent'),
-            'list_of_officers': request.FILES.get('list_of_officers'),
-            'certificate_of_registration': request.FILES.get('certificate_of_registration'),
-            'list_of_members': request.FILES.get('list_of_members'),
-            'accomplishment_report': request.FILES.get('accomplishment_report'),
-            'calendar_of_activities': request.FILES.get('calendar_of_activities'),
-            'financial_statement': request.FILES.get('financial_statement'),
-            'bank_passbook': request.FILES.get('bank_passbook'),
-            'inventory_of_properties': request.FILES.get('inventory_of_properties'),
-            'organization_bylaws': request.FILES.get('organization_bylaws'),
-            'faculty_adviser_appointment': request.FILES.get('faculty_adviser_appointment'),
-            'other_documents': request.FILES.get('other_documents'),
-        }
-    return render (request, "studentorg/SSG/SSG_accreditation.html", context)
-
-def SSG_CBL(request):
-    return render (request, "studentorg/SSG/SSG_CBL.html")
-
-#SSG ADD
-def SSG_projects(request):
-    if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('SSG_projects') 
-    else:
-        form = ProjectForm()
-    return render(request, "studentorg/SSG/SSG_projects.html", {'form': form})
-def SSG_financial(request):
-    if request.method == 'POST':
-        form = FinancialStatementForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('SSG_financial')
-    else:
-        form = FinancialStatementForm()
-    return render (request, "studentorg/SSG/SSG_financial_statement.html", {'form': form})
-def SSG_officerdata(request):
-    if request.method == 'POST':
-        form = OfficerForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('SSG_officerdata')
-    else:
-        form = OfficerForm()
-    return render(request, 'studentorg/SSG/SSG_officerdata.html', {'form': form})
-def SSG_adviserdata(request):
-    if request.method == 'POST':
-        form = AdviserForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('SSG_adviserdata')
-    else:
-        form = AdviserForm()
-    return render(request,'studentorg/SSG/SSG_adviserdata.html',{'form': form})
-
-
-
-#SSG VIEW
-def SSG_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='SSG')
-    return render(request, 'studentorg/SSG/SSG_viewproject.html', {'projects': approved_projects})
-def SSG_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='SSG')
-    return render(request, 'studentorg/SSG/SSG_viewfinancial.html', {'statements': approved_projects})
-def SSG_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='SSG')
-    return render(request, 'studentorg/SSG/SSG_viewofficer.html', {'statements': approved_projects})
-def SSG_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='SSG')
-    return render(request, 'studentorg/SSG/SSG_viewadviser.html', {'advisers': approved_projects})
-
-
-
-#TECHNOCRATS
-def TECHNOCRATS_profile(request):
-    return render (request, "studentorg/TECHNOCRATS/TECHNOCRATS_profile.html")
-
-def TECHNOCRATS_accreditation(request):
-    if request.method == 'POST':
-        form = AccreditationForm(request.POST, request.FILES)
-        if form.is_valid():
-            accreditation = form.save()
-            return redirect('TECHNOCRATS_accreditation')
-        else:
-            print(form.errors)
-    else:
-        form = AccreditationForm()
-
-    context = {'form': form}
-
-    if request.method == 'POST':
-        context['uploaded_files'] = {
-            'letter_of_intent': request.FILES.get('letter_of_intent'),
-            'list_of_officers': request.FILES.get('list_of_officers'),
-            'certificate_of_registration': request.FILES.get('certificate_of_registration'),
-            'list_of_members': request.FILES.get('list_of_members'),
-            'accomplishment_report': request.FILES.get('accomplishment_report'),
-            'calendar_of_activities': request.FILES.get('calendar_of_activities'),
-            'financial_statement': request.FILES.get('financial_statement'),
-            'bank_passbook': request.FILES.get('bank_passbook'),
-            'inventory_of_properties': request.FILES.get('inventory_of_properties'),
-            'organization_bylaws': request.FILES.get('organization_bylaws'),
-            'faculty_adviser_appointment': request.FILES.get('faculty_adviser_appointment'),
-            'other_documents': request.FILES.get('other_documents'),
-        }
-    return render (request, "studentorg/TECHNOCRATS/TECHNOCRATS_accreditation.html", context)
-
-def TECHNOCRATS_CBL(request):
-    return render (request, "studentorg/TECHNOCRATS/TECHNOCRATS_CBL.html")
-
-#TECNOCRATS ADD
-def TECHNOCRATS_projects(request):
-    if request.method == 'POST':
-        form = ProjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('TECHNOCRATS_projects') 
-    else:
-        form = ProjectForm()
-    return render(request, "studentorg/TECHNOCRATS/TECHNOCRATS_projects.html", {'form': form})
-def TECHNOCRATS_financial(request):
-    if request.method == 'POST':
-        form = FinancialStatementForm(request.POST)
-        if form.is_valid():
-            form.save()
-    else:
-        form = FinancialStatementForm()
-    return render (request, "studentorg/TECHNOCRATS/TECHNOCRATS_financial_statement.html", {'form': form})
-def TECHNOCRATS_officerdata(request):
-    if request.method == 'POST':
-        form = OfficerForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('TECHNOCRATS_officerdata')
-    else:
-        form = OfficerForm()
-    return render(request, 'studentorg/TECHNOCRATS/TECHNOCRATS_officerdata.html', {'form': form})
-
-def TECHNOCRATS_adviserdata(request):
-    if request.method == 'POST':
-        form = AdviserForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('TECHNOCRATS_adviserdata')
-    else:
-        form = AdviserForm()
-    return render(request,'studentorg/TECHNOCRATS/TECHNOCRATS_adviserdata.html',{'form': form})
-
-#TECNOCRATS VIEW
-def TECHNOCRATS_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='TECHNOCRATS')
-    return render(request, 'studentorg/TECHNOCRATS/TECHNOCRATS_viewproject.html', {'projects': approved_projects})
-def TECHNOCRATS_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='TECHNOCRATS')
-    return render(request, 'studentorg/TECHNOCRATS/TECHNOCRATS_viewfinancial.html', {'statements': approved_projects})
-def TECHNOCRATS_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='TECHNOCRATS')
-    return render(request, 'studentorg/TECHNOCRATS/TECHNOCRATS_viewofficer.html', {'statements': approved_projects})
-def TECHNOCRATS_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='TECHNOCRATS')
-    return render(request, 'studentorg/TECHNOCRATS/TECHNOCRATS_viewadviser.html', {'advisers': approved_projects})
-
-#General View
-
-
-
-def Gen_FSTLP_profile(request):
-    return render (request, "studentorg/VIEW/FSTLP_profile.html")
-def Gen_SI_profile(request):
-    return render (request, "studentorg/VIEW/SI++_profile.html")
-def Gen_SSG_profile(request):
-    return render (request, "studentorg/VIEW/SSG_profile.html")
-def Gen_TECHNOCRATS_profile(request):
-    return render (request, "studentorg/VIEW/TECHNOCRATS_profile.html")
-def Gen_THEEQUATIONERS_profile(request):
-    return render (request, "studentorg/VIEW/THEEQUATIONER_profile.html")
-
-
-def Gen_FSTLP_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='FSTLP')
-    return render(request, 'studentorg/VIEW/FSTLP_viewproject.html', {'projects': approved_projects})
-def Gen_FSTLP_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='FSTLP')
-    return render(request, 'studentorg/VIEW/FSTLP_viewfinancial.html', {'statements': approved_projects})
-def Gen_FSTLP_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='FSTLP')
-    return render(request, 'studentorg/VIEW/FSTLP_viewofficer.html', {'statements': approved_projects})
-def Gen_FSTLP_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='FSTLP')
-    return render(request, 'studentorg/VIEW/FSTLP_viewadviser.html', {'advisers': approved_projects})
-
-def Gen_SI_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='SI++')
-    return render(request, 'studentorg/VIEW/SI++_viewproject.html', {'projects': approved_projects})
-def Gen_SI_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='SI++')
-    return render(request, 'studentorg/VIEW/SI++_viewfinancial.html', {'statements': approved_projects})
-def Gen_SI_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='SI++')
-    return render(request, 'studentorg/VIEW/SI++_viewofficer.html', {'statements': approved_projects})
-def Gen_SI_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='BSIT')
-    return render(request, 'studentorg/VIEW/SI++_viewadviser.html', {'advisers': approved_projects})
-
-def Gen_THEEQUATIONERS_viewproject(request):
-    try:
-        org = Organization.objects.get(name='THE EQUATIONERS')
-        approved_projects = Project.objects.filter(status='approved', org=org)
-    except Organization.DoesNotExist:
-        approved_projects = []
-
-    return render(request, 'studentorg/VIEW/THEEQUATIONER_viewproject.html', {
-        'projects': approved_projects
-    })
-def Gen_THEEQUATIONERS_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='THE EQUATIONERS')
-    return render(request, 'studentorg/VIEW/THEEQUATIONER_viewfinancial.html', {'statements': approved_projects})
-def Gen_THEEQUATIONERS_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='THE EQUATIONERS')
-    return render(request, 'studentorg/VIEW/THEEQUATIONER_viewofficer.html', {'statements': approved_projects})
-def Gen_THEEQUATIONERS_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='THE EQUATIONERS')
-    return render(request, 'studentorg/VIEW/THEEQUATIONER_viewadviser.html', {'advisers': approved_projects})
-
-def Gen_SSG_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='SSG')
-    return render(request, 'studentorg/VIEW/SSG_viewproject.html', {'projects': approved_projects})
-def Gen_SSG_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='SSG')
-    return render(request, 'studentorg/VIEW/SSG_viewfinancial.html', {'statements': approved_projects})
-def Gen_SSG_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='SSG')
-    return render(request, 'studentorg/VIEW/SSG_viewofficer.html', {'statements': approved_projects})
-def Gen_SSG_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='SSG')
-    return render(request, 'studentorg/VIEW/SSG_viewadviser.html', {'advisers': approved_projects})
-
-def Gen_TECHNOCRATS_viewproject(request):
-    approved_projects = Project.objects.filter(status='approved', org='TECHNOCRATS')
-    return render(request, 'studentorg/VIEW/TECHNOCRATS_viewproject.html', {'projects': approved_projects})
-def Gen_TECHNOCRATS_viewfinancial(request):
-    approved_projects = FinancialStatement.objects.filter(status='approved', org='TECHNOCRATS')
-    return render(request, 'studentorg/VIEW/TECHNOCRATS_viewfinancial.html', {'statements': approved_projects})
-def Gen_TECHNOCRATS_viewofficer(request):
-    approved_projects = Officer.objects.filter(status='approved', organization='TECHNOCRATS')
-    return render(request, 'studentorg/VIEW/TECHNOCRATS_viewofficer.html', {'statements': approved_projects})
-def Gen_TECHNOCRATS_viewadviser(request):
-    approved_projects = Adviser.objects.filter(status='approved', organization='TECHNOCRATS')
-    return render(request, 'studentorg/VIEW/TECHNOCRATS_viewadviser.html', {'advisers': approved_projects})
-

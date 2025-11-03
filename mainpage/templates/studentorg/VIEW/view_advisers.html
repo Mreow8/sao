@@ -1,0 +1,264 @@
+{% extends base_template|default:"adminmain.html" %} {% load static %}
+<!-- prettier-ignore -->
+{% block headcontent %}
+<link rel="stylesheet" href="{% static 'studentorg/css/Manage.css' %}" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+<style>
+  /* ... (your existing modal styles) ... */
+
+  .container {
+    padding: 20px;
+  }
+  .subcontain {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  th,
+  td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #f4f4f4;
+    font-weight: 600;
+  }
+  tr:hover {
+    background-color: #f9f9f9;
+  }
+  .no-applicants {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #777;
+  }
+  .profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  .pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .pagination a,
+  .pagination .current {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #007bff;
+  }
+  .pagination .current {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  .pagination a:hover {
+    background-color: #f4f4f4;
+  }
+  th.sortable a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* --- Image Modal --- */
+  .image-modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+  }
+  .image-modal-content {
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+  }
+  .image-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+{% endblock %} {% block bodycontent %}
+<div class="sub-title">
+  <h3>{{ organization.name }}</h3>
+  <p class="hometext">Home</p>
+  <p class="certxt">&gt; View Approved Advisers</p>
+</div>
+
+<div class="container">
+  <div class="maincontain gmc-form">
+    <form class="search-form" method="GET" action="">
+      <input
+        type="text"
+        name="search"
+        class="search-input"
+        placeholder="Search by Adviser ID, Name, Department..."
+        value="{{ request.GET.search }}"
+      />
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+
+    <div class="subcontain">
+      <table>
+        <thead>
+          <tr>
+            <th class="sortable">
+              <a
+                href="?sort=adviser_id&order={% if current_sort == 'adviser_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+                >Adviser ID</a
+              >
+            </th>
+            <th>Profile Picture</th>
+            <th class="sortable">
+              <a
+                href="?sort=surname&order={% if current_sort == 'surname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+                >Last Name</a
+              >
+            </th>
+            <th class="sortable">
+              <a
+                href="?sort=firstname&order={% if current_sort == 'firstname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+                >First Name</a
+              >
+            </th>
+            <th class="sortable">
+              <a
+                href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+                >Department</a
+              >
+            </th>
+            <th class="sortable">
+              <a
+                href="?sort=position&order={% if current_sort == 'position' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
+                >Position</a
+              >
+            </th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for adviser in page_obj %}
+          <tr>
+            <td>{{ adviser.adviser_id }}</td>
+            <td>
+              <a
+                href="{{ adviser.profile_picture.url|default_if_none:'#' }}"
+                class="clickable-profile-pic"
+              >
+                <img
+                  src="{{ adviser.profile_picture.url|default_if_none:'/static/images/default_profile.png' }}"
+                  alt="{{ adviser.firstname }}'s Profile"
+                  class="profile-pic"
+                />
+              </a>
+            </td>
+            <td>{{ adviser.surname }}</td>
+            <td>{{ adviser.firstname }}</td>
+            <td>{{ adviser.department }}</td>
+            <td>{{ adviser.position }}</td>
+            <td>
+              <span style="color: green; font-weight: bold">
+                {{ adviser.get_status_display }}
+              </span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="no-applicants">
+              No approved advisers found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a
+          href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}"
+          >&laquo; First</a
+        >
+        <a
+          href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}"
+          >Previous</a
+        >
+        {% endif %}
+
+        <span class="current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+        <a
+          href="?page={{ page_obj.next_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}"
+          >Next</a
+        >
+        <a
+          href="?page={{ page_obj.paginator.num_pages }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}"
+          >Last &raquo;</a
+        >
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+
+<div id="image-modal" class="image-modal-overlay">
+  <span class="image-modal-close">&times;</span>
+  <img class="image-modal-content" id="modal-image" />
+</div>
+
+<script>
+  $(document).ready(function () {
+    // --- Image Modal Code ---
+    $(".clickable-profile-pic").on("click", function (e) {
+      e.preventDefault();
+      let imageUrl = $(this).attr("href");
+      if (imageUrl && imageUrl !== "#") {
+        $("#modal-image").attr("src", imageUrl);
+        $("#image-modal").css("display", "flex");
+      }
+    });
+
+    $(".image-modal-close").on("click", function () {
+      $("#image-modal").css("display", "none");
+    });
+
+    $("#image-modal").on("click", function (e) {
+      if (e.target.id === "image-modal") {
+        $("#image-modal").css("display", "none");
+      }
+    });
+  });
+</script>
+{% endblock bodycontent %}

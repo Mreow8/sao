@@ -7,6 +7,32 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+<!-- UPDATED: Added simple styles for new buttons -->
+<style>
+  .approve {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .approve:hover {
+    background-color: #218838;
+  }
+  .decline {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .decline:hover {
+    background-color: #c82333;
+  }
+</style>
 {% endblock %} 
 
 {% block bodycontent %}
@@ -34,6 +60,7 @@
 
   <div class="maincontain gmc-form">
   
+    <!-- UPDATED: Added new 'active' filter dropdown -->
     <form class="search-form" method="GET" action="">
       <input
         type="text"
@@ -46,26 +73,35 @@
           <option value="">All Statuses</option>
           <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
           <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+          <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
       </select>
+      
+      <!-- NEW: Filter for Active/Inactive -->
+      <select class="filter-select" name="active" id="active-filter">
+        <option value="">All Active</option>
+        <option value="true" {% if request.GET.active == 'true' %}selected{% endif %}>Active</option>
+        <option value="false" {% if request.GET.active == 'false' %}selected{% endif %}>Inactive</option>
+      </select>
+      
       <button type="submit" class="search-btn">Search</button>
     </form>
     
+    <!-- UPDATED: Script now handles both filters -->
     <script>
         $(document).ready(function() {
-            $('#status-filter').change(function() {
+            $('#status-filter, #active-filter').change(function() {
                 $(this).closest('form').submit();
             });
         });
     </script>
 
     <div class="subcontain">
-      <form method="POST">
-      {% csrf_token %}
+      <!-- NOTE: Removed the outer <form> tag, it's better to have one form per row -->
       <table>
         <thead>
           <tr>
             <th class="sortable">
-              <a href="?sort=id&order={% if current_sort == 'id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Officer ID</a>
+              <a href="?sort=adviser_id&order={% if current_sort == 'adviser_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Adviser ID</a>
             </th>
             <th>Profile Picture</th>
             <th class="sortable">
@@ -84,36 +120,59 @@
             <th class="sortable">
               <a href="?sort=status&order={% if current_sort == 'status' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Status</a>
             </th>
+            <!-- NEW: 'Active' column header -->
+            <th class="sortable">
+              <a href="?sort=is_active&order={% if current_sort == 'is_active' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Active</a>
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for adviser in page_obj %}
           <tr>
-            <td>{{ adviser.id }}</td>
+            <td>{{ adviser.adviser_id }}</td>
+                        <!-- This is the <td> for Profile Picture -->
             <td>
-              {% if adviser.Adviser_profile_picture %}<a
-                href="{{ adviser.Adviser_profile_picture.url }}"
-                target="_blank"
-                >View Profile</a
-              >{% endif %}
+              {% if adviser.profile_picture %}
+                <img 
+                  src="{{ adviser.profile_picture.url }}" 
+                  alt="Profile" 
+                  style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;"
+                >
+              {% else %}
+                <span style="color: #777;">No Pic</span>
+              {% endif %}
             </td>
+
             <td>{{ adviser.surname }}</td>
             <td>{{ adviser.firstname }}</td>
             <td>{{ adviser.middlename }}</td>
             <td>{{adviser.department}}</td>
             <td>{{ adviser.position }}</td>
             <td>{{ adviser.get_status_display }}</td>
+            
+            <!-- NEW: 'Active' column data -->
             <td>
-              <form method="post">
+              {% if adviser.is_active %}
+                  <span style="color: green; font-weight: bold;">&#10003; Yes</span>
+              {% else %}
+                  <span style="color: red;">&#10007; No</span>
+              {% endif %}
+            </td>
+
+            <!-- UPDATED: Actions column with new logic -->
+            <td>
+              <form method="post" style="margin: 0;">
                 {% csrf_token %}
                 <input
                   type="hidden"
                   name="adviser_id"
-                  value="{{ adviser.id }}"
+                  value="{{ adviser.adviser_id }}"
                 />
+                
                 {% if adviser.status == 'pending' %}
-                <button type="submit" name="action" value="approve">
+                <!-- Show Approve/Decline for pending applications -->
+                <button type="submit" name="action" value="approve" class="approve">
                   Approve
                 </button>
                 <button
@@ -124,22 +183,43 @@
                 >
                   Decline
                 </button>
+                
+                {% elif adviser.status == 'approved' %}
+                  <!-- Show Activate/Deactivate for approved applications -->
+                  
+                  {% if adviser.is_active %}
+                    <!-- If they are active, show Deactivate button -->
+                    <button type="submit" name="action" value="deactivate" class="decline">
+                        Deactivate
+                    </button>
+                  {% else %}
+                    <!-- If they are inactive, show Activate button -->
+                    <button type="submit" name="action" value="activate" class="approve">
+                        Activate
+                    </button>
+                  {% endif %}
+                
+                {% else %}
+                    <!-- This is for 'declined' status -->
+                    <span style="color: #666;">Declined</span>
                 {% endif %}
               </form>
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="9" class="no-applicants">No advisers found.</td>
+            <!-- UPDATED: Colspan is now 10 -->
+            <td colspan="10" class="no-applicants">No advisers found.</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-      </form>
     </div>
 
     <div class="pagination">
         <span class="step-links">
+            <!-- NOTE: No change needed here. The 'search_params' variable from your view
+                 now correctly includes all filters (search, status, and active). -->
             {% if page_obj.has_previous %}
                 <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
                 <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>

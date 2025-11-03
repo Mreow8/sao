@@ -94,8 +94,7 @@
     </script>
 
     <div class="subcontain">
-      <form method="POST">
-      {% csrf_token %}
+
       <table>
         <thead>
   <tr>
@@ -128,7 +127,7 @@
         <tbody>
           {% for officer in page_obj %}
           <tr>
-            <td>{{ officer.id }}</td>
+            <td>{{ officer.officer_id }}</td>
            <td>
               {% if officer.profile_picture %}
                 <a href="{{ officer.profile_picture.url }}" class="clickable-profile-pic">
@@ -161,7 +160,7 @@
                 <input
                   type="hidden"
                   name="officer_id"
-                  value="{{ officer.id }}"
+                  value="{{ officer.officer_id }}"
                 />
                 {% if officer.status == 'pending' %}
                 <button type="submit" name="action" value="approve">
@@ -186,7 +185,6 @@
           {% endfor %}
         </tbody>
       </table>
-      </form>
     </div>
 
     <div class="pagination">

@@ -6,116 +6,175 @@
 {% endblock %} {% block bodycontent %}
 
 <style>
-  /* --- General Body & Font Styling --- */
+  /* --- Import Font (Must be at the top) --- */
+  @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+  /* --- GLOBAL STYLES --- */
   body {
-    background-color: #f8f9fa;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Helvetica, Arial, sans-serif;
+    font-family: "Rubik", sans-serif;
+    background-color: #f8f9fa; /* Light grey background from Manage.css */
+    margin: 0;
+    padding: 0;
+    color: #333;
   }
 
-  /* --- Page Title Section --- */
+  /* --- HEADER AND NAVIGATION (.sub-title) --- */
   .sub-title {
-    text-align: center;
-    padding: 40px 20px 20px 20px;
+    /* Styled to match the clean, card-based UI */
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: baseline; /* Aligns "Medical" with the breadcrumbs */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
   }
+
   .sub-title h3 {
-    font-size: 24px;
+    margin: 0;
+    font-size: 1.75rem;
     font-weight: 600;
-    color: #2b2b2b;
+    color: #2c5282; /* Primary Blue from Manage.css */
   }
-  .sub-title p {
-    display: inline;
-    font-size: 14px;
-  }
-  .hometext {
-    color: #666;
-  }
+
+  .hometext,
   .certxt {
-    margin-left: 5px;
-    color: #ff8000;
+    margin-left: 10px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  .certxt {
     font-weight: 500;
+    color: #333; /* Highlights the current page */
   }
 
-  /* --- Main Content Container (styled like .gmc-form) --- */
+  /* --- MAIN FORM CONTAINER (Styled like .gmc-form) --- */
   .main-container {
-    max-width: 700px;
-    margin: 20px auto 40px auto;
-    background: #ffffff;
-    padding: 40px;
+    max-width: 700px; /* Good width for a two-column form */
+    margin: 2rem auto; /* Center the container */
+    padding: 2.5rem; /* Padding from .gmc-form */
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Shadow from .gmc-form */
   }
 
-  /* --- Form Styling --- */
+  /* --- FORM LAYOUT AND FIELDS --- */
   .request-form {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    gap: 20px; /* Space between field block and submit button */
   }
 
   .form-header {
     display: flex;
-    background-color: #f7f7f7;
-    padding: 10px;
-    border-radius: 8px 8px 0 0;
-    border: 1px solid #e0e0e0;
-    border-bottom: none;
+    justify-content: space-between;
+    padding: 0 2px; /* Slight padding to align with inputs */
   }
 
   .form-header label {
-    flex: 1;
-    text-align: center;
-    font-weight: 600;
-    color: #ff8000;
-    font-size: 14px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: #333;
+    flex-basis: 48%; /* Align with the inputs below */
   }
 
   .form-inputs {
     display: flex;
-    gap: 15px;
-    padding: 15px;
-    border: 1px solid #e0e0e0;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    margin-bottom: 25px;
+    justify-content: space-between;
+    gap: 20px; /* Space between the two inputs */
   }
 
-  .form-inputs input,
+  /* Input and Select Styling (Styled like .search-input / .filter-select) */
+  .form-inputs input[type="text"],
   .form-inputs select {
-    flex: 1;
-    width: 100%;
-    height: 40px;
-    padding: 0 12px;
-    background: #f0f2f5;
+    font-family: "Rubik", sans-serif;
+    font-size: 1rem;
+    padding: 10px 12px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: 8px; /* Rounded corners from Manage.css */
+    background-color: #f9f9f9; /* Light background from Manage.css */
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: #333;
+    box-sizing: border-box; /* Ensures padding doesn't break layout */
+    flex-basis: 48%; /* Two fields side-by-side */
   }
 
-  .form-inputs input:focus,
+  /* Focus State from Manage.css */
+  .form-inputs input[type="text"]:focus,
   .form-inputs select:focus {
     outline: none;
-    border-color: #ff8000;
+    border-color: #2c5282; /* Primary Blue */
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Focus effect */
     background-color: #fff;
   }
 
-  /* --- Submit Button --- */
+  /* Specific style for readonly ID Number input */
+  #student_id[readonly] {
+    background-color: #e9ecef; /* Standard readonly/disabled color */
+    color: #6c757d;
+  }
+
+  /* --- SUBMIT BUTTON (Styled like .search-btn) --- */
   .submit-btn {
-    background-color: #ff8000;
+    background-color: #2c5282; /* Primary Blue from Manage.css */
     color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 16px;
+    font-family: "Rubik", sans-serif;
+    font-size: 1rem;
     font-weight: 600;
+    padding: 12px 24px;
+    border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.2s;
+    margin-top: 10px; /* Space above the button */
+    width: 100%; /* Make button full-width */
   }
 
   .submit-btn:hover {
-    background-color: #e67300;
+    background-color: #2a4365; /* Darker Blue on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  /* --- RESPONSIVENESS --- */
+  @media (max-width: 600px) {
+    .main-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+
+    .sub-title {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+      padding: 1rem 1.5rem;
+    }
+
+    .hometext,
+    .certxt {
+      margin-left: 0;
+    }
+
+    .form-inputs {
+      flex-direction: column; /* Stack inputs vertically */
+      gap: 15px;
+    }
+
+    .form-header {
+      flex-direction: column; /* Stack labels vertically */
+      gap: 15px;
+    }
+
+    .form-header label {
+      margin-bottom: -10px; /* Reduce gap between label and its input */
+    }
   }
 </style>
 <div class="sub-title">

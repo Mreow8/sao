@@ -58,6 +58,7 @@ class OfficerForm(forms.ModelForm):
         model = Officer
         fields = [
             # --- FIELDS YOU MUST ADD ---
+            "student_search",
             "student",      # This fixes the NOT NULL error
             "firstname",    # For autofill
             "surname",      # For autofill
@@ -73,6 +74,8 @@ class OfficerForm(forms.ModelForm):
             "position",
             "year",
             "home_address",
+            'academic_year',  # <-- ADDED
+            'is_active',
         ]
         
         # 3. Set up widgets for autofill and your existing ones
@@ -88,6 +91,13 @@ class OfficerForm(forms.ModelForm):
             "age": forms.NumberInput(attrs={"id": "id_age", "readonly": "readonly"}),
             "sex": forms.Select(),
             "civil_status": forms.Select(),
+            # --- ADD THESE WIDGETS ---
+            'academic_year': forms.TextInput(
+                attrs={'placeholder': 'e.g., 2024-2025'}
+            ),
+            'is_active': forms.CheckboxInput(
+                attrs={'class': 'form-check-input'}
+            ),
           # Added readonly/disabled for autofill
         }
 

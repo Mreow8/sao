@@ -19,5 +19,8 @@ mainpage/templates/community_involvement/crowdfunding_list.html
 mainpage/templates/community_involvement/programs.html
 mainpage/templates/community_involvement/donate.html
 mainpage/templates/studentorg/Main/register_adviser_new.html
+mainpage/templates/studentorg/Main/view_officer.html
 mainpage/templates/officeOfStudentL/adminUser/monthlyCalendarAdmin.html
 mainpage/templates/scholarship/studentrequirements.html
+mainpage/templates/medical/medicalrequirements.html
+mainpage/templates/medical/admin/viewrequest.html

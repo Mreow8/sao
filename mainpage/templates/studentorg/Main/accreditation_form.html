@@ -38,59 +38,37 @@
     margin: 0 auto; /* Center the container */
   }
 
-  /* --- Sub-title / Breadcrumb --- */
-  .sub-title {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 2rem;
-  }
+  /* ---
 
-  .sub-title h3 {
-    font-size: 1.5rem; /* 24px */
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
-
-  .sub-title p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #555;
-    margin-left: 1rem;
-  }
-
-  /* --- Tabs Navigation --- */
+/* --- Tabs (Adapted for <button>) --- */
   .tabs {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     border-bottom: 1px solid #ddd;
-    margin-bottom: 0; /* Aligns with card margin */
   }
-
   .tab {
+    font-family: "Rubik", sans-serif;
     font-weight: 500;
     font-size: 1rem;
-    color: #555;
+    color: #2c5282; /* Theme Blue */
     text-decoration: none;
     padding: 1rem 1.25rem;
+    border: none;
     border-bottom: 3px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    background-color: transparent;
+    transition: color 0.2s, background-color 0.2s;
   }
-
   .tab:hover {
-    color: #333;
+    color: #2a4365;
+    background-color: #f0f5fa; /* Light blue hover */
   }
-
   .tab.active {
-    /* Use Primary Blue from requestgmc.css */
-    color: #2c5282;
+    color: #ffffff;
+    font-weight: 600;
+    background-color: #2c5282; /* Active tab has blue background */
     border-bottom-color: #2c5282;
   }
 
@@ -277,7 +255,9 @@
     <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
   </div>
   <div class="tabs">
-    <a href="" class="tab active">Profiles</a>
+    <a href="{% url 'org_profile' slug=organization.slug  %}" class="tab"
+      >Profiles</a
+    >
     <a
       href="{% url 'view_project_by_slug' slug=organization.slug %}"
       class="tab"
@@ -287,6 +267,11 @@
       href="{% url 'view_financial_by_slug' slug=organization.slug %}"
       class="tab"
       >Financial Statements</a
+    >
+    <a
+      href="{% url 'view_accreditation_by_slug' slug=organization.slug  %}"
+      class="tab active"
+      >Accreditation Application</a
     >
   </div>
   <form method="post" enctype="multipart/form-data">
