@@ -12,11 +12,6 @@ Assessments/Psychological Issuance{% endblock %} {% block headcontent %}
   <p class="certxt">&gt; OJT Assessments/Psychological Issuance</p>
 </div>
 <div class="container">
-  {% if messages %} {% for message in messages %}
-  <div class="alert alert-info" role="alert" style="margin-top: 20px">
-    {{ message }}
-  </div>
-  {% endfor %} {% endif %}  
   <div class="form-container">
     {% if ongoing_request %}
     <div class="alert alert-warning" role="alert" style="margin-top: 20px">

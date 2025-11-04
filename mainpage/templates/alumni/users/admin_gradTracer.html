@@ -235,8 +235,8 @@ background-color: #ffffff;
           data-bs-target="#modal-{{ graduate_request.alumniID.pk }}">
         
         <td data-label="Alumni ID">{{ graduate_request.alumniID.alumniID }}</td>
-        <td data-label="First Name">{{ graduate_request.firstname }}</td>
-        <td data-label="Last Name">{{ graduate_request.lastname }}</td>
+        <td data-label="First Name">{{ graduate_request.student.firstname }}</td>
+        <td data-label="Last Name">{{ graduate_request.student.lastname }}</td>
         <td data-label="Date Graduate">{{ graduate_request.dategraduated|date:"F d, Y" }}</td>
         <td data-label="Email">{{ graduate_request.email_add }}</td>
         
@@ -256,7 +256,7 @@ background-color: #ffffff;
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="modalLabel-{{ graduate_request.alumniID.pk }}">
-                Tracer Form Details: {{ graduate_request.firstname }} {{ graduate_request.lastname }}
+                Tracer Form Details: {{ graduate_request.student.firstname }} {{ graduate_request.student.lastname }}
               </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -269,11 +269,11 @@ background-color: #ffffff;
                 <dt>Student ID</dt>
                 <dd>{{ graduate_request.student.studID|default:"N/A" }}</dd>
                 <dt>First Name</dt>
-                <dd>{{ graduate_request.firstname }}</dd>
+                <dd>{{ graduate_request.student.firstname }}</dd>
                 <dt>Last Name</dt>
-                <dd>{{ graduate_request.lastname }}</dd>
+                <dd>{{ graduate_request.student.lastname }}</dd>
                 <dt>Sex</dt>
-                <dd>{{ graduate_request.sex|default:"N/A" }}</dd>
+                <dd>{{ graduate_request.student.sex|default:"N/A" }}</dd>
                 <dt>Email</dt>
                 <dd>{{ graduate_request.email_add|default:"N/A" }}</dd>
                 <dt>Contact Number</dt>
@@ -285,7 +285,7 @@ background-color: #ffffff;
               <h4 class="modal-section-title">Education</h4>
               <dl class="modal-details">
                 <dt>Degree</dt>
-                <dd>{{ graduate_request.degree|default:"N/A" }}</dd>
+                <dd>{{ graduate_request.student.degree|default:"N/A" }}</dd>
                 <dt>Date Graduated</dt>
                 <dd>{{ graduate_request.dategraduated|date:"F d, Y" }}</dd>
               </dl>

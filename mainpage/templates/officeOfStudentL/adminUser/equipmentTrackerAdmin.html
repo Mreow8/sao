@@ -22,13 +22,7 @@
 
   <div class="equipmentContents">
     <!-- prettier-ignore -->
-    {% if messages %}
-      {% for message in messages %}
-        {% if message.tags == "success" %}
-    <div class="messages success-message" role="alert">{{ message }}</div>
-    {% elif message.tags == "error" %}
-    <div class="messages error-message" role="alert">{{ message }}</div>
-    {% endif %} {% endfor %} {% endif %}
+
     <div class="title-txt">
       <p>Enter ID number:</p>
     </div>

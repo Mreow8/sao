@@ -190,9 +190,6 @@
 <div class="body-content">
   <div>
     <div class="form-wrapper">
-      {% if messages %} {% for message in messages %}
-      <div class="form-message {{ message.tags }}">{{ message }}</div>
-      {% endfor %} {% endif %}
       <form method="post" action="{% url 'admin_jobfairs' %}">
         {% csrf_token %}
 

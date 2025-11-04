@@ -153,14 +153,6 @@ headcontent %}
     <button type="submit"><i class="fas fa-search"></i> Search</button>
   </form>
 
-  {% if messages %}
-  <div class="messages-container">
-    {% for message in messages %}
-    <div class="message {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  </div>
-  {% endif %}
-
   <div class="table-wrapper">
     <table id="studentAssignmentTable">
       <thead>

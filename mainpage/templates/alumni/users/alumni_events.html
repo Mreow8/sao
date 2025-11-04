@@ -1,8 +1,8 @@
 {% extends 'main.html' %} {% block bodycontent %}
 <style>
   /* ===================================================================
-   1. :ROOT VARIABLES (Your Project's Design System)
-   =================================================================== */
+    1. :ROOT VARIABLES (Your Project's Design System)
+    =================================================================== */
   :root {
     /* --- Colors --- */
     --primary: #2c5282;
@@ -38,8 +38,8 @@
   }
 
   /* ===================================================================
-   2. ALUMNI EVENT PAGE STYLES
-   =================================================================== */
+    2. ALUMNI EVENT PAGE STYLES
+    =================================================================== */
 
   /* --- General & Container --- */
   section {
@@ -86,6 +86,7 @@
     height: 200px; /* Fixed height for all event images */
     object-fit: cover; /* Ensures image covers the area without distortion */
     display: block;
+    background-color: var(--gray-100); /* Color for empty/loading space */
   }
 
   .event-details {
@@ -125,6 +126,7 @@
     border: 1px dashed var(--border-color);
   }
 </style>
+
 <section>
   <div class="container">
     <div class="sub-title">
@@ -132,15 +134,21 @@
       <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
       <p class="certxt">&gt; Alumni Reunion and Events</p>
     </div>
+
     {% if events %}
     <div class="event-grid">
       {% for event in events %}
       <div class="event-card">
+        {% if event.eventsImage %}
         <img
           src="{{ event.eventsImage.url }}"
-          alt="Event Image"
+          alt="{{ event.eventsName }}"
           class="event-img"
         />
+        {% else %}
+        <div class="event-img"></div>
+        {% endif %}
+
         <div class="event-details">
           <h2>{{ event.eventsName }}</h2>
           <p>{{ event.eventsDate }}</p>

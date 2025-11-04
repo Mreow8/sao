@@ -262,15 +262,7 @@
   </div>
 
   <div class="equipmentContents">
-    {% if messages %}
-      {% for message in messages %}
-        {% if message.tags == "success" %}
-          <div class="messages success-message" role="alert">{{ message }}</div>
-        {% elif message.tags == "error" %}
-          <div class="messages error-message" role="alert">{{ message }}</div>
-        {% endif %}
-      {% endfor %}
-    {% endif %}
+   
 
     <table class="equipmentTable">
       <thead>

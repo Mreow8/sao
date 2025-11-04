@@ -26,51 +26,60 @@ from django.contrib import messages
 from ..models import studentInfo
 from ..models.alumni import Alumni, graduateForm
 from functools import wraps
-                                                                                                                                                                                                                                                                                                                                                                             
 def alumni_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         
-        # 1. Check if logged in
+        # 1. Check for authenticated user (should be covered by @login_required)
         if not request.user.is_authenticated:
-            messages.error(request, 'Please log in to continue.')
+            messages.error(request, "Please log in to access this page.")
             return redirect('login') 
 
+        # 2. Find the student and alumni profile
         try:
-            # 2. Check for student profile
             student = studentInfo.objects.get(studID=request.user.username)
+            alumni = Alumni.objects.get(student=student)
         except studentInfo.DoesNotExist:
-            messages.error(request, 'Your user account is not linked to a student profile.')
+            messages.error(request, "Your user account is not linked to a student profile.")
             return redirect('homepage') 
+        except Alumni.DoesNotExist:
+            messages.error(request, "You must register for an Alumni ID first.")
+            return redirect('idRequest') # Send them to the ID request page
 
-        # 3. 'student_status' check is removed, as requested.
+        # 3. CRITICAL CHECK: Allow access to the 'graduateTracer' page
+        #    This page has its own logic to show the pending/accepted/blank form.
+        if view_func.__name__ == 'graduateTracer':
+            return view_func(request, *args, **kwargs)
 
-        # 4. Get or create their alumni record.
-        alumni_obj, created = Alumni.objects.get_or_create(student=student)
-
-        # 5. Check if they have filled out the tracer form
-        has_filled_form = graduateForm.objects.filter(alumniID=alumni_obj).exists()
-
-        # 6. Get the name of the page they are trying to visit
-        current_url_name = request.resolver_match.url_name
-
-        # 7. The logic to force them to the tracer form
-        if not has_filled_form:
-            # If they haven't filled the form...
+        # 4. For ALL OTHER alumni pages, check the form status
+        try:
+            # Find their submitted form
+            grad_form = graduateForm.objects.get(alumniID=alumni)
             
-            if current_url_name == 'graduateTracer' or current_url_name == 'graduateTracer_submit':
-                # ...but they are *already* on the tracer page, let them stay.
+            if grad_form.approval_status == 'Accepted':
+                # SUCCESS: They are fully approved. Let them access the page.
                 return view_func(request, *args, **kwargs)
-            else:
-                # ...and they are trying to go *anywhere else* (like idRequest),
-                # force them to the tracer page first.
-                messages.info(request, 'Please complete the Graduate Tracer form before accessing other alumni features.')
+            
+            elif grad_form.approval_status == 'Pending':
+                # PENDING: Block access and redirect to the tracer page
+                messages.warning(request, "Your tracer form is still pending approval. You cannot access this page yet.")
                 return redirect('graduateTracer')
-        
-        # 8. They HAVE filled the form, let them go anywhere.
-        return view_func(request, *args, **kwargs)
-        
-    return _wrapped_view
+                
+            elif grad_form.approval_status == 'Declined':
+                # DECLINED: Block access and redirect to the tracer page
+                messages.error(request, "Your tracer form submission was declined.")
+                return redirect('graduateTracer')
+                
+        except graduateForm.DoesNotExist:
+            # NO FORM: They have an Alumni ID but haven't submitted the form.
+            messages.error(request, "You must complete the Graduate Tracer form to access this page.")
+            return redirect('graduateTracer')
+
+        # Failsafe redirect
+        messages.error(request, "You do not have permission to view this page.")
+        return redirect('homepage')
+    
+    return _wrapped_view                                                                                                             
 def staff_role(user):
   
     return user.role != 'student'

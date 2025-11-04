@@ -37,14 +37,11 @@
     {% block headcontent %}{% endblock %}
   </head>
   <body>
+
      <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Open sidebar">
       &#9776;
     </button>
-    <ul class="messages">
-  {% for message in messages %}
-  <li class="{{ message.tags }}">{{ message }}</li>
-  {% endfor %}
-</ul>
+    
     <div class="left-side">
       <div class="sidebar-brand">
          <a href="{% url 'homepage' %}">
@@ -282,6 +279,7 @@
     </div>
 
     <div class="right-side">
+
 <div class="custom-search-wrapper">
         <div class="search-container">
             <div class="search-box">
@@ -324,6 +322,7 @@
     </div>
 
       <main class="main_content">{% block bodycontent %}{% endblock %}</main>
+      
     </div>
 
     <script src="{% static 'scripts/main.js' %}"></script>
@@ -388,28 +387,34 @@
             }
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script><script>
-  // --- Code for dismissible alerts ---
-  document.addEventListener("DOMContentLoaded", function () {
-    const allMessageLists = document.querySelectorAll("ul.messages");
-
-    allMessageLists.forEach(function (messageList) {
-      const messages = messageList.querySelectorAll("li");
-
-      messages.forEach(function (li) {
-        let closeBtn = document.createElement("span");
-        closeBtn.textContent = "×"; // The 'x' character
-        closeBtn.className = "message-close-btn";
-
-        closeBtn.onclick = function () {
-          li.style.display = "none";
-        };
-
-        li.appendChild(closeBtn);
-      });
+    {% if messages %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
     });
+
+    {% for message in messages %}
+      Toast.fire({
+        icon: '{{ message.tags }}',
+        title: '{{ message|escapejs }}'
+      });
+    {% endfor %}
   });
 </script>
+{% endif %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
   
 </html>

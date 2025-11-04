@@ -226,9 +226,6 @@
 <section>
   <div class="form-container">
     <div class="form-wrapper">
-      {% if messages %} {% for message in messages %}
-      <div class="success-message">{{ message }}</div>
-      {% endfor %} {% endif %}
       <form
         method="post"
         action="{% url 'admin_events' %}"

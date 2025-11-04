@@ -560,30 +560,5 @@
     console.log("Hidden student ID set to:", studIDHidden.value);
   });
 </script>
-{% if request.user.is_staff %} 
-{% if messages %}
-<script>
-  // 1. Configure the toast's appearance
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end', // Position it in the top-right corner
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    }
-  });
 
-  // 2. Loop through messages and show a toast for each one
-  {% for message in messages %}
-  Toast.fire({
-    icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% elif "warning" in message.tags %}warning{% else %}info{% endif %}',
-    title: '{{ message|escapejs }}'
-  });
-  {% endfor %}
-</script>
-{% endif %}
-{% endif %}
 {% endblock bodycontent %}

@@ -1,22 +1,146 @@
 {% extends 'main.html' %}
 
 {% block bodycontent %}
+
+<style>
+    /* --- Success Alert (Approved) --- */
+.alert-success {
+  background-color: #f0fff4; /* Light green */
+  border: 1px solid #c6f6d5; /* Lighter green border */
+  border-left: 5px solid #38a169; /* Green accent border */
+}
+
+.alert-success .alert-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2f855a; /* Dark green text */
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.alert-success p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.alert-success hr {
+  margin: 1.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #c6f6d5;
+}
+
+/* --- Danger Alert (Declined) --- */
+.alert-danger {
+  background-color: #fff5f5; /* Light red */
+  border: 1px solid #fed7d7; /* Lighter red border */
+  border-left: 5px solid #e53e3e; /* Red accent border */
+}
+
+.alert-danger .alert-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #c53030; /* Dark red text */
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.alert-danger p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.alert-danger hr {
+  margin: 1.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #fed7d7;
+}
+    .alert-container {
+  display: flex;
+  justify-content: center; /* This centers the alert horizontally */
+  align-items: center; /* This centers it vertically (optional) */
+  width: 100%;
+  padding: 2rem 0; /* Adds some space above and below */
+}
+
+.alert-warning {
+  /* You can set a max-width so it doesn't stretch too wide */
+  max-width: 800px; 
+  width: 90%; /* Ensures it's responsive */
+  
+  /* --- Your existing alert styles --- */
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 0; /* The container now handles the margin */
+  border: 1px solid #ffecb5;
+  background-color: #fff3cd;
+  color: #664d03;
+  /* etc. */
+}
+.alert {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid transparent;
+}
+
+/* For Django messages */
+.alert-info {
+  background-color: #ebf8ff; /* Light blue */
+  border-color: #bee3f8; /* Lighter blue border */
+  color: #2b6cb0; /* Darker blue text */
+  font-weight: 500;
+}
+
+/* For the "Pending Request" box */
+.alert-warning {
+  /* This is styled like .pending-request-box from the guide */
+  background-color: #ebf8ff;
+  border: 1px solid #bee3f8;
+  border-left: 5px solid #2c5282; /* Accent border */
+}
+
+.alert-warning .alert-heading {
+  /* h4 */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2b6cb0;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.alert-warning p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.alert-warning hr {
+  margin: 1.5rem 0; /* Override default hr margin */
+  border: 0;
+  height: 1px;
+  background-color: #bee3f8;
+}
+</style>
 <div class="container">
     {% if already_submitted %}
     {% if submitted_form.approval_status == 'Pending' %}
-            
-            <div class="alert alert-warning" role="alert">
-                <h4 class="alert-heading">Submission Received!</h4>
-                <p>
-                    Thank you for submitting your graduate tracer form. 
-                    Your submission is now **pending approval** from an administrator.
-                </p>
-                <hr>
-                <p class="mb-0">
-                    You cannot edit your form at this time. Please check back later.
-                </p>
-            </div>
-
+          <div class="alert-container">
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Submission Received!</h4>
+        <p>
+            Thank you for submitting your graduate tracer form. 
+            Your submission is now **pending approval** from an administrator.
+        </p>
+        <hr>
+        <p class="mb-0">
+            You cannot edit your form at this time. Please check back later.
+        </p>
+    </div>
+</div>
         {% elif submitted_form.approval_status == 'Accepted' %}
             
             <div class="alert alert-success" role="alert">
@@ -52,20 +176,7 @@
                 {% csrf_token %}
                 <div class="alumni-form-wrapper">
 
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="message-box" style="
-                                {% if message.tags == 'error' %} background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24;
-                                {% elif message.tags == 'success' %} background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724;
-                                {% else %} background-color: #e2e3e5; border: 1px solid #d6d8db; color: #383d41;
-                                {% endif %}
-                                width: 483px; padding: 15px; border-radius: 8px; margin-bottom: 16px; text-align: center;">
-                                <p style="text-align: center; color: inherit; font-weight: bold;">
-                                    {{ message }}
-                                </p>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                  
 
                     <div class="form-section-wrapper">
                         <div class="sub-title">
@@ -84,17 +195,17 @@
 
                             <div class="detail-item">
                                 <p style="font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">First Name</p>
-                                <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.firstname }}</p>
+                            <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.student.firstname }}</p>
                             </div>
 
                             <div class="detail-item">
                                 <p style="font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Last Name</p>
-                                <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.lastname }}</p>
+                                <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.student.lastname }}</p>
                             </div>
 
                             <div class="detail-item">
                                 <p style="font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Degree</p>
-                                <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.degree }}</p>
+                                <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.student.degree }}</p>
                             </div>
                         </div>
                         

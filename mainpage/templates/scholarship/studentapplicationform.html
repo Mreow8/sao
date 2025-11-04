@@ -105,26 +105,5 @@
         {% endif %}
     </div>
 </div>
-<script>
-    document.getElementById('gradeFile').addEventListener('change', function() {
-        var formData = new FormData();
-        formData.append('gradeFile', this.files[0]);
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-    
-        fetch("{% url '' %}", {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('gpa').value = data.gpa;
-                document.getElementById('gpa-result').style.display = 'block';
-                document.getElementById('extracted-gpa').textContent = data.gpa;
-                document.getElementById('total-units').textContent = data.total_units;
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-</script>
+
 {% endblock %}

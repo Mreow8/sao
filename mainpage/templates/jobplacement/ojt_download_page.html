@@ -73,28 +73,4 @@ headcontent %}
     &larr; Go back to OJT Hiring
   </a>
 </div>
-
-{% if messages %}
-<script>
-  // Configure the toast's appearance
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end', // Position it in the top-right corner
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    }
-  });
-
-  // Loop through messages and show a toast for each one
-  {% for message in messages %}
-  Toast.fire({
-    icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% elif "warning" in message.tags %}warning{% else %}info{% endif %}',
-    title: '{{ message|escapejs }}'
-  });
-  {% endfor %}
-</script>
-{% endif %} {% endblock bodycontent %}
+{% endblock bodycontent %}

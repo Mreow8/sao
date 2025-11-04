@@ -37,13 +37,6 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
 </style>
 {% endblock %} {% block bodycontent %}
 <style></style>
-{% if messages %}
-<div id="popup-messages">
-  {% for message in messages %}
-  <div class="popup-message {{ message.tags }}">{{ message }}</div>
-  {% endfor %}
-</div>
-{% endif %}
 
 <div class="overlay" id="overlay">
   <div class="form-card" id="offcier-modal-container">
