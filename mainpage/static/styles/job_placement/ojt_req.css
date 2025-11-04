@@ -412,10 +412,13 @@ hr {
   background-color: #f39c12; /* Orange */
 }
 .accepted {
-  background-color: #2ecc71; /* Green */
+  background-color: #8ccfa8;
+  color: #0b552a;
 }
 .declined {
   background-color: #e74c3c; /* Red */
+
+  color: #551008; /* Red */
 }
 .nofile,
 .no_file {

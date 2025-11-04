@@ -13,7 +13,7 @@
 /* --- Main Content Card --- */
 .equipmentContents {
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -145,54 +145,49 @@
   color: #495057;
   cursor: not-allowed;
 }
-
-/* --- Button Container & Buttons --- */
+/* This container aligns the buttons to the right */
 .button-container {
   display: flex;
-  flex-wrap: wrap; /* Allow wrapping on mobile */
-  gap: 1rem;
+  justify-content: flex-end; /* Aligns button(s) to the right */
+  gap: 1rem; /* Adds space between buttons in the same container */
   margin-top: 2rem;
-  align-items: center;
 }
 
-/* Base styles for all buttons/links */
-.saveBtn,
-#addbtn {
-  font-family: "Rubik", sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-decoration: none; /* For <a> tags */
-  display: inline-block; /* For <a> tags */
-  text-align: center;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-/* Primary button (Save) */
+/* --- Base Button Styles (Shared by all) --- */
+#addbtn,
 .saveBtn {
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-}
-.saveBtn:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-align: center;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
 }
 
-/* Secondary button (Add Equipment) */
+/* --- "ADD EQUIPMENT" (Grey) --- */
 #addbtn {
-  background-color: #28a745; /* Green */
+  background-color: #6c757d; /* Grey */
   color: white;
 }
+
 #addbtn:hover {
-  background-color: #218838; /* Darker Green */
-  transform: translateY(-2px);
+  background-color: #5a6268;
 }
 
+/* --- "SAVE RECORD" & "STUDENTS THAT BORROWED" (Green) --- */
+.saveBtn {
+  background-color: #2c5282; /* Green */
+  color: white;
+}
+
+.saveBtn:hover {
+  background-color: #3b6aa3;
+}
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .equipmentContents {

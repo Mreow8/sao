@@ -91,10 +91,12 @@ th.sortable a.sorted.desc::after {
   text-transform: uppercase;
 }
 .status-pending {
-  background-color: #f39c12; /* Orange */
+  color: #92400e;
+  background-color: #fef3c7;
 }
 .status-resolved {
-  background-color: #2ecc71; /* Green */
+  background-color: #8ccfa8;
+  color: #0b552a;
 }
 .status-default {
   background-color: #777; /* Default grey */

@@ -4,7 +4,48 @@
 {% block headcontent %}
   <link rel="stylesheet" href="{% static 'styles/role.css' %}">
   <style>/* --- Custom Pagination Styles (to match image) --- */
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden; /* This keeps the corners rounded */
+}
 
+.search-input {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  flex-grow: 1; /* Allows input to fill available space */
+}
+
+.search-btn {
+  padding: 8px 12px;
+  background-color: #2c5282;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.search-btn:hover {
+  background-color: #0056b3;
+}
+.action-row {
+  display: flex; /* Aligns items horizontally */
+  align-items: center; /* Vertically centers them */
+  gap: 8px; /* Adds space between the select and button */
+}
+
+/* This styles the organization dropdown when it appears */
+.org-dropdown {
+  /* Adds spacing above it when it becomes visible */
+  margin-top: 8px; 
+}
 /* Main container */
 .pagination {
   margin: 2rem 0;
@@ -69,26 +110,29 @@
 {% block bodycontent %}
 <div class="sub-title">
   <h3>OFFICE OF STUDENT LIFE</h3>
-  <p class="hometext"><a href="{% url 'homepage' %}">Home</p>
+  <p class="hometext"><a href="{% url 'homepage' %}"></a>Home</p>
   <p class="certxt">&gt; Assign Role to Users</p>
 </div>
 
 <div class="container mt-5">
   
   <form method="GET" class="mb-3">
-    <div class="input-group">
-      <input
-        type="text"
-        id="userSearch"
-        name="q"
-        value="{{ query }}"
-        placeholder="Search for usernames or emails..."
-        class="form-control"
+   <div class="search-bar">
+  <input type="text" class="search-input" placeholder="Search..." />
+  <button class="search-btn" aria-label="Search">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      viewBox="0 0 16 16"
+    >
+      <path
+        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
       />
-      <input type="hidden" name="sort" value="{{ sort_by }}">
-      <input type="hidden" name="dir" value="{{ direction }}">
-      <button class="btn btn-outline-secondary" type="submit">Search</button>
-    </div>
+    </svg>
+  </button>
+</div>
   </form>
 
   <div class="table-responsive">
@@ -128,29 +172,31 @@
             <td>{{ user.email }}</td>
             <td>{{ user.get_role_display }}</td>
             <td>
-              <input type="hidden" name="user_id" value="{{ user.id }}" />
+            <input type="hidden" name="user_id" value="{{ user.id }}" />
 
-              <select name="role" class="form-select form-select-sm role-select" required onchange="toggleOrgDropdown(this)">
-                {% for value, display_name in role_choices %}
-                  <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>
-                    {{ display_name }}
-                  </option>
-                {% endfor %}
-              </select>
+<div class="action-row">
+  <select name="role" class="form-select form-select-sm role-select" required onchange="toggleOrgDropdown(this)">
+    {% for value, display_name in role_choices %}
+      <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>
+        {{ display_name }}
+      </option>
+    {% endfor %}
+  </select>
+  
+  <button type="submit" class="btn btn-sm btn-primary">Save</button>
+</div>
 
-              <div class="org-dropdown mt-1" style="{% if user.role != 'org_admin' %}display:none;{% endif %}">
-                <select name="organization_id" class="form-select form-select-sm">
-                  <option value="">None</option>
-                  {% for org in organizations %}
-                  <option value="{{ org.org_id }}"
-                    {% if user.organization and user.organization.org_id == org.org_id %}selected{% endif %}>
-                    {{ org.name }}
-                  </option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <button type="submit" class="btn btn-sm btn-primary mt-2">Save</button>
+<div class="org-dropdown" style="{% if user.role != 'org_admin' %}display:none;{% endif %}">
+  <select name="organization_id" class="form-select form-select-sm">
+    <option value="">None</option>
+    {% for org in organizations %}
+      <option value="{{ org.org_id }}"
+        {% if user.organization and user.organization.org_id == org.org_id %}selected{% endif %}>
+        {{ org.name }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
             </td>
           </form>
         </tr>

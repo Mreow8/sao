@@ -99,11 +99,12 @@ body {
   color: white;
 }
 .status-verified {
-  background-color: #28a745;
+  background-color: #8ccfa8;
+  color: #0b552a;
 }
 .status-pending {
-  background-color: #ffc107;
-  color: #212529;
+  color: #92400e;
+  background-color: #fef3c7;
 }
 .btn {
   border: none;

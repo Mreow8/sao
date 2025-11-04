@@ -205,10 +205,12 @@ hr {
   text-transform: uppercase;
 }
 .status-pending {
-  background-color: #f39c12;
+  color: #92400e;
+  background-color: #fef3c7;
 } /* Orange */
 .status-processed {
-  background-color: #2ecc71;
+  background-color: #8ccfa8;
+  color: #0b552a;
 } /* Green */
 
 /* --- ADMIN TABLE SPECIFIC STYLES --- */

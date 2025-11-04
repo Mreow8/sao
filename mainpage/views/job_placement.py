@@ -67,10 +67,10 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from urllib.parse import urlencode
 
-@login_required(login_url='admin_login')
+
 def admin_student_tracker(request):
     # Check if user is an admin
-    if not (request.user.is_staff or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard'):
+    if not (request.user.role != 'student' or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard'):
         messages.error(request, "You do not have permission to view this page.")
         return redirect('admin_login') # Or student home page
 
@@ -112,7 +112,7 @@ def admin_student_tracker(request):
         'base_template': base_template,
     }
     return render(request, 'jobplacement/admin_student_tracker.html', context)
-@login_required(login_url='admin_login')
+
 def ojt_requiremets_download(request):
     """
     This page shows a success message and provides the download link 
@@ -137,10 +137,10 @@ def ojt_requiremets_download(request):
         'base_template': base_template,
     }
     return render(request, 'jobplacement/ojt_download_page.html', context)
-@login_required(login_url='admin_login')
+
 def ojt_assign_student(request):
     # --- Access control ---
-    if not (request.user.is_staff or request.user.is_superuser):
+    if not (request.user.role != 'student' or request.user.is_superuser):
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
 
@@ -287,7 +287,7 @@ def ojt_assign_student(request):
                     print(new_ojt_form.errors)
                     messages.error(request, f"Failed to assign student: Invalid form data. {new_ojt_form.errors.as_text()}")
                 return redirect('ojt_hiring')
-                base_template = "adminmain.html" if (request.user.is_staff or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard') else "main.html"
+                base_template = "adminmain.html" if (request.user.role != 'student' or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard') else "main.html"
                 context = {
                     'form': OjtHiringForm(),
                     'assign_form': new_ojt_form,
@@ -303,6 +303,7 @@ def ojt_assign_student(request):
 
     # If GET request or if POST failed before redirecting
     return redirect('ojt_hiring')
+
 def student_suggestions(request):
     """Return a JSON list of students matching the query (by ID or name)."""
     query = request.GET.get('q', '').strip()
@@ -321,9 +322,9 @@ def student_suggestions(request):
     return JsonResponse(data, safe=False)
 # GI COMMENT KAY DILI NA JOBPLACEMENT GA HANDLE SA STUDENT LOGIN/SIGN UP
 
-# @login_required(login_url='admin_login')
+# 
 # def student_signup_view(request):
-#     if not (request.user.is_staff or request.user.is_superuser):
+#     if not (request.user.role != 'student' or request.user.is_superuser):
 #         messages.info(request, 'Must be a superuser to access page')
 #         return redirect('admin_login')
 
@@ -363,6 +364,7 @@ def student_suggestions(request):
 
 # Create your views here.
 
+
 def get_user_backend(user):
     if isinstance(user, JobPlacementAdminUser):
         return 'jobplacement.auth_backends.AdminUserBackend'
@@ -384,7 +386,7 @@ def get_user_backend(user):
 #             email = form.cleaned_data.get('username')
 #             password = form.cleaned_data.get('password')
 #             user = authenticate(request, username=email, password=password)
-#             if user is not None and user.is_staff:
+#             if user is not None and user.role != 'student':
 #                 backend = get_user_backend(user)
 #                 login(request, user, backend=backend)
 #                 return redirect('home')
@@ -396,16 +398,19 @@ def get_user_backend(user):
 #         form = AdminLoginForm()
 #     return render(request, 'jobplacement/signin.html', {'page':page, 'form':form})
 
+
 def logout_user(request):
     logout(request)
     return redirect('admin_student')
 
-# @login_required(login_url='admin_student')
+# (login_url='admin_student')
+
 def mainpage(request):
     return redirect('ojt_hiring')
 
 #   OJT HIRING THINGS
-# @login_required(login_url='admin_student')
+# (login_url='admin_student')
+
 def ojt_hiring(request):
     
     ojt_hiring_form = OjtHiringForm()
@@ -415,10 +420,10 @@ def ojt_hiring(request):
     student_assignment = None
     download_url = None 
 
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+    base_template = "adminmain.html" if request.user.role != 'student' or request.user.is_superuser else "main.html"
 
     # --- Student Assignment Logic (No change) ---
-    if request.user.is_authenticated and not (request.user.is_staff or request.user.is_superuser):
+    if request.user.is_authenticated and not (request.user.role != 'student' or request.user.is_superuser):
         try:
             student_info = studentInfo.objects.get(user=request.user) 
         except studentInfo.DoesNotExist:
@@ -440,7 +445,7 @@ def ojt_hiring(request):
 
     # --- POST Logic (No change) ---
     if request.method == 'POST':
-        if not (request.user.is_staff or request.user.is_superuser):
+        if not (request.user.role != 'student' or request.user.is_superuser):
             messages.info(request, 'Must be staff/admin to access page')
             return redirect('admin_login')
         
@@ -507,10 +512,10 @@ def ojt_hiring(request):
 
     return render(request, 'jobplacement/ojthiring.html', context)
 
-    return render(request, 'jobplacement/ojthiring.html', context)
-@login_required(login_url='admin_login')
+  
+
 def ojthiring_delete(request, id):
-    if not (request.user.is_staff or request.user.is_superuser):  # prevent student access
+    if not (request.user.role != 'student' or request.user.is_superuser):  # prevent student access
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
     
@@ -527,9 +532,9 @@ def ojthiring_delete(request, id):
     
     return redirect('ojt_hiring')
 
-@login_required(login_url='admin_login')
+
 def ojt_hiring_info(request, id):   # ojt company page
-    if not (request.user.is_staff or request.user.is_superuser):  # prevent student access
+    if not (request.user.role != 'student' or request.user.is_superuser):  # prevent student access
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
     
@@ -559,13 +564,14 @@ def ojt_hiring_info(request, id):   # ojt company page
     context = {'hired_students':hiredStudents, 'ojt':ojt}
     return render(request, 'jobplacement/ojthiring_info.html', context)
 
-# @login_required(login_url='admin_student')
+# (login_url='admin_student')
 
 from ..models import OJTRequirements, studentInfo
+
 def ojtRequirements_tracker(request):
     req_records = OJTRequirements.objects.all()
     existing_requirement = None
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+    base_template = "adminmain.html" if request.user.role != 'student' or request.user.is_superuser else "main.html"
 
     # handles search (lookup by studID in studentInfo)
     if request.method == 'POST':
@@ -592,6 +598,7 @@ def ojtRequirements_tracker(request):
         'req_records': req_records
     }
     return render(request, 'jobplacement/ojt_requirements.html', context)
+
 def ojt_requirements_submit(request):
     if request.method == 'POST':
         if not request.user.is_authenticated:
@@ -637,9 +644,9 @@ def ojt_requirements_submit(request):
     return redirect('ojt_requirements_tracker')
 
 
-@login_required(login_url='admin_login')
+
 def ojt_requirements_accept(request):
-    if not (request.user.is_staff or request.user.is_superuser): # allow access to admin and superuser only
+    if not (request.user.role != 'student' or request.user.is_superuser): # allow access to admin and superuser only
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
 
@@ -782,16 +789,17 @@ def ojt_requirements_accept(request):
 
 
 # SEMINAR THINGS
-# @login_required(login_url='admin_student')
+# (login_url='admin_student')
+
 def seminar(request):
     seminars = Seminar.objects.all()
     form = SeminarForm()
 
     # Determine the layout (admin or student)
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+    base_template = "adminmain.html" if request.user.role != 'student' or request.user.is_superuser else "main.html"
 
     if request.method == 'POST':
-        if not (request.user.is_staff or request.user.is_superuser):
+        if not (request.user.role != 'student' or request.user.is_superuser):
             messages.info(request, 'Must be staff/admin to access page')
             return redirect('admin_login')
 
@@ -814,9 +822,10 @@ def seminar(request):
     return render(request, 'jobplacement/seminar_page.html', context)
 
 
-# @login_required(login_url='admin_login')
+# 
+
 def seminar_delete(request, id):
-    if not (request.user.is_staff or request.user.is_superuser):  # prevent student access
+    if not (request.user.role != 'student' or request.user.is_superuser):  # prevent student access
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
 
@@ -829,9 +838,10 @@ def seminar_delete(request, id):
     seminar.delete()
     return redirect('seminar_page')
 
-# @login_required(login_url='admin_login')
+# 
+
 def manage_attendance(request, id): # seminar attendance page
-    if not (request.user.is_staff or request.user.is_superuser): # prevent student/alien access
+    if not (request.user.role != 'student' or request.user.is_superuser): # prevent student/alien access
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
 
@@ -848,6 +858,7 @@ def manage_attendance(request, id): # seminar attendance page
     context = {'attendance':attendance, 'sem_id':id, 'sem_form':sem_form, 'presents':present_students}
     return render(request, 'jobplacement/sem_att_manager.html', context)
 # ...existing code...
+
 def pend_attendance(request):
 
     # handles student attendance request
@@ -914,9 +925,10 @@ def pend_attendance(request):
     return redirect('seminar')
 # ...existing code...
 
-# @login_required(login_url='admin_login')
+# 
+
 def cancel_pending(request, id): # handles attendance request cancel
-    if not (request.user.is_staff or request.user.is_superuser):
+    if not (request.user.role != 'student' or request.user.is_superuser):
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')    
     
@@ -936,9 +948,9 @@ def cancel_pending(request, id): # handles attendance request cancel
         return redirect('home')
 
 @csrf_exempt
-@login_required(login_url='admin_login')
+
 def attend_all_pending(request, id): # handle attend all button
-    if not (request.user.is_staff or request.user.is_superuser): # prevent student/alien access
+    if not (request.user.role != 'student' or request.user.is_superuser): # prevent student/alien access
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
      
@@ -972,8 +984,9 @@ def attend_all_pending(request, id): # handle attend all button
 
     # NON-ACADEMIC AWARD ISSUANCE
 
+
 def non_acad_page(request):
-    if not (request.user.is_staff or request.user.is_superuser):
+    if not (request.user.role != 'student' or request.user.is_superuser):
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
     
@@ -1516,8 +1529,9 @@ def non_acad_page(request):
     return render(request, 'jobplacement/non_academic.html', context)
 
     # TRANSACTION REPORTS THINGS
+
 def log_activity(user, action): # transaction report auto record
-    user_type = 'admin' if user.is_staff else 'student'
+    user_type = 'admin' if user.role != 'student' else 'student'
     TransactionReport.objects.create(
         user=user,
         action=action,
@@ -1525,9 +1539,10 @@ def log_activity(user, action): # transaction report auto record
         user_type=user_type
     )
 
-# @login_required(login_url='admin_login')
+# 
+
 def transRep(request): # transaction report page
-    if not (request.user.is_staff or request.user.is_superuser): # prevent student/alien access
+    if not (request.user.role != 'student' or request.user.is_superuser): # prevent student/alien access
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')    
     
@@ -1573,9 +1588,9 @@ def transRep(request): # transaction report page
     context = {'transactions':records, 'date_time':dt,'prev_period':_monthly, 'form':form}
     return render(request, 'jobplacement/trans_report.html', context )
 
-@login_required(login_url='admin_login')
+
 def transRep_print(request): 
-    if not (request.user.is_staff or request.user.is_superuser): # prevent student/alien access
+    if not (request.user.role != 'student' or request.user.is_superuser): # prevent student/alien access
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
     
@@ -1656,7 +1671,7 @@ class company_suggestions(View):
             return JsonResponse(suggestions, safe=False)
 
 
-@login_required(login_url='admin_login')
+
 def del_ojt(request):
     if OJTRequirements.objects.all().delete():
         messages.success(request, "Clear success")
@@ -1701,6 +1716,7 @@ def view_pdf(request, id):
 
 
 # generate application letter document
+
 def gen_application_letter(template_path, output_path, student_id, company_id):
     student = studentInfo.objects.get(studID = student_id)
     company = OJTCompany.objects.get(company_id = company_id)
@@ -1746,6 +1762,7 @@ def gen_application_letter(template_path, output_path, student_id, company_id):
     print("Application Letter Generated")
 
 # generate biodata document
+
 def gen_biodata(template_path, output_path, student_id, company_id):
     print("generating biodata")
     student = studentInfo.objects.get(studID = student_id)
@@ -1765,6 +1782,7 @@ def gen_biodata(template_path, output_path, student_id, company_id):
     print("Biodata Generated")
 
 # generate endorsement letter document
+
 def gen_endorsement_letter(template_path, output_path, student_id, company_id, duration, **params):
     print("generating endorsement")
     student = studentInfo.objects.get(studID = student_id)
@@ -1805,6 +1823,7 @@ def gen_endorsement_letter(template_path, output_path, student_id, company_id, d
     print("Endorsement Generated")
 
 # generate medical document
+
 def gen_medical(template_path, output_path, student_id):
     print('Generating Medical')
     student = studentInfo.objects.get(studID = student_id)
@@ -1822,6 +1841,7 @@ def gen_medical(template_path, output_path, student_id):
     print("Medical Generated")
 
 # generate moa document
+
 def gen_moa(template_path, output_path, student_id, duration, **params):
     print('generating MOA')
     student = studentInfo.objects.get(studID = student_id)
@@ -1870,6 +1890,7 @@ def gen_moa(template_path, output_path, student_id, duration, **params):
     print("MOA Generated")
 
 # zip folder
+
 def zip_files_in_folder(folder_path):
     print("buffing zip folder")
     zip_buffer = BytesIO()
@@ -1884,6 +1905,7 @@ def zip_files_in_folder(folder_path):
     return zip_buffer
 
 # download zip folders
+
 def download_zipped_folder(request, folder_path):
     print("downlodaing zip folder")
     try:
@@ -1904,12 +1926,14 @@ def download_zipped_folder(request, folder_path):
         raise Http404("Failed to generate zip file.")
 
 # download zipped folder
+
 def download_zipped_ojt_templates(request):
     print("downloading ojt_templates")
     folder_path = './media/templates/ojt_requirements/generated'
     return download_zipped_folder(request, folder_path)
 
 # as the function name
+
 def file_scrapper(request):
     if request.method == 'POST':
         file = ScrapperFile( request.POST, request.FILES)

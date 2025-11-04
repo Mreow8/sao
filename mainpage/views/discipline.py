@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 # ---
 # This view combines the GET (show form) and POST (create case)
 # from your original case_profile_view
+@login_required
 def serviceTracker(request, student_id):
     student = get_object_or_404(studentInfo, studID=student_id)
 
@@ -91,6 +92,8 @@ def serviceTracker(request, student_id):
         'total_minutes': total_minutes,
     }
     return render(request, 'discipline/comm_service.html', context)
+@login_required
+@login_required
 def case_profile_create(request):
     user = request.user
     students = studentInfo.objects.all()
@@ -140,6 +143,7 @@ from django.core.paginator import Paginator
 
 # ... (all your other imports) ...
 
+@login_required
 def case_list(request):
     user = request.user
     base_template = (
@@ -184,6 +188,7 @@ def case_list(request):
         'current_order': order,
     }
     return render(request, 'discipline/case_list.html', context)
+@login_required
 def case_edit(request, case_id):
     case = get_object_or_404(CaseProfile, id=case_id)
     if request.method == "POST":
@@ -208,6 +213,7 @@ def case_edit(request, case_id):
     return render(request, "discipline/edit_case.html", context)
 
 
+@login_required
 def get_student(request, studID):
     try:
         studID = int(studID)  # convert to integer
@@ -226,6 +232,7 @@ def get_student(request, studID):
     except Exception as e:
         print(f"Error fetching student {studID}: {e}")
         return JsonResponse({'found': False, 'error': str(e)})
+@login_required
 def community_service_list(request):
     services = CommunityService.objects.all().order_by('-service_date')
     total_hours = sum(service.hours_rendered for service in services)
@@ -234,6 +241,7 @@ def community_service_list(request):
         'total_hours': total_hours
     })
 
+@login_required
 def add_community_service(request):
     if request.method == 'POST':
         form = CommunityServiceForm(request.POST)
@@ -249,6 +257,7 @@ def add_community_service(request):
 # This view handles the POST request from the SweetAlert pop-up
 # It replaces your original delete_case view
 @require_POST # Ensures this view only accepts POST requests
+@login_required
 def case_delete(request, case_id):
     try:
         case = get_object_or_404(CaseProfile, id=case_id)
@@ -266,6 +275,7 @@ def case_delete(request, case_id):
 
 # This is your AJAX view for the student datalist
 # Renamed from get_student to avoid confusion, but it's your code
+@login_required
 def get_student_details(request, studID):
     try:
         studID = int(studID)  # convert to integer
@@ -286,6 +296,7 @@ def get_student_details(request, studID):
 
 # Your original update_suspension view
 @csrf_exempt
+@login_required
 def update_suspension(request, case_id):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -311,6 +322,7 @@ def update_suspension(request, case_id):
             return JsonResponse({"success": False, "error": "Case not found"})
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
 
+@login_required
 def counseling_form_view(request, case_id):
     case = get_object_or_404(CaseProfile, id=case_id)
     student = case.student 
@@ -366,6 +378,7 @@ def counseling_form_view(request, case_id):
     }
     return render(request, "discipline/counseling_form.html", context)
 # Your original student_hours_view
+@login_required
 def student_hours_view(request, case_id):
     case = get_object_or_404(CaseProfile, pk=case_id)
     records = CommunityServiceTracker.objects.filter(case=case).order_by('-service_date')

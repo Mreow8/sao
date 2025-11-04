@@ -71,3 +71,6 @@ def alumni_required(view_func):
         return view_func(request, *args, **kwargs)
         
     return _wrapped_view
+def staff_role(user):
+  
+    return user.role != 'student'

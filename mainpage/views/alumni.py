@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.mail import send_mail, BadHeaderError
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
 import socket
 from mainpage.models import studentInfo
@@ -12,6 +13,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 
 
+@login_required
 def admin_id_request(request):
     
     # 1. Get parameters from URL
@@ -73,6 +75,7 @@ def admin_id_request(request):
     }
     
     return render(request, 'alumni/users/admin_idRequest.html', context)
+@login_required
 def admin_tracer_list(request):
     """
     Shows the page with the table.
@@ -85,6 +88,7 @@ def admin_tracer_list(request):
     return render(request, 'alumni/users/admin_gradTracer.html', context)
 
 
+@login_required
 def update_form_status(request, pk):
     """
     Handles the Accept/Decline/Pending button clicks from the modal.
@@ -132,6 +136,7 @@ def idRequest(request):
         'sixteen_years_ago': sixteen_years_ago,
     }
     return render(request, 'alumni/users/id_alumni.html', context)
+@login_required
 def search_id(request):
     if request.method == 'GET':
         student_id = request.GET.get('student_id')
@@ -151,6 +156,7 @@ def search_id(request):
         
         return render(request, 'alumni/users/id_alumni.html')
     
+@login_required
 def add_alumni(request):
     if request.method == 'POST':
         student_id = request.POST.get('student_id')
@@ -189,6 +195,7 @@ def add_alumni(request):
     
 
 @alumni_required  # <-- ADD THIS
+@login_required
 def graduateTracer(request):
     # No login check needed.
     
@@ -223,6 +230,7 @@ def graduateTracer(request):
     except Exception as e:
         messages.error(request, f'An error occurred: {str(e)}')
         return render(request, 'alumni/users/graduateTracer.html', {'already_submitted': False})
+@login_required
 def search_id2(request):
     user = request.user
     if not user.is_authenticated:
@@ -254,6 +262,7 @@ def search_id2(request):
         return render(request, 'alumni/users/graduateTracer.html')
     
 @alumni_required
+@login_required
 def graduateTracer_submit(request):
     if request.method == 'POST':
         # --- Data Retrieval (No Change Here) ---
@@ -411,9 +420,11 @@ def graduateTracer_submit(request):
     else:
         return redirect('graduateTracer')
 @alumni_required
+@login_required
 def alumni_events(request):
     events = Event.objects.all()    
     return render(request, 'alumni/users/alumni_events.html', {'events': events})    
+@login_required
 def alumni_events_admin(request):
     events = Event.objects.all()    
     return render(request, 'alumni/users/alumni_events_admin.html', {'events': events})    
@@ -425,10 +436,12 @@ def jobfairs(request):
 
 
 
+@login_required
 def yearbook(request):
     return render(request, 'alumni/users/yearbook.html')
 
 
+@login_required
 def search_yearbook(request):
     if request.method == 'GET':
         first_name = request.GET.get('yeargetfirstname')
@@ -454,6 +467,7 @@ def search_yearbook(request):
 def transaction_alumni(request):
     return render(request, 'alumni/users/transaction_alumni.html')
 @sao_admin_required
+@login_required
 def transac_search(request):
     context = {}
     
@@ -538,6 +552,7 @@ def transac_search(request):
 # admin alumni
 # @sao_admin_required
 
+@login_required
 def approve_alumni_request(request, alumni_id):
     if request.method == 'POST':
         alumni = get_object_or_404(Alumni, pk=alumni_id)
@@ -561,6 +576,7 @@ def approve_alumni_request(request, alumni_id):
 
     return redirect('admin_idRequest')
     
+@login_required
 def claim_alumni_id(request, alumni_id):
     if request.method == 'POST':
         alumni = get_object_or_404(Alumni, pk=alumni_id)
@@ -570,6 +586,7 @@ def claim_alumni_id(request, alumni_id):
 
     return redirect('admin_idRequest')
 # @sao_admin_required
+@login_required
 def admin_gradTracer(request):
     graduate_requests = graduateForm.objects.select_related('alumniID').all()
     return render(request, 'alumni/users/admin_gradTracer.html', {'graduate_requests': graduate_requests})
@@ -577,6 +594,7 @@ def admin_gradTracer(request):
 from ..forms import EventForm
 from ..forms import EventForm
 # @sao_admin_required
+@login_required
 def admin_events(request):
     if request.method == 'POST':
         # 1. Bind the form to the POST data
@@ -599,6 +617,7 @@ def admin_events(request):
     context = {'form': form}
     return render(request, 'alumni/users/admin_events.html', context)
 # @sao_admin_required
+@login_required
 def admin_jobfairs(request):
     if request.method == "POST":
         jobtitle = request.POST.get("jobtitle")
@@ -630,6 +649,7 @@ def admin_jobfairs(request):
 
 
 # @sao_admin_required
+@login_required
 def admin_yearbook(request):
     if request.method == 'POST':
         yearbookFirstname = request.POST.get('yearfirstname')

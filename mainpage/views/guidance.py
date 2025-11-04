@@ -96,15 +96,21 @@ def calculate_age(birth_date):
     today = datetime.today()
     age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
     return age
+from django.contrib.auth.decorators import login_required # 👈 Import this
+from django.contrib import messages # 👈 Make sure this is imported
+
+# ... all other imports ...
+
+@login_required
 def individualProfile(request):
     student = None
-    user = request.user
-
-    if user.is_authenticated:
-        try:
-            student = studentInfo.objects.get(studID=int(user.username))
-        except studentInfo.DoesNotExist:
-            messages.error(request, "Student not found")
+    
+    # 2. GET THE STUDENT SECURELY (like in your ojt_assessment view)
+    try:
+        student = studentInfo.objects.get(studID=int(request.user.username))
+    except (studentInfo.DoesNotExist, ValueError):
+        messages.error(request, "Could not find a student profile for your account.")
+        return redirect('home') # Redirect to a safe page (e.g., your dashboard or home)
 
     if request.method == 'POST':
         form = IndividualProfileForm(request.POST, request.FILES)
@@ -131,19 +137,19 @@ def individualProfile(request):
             ]
 
             describeYouBest_checked = request.POST.getlist('describeYouBest[]')
-            student_id = request.POST.get('student_id_val')
-
+            
             date_of_birth_str = form.cleaned_data['dateOfBirth']
             date_of_birth = datetime.strptime(str(date_of_birth_str), '%Y-%m-%d')
             age = calculate_age(date_of_birth)
-
-            student = get_object_or_404(studentInfo, studID=student_id)
 
             describeYouBest_state = {value: value in describeYouBest_checked for value in describeYouBest_values}
 
             new_form = form.save(commit=False)
             new_form.age = age
-            new_form.studentId = student
+            
+            # 4. ✅ USE THE SECURE 'student' OBJECT from the top of the view
+            new_form.studentId = student 
+            
             new_form.dateFilled = current_datetime
             new_form.siblingsName = siblings_name
             new_form.siblingsAge = siblings_age
@@ -160,16 +166,20 @@ def individualProfile(request):
             new_form.save()
             messages.success(request, 'Your request has been successfully added. An email will be sent if it is accepted.')
             return redirect('Individual Profile')
+        
+        else:
+            # --- THIS IS THE NEW MESSAGE ---
+            # 👇 This message will appear if the form is NOT valid
+            messages.error(request, 'Please correct the errors in the form.')
+            
     else:
         form = IndividualProfileForm()
 
     context = {
         'form': form,
-        'student': student,
+        'student': student, # This 'student' is the secure one
     }
     return render(request, 'guidance/individual_profile.html', context)
-
-
 from django.shortcuts import render, redirect, get_object_or_404
 
 # Assuming necessary models are imported:
@@ -288,24 +298,39 @@ def intake_interview_view(request):
     # 2. FIX: Ensure 'students' is passed to the context for the GET request 
     # (and for the POST request if execution reaches here due to an error/return).
     return render(request, 'guidance/intake_interview.html', {'students': students})
-
 def search_student_info_for_intake(request):
      if request.method == 'POST':
         id_number = request.POST.get('id_number', '')
         try:
+            # 1. Get the student
             student = studentInfo.objects.get(studID = id_number)
-            individual = IndividualProfileBasicInfo.objects.filter(studentId = student)
-            items = []
-            for val in individual:
-                response = {
+            
+            # 2. Get their profiles
+            individual_profiles = IndividualProfileBasicInfo.objects.filter(studentId = student)
+            
+            # 3. Format the student's details
+            student_details = {
+                'name': f"{student.lastname}, {student.middlename}, {student.firstname}",
+                'program': student.degree,
+                'year': student.yearlvl,
+            }
+
+            # 4. Format the list of profiles
+            profiles_list = []
+            for val in individual_profiles:
+                profiles_list.append({
                     'profile_number': val.individualProfileID,
                     'studentid': val.studentId.studID,
                     'name': f"{val.studentId.lastname}, {val.studentId.middlename}, {val.studentId.firstname}",
                     'datefilled': val.dateFilled.strftime("%B %d, %Y")
-                }
-                items.append(response)
+                })
 
-            return JsonResponse({'response': items})
+            # 5. Send both in one response
+            return JsonResponse({
+                'student_details': student_details,
+                'profiles': profiles_list
+            })
+            
         except studentInfo.DoesNotExist:
             return JsonResponse({'error': 'Student not found'}, status=404)
 

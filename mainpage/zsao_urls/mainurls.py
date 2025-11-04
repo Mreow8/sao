@@ -9,6 +9,7 @@ urlpatterns = [
 
            path('assign-role/', views.assign_role, name='assign_role'), 
            path('staff_upload/', views.staff_upload, name='staff_upload'),
+           
   path("search/students/", views.search_students, name="search_students"),
 
 # urls.py

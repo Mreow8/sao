@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ..models import (
     Program, ProgramImage, MOD, QrDonation,
@@ -13,6 +14,7 @@ from ..forms import CrowdfundingProjectForm,  ProgramForm
 
 # --- All View Functions Below ---
 
+@login_required
 def edit_program(request, pk):
     program = get_object_or_404(Program, pk=pk)
     
@@ -48,6 +50,7 @@ def edit_program(request, pk):
 
     return render(request, "community_involvement/edit_program.html", {"form": form, "program": program})
 
+@login_required
 def delete_program(request, pk):
     program = get_object_or_404(Program, pk=pk)
     if request.method == "POST":
@@ -56,6 +59,7 @@ def delete_program(request, pk):
     # This renders a confirmation page before deleting
     return render(request, "community_involvement/admin/confirm_delete_program.html", {"program": program})
 
+@login_required
 def edit_project(request, pk):
     project = get_object_or_404(CrowdfundingProject, pk=pk)
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
@@ -107,6 +111,7 @@ def edit_project(request, pk):
 
     context = {"form": form, "project": project}
     return render(request, "community_involvement/admin/edit_project.html", context)
+@login_required
 def delete_project(request, pk):
     project = get_object_or_404(CrowdfundingProject, pk=pk)
     if request.method == "POST":
@@ -114,6 +119,7 @@ def delete_project(request, pk):
         return redirect("crowdfunding_list")
     return render(request, "community_involvement/confirm_delete.html", {"project": project})
 
+@login_required
 def add_event(request):
     if request.method == "POST" and request.headers.get("x-requested-with") == "XMLHttpRequest":
         title = request.POST.get("title", "Community Event")
@@ -149,6 +155,7 @@ def add_event(request):
     projects = CrowdfundingProject.objects.all().order_by("-created_at")
     return render(request, "community_involvement/crowdfunding_list.html", {"projects": projects})
 
+@login_required
 def add_programs(request):
     if request.method == "POST":
         title = request.POST.get("title", "Untitled Event")
@@ -183,6 +190,7 @@ def add_programs(request):
         return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
     return redirect("programs")
 
+@login_required
 def programs(request):
     program_list = Program.objects.filter(archive=False).order_by("-date_time")
     items_per_page = 5 
@@ -212,6 +220,7 @@ def programs(request):
         },
     )
 
+@login_required
 def crowdfunding_list(request):
     project_list = CrowdfundingProject.objects.filter(active=True).order_by("-created_at")
     items_per_page = 5
@@ -240,6 +249,7 @@ def crowdfunding_list(request):
     )
 
 
+@login_required
 def crowdfunding_detail(request, pk):
     project = get_object_or_404(CrowdfundingProject, pk=pk, active=True)
     return render(
@@ -248,6 +258,7 @@ def crowdfunding_detail(request, pk):
         {"project": project},
     )
 
+@login_required
 def donate_view(request):
     qrCodeID = QrDonation.objects.all()
     return render(request, "community_involvement/donate.html", {
@@ -255,6 +266,7 @@ def donate_view(request):
         "user": request.user,
     })
 
+@login_required
 def donate(request, pk):
     project = get_object_or_404(CrowdfundingProject, pk=pk, active=True)
     if request.method == "POST":
@@ -287,6 +299,7 @@ def donate(request, pk):
         {"project": project},
     )
 
+@login_required
 def gcash_mode(request):
     if request.method == "POST":
         donated = request.POST["title"]
@@ -307,6 +320,7 @@ def gcash_mode(request):
             donation.save()
     return redirect("programs")
 
+@login_required
 def gcash_mode_admin(request, id):
     # It's good practice to ensure this is a POST request
     if request.method != "POST":
@@ -343,6 +357,7 @@ def gcash_mode_admin(request, id):
     # This will redirect and the message will be displayed on the next page
     return redirect("crowdfunding_list")
 
+@login_required
 def bank_mode(request):
     if request.method == "POST":
         donated = request.POST["title"]
@@ -365,6 +380,7 @@ def bank_mode(request):
             donation.save()
     return redirect("programs")
 
+@login_required
 def bank_mode_admin(request, id):
     qr = request.FILES.getlist("images")
     banks = request.POST.get("banks")
@@ -406,6 +422,7 @@ def bank_mode_admin(request, id):
         qrCode.save()
     return redirect("programs")
 
+@login_required
 def volunteer_mode(request):
     if request.method == "POST":
         donated = request.POST["title"]
@@ -469,6 +486,7 @@ def volunteer_mode(request):
             )
     return redirect("programs")
 
+@login_required
 def reports(request):
     user = request.user.is_staff
     return render(
@@ -477,6 +495,7 @@ def reports(request):
         {"url": "report", "user": user},
     )
 
+@login_required
 def reports_all(request):
     loadDonations = MOD.objects.all()
     return render(
@@ -488,6 +507,7 @@ def reports_all(request):
         },
     )
 
+@login_required
 def reports_find(request):
     if request.method == "POST":
         month = request.POST.get("month")
@@ -502,14 +522,17 @@ def reports_find(request):
         },
     )
 
+@login_required
 def archive_project(request, id):
     Program.objects.filter(id=id).update(archive=True)
     return redirect("project") # This URL name might be wrong
 
+@login_required
 def archive_program(request, id):
     Program.objects.filter(id=id).update(archive=True)
     return redirect("programs") # Changed from "program" to "programs"
 
+@login_required
 def donation_validate(request):
   
     
@@ -544,14 +567,17 @@ def donation_validate(request):
         context,
     )
 
+@login_required
 def donation_accept(request, id):
     MOD.objects.filter(id=id).update(status="Accepted")
     return redirect("donation-validate")
 
+@login_required
 def donation_decline(request, id):
     MOD.objects.filter(id=id).update(status="Declined")
     return redirect("donation-validate")
 
+@login_required
 def donation_filter(request):
     if request.method == "POST":
         statusFilter = request.POST.get("filterStatus")
@@ -568,6 +594,7 @@ def donation_filter(request):
 
 # --- FIX --- Removed the duplicate archive_program function
 
+@login_required
 def dashboard(request):
     user = request.user.is_staff
     return render(
@@ -576,6 +603,7 @@ def dashboard(request):
         {"user": user},
     )
 
+@login_required
 def donation_dashboard(request):
     loadGcashDonations = MOD.objects.filter(donation_type="GCash", status="Accepted")
     loadBankDonations = MOD.objects.filter(donation_type="Bank", status="Accepted")
@@ -590,6 +618,7 @@ def donation_dashboard(request):
         },
     )
 # @login_required
+@login_required
 def gcash_dashboard(request):
     # 1. Base QuerySet
     # Assuming your model has a 'date' field to order by
@@ -616,6 +645,7 @@ def gcash_dashboard(request):
         context,
     )
 
+@login_required
 def banks_dashboard(request):
     loadBanksDonations = MOD.objects.filter(donation_type="Bank", status="Accepted")
     return render(
@@ -624,6 +654,7 @@ def banks_dashboard(request):
         {"loadBanksDonations": loadBanksDonations},
     )
 
+@login_required
 def volunteer_dashboard(request):
     loadVolunteerDonations = MOD.objects.filter(
         donation_type="Volunteer", status="Accepted"

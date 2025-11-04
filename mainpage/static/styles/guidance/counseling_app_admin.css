@@ -172,10 +172,12 @@ body {
   text-transform: uppercase;
 }
 .accepted {
-  background-color: #2ecc71;
+  background-color: #8ccfa8;
+  color: #0b552a;
 } /* Green */
 .pending {
-  background-color: #f39c12;
+  color: #92400e;
+  background-color: #fef3c7;
 } /* Orange */
 .declined,
 .expired {

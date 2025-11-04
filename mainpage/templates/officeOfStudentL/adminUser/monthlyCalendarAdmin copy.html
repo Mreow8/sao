@@ -1,7 +1,5 @@
-{% extends base_template|default:"adminmain.html" %}{% load static %}
-{% block title %}Monthly Calendar of Activities{% endblock %}
-
-{% block headcontent %}
+{% extends base_template|default:"adminmain.html" %}{% load static %} {% block
+title %}Monthly Calendar of Activities{% endblock %} {% block headcontent %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -14,13 +12,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-{% endblock %} 
-
-{% block bodycontent %}
+{% endblock %} {% block bodycontent %}
 <div class="container">
   <div class="sub-title">
     <h3>OFFICE OF STUDENT LIFE {% if is_admin %} (Admin) {% endif %}</h3>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</p>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">> Monthly Calendar of Activities</p>
   </div>
 
@@ -57,275 +53,274 @@
 </script>
 
 <script>
-  // Use the 'scheds' variable from above
-  const events = Object.values(scheds);
+    // Use the 'scheds' variable from above
+    const events = Object.values(scheds);
 
-  let currentDate = new Date();
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ];
+    let currentDate = new Date();
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December",
+    ];
 
-  function updateCalendar() {
-    const calendar = document.getElementById("calendarDays");
-    const monthLabel = document.getElementById("currentMonth");
-    if (!calendar || !monthLabel) return;
+    function updateCalendar() {
+      const calendar = document.getElementById("calendarDays");
+      const monthLabel = document.getElementById("currentMonth");
+      if (!calendar || !monthLabel) return;
 
-    calendar.innerHTML = "";
-    monthLabel.textContent = `${
-      monthNames[currentDate.getMonth()]
-    } ${currentDate.getFullYear()}`;
+      calendar.innerHTML = "";
+      monthLabel.textContent = `${
+        monthNames[currentDate.getMonth()]
+      } ${currentDate.getFullYear()}`;
 
-    const firstDay = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      1
-    );
-    const startingDay = firstDay.getDay();
-    const lastDay = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    );
-    const totalDays = lastDay.getDate();
+      const firstDay = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+      );
+      const startingDay = firstDay.getDay();
+      const lastDay = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0
+      );
+      const totalDays = lastDay.getDate();
 
-    // Add empty cells
-    for (let i = 0; i < startingDay; i++) {
-      const emptyCell = document.createElement("div");
-      emptyCell.className = "calendar-day empty-day";
-      calendar.appendChild(emptyCell);
-    }
-
-    // Add day cells
-    for (let day = 1; day <= totalDays; day++) {
-      const cell = document.createElement("div");
-      cell.className = "calendar-day";
-      cell.textContent = day;
-
-      const dateString = `${currentDate.getFullYear()}-${String(
-        currentDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-      // Check for events on this day
-      // [MODIFIED] Adapted to FullCalendar's event format (start, end)
-     // ... inside the 'for' loop, after dateString is defined ...
-
-      // Check for events on this day
-      const dayEvents = events.filter((event) => {
-          if (!event.start || !event.end) return false;
-          // Check if dateString is between or equal to event.start and event.end
-          return event.start <= dateString && event.end >= dateString;
-      });
-
-      if (dayEvents.length > 0) {
-        cell.className += " has-event"; // For the click listener
-
-        // --- NEW SPAN LOGIC ---
-        
-        // We'll just show the first event if there are multiple
-        const firstEvent = dayEvents[0]; 
-
-        // 1. Get the day number text
-        const dayNumber = cell.textContent;
-        cell.textContent = ''; // Clear the cell
-        
-        // 2. Create a span for the day number
-        const dayNumberEl = document.createElement('span');
-        dayNumberEl.textContent = dayNumber;
-        
-        // 3. Create a span for the event title
-        const eventTitleEl = document.createElement('span');
-        eventTitleEl.className = 'event-span-title';
-        eventTitleEl.textContent = firstEvent.title;
-
-        // 4. Add the number and title back to the cell
-        cell.appendChild(dayNumberEl);
-        cell.appendChild(eventTitleEl);
-
-        // 5. Add CSS classes to create the "span" effect
-        if (firstEvent.start === dateString && firstEvent.end === dateString) {
-            cell.className += " event-span-single"; // Single day event
-        } else if (firstEvent.start === dateString) {
-            cell.className += " event-span-start"; // Start of a span
-        } else if (firstEvent.end === dateString) {
-            cell.className += " event-span-end"; // End of a span
-        } else {
-            cell.className += " event-span-middle"; // Middle of a span
-        }
-  
+      // Add empty cells
+      for (let i = 0; i < startingDay; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "calendar-day empty-day";
+        calendar.appendChild(emptyCell);
       }
 
-    
-      const today = new Date();
-      if (
-        day === today.getDate() &&
-        currentDate.getMonth() === today.getMonth() &&
-        currentDate.getFullYear() === today.getFullYear()
-      ) {
-        cell.className += " today";
-      }
+      // Add day cells
+      for (let day = 1; day <= totalDays; day++) {
+        const cell = document.createElement("div");
+        cell.className = "calendar-day";
+        cell.textContent = day;
 
-      // Add click listener to open modal (for admins)
-      {% if is_admin %}
-      cell.addEventListener('click', function() {
-          const formattedStart = `${dateString}T08:00`;
-          const formattedEnd = `${dateString}T17:00`; // Default 5 PM
-          showAddScheduleModal(formattedStart, formattedEnd);
-      });
-      {% endif %}
+        const dateString = `${currentDate.getFullYear()}-${String(
+          currentDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-      calendar.appendChild(cell);
-    }
+        // Check for events on this day
+        // [MODIFIED] Adapted to FullCalendar's event format (start, end)
+       // ... inside the 'for' loop, after dateString is defined ...
 
-    // Add remaining empty cells
-    const remainingDays = 42 - (startingDay + totalDays);
-    for (let i = 0; i < remainingDays; i++) {
-      const emptyCell = document.createElement("div");
-      emptyCell.className = "calendar-day empty-day";
-      calendar.appendChild(emptyCell);
-    }
-  }
+        // Check for events on this day
+        const dayEvents = events.filter((event) => {
+            if (!event.start || !event.end) return false;
+            // Check if dateString is between or equal to event.start and event.end
+            return event.start <= dateString && event.end >= dateString;
+        });
 
-  function previousMonth() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    updateCalendar();
-  }
+        if (dayEvents.length > 0) {
+          cell.className += " has-event"; // For the click listener
 
-  function nextMonth() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    updateCalendar();
-  }
+          // --- NEW SPAN LOGIC ---
 
-  // --- Add/Edit/Delete Logic (from old template) ---
+          // We'll just show the first event if there are multiple
+          const firstEvent = dayEvents[0];
 
-  // Show Add Modal (for Admin)
-  function showAddScheduleModal(start, end) {
-      Swal.fire({
-      title: "Add Schedule",
-      html:
-      `<label for="swal-title">Title</label>` +
-`<input id="swal-title" class="swal2-input" placeholder="Enter the event title">` +
+          // 1. Get the day number text
+          const dayNumber = cell.textContent;
+          cell.textContent = ''; // Clear the cell
 
-`<label for="swal-description">Description</label>` +
-`<textarea id="swal-description" class="swal2-textarea" placeholder="Enter the event description"></textarea>` +
+          // 2. Create a span for the day number
+          const dayNumberEl = document.createElement('span');
+          dayNumberEl.textContent = dayNumber;
 
-`<label for="swal-start">Start Date</label>` +
-`<input id="swal-start" type="date" class="swal2-input" value="${start.slice(0, 10)}">` +
+          // 3. Create a span for the event title
+          const eventTitleEl = document.createElement('span');
+          eventTitleEl.className = 'event-span-title';
+          eventTitleEl.textContent = firstEvent.title;
 
-`<label for="swal-end">End Date</label>` +
-`<input id="swal-end" type="date" class="swal2-input" value="${end.slice(0, 10)}">`,
+          // 4. Add the number and title back to the cell
+          cell.appendChild(dayNumberEl);
+          cell.appendChild(eventTitleEl);
 
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      preConfirm: () => {
-        const title = document.getElementById("swal-title").value;
-        const description = document.getElementById("swal-description").value;
-        const start_date = document.getElementById("swal-start").value;
-        const end_date = document.getElementById("swal-end").value;
-
-        if (!title || !description || !start_date || !end_date) {
-          Swal.showValidationMessage("All fields are required.");
-          return false;
-        }
-        return { title, description, start_date, end_date };
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch("{% url 'save_schedule' %}", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: JSON.stringify(result.value),
-          });
-          const responseData = await response.json();
-          if (response.ok && responseData.status === "success") {
-            Swal.fire("Saved!", "Schedule has been added.", "success");
-            // Add event to local list and re-render
-            events.push({
-              id: responseData.id,
-              title: responseData.title,
-              start: responseData.start,
-              end: responseData.end,
-              description: responseData.description
-            });
-            updateCalendar();
+          // 5. Add CSS classes to create the "span" effect
+          if (firstEvent.start === dateString && firstEvent.end === dateString) {
+              cell.className += " event-span-single"; // Single day event
+          } else if (firstEvent.start === dateString) {
+              cell.className += " event-span-start"; // Start of a span
+          } else if (firstEvent.end === dateString) {
+              cell.className += " event-span-end"; // End of a span
           } else {
-            throw new Error(responseData.message || "Failed to save schedule.");
+              cell.className += " event-span-middle"; // Middle of a span
           }
-        } catch (error) {
-          Swal.fire("Error", error.message, "error");
+
         }
+
+
+        const today = new Date();
+        if (
+          day === today.getDate() &&
+          currentDate.getMonth() === today.getMonth() &&
+          currentDate.getFullYear() === today.getFullYear()
+        ) {
+          cell.className += " today";
+        }
+
+        // Add click listener to open modal (for admins)
+        {% if is_admin %}
+        cell.addEventListener('click', function() {
+            const formattedStart = `${dateString}T08:00`;
+            const formattedEnd = `${dateString}T17:00`; // Default 5 PM
+            showAddScheduleModal(formattedStart, formattedEnd);
+        });
+        {% endif %}
+
+        calendar.appendChild(cell);
       }
-    });
-  }
 
-  // --- View Modal (for all users) ---
-  // We need to find the event data from our 'events' array
-  function showViewModal(eventInfo) {
-      // Fill modal fields
-      document.getElementById("title").textContent = eventInfo.title;
-      document.getElementById("description").textContent =
-        eventInfo.extendedProps.description || "";
-      document.getElementById("start").textContent =
-        new Date(eventInfo.start).toLocaleString();
-      document.getElementById("end").textContent = eventInfo.end
-        ? new Date(eventInfo.end).toLocaleString()
-        : "";
+      // Add remaining empty cells
+      const remainingDays = 42 - (startingDay + totalDays);
+      for (let i = 0; i < remainingDays; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "calendar-day empty-day";
+        calendar.appendChild(emptyCell);
+      }
+    }
 
-      // Set data-id for edit/delete
-      document.getElementById("edit") &&
-        (document.getElementById("edit").dataset.id = eventInfo.id);
-      document.getElementById("delete") &&
-        (document.getElementById("delete").dataset.id = eventInfo.id);
+    function previousMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      updateCalendar();
+    }
 
-      // Show modal
-      $("#event-details-modal").modal("show");
-  }
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      updateCalendar();
+    }
 
-  // Initial call
-  document.addEventListener("DOMContentLoaded", updateCalendar);
+    // --- Add/Edit/Delete Logic (from old template) ---
 
-  // --- [NEW] Add click listeners for existing events ---
-  // We must re-add this logic since FullCalendar is gone
-  document.getElementById('calendarDays').addEventListener('click', function(e) {
-      if (e.target.classList.contains('calendar-day') && e.target.classList.contains('has-event')) {
-          // Find the event
-          const dateString = `${currentDate.getFullYear()}-${String(
-            currentDate.getMonth() + 1
-          ).padStart(2, "0")}-${String(e.target.textContent).padStart(2, "0")}`;
-          
-          const clickedEvent = events.find(ev => ev.start && ev.start.startsWith(dateString));
-          
-          if(clickedEvent) {
-              // Re-format for the modal function
-              const modalEvent = {
-                  title: clickedEvent.title,
-                  start: clickedEvent.start,
-                  end: clickedEvent.end,
-                  id: clickedEvent.id,
-                  extendedProps: { description: clickedEvent.description }
-              };
-              showViewModal(modalEvent);
+    // Show Add Modal (for Admin)
+    function showAddScheduleModal(start, end) {
+        Swal.fire({
+        title: "Add Schedule",
+        html:
+        `<label for="swal-title">Title</label>` +
+  `<input id="swal-title" class="swal2-input" placeholder="Enter the event title">` +
+
+  `<label for="swal-description">Description</label>` +
+  `<textarea id="swal-description" class="swal2-textarea" placeholder="Enter the event description"></textarea>` +
+
+  `<label for="swal-start">Start Date</label>` +
+  `<input id="swal-start" type="date" class="swal2-input" value="${start.slice(0, 10)}">` +
+
+  `<label for="swal-end">End Date</label>` +
+  `<input id="swal-end" type="date" class="swal2-input" value="${end.slice(0, 10)}">`,
+
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: "Save",
+        preConfirm: () => {
+          const title = document.getElementById("swal-title").value;
+          const description = document.getElementById("swal-description").value;
+          const start_date = document.getElementById("swal-start").value;
+          const end_date = document.getElementById("swal-end").value;
+
+          if (!title || !description || !start_date || !end_date) {
+            Swal.showValidationMessage("All fields are required.");
+            return false;
           }
-      }
-  });
+          return { title, description, start_date, end_date };
+        },
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch("{% url 'save_schedule' %}", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+              },
+              body: JSON.stringify(result.value),
+            });
+            const responseData = await response.json();
+            if (response.ok && responseData.status === "success") {
+              Swal.fire("Saved!", "Schedule has been added.", "success");
+              // Add event to local list and re-render
+              events.push({
+                id: responseData.id,
+                title: responseData.title,
+                start: responseData.start,
+                end: responseData.end,
+                description: responseData.description
+              });
+              updateCalendar();
+            } else {
+              throw new Error(responseData.message || "Failed to save schedule.");
+            }
+          } catch (error) {
+            Swal.fire("Error", error.message, "error");
+          }
+        }
+      });
+    }
 
-  // [NEW] Add event listener for Edit/Delete buttons in the modal
-  // This logic comes from your `newmain.js`
-  document.getElementById('edit')?.addEventListener('click', function() {
-      // Add your edit logic here (e.g., open edit modal)
-      alert('Edit button clicked for event ID: ' + this.dataset.id);
-  });
+    // --- View Modal (for all users) ---
+    // We need to find the event data from our 'events' array
+    function showViewModal(eventInfo) {
+        // Fill modal fields
+        document.getElementById("title").textContent = eventInfo.title;
+        document.getElementById("description").textContent =
+          eventInfo.extendedProps.description || "";
+        document.getElementById("start").textContent =
+          new Date(eventInfo.start).toLocaleString();
+        document.getElementById("end").textContent = eventInfo.end
+          ? new Date(eventInfo.end).toLocaleString()
+          : "";
 
-  document.getElementById('delete')?.addEventListener('click', function() {
-      // Add your delete logic here
-      alert('Delete button clicked for event ID: ' + this.dataset.id);
-  });
+        // Set data-id for edit/delete
+        document.getElementById("edit") &&
+          (document.getElementById("edit").dataset.id = eventInfo.id);
+        document.getElementById("delete") &&
+          (document.getElementById("delete").dataset.id = eventInfo.id);
 
+        // Show modal
+        $("#event-details-modal").modal("show");
+    }
+
+    // Initial call
+    document.addEventListener("DOMContentLoaded", updateCalendar);
+
+    // --- [NEW] Add click listeners for existing events ---
+    // We must re-add this logic since FullCalendar is gone
+    document.getElementById('calendarDays').addEventListener('click', function(e) {
+        if (e.target.classList.contains('calendar-day') && e.target.classList.contains('has-event')) {
+            // Find the event
+            const dateString = `${currentDate.getFullYear()}-${String(
+              currentDate.getMonth() + 1
+            ).padStart(2, "0")}-${String(e.target.textContent).padStart(2, "0")}`;
+
+            const clickedEvent = events.find(ev => ev.start && ev.start.startsWith(dateString));
+
+            if(clickedEvent) {
+                // Re-format for the modal function
+                const modalEvent = {
+                    title: clickedEvent.title,
+                    start: clickedEvent.start,
+                    end: clickedEvent.end,
+                    id: clickedEvent.id,
+                    extendedProps: { description: clickedEvent.description }
+                };
+                showViewModal(modalEvent);
+            }
+        }
+    });
+
+    // [NEW] Add event listener for Edit/Delete buttons in the modal
+    // This logic comes from your `newmain.js`
+    document.getElementById('edit')?.addEventListener('click', function() {
+        // Add your edit logic here (e.g., open edit modal)
+        alert('Edit button clicked for event ID: ' + this.dataset.id);
+    });
+
+    document.getElementById('delete')?.addEventListener('click', function() {
+        // Add your delete logic here
+        alert('Delete button clicked for event ID: ' + this.dataset.id);
+    });
 </script>
 
 <div

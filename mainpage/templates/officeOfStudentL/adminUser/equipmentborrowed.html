@@ -7,6 +7,61 @@
     margin: 0 auto;
     padding: 0 1.5rem 2rem;
 }
+/* --- Action Button Wrapper --- */
+.action-btn-wrapper {
+  display: flex;
+  gap: 8px; /* Adds space between buttons */
+}
+
+/* --- Base Button Style --- */
+.action-btn {
+  padding: 6px 14px; /* Smaller padding */
+  font-size: 13px; /* Smaller font */
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* --- Solid Button Colors --- */
+.btn-edit {
+  background-color: #007bff;
+  color: white;
+}
+.btn-edit:hover {
+  background-color: #0056b3;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-delete:hover {
+  background-color: #c82333;
+}
+/* --- Status Badges --- */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Green for "Returned" or "Completed" */
+.status-returned {
+  background-color: #e6f7ec; /* Light green */
+  color: #28a745; /* Dark green */
+}
+
+/* Orange/Yellow for "Borrowed", "Pending", or "Return" */
+.status-borrowed {
+  background-color: #fff8e6; /* Light orange */
+  color: #ffc107; /* Dark orange */
+}
 .equipment{
   background-color: #ffffff;
     border: 1px solid #e0e0e0;
@@ -147,18 +202,7 @@
 .returnBtn:hover {
     background-color: #218838;
 }
-.editBtn {
-    background-color: #007bff; /* Info Blue */
-}
-.editBtn:hover {
-    background-color: #0069d9;
-}
-.deleteBtn {
-    background-color: #dc3545; /* Red */
-}
-.deleteBtn:hover {
-    background-color: #c82333;
-}
+
 
 .status-badge {
     padding: 5px 10px;
@@ -167,8 +211,8 @@
     font-size: 0.85em;
 }
 .status-processed {
-    background-color: #28a745; /* Green */
-    color: white;
+      background-color: #8ccfa8;
+  color: #0b552a;
 }
 
 /* --- Pagination (from Manage.css) --- */
@@ -202,7 +246,7 @@
 <div class="container">
   <div class="sub-title">
     <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</p>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">> Equipment Tracker</p>
   </div>
 <div class="equipment">
@@ -270,8 +314,11 @@
             </td>
             <td>{{ record.date_returned|default:"---" }}</td>
             <td>
-              <button class="editBtn">Edit</button>
-              <button class="deleteBtn">Delete</button>
+             <div class="action-btn-wrapper">
+    <a href="#" class="action-btn btn-edit ">Edit</a>
+    <a href="#" class="action-btn btn-delete ">Delete</a>
+
+</div>
             </td>
           </tr>
         {% empty %}
@@ -282,6 +329,7 @@
       </tbody>
     </table>
   </div>
+
 </div>
   {% if page_obj.has_other_pages %}
   <div class="pagination">

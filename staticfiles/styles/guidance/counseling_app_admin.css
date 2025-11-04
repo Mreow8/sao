@@ -113,7 +113,10 @@
   align-items: center;
   border-radius: 5px;
 }
-.accepted,
+.accepted {
+  background-color: #8ccfa8;
+  color: #0b552a;
+}
 .accept {
   background-color: #16ad2a;
   color: #ffffff;

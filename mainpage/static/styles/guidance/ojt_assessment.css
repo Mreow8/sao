@@ -225,11 +225,12 @@ hr {
   text-transform: uppercase;
 }
 .status-pending {
-  background-color: #f39c12; /* Orange (from guide) */
-  color: #fff;
+  color: #92400e;
+  background-color: #fef3c7;
 }
 .status-accepted {
-  background-color: #2ecc71; /* Green (from guide .status-processed) */
+  background-color: #8ccfa8;
+  color: #0b552a; /* Green (from guide .status-processed) */
 }
 .status-declined {
   background-color: #dc3545; /* Red (from your inline style) */
