@@ -5,15 +5,53 @@ With Scheduler{% endblock %} {% block headcontent %}
   type="text/css"
   href="{% static 'styles/guidance/intake.css'%}"
 />
+{% endblock %} {% block bodycontent %}
 <style>
-  /* Style for the close button */
+  /* --- Message Box Styling --- */
+  .messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 1em 0;
+    /* Make sure it appears on top of other content */
+    position: relative;
+    z-index: 100;
+  }
+
+  .messages li {
+    padding: 15px 40px 15px 20px; /* 40px right-padding for 'x' */
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-weight: 500;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .messages li.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .messages li.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .messages li.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+  }
+
+  /* --- Close Button Style --- */
   .message-close-btn {
     position: absolute;
     top: 5px;
     right: 10px;
     font-size: 24px;
     font-weight: bold;
-    color: inherit; /* Inherits color from parent (green or red) */
+    color: inherit;
     opacity: 0.6;
     cursor: pointer;
   }
@@ -21,15 +59,7 @@ With Scheduler{% endblock %} {% block headcontent %}
   .message-close-btn:hover {
     opacity: 1;
   }
-
-  /* Make the message 'li' relative so the button can be absolute */
-  .messages li {
-    position: relative;
-    padding-right: 40px; /* Add space for the 'x' button */
-  }
 </style>
-{% endblock %} {% block bodycontent %}
-
 <div class="container">
   <div class="sub-title">
     <h3>GUIDANCE (ADMIN)</h3>
@@ -38,11 +68,6 @@ With Scheduler{% endblock %} {% block headcontent %}
   </div>
 
   <div class="form-container">
-    <ul class="messages">
-      {% for message in messages %}
-      <li class="{{ message.tags }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
     <form>
       {% csrf_token %}
       <span id="search_id">
@@ -73,11 +98,6 @@ With Scheduler{% endblock %} {% block headcontent %}
             />
           </svg>
         </button>
-        <ul class="messages">
-          {% for message in messages %}
-          <li class="{{ message.tags }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
       </span>
 
       <table id="info_table" class="hidden">
@@ -515,21 +535,6 @@ With Scheduler{% endblock %} {% block headcontent %}
         tbody.appendChild(newRow);
       });
     });
-
-    // --- 8. NEW CODE: For dismissible alerts (from previous step) ---
-    const messageList = document.querySelector("ul.messages");
-    if (messageList) {
-      const messages = messageList.querySelectorAll("li");
-      messages.forEach(function (li) {
-        let closeBtn = document.createElement("span");
-        closeBtn.textContent = "×"; // The 'x' character
-        closeBtn.className = "message-close-btn";
-        closeBtn.onclick = function () {
-          li.style.display = "none";
-        };
-        li.appendChild(closeBtn);
-      });
-    }
   }); // End of DOMContentLoaded
 </script>
 
