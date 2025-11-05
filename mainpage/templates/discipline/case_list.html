@@ -1,5 +1,5 @@
 {% extends base_template|default:"main.html" %}
-{% block title %}Case List{% endblock %}
+{% block title %}Case History{% endblock %}
 {% load static %}
 
 {% block bodycontent %}
@@ -9,7 +9,7 @@
     href="{% static 'styles/discipline/case_list.css' %}"
 />
 <style>
-    /* ... (existing pagination styles) ... */
+    /* --- Pagination --- */
     .pagination {
         margin-top: 20px;
         text-align: center;
@@ -36,85 +36,203 @@
         pointer-events: none;
     }
 
-    /* --- Add Styles for Sorting --- */
+    /* --- Sorting --- */
     th.sortable a {
         text-decoration: none;
-        color: inherit; /* Make header links look like normal text */
-        display: block; /* Make the whole header clickable */
+        color: inherit;
+        display: block;
     }
     th.sortable a:hover {
         text-decoration: underline;
         color: #337ab7;
     }
     th.sortable a.sorted::after {
-        content: ' ▲'; /* Ascending arrow */
+        content: ' ▲';
         font-size: 0.8em;
         padding-left: 5px;
     }
     th.sortable a.sorted.desc::after {
-        content: ' ▼'; /* Descending arrow */
+        content: ' ▼';
     }
-    /* --- End Sorting Styles --- */
+    
+    /* --- Search Bar --- */
+    .filter-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .filter-controls .search { flex-grow: 1; display: flex; }
+    .filter-controls .search input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; }
+    .filter-controls .search button {
+        padding: 8px 12px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+    }
+
+    /* --- Styles for Edit Modal --- */
+    #editModal h4 {
+        margin-top: 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    #editFormFields {
+        max-height: 65vh; /* Make form scrollable */
+        overflow-y: auto;
+        padding: 10px;
+    }
+    #editFormFields .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Two columns */
+        gap: 15px 20px;
+    }
+    #editFormFields .form-grid .full-width {
+        grid-column: 1 / -1; /* Span both columns */
+    }
+    #editFormFields label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 0.9em;
+    }
+    #editFormFields input[type="text"],
+    #editFormFields input[type="number"],
+    #editFormFields input[type="file"],
+    #editFormFields input[type="date"],
+    #editFormFields select,
+    #editFormFields textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    #editFormFields textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+    .dynamic-field {
+        display: none; /* JS will change this to 'block' */
+        margin-top: 10px;
+    }
+    /* This is the class for error lists in edit_case.html */
+    .error-list {
+        color: #cc0000;
+        font-size: 0.85em;
+        font-weight: bold;
+        margin-top: 5px;
+        list-style: none;
+        padding-left: 0;
+    }
+    #editFormFields .submit-container {
+        text-align: right;
+        margin-top: 20px;
+        grid-column: 1 / -1;
+    }
+    #editFormFields .submit-btn {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    #editFormFields .submit-btn:hover {
+        background-color: #218838;
+    }
 </style>
 
 <div class="sub-title">
     <h3>STUDENT DISCIPLINE</h3>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt; Case List</p>
+    <p class="certxt">&gt; Case History</p>
 </div>
+
+
 <div class="container">
+
+    <form method="GET" action="{% url 'case_list' %}">
+        <div class="filter-controls">
+            <div class="search">
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search by Student Name, ID, or Offense..."
+                    value="{{ search_query }}"
+                />
+                <button type="submit">Search</button>
+            </div>
+        </div>
+        <input type="hidden" name="sort" value="{{ current_sort }}">
+        <input type="hidden" name="order" value="{{ current_order }}">
+    </form>
+
     <div style="overflow-x: auto">
         <table>
             <thead>
                 <tr>
+                    {% with sort=current_sort order=current_order params=sort_params %}
                     <th class="sortable">
-                        {% if current_sort == 'student' %}
-                            <a href="?sort=student&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
-                               class="sorted {% if current_order == 'desc' %}desc{% endif %}">
+                        {% if sort == 'student' %}
+                            <a href="?sort=student&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                               class="sorted {% if order == 'desc' %}desc{% endif %}">
                                 Student
                             </a>
                         {% else %}
-                            <a href="?sort=student&order=asc">Student</a>
+                            <a href="?sort=student&order=asc{{ params|safe }}">Student</a>
                         {% endif %}
                     </th>
                     <th class="sortable">
-                        {% if current_sort == 'offense' %}
-                            <a href="?sort=offense&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
-                               class="sorted {% if current_order == 'desc' %}desc{% endif %}">
+                        {% if sort == 'offense' %}
+                            <a href="?sort=offense&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                               class="sorted {% if order == 'desc' %}desc{% endif %}">
                                 Offense
                             </a>
                         {% else %}
-                            <a href="?sort=offense&order=asc">Offense</a>
+                            <a href="?sort=offense&order=asc{{ params|safe }}">Offense</a>
                         {% endif %}
                     </th>
                     <th class="sortable">
-                        {% if current_sort == 'date' %}
-                            <a href="?sort=date&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
-                               class="sorted {% if current_order == 'desc' %}desc{% endif %}">
+                        {% if sort == 'date' %}
+                            <a href="?sort=date&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                               class="sorted {% if order == 'desc' %}desc{% endif %}">
                                 Date
                             </a>
                         {% else %}
-                            <a href="?sort=date&order=asc">Date</a>
+                            <a href="?sort=date&order=asc{{ params|safe }}">Date</a>
                         {% endif %}
                     </th>
                     <th class="sortable">
-                        {% if current_sort == 'status' %}
-                            <a href="?sort=status&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
-                               class="sorted {% if current_order == 'desc' %}desc{% endif %}">
+                        {% if sort == 'status' %}
+                            <a href="?sort=status&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                               class="sorted {% if order == 'desc' %}desc{% endif %}">
                                 Status
                             </a>
                         {% else %}
-                            <a href="?sort=status&order=asc">Status</a>
+                            <a href="?sort=status&order=asc{{ params|safe }}">Status</a>
                         {% endif %}
                     </th>
-                    <th>Action Taken</th> <th>Actions</th>      </tr>
+                    <th>Action Taken</th> 
+                    <th>Actions</th>
+                    {% endwith %}
+                </tr>
             </thead>
             <tbody>
                 {% for case in page_obj %}
                 <tr>
                     <td>{{ case.student.firstname }} {{ case.student.lastname }}</td>
-                    <td>{{ case.offense_type }}</td>
-                    <td>{{ case.date_reported }}</td>
+                    <td>
+                        {% if case.offense_type == 'Others' %}
+                            {{ case.custom_offense|default:"-" }}
+                        {% else %}
+                            {{ case.offense_type }}
+                        {% endif %}
+                    </td>
+                    <td>{{ case.date_reported|date:"Y-m-d" }}</td>
                     <td>
                         <span
                             class="status-badge {% if case.status == 'Pending' %}status-pending{% elif case.status == 'Resolved' %}status-resolved{% else %}status-default{% endif %}"
@@ -122,28 +240,34 @@
                             {{ case.status }}
                         </span>
                     </td>
+                    
                     <td>
-                        {% if user.is_authenticated %} {% if user.role == 'superadmin' or user.role == 'guard' %} {% if case.action_taken == 'Counseling' %}
-                        <a href="{% url 'counseling_form' case.id %}"
-                            >{{ case.action_taken }}</a
-                        >
-                        {% elif case.action_taken == 'Suspension' %}
-                        <a
-                            href="#"
-                            class="suspensionBtn"
-                            data-id="{{ case.id }}"
-                            data-duration="{{ case.suspension_duration }}"
-                        >
-                            Suspension
-                        </a>
-                        {% elif case.action_taken == 'Community Service' %}
-                        <a href="{% url 'student_hours' case.id %}"
-                            >{{ case.action_taken }}</a
-                        >
-                        {% else %}
-                            {{ case.action_taken }}
+                        {% if user.is_authenticated %} 
+                            {% if user.role == 'superadmin' or user.role == 'guard' %} 
+                                {% if case.action_taken == 'Counseling' %}
+                                <a href="{% url 'counseling_form' case.id %}"
+                                    >{{ case.action_taken }}</a
+                                >
+                                {% elif case.action_taken == 'Suspension' %}
+                                <a
+                                    href="#"
+                                    class="suspensionBtn"
+                                    data-id="{{ case.id }}"
+                                    data-duration="{{ case.suspension_duration }}"
+                                >
+                                    Suspension
+                                </a>
+                                {% elif case.action_taken == 'Community Service' %}
+                                <a href="{% url 'student_hours' case.id %}"
+                                    >{{ case.action_taken }}</a
+                                >
+                                {% else %}
+                                    {{ case.action_taken }}
+                                {% endif %}
+                            {% else %} 
+                                {{ case.action_taken }} 
+                            {% endif %} 
                         {% endif %}
-                        {% else %} {{ case.action_taken }} {% endif %} {% endif %}
                     </td>
                     <td>
                         {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
@@ -154,9 +278,19 @@
                             style="color: rgb(121, 213, 77)"
                             >Edit</a
                         >
-                       
-                         {% endif %}
+                        <a
+                            href="#"
+                            class="deleteBtn"
+                            data-id="{{ case.id }}"
+                            style="color: red; margin-left: 10px;"
+                            >Delete</a
+                        >
+                        {% endif %}
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">No cases found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -166,8 +300,8 @@
     <div class="pagination">
         <span class="step-links">
             {% if page_obj.has_previous %}
-                <a href="?sort={{ current_sort }}&order={{ current_order }}&page=1">&laquo; first</a>
-                <a href="?sort={{ current_sort }}&order={{ current_order }}&page={{ page_obj.previous_page_number }}">previous</a>
+                <a href="?page=1{{ pagination_params|safe }}">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}{{ pagination_params|safe }}">previous</a>
             {% else %}
                 <span class="disabled">&laquo; first</span>
                 <span class="disabled">previous</span>
@@ -178,8 +312,8 @@
             </span>
 
             {% if page_obj.has_next %}
-                <a href="?sort={{ current_sort }}&order={{ current_order }}&page={{ page_obj.next_page_number }}">next</a>
-                <a href="?sort={{ current_sort }}&order={{ current_order }}&page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                <a href="?page={{ page_obj.next_page_number }}{{ pagination_params|safe }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{{ pagination_params|safe }}">last &raquo;</a>
             {% else %}
                 <span class="disabled">next</span>
                 <span class="disabled">last &raquo;</span>
@@ -189,94 +323,111 @@
 
 </div>
 
-<div id="editModal">
+<div id="editModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.4); justify-content:center; align-items:center;">
+    <div style="background-color:#fefefe; margin:auto; padding:20px; border:1px solid #888; width:80%; max-width:700px; border-radius: 8px; position:relative;">
+        <span id="closeEdit" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+        
+        <form id="editForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <h4>Edit Case</h4>
+            <div id="editFormFields">Loading...</div>
+        </form>
     </div>
+</div>
 
-<script src="https://cdn.j/sdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        
+        // --- Function to handle dynamic field display ---
+        function initializeDynamicFields(container) {
+            const scope = container || document;
+
+            // Offense Type Logic
+            // FIX: Use Django's 'id_...'
+            const offenseTypeSelect = scope.querySelector("#id_offense_type");
+            const customOffenseContainer = scope.querySelector("#custom_offense_container");
+
+            function toggleCustomOffense() {
+                if (offenseTypeSelect && customOffenseContainer) {
+                    customOffenseContainer.style.display = offenseTypeSelect.value === "Others" ? "block" : "none";
+                }
+            }
+            if (offenseTypeSelect) {
+                offenseTypeSelect.addEventListener("change", toggleCustomOffense);
+                toggleCustomOffense();
+            }
+            
+            // Action Taken Logic
+            // FIX: Use Django's 'id_...'
+            const actionTakenSelect = scope.querySelector("#id_action_taken");
+            const communityHoursContainer = scope.querySelector("#community_service_hours_container");
+            const suspensionDurationContainer = scope.querySelector("#suspension_duration_container");
+            const customActionContainer = scope.querySelector("#custom_action_container");
+            
+            function toggleActionFields() {
+                const value = actionTakenSelect ? actionTakenSelect.value : '';
+
+                if (communityHoursContainer) communityHoursContainer.style.display = "none";
+                if (suspensionDurationContainer) suspensionDurationContainer.style.display = "none";
+                if (customActionContainer) customActionContainer.style.display = "none";
+
+                if (value === "Community Service" && communityHoursContainer) {
+                    communityHoursContainer.style.display = "block";
+                } else if (value === "Suspension" && suspensionDurationContainer) {
+                    suspensionDurationContainer.style.display = "block";
+                } else if (value === "Others" && customActionContainer) {
+                    customActionContainer.style.display = "block";
+                }
+            }
+            
+            if (actionTakenSelect) {
+                actionTakenSelect.addEventListener("change", toggleActionFields);
+                toggleActionFields();
+            }
+        }
+        
+        // --- Edit Modal Logic ---
         const editModal = document.getElementById("editModal");
         const editForm = document.getElementById("editForm");
         const editFormFields = document.getElementById("editFormFields");
+        const closeEditBtn = document.getElementById("closeEdit");
 
         document.querySelectorAll(".editBtn").forEach((btn) => {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
                 const caseId = this.dataset.id;
-
-                fetch(`/main/cases/edit/${caseId}/`)
+                
+                // This URL must match your urls.py
+                fetch(`/discipline/cases/edit/${caseId}/`) 
                     .then((res) => res.text())
                     .then((html) => {
                         editFormFields.innerHTML = html;
-                        editForm.action = `/main/cases/edit/${caseId}/`;
+                        editForm.action = `/discipline/cases/edit/${caseId}/`;
                         editModal.style.display = "flex";
                         
-                        // Initialize dynamic fields within the modal when loaded
-                        // We must call this *after* the modal content is loaded
+                        // Initialize dynamic fields *inside the modal*
                         initializeDynamicFields(editModal); 
                     })
                     .catch((err) => console.error("Error loading edit form:", err));
             });
         });
 
-        document.getElementById("closeEdit").addEventListener("click", () => {
-            editModal.style.display = "none";
-        });
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        // Function to handle dynamic field display
-        // Pass a 'container' so it can work on the main form OR the modal
-        function initializeDynamicFields(container) {
-            const scope = container || document;
-
-            // Offense Type Logic (Custom Offense)
-            const offenseTypeSelect = scope.querySelector("#id_offense_type");
-            const customOffenseInput = scope.querySelector("#custom_offense");
-
-            function toggleCustomOffense() {
-                if (offenseTypeSelect && customOffenseInput) {
-                    customOffenseInput.style.display = offenseTypeSelect.value === "Others" ? "block" : "none";
-                }
-            }
-
-            if (offenseTypeSelect) {
-                offenseTypeSelect.addEventListener("change", toggleCustomOffense);
-                toggleCustomOffense(); // Run on load/init
-            }
-            
-            // Action Taken Logic (Community Service, Suspension, Custom Action)
-            const actionTakenSelect = scope.querySelector("#id_action_taken");
-            const communityHoursInput = scope.querySelector("#community_service_hours");
-            const suspensionDurationInput = scope.querySelector("#suspension_duration");
-            const customActionInput = scope.querySelector("#custom_action");
-            
-            function toggleActionFields() {
-                const value = actionTakenSelect ? actionTakenSelect.value : '';
-
-                if (communityHoursInput) communityHoursInput.style.display = "none";
-                if (suspensionDurationInput) suspensionDurationInput.style.display = "none";
-                if (customActionInput) customActionInput.style.display = "none";
-
-                if (value === "Community Service" && communityHoursInput) {
-                    communityHoursInput.style.display = "block";
-                } else if (value === "Suspension" && suspensionDurationInput) {
-                    suspensionDurationInput.style.display = "block";
-                } else if (value === "Others" && customActionInput) {
-                    customActionInput.style.display = "block";
-                }
-            }
-            
-            if (actionTakenSelect) {
-                actionTakenSelect.addEventListener("change", toggleActionFields);
-                toggleActionFields(); // Run on load/init
-            }
+        if (closeEditBtn) {
+            closeEditBtn.addEventListener("click", () => {
+                editModal.style.display = "none";
+            });
         }
-        
-        // Note: No need to call initializeDynamicFields() here, 
-        // it's called inside the edit button fetch logic.
+        window.addEventListener("click", (event) => {
+            if (event.target == editModal) {
+                editModal.style.display = "none";
+            }
+        });
 
+        // --- Suspension Button Logic ---
         document.querySelectorAll(".suspensionBtn").forEach((btn) => {
             btn.addEventListener("click", function () {
                 const caseId = this.dataset.id;
@@ -291,8 +442,8 @@
                         </select>
                         <input type="text" id="suspensionValue" 
                             class="swal2-input" 
-                            placeholder="Enter value (e.g., 5 days or 1 semester)" 
-                            value="${currentDuration}">
+                            placeholder="Enter value (e.g., 5)" 
+                            value="${currentDuration.split(' ')[0] || ''}">
                     `,
                     confirmButtonText: "Save",
                     showCancelButton: true,
@@ -304,13 +455,12 @@
                             Swal.showValidationMessage("Please enter a duration value");
                             return false;
                         }
-                        
-                        // Combine type and value for storage (e.g., "5 days" or "1 semester")
                         return `${value} ${type}`;
                     },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch(`/main/update-suspension/${caseId}/`, {
+                        // FIX: Corrected URL
+                        fetch(`/discipline/update-suspension/${caseId}/`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -320,11 +470,12 @@
                         })
                             .then((res) => res.json())
                             .then((data) => {
-                                Swal.fire(
-                                    "Updated!",
-                                    "Suspension updated successfully",
-                                    "success"
-                                ).then(() => location.reload());
+                                if(data.success) {
+                                    Swal.fire("Updated!", "Suspension updated.", "success")
+                                    .then(() => location.reload());
+                                } else {
+                                    Swal.fire("Error", data.error || "Something went wrong", "error");
+                                }
                             })
                             .catch((err) =>
                                 Swal.fire("Error", "Something went wrong", "error")
@@ -334,7 +485,7 @@
             });
         });
 
-        // Delete Button Logic
+        // --- Delete Button Logic ---
         document.querySelectorAll(".deleteBtn").forEach((btn) => {
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
@@ -350,7 +501,8 @@
                     confirmButtonText: "Yes, delete it!",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch(`/main/cases/delete/${caseId}/`, {
+                        // This URL must match your urls.py
+                        fetch(`/discipline/cases/delete/${caseId}/`, {
                             method: "POST",
                             headers: {
                                 "X-CSRFToken": "{{ csrf_token }}",

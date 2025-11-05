@@ -1,83 +1,100 @@
+{% csrf_token %}
 {% load widget_tweaks %}
 
-<div>
-    <label>Student</label>
-    <input type="text" value="{{ case.student.firstname }} {{ case.student.lastname }} ({{ case.student.studID }})" readonly class="form-control-plaintext" style="background: #eee; padding: 8px; border-radius: 4px;">
-</div>
-
-<div>
-    <label>Date Reported</label>
-    {{ form.date_reported }}
-</div>
-
-<div>
-    <label>Offense Number</label>
-    {{ form.offense_number }}
-</div>
-
-<div>
-    <label>Offense Type</label>
-    {{ form.offense_type }}
-    <input type="text" id="custom_offense" name="custom_offense" 
-           value="{{ form.custom_offense.value|default:'' }}" 
-           placeholder="Specify custom offense" 
-           style="display: none; margin-top: 5px;">
-</div>
-
-<div>
-    <label>Description</label>
-    {{ form.description }}
-</div>
-
-<div>
-    <label>Reported By</label>
-    {{ form.reported_by|attr:"readonly:true" }}
-</div>
-
-<div>
-    <label>Action Taken</label>
-    {{ form.action_taken }}
-    
-    <input type="number" id="community_service_hours" name="community_service_hours" 
-           value="{{ form.community_service_hours.value|default:'' }}" 
-           placeholder="Number of Hours" 
-           style="display: none; margin-top: 5px;">
-           
-    <input type="text" id="suspension_duration" name="suspension_duration" 
-           value="{{ form.suspension_duration.value|default:'' }}" 
-           placeholder="Number of Days/Semester" 
-           style="display: none; margin-top: 5px;">
-           
-    <input type="text" id="custom_action" name="custom_action" 
-           value="{{ form.custom_action.value|default:'' }}" 
-           placeholder="Specify custom action" 
-           style="display: none; margin-top: 5px;">
-</div>
-
-<div>
-    <label>Status</label>
-    {{ form.status }}
-</div>
-
-<div>
-    <label>Attachment (optional)</label>
-    {% if case.evidence %}
-        <p style="font-size: 0.9em; margin-bottom: 5px;">
-            Current: <a href="{{ case.evidence.url }}" target="_blank">{{ case.evidence.name }}</a>
-        </p>
-    {% endif %}
-    {{ form.evidence }}
-    <span style="font-size: 0.8em; color: #555;">Uploading a new file will replace the current one.</span>
-</div>
-
 {% if form.non_field_errors %}
-    <div style="color: red; margin-top: 10px;">
+    <div class="error-list">
         {% for error in form.non_field_errors %}
             <p>{{ error }}</p>
         {% endfor %}
     </div>
 {% endif %}
 
-<div style="text-align: right; margin-top: 20px;">
-    <button type="submit" class="bg-gray-600">Save Changes</button>
+<div class="form-grid">
+    <div class="full-width">
+        <label>Student</label>
+        
+        {{ form.student }}
+        
+        <input type="text" value="{{ case.student.firstname }} {{ case.student.lastname }} ({{ case.student.studID }})" readonly style="background: #eee; cursor: not-allowed;">
+        
+        {{ form.student.errors|attr:"class:error-list" }}
+    </div>
+
+    <div>
+        <label for="{{ form.date_reported.id_for_label }}">Date Reported</label>
+        {{ form.date_reported }}
+        {{ form.date_reported.errors|attr:"class:error-list" }}
+    </div>
+
+    <div>
+        <label for="{{ form.offense_number.id_for_label }}">Offense Number</label>
+        {{ form.offense_number }}
+        {{ form.offense_number.errors|attr:"class:error-list" }}
+    </div>
+
+    <div>
+        <label for="{{ form.offense_type.id_for_label }}">Offense Type</label>
+        {{ form.offense_type }}
+        {{ form.offense_type.errors|attr:"class:error-list" }}
+        
+        <div id="custom_offense_container" class="dynamic-field">
+            {{ form.custom_offense|add_class:"form-control"|attr:"placeholder:Specify custom offense" }}
+            {{ form.custom_offense.errors|attr:"class:error-list" }}
+        </div>
+    </div>
+
+    <div>
+        <label for="{{ form.reported_by.id_for_label }}">Reported By</label>
+        {{ form.reported_by|attr:"readonly:true"|attr:"style:background:#eee; cursor:not-allowed;" }}
+        {{ form.reported_by.errors|attr:"class:error-list" }}
+    </div>
+
+    <div class="full-width">
+        <label for="{{ form.description.id_for_label }}">Description</label>
+        {{ form.description }}
+        {{ form.description.errors|attr:"class:error-list" }}
+    </div>
+
+    <div>
+        <label for="{{ form.action_taken.id_for_label }}">Action Taken</label>
+        {{ form.action_taken }}
+        {{ form.action_taken.errors|attr:"class:error-list" }}
+        
+        <div id="community_service_hours_container" class="dynamic-field">
+            {{ form.community_service_hours|add_class:"form-control"|attr:"placeholder:Number of Hours" }}
+            {{ form.community_service_hours.errors|attr:"class:error-list" }}
+        </div>
+            
+        <div id="suspension_duration_container" class="dynamic-field">
+            {{ form.suspension_duration|add_class:"form-control"|attr:"placeholder:Number of Days/Semester" }}
+            {{ form.suspension_duration.errors|attr:"class:error-list" }}
+        </div>
+            
+        <div id="custom_action_container" class="dynamic-field">
+            {{ form.custom_action|add_class:"form-control"|attr:"placeholder:Specify custom action" }}
+            {{ form.custom_action.errors|attr:"class:error-list" }}
+        </div>
+    </div>
+    
+    <div>
+        <label for="{{ form.status.id_for_label }}">Status</label>
+        {{ form.status }}
+        {{ form.status.errors|attr:"class:error-list" }}
+    </div>
+
+    <div class="full-width">
+        <label for="{{ form.evidence.id_for_label }}">Attachment (optional)</label>
+        {% if case.evidence %}
+            <p style="font-size: 0.9em; margin-bottom: 5px;">
+                Current: <a href="{{ case.evidence.url }}" target="_blank">{{ case.evidence.name }}</a>
+            </p>
+        {% endif %}
+        {{ form.evidence }}
+        {{ form.evidence.errors|attr:"class:error-list" }}
+        <span style="font-size: 0.8em; color: #555;">Uploading a new file will replace the current one.</span>
+    </div>
+
+    <div class="submit-container">
+        <button type="submit" class="submit-btn">Save Changes</button>
+    </div>
 </div>

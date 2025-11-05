@@ -4,7 +4,7 @@
 from datetime import datetime
 import json
 import logging
-
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.core.exceptions import ValidationError
@@ -142,7 +142,6 @@ def case_profile_create(request):
 from django.core.paginator import Paginator
 
 # ... (all your other imports) ...
-
 @login_required
 def case_list(request):
     user = request.user
@@ -152,42 +151,74 @@ def case_list(request):
         else "main.html"
     )
 
+    # --- 1. Get all GET parameters ---
+    search_query = request.GET.get('search', '') # NEW
     sort_by = request.GET.get('sort', 'date')
     order = request.GET.get('order', 'desc')
 
+    # --- 2. Define Sort Fields ---
     valid_sort_fields = {
         'student': 'student__firstname',
         'offense': 'offense_type',
         'date': 'date_reported',
         'status': 'status',
     }
-
     sort_field = valid_sort_fields.get(sort_by, 'date_reported')
-
-    if order == 'desc':
-        order_string = f'-{sort_field}'
-    else:
-        order_string = sort_field
-        
+    order_string = f'-{sort_field}' if order == 'desc' else sort_field
+    
+    # --- 3. Get Base Queryset based on Role (with performance fix) ---
     if user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'):
-        all_cases = CaseProfile.objects.all().order_by(order_string)
-        
+        all_cases = CaseProfile.objects.select_related('student').all() 
     elif user.is_authenticated and getattr(user, 'role', None) == 'student':
-        all_cases = CaseProfile.objects.filter(student__studID=user.username).order_by(order_string)
+        all_cases = CaseProfile.objects.select_related('student').filter(student__studID=user.username)
     else:
         all_cases = CaseProfile.objects.none()
 
-    paginator = Paginator(all_cases, 10) 
+    # --- 4. Apply Search Filter (NEW) ---
+    if search_query:
+        all_cases = all_cases.filter(
+            Q(student__studID__icontains=search_query) |
+            Q(student__firstname__icontains=search_query) |
+            Q(student__lastname__icontains=search_query) |
+            Q(offense_type__icontains=search_query) |
+            Q(custom_offense__icontains=search_query) # So it can find "Others"
+        )
+
+    # --- 5. Apply Sorting ---
+    all_cases = all_cases.order_by(order_string)
+
+    # --- 6. Prepare Query Strings for Links (NEW/FIXED) ---
+    
+    # For Pagination (preserves search, sort, order)
+    pagination_params = request.GET.copy()
+    if 'page' in pagination_params:
+        del pagination_params['page']
+    pagination_params_str = f"&{pagination_params.urlencode()}" if pagination_params else ""
+
+    # For Sorting (preserves search, but not sort/order)
+    sort_params = request.GET.copy()
+    for key in ['sort', 'order', 'page']:
+        if key in sort_params:
+            del sort_params[key]
+    sort_params_str = f"&{sort_params.urlencode()}" if sort_params else ""
+
+    # --- 7. Apply Pagination ---
+    paginator = Paginator(all_cases, 10) # 10 cases per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # --- 8. Context (Updated) ---
     context = {
         'page_obj': page_obj, 
         'base_template': base_template,
         'current_sort': sort_by,
         'current_order': order,
+        'search_query': search_query, # NEW
+        'pagination_params': pagination_params_str, # NEW
+        'sort_params': sort_params_str, # NEW
     }
     return render(request, 'discipline/case_list.html', context)
+
 @login_required
 def case_edit(request, case_id):
     case = get_object_or_404(CaseProfile, id=case_id)
@@ -196,22 +227,23 @@ def case_edit(request, case_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Case updated successfully.")
-            return redirect("case_list") # Redirect to the list after saving
+            return redirect("case_list")
         else:
-            # If form is invalid, re-render the modal form with errors
+            # Form is invalid, re-render the partial template with errors
+            logger.warning(f"Invalid edit form submission: {form.errors}")
             context = {"form": form, "case": case}
-            return render(request, "discipline/_case_edit_form.html", context)
+            # We return a 400 status to indicate a bad request, which can be
+            # handled in JS, but for now just re-rendering is fine.
+            return render(request, "discipline/edit_case.html", context)
     else:
-        # GET request: show the form pre-filled with case data
+        # GET request: show the form pre-filled
         form = CaseProfileForm(instance=case)
 
     context = {
         "form": form,
         "case": case,
     }
-    # Renders the *partial* template for the modal
     return render(request, "discipline/edit_case.html", context)
-
 
 @login_required
 def get_student(request, studID):

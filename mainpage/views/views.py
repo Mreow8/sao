@@ -2,18 +2,29 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.shortcuts import render
+from django.contrib import messages
 
 @login_required(login_url='signinuser')  # or the URL name of your login page
 
+
 def homepage(request):
-    # This checks if the user is an admin/staff or a regular user
+    # This logic is correct. An anonymous user will have is_staff=False
+    # and is_superuser=False, so they will get 'main.html'.
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
     
-    # Pass the base_template variable to the homepage.html
+    # Check if the user is logged in (not an 'AnonymousUser')
+    if request.user.is_authenticated:
+        # Use the user's username in the message
+        messages.success(request, f'Welcome back, {request.user.username}!')
+    else:
+        messages.info(request, 'Welcome to the homepage!')
+
     return render(request, 'homepage.html', {
         'base_template': base_template
+        # NOTE: No need to add 'user': request.user
+        # The render() function does this automatically.
     })
-
 def alumni_main(request):
     return render(request, 'alumni/id_requests.html')
 def calendar(request):

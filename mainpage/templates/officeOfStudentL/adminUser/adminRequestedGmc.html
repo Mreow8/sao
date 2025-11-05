@@ -1,6 +1,5 @@
 {% extends 'adminmain.html' %} {% load static %} {% load tz %}
-<!-- prettier-ignore -->
-{% block bodycontent    %}
+{% block headcontent %}
 <link
   rel="stylesheet"
   href="{% static 'styles/studentlife/requestgmc.css' %}"
@@ -11,7 +10,52 @@
   href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
   rel="stylesheet"
 />
+<style>
+  .filter-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .filter-controls .search {
+    flex-grow: 1;
+    margin-right: 20px;
+    display: flex;
+  }
+  .filter-controls .search input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+  }
+  .filter-controls .search button {
+    padding: 8px 12px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+  }
+  .filter-controls .status-filters a {
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    margin-left: 5px;
+  }
+  .filter-controls .status-filters a.active {
+    background-color: #007bff;
+    color: white;
+  }
+  th a { text-decoration: none; color: inherit; }
+  .pagination { margin-top: 20px; text-align: center; }
+  .pagination a { margin: 0 5px; text-decoration: none; }
+  .pagination .current { margin: 0 5px; font-weight: bold; }
+</style>
+{% endblock headcontent %}
 
+{% block bodycontent %}
 <div class="body-content">
   <div class="sub-title">
     <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
@@ -19,26 +63,71 @@
     <p class="certxt">Good Moral Certificate Issuance</p>
   </div>
   <div class="gmc-form">
-    <form
-      id="trackerForm"
-      action="{% url 'adminRequestedGmc' %}"
-      method="GET"
-    ></form>
+    
+    <form id="trackerForm" action="{% url 'adminRequestedGmc' %}" method="GET">
+      <div class="filter-controls">
+        <div class="search">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search by Student Name, ID, Reason, or OR#"
+            value="{{ search_query }}"
+          />
+          <button type="submit">Search</button>
+        </div>
+        
+        <div class="status-filters">
+          <a href="?status=pending{{ status_params|safe }}" 
+             class="{% if current_status_filter == 'pending' %}active{% endif %}">
+             Pending
+          </a>
+          <a href="?status=processed{{ status_params|safe }}"
+             class="{% if current_status_filter == 'processed' %}active{% endif %}">
+             Processed
+          </a>
+          <a href="?status=all{{ status_params|safe }}"
+             class="{% if current_status_filter == 'all' %}active{% endif %}">
+             All
+          </a>
+        </div>
+      </div>
+      <input type="hidden" name="sort" value="{{ current_sort }}">
+      <input type="hidden" name="order" value="{{ current_order }}">
+    </form>
+    
     <div class="admin-table-wrapper">
       <table id="trackerTable">
         <thead>
           <tr>
-            <th>Student ID</th>
-            <th>Student Name</th>
+            {% with sort=current_sort order=current_order params=sort_params %}
+            <th>
+              <a href="?sort=stud_id&order={% if sort == 'stud_id' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                >Student ID
+                {% if sort == 'stud_id' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+              </a>
+            </th>
+            <th>
+              <a href="?sort=stud_name&order={% if sort == 'stud_name' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                >Student Name
+                {% if sort == 'stud_name' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+              </a>
+            </th>
             <th>Course/Program</th>
             <th>Year Level</th>
             <th>Reason</th>
+            <th>
+              <a href="?sort=request_date&order={% if sort == 'request_date' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                >Date Requested
+                {% if sort == 'request_date' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+              </a>
+            </th>
             <th>OR Number</th>
             <th>Action</th>
+            {% endwith %}
           </tr>
         </thead>
         <tbody>
-          {% for request in gmc_requests %}
+          {% for request in page_obj %}
           <tr>
             <td>{{ request.student.studID }}</td>
             <td>
@@ -47,33 +136,87 @@
             <td>{{ request.student.degree }}</td>
             <td>{{ request.student.yearlvl }}</td>
             <td>{{ request.reason }}</td>
+            <td>{{ request.request_date|date:"Y-m-d" }}</td>
+            
             <td>
-              <input
-                type="text"
-                name="ornum"
-                class="ornum-input"
-                id="ornum"
-                data-request-id="{{ request.id }}"
-                required
-              />
+              {% if request.processed %}
+                {{ request.or_num }}
+              {% else %}
+                <input
+                  type="text"
+                  name="ornum"
+                  class="ornum-input"
+                  data-request-id="{{ request.id }}"
+                  required
+                />
+              {% endif %}
             </td>
             <td>
-              <button class="printBtn" data-request-id="{{ request.id }}">
-                Print
-              </button>
+              {% if request.processed %}
+                <button 
+                  class="reprintBtn" 
+                  data-request-id="{{ request.id }}" 
+                  data-or-num="{{ request.or_num }}">
+                  Re-print
+                </button>
+              {% else %}
+                <button class="printBtn" data-request-id="{{ request.id }}">
+                  Print
+                </button>
+              {% endif %}
             </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" style="text-align: center;">No requests found.</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+
+    <div class="pagination">
+      <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{{ pagination_params|safe }}">&laquo; first</a>
+        <a href="?page={{ page_obj.previous_page_number }}{{ pagination_params|safe }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{{ pagination_params|safe }}">next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{{ pagination_params|safe }}">last &raquo;</a>
+        {% endif %}
+      </span>
+    </div>
+
   </div>
 </div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const printButtons = document.querySelectorAll(".printBtn");
+    
+    // Function to open print window and reload on close
+    function openPrintWindow(url) {
+      const printWindow = window.open(url, "_blank");
 
-    printButtons.forEach((button) => {
+      // Poll for the print window close event
+      const interval = setInterval(() => {
+        if (printWindow.closed) {
+          clearInterval(interval);
+          // Reload the page to show the updated status
+          setTimeout(() => {
+            location.reload();
+          }, 500);
+        }
+      }, 500);
+    }
+
+    // Handler for NEW "Print" buttons
+    document.querySelectorAll(".printBtn").forEach((button) => {
       button.addEventListener("click", function () {
         const requestId = this.getAttribute("data-request-id");
         const orNumInput = document.querySelector(
@@ -84,26 +227,26 @@
         if (!orNum) {
           alert("OR Number is required");
           orNumInput.focus();
-          return; // Stop execution if ORN number is empty
+          return; // Stop execution
         }
 
-        const printWindow = window.open(
-          `/main/generate-gmc/${requestId}/?ornum=${orNum}`,
-          "_blank"
-        );
-
-        // Poll for the print window close event
-        const interval = setInterval(() => {
-          if (printWindow.closed) {
-            clearInterval(interval);
-            // Delay the refresh slightly to ensure print dialog is fully closed
-            setTimeout(() => {
-              location.reload();
-            }, 500);
-          }
-        }, 500);
+        const printUrl = `/main/generate-gmc/${requestId}/?ornum=${encodeURIComponent(orNum)}`;
+        openPrintWindow(printUrl);
       });
     });
+
+    // Handler for "Re-print" buttons
+    document.querySelectorAll(".reprintBtn").forEach((button) => {
+      button.addEventListener("click", function () {
+        const requestId = this.getAttribute("data-request-id");
+        const orNum = this.getAttribute("data-or-num");
+        
+        // We don't need to check for empty OR number, it's already saved
+        const printUrl = `/main/generate-gmc/${requestId}/?ornum=${encodeURIComponent(orNum)}`;
+        openPrintWindow(printUrl);
+      });
+    });
+
   });
 </script>
 {% endblock bodycontent %}

@@ -71,7 +71,7 @@ body {
 /* Orange button (as per your HTML) */
 .OrangeButton {
   font-family: "Rubik", sans-serif;
-  background-color: #ff8000;
+  background-color: #718096;
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -84,7 +84,7 @@ body {
   transition: background-color 0.2s, transform 0.2s;
 }
 .OrangeButton:hover {
-  background-color: #e67300; /* Darker Orange */
+  background-color: #5b77a1; /* Darker Orange */
   transform: translateY(-2px);
 }
 

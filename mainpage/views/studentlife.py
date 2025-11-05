@@ -193,12 +193,101 @@ def requestedgmc(request):
         "request_history": request_history  # <-- Pass the history to the template
     }
     return render(request, "officeOfStudentL/requestgmc.html", context)
-# @sao_admin_required
 
-# Processing Goodmoral Certificate Admin side 
+# In studentlife.py
+
+# (Make sure Paginator, Q, and urlencode are imported at the top)
+from django.core.paginator import Paginator
+from django.db.models import Q
+from urllib.parse import urlencode
+
 def adminRequestedGmc(request):
-    gmc_requests = RequestedGMC.objects.filter(processed=False)
-    context = {"gmc_requests": gmc_requests}
+    
+    # --- 1. GET PARAMETERS ---
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', 'pending') # Default to pending
+    sort_by = request.GET.get('sort', 'request_date')
+    order = request.GET.get('order', 'desc')
+    page_number = request.GET.get('page')
+
+    # --- 2. START QUERYSET ---
+    gmc_request_list = RequestedGMC.objects.select_related('student').all()
+    
+    # --- 3. APPLY STATUS FILTER ---
+    if status_filter == 'pending':
+        gmc_request_list = gmc_request_list.filter(processed=False)
+    elif status_filter == 'processed':
+        gmc_request_list = gmc_request_list.filter(processed=True)
+    # if 'all', we do nothing
+
+    # --- 4. APPLY SEARCH FILTER ---
+    if search_query:
+        gmc_request_list = gmc_request_list.filter(
+            Q(student__studID__icontains=search_query) |
+            Q(student__firstname__icontains=search_query) |
+            Q(student__lastname__icontains=search_query) |
+            Q(reason__icontains=search_query) |
+            Q(or_num__icontains=search_query)
+        )
+
+    # --- 5. APPLY SORTING ---
+    sort_fields = {
+        'stud_id': 'student__studID',
+        'stud_name': 'student__lastname',
+        'course': 'student__degree',
+        'year': 'student__yearlvl',
+        'reason': 'reason',
+        'request_date': 'request_date',
+    }
+    db_field = sort_fields.get(sort_by, 'request_date')
+    
+    if order == 'desc':
+        db_field = f'-{db_field}'
+    
+    gmc_request_list = gmc_request_list.order_by(db_field)
+
+    # --- 6. PREPARE QUERY STRINGS FOR LINKS (THE FIX) ---
+    
+    # 6a. For Pagination (preserves everything except 'page')
+    pagination_params = request.GET.copy()
+    if 'page' in pagination_params:
+        del pagination_params['page']
+    pagination_params_str = f"&{pagination_params.urlencode()}" if pagination_params else ""
+
+    # 6b. For Sorting (preserves search/status, but not sort/order/page)
+    sort_params = request.GET.copy()
+    for key in ['sort', 'order', 'page']:
+        if key in sort_params:
+            del sort_params[key]
+    sort_params_str = f"&{sort_params.urlencode()}" if sort_params else ""
+
+    # 6c. For Status Filters (preserves search/sort, but not status/page)
+    status_params = request.GET.copy()
+    for key in ['status', 'page']:
+        if key in status_params:
+            del status_params[key]
+    status_params_str = f"&{status_params.urlencode()}" if status_params else ""
+
+
+    # --- 7. APPLY PAGINATION ---
+    paginator = Paginator(gmc_request_list, 10) # 10 records per page
+    page_obj = paginator.get_page(page_number)
+
+    # --- 8. CONTEXT ---
+    context = {
+        'page_obj': page_obj,
+        'current_sort': sort_by,
+        'current_order': order,
+        'current_status_filter': status_filter,
+        'search_query': search_query,
+        
+        # --- NEW CONTEXT VARIABLES ---
+        'pagination_params': pagination_params_str,
+        'sort_params': sort_params_str,
+        'status_params': status_params_str,
+        
+        'base_template': 'adminmain.html'
+    }
     return render(request, "officeOfStudentL/adminUser/adminRequestedGmc.html", context)
 
 # Making of Goodmoral Certificate
