@@ -284,7 +284,8 @@
     <div class="search-container">
         <div class="right-controls" style="margin-left: auto;">
           {% if user.role == 'superadmin' or user.role == 'student_life_staff' %}
-            <a href="#" class="upload-button">
+           <a href="{% url 'upload_files' %}" class="upload-button">
+
                 <i class="fas fa-upload"></i>
                 <span>Upload</span>
             </a>
