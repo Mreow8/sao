@@ -274,6 +274,8 @@ body {
       <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
       <p class="certxt">&gt; Requirement Submission History</p>
     </div>
+<hr>
+
 <div class="content_box">
   <div class="content">
  
@@ -360,16 +362,29 @@ body {
               {% if req.schoolid_file %}
                 <img id="schoolid_pic" src="{{ req.schoolid_file.url }}" alt="ID">
               {% endif %}
-            </td>
-            <td>{{ req.gpa }}</td>
-            <td>{{ req.units }}</td>
-            <td>{{ req.scholar_type }}</td>
-            <td>{{ req.year }}</td>
-            <td>{{ req.semester }}</td>
-            <td>{{ req.status }}</td>
-            <td>{{ req.record }}</td>
-          </tr>
-          {% empty %}
+      </td>
+    <td>{{ req.gpa }}</td>
+    <td>{{ req.units }}</td>
+    <td>{{ req.scholar_type }}</td>
+    <td>{{ req.year }}</td>
+    <td>{{ req.sem }}</td>
+    
+    <td {% if req.status == 'PENDING' %}style="
+        color: #92400e; 
+        background-color: #fef3c7;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        /* Note: 'color: white;' was not used as it's unreadable on yellow */
+    "{% endif %}>
+      {{ req.status }}
+    </td>
+    
+    <td>{{ req.record }}</td>
+  </tr>
+  {% empty %}
           <tr>
             <td colspan="10" style="text-align: center; color: black;">
               No records found matching your filters.

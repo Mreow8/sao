@@ -26,6 +26,8 @@ title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
   </div>
+  <hr />
+
   <!-- Tabs -->
   <div class="tabs">
     <a href="{% url 'org_profile' slug=org.slug %}" class="tab">Profiles</a>

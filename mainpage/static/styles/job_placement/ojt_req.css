@@ -1,217 +1,352 @@
-/* --- Import Font (from requestgmc.css) --- */
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+/* =================================
+   SHARED STYLES (Admin & Student)
+   ================================= */
 
-/* --- Global, Container, & Font --- */
-body,
-.container,
-.sub-title,
-input,
-select,
-button,
-table {
-  font-family: "Rubik", sans-serif;
-}
+/* =================================
+   ADMIN VIEW STYLES
+   ================================= */
 
-section {
-  max-width: 1400px;
-  margin: 0 auto;
-  font-family: "Rubik", sans-serif !important;
-  padding: 1.5rem;
-}
-
-/* --- Utility --- */
-hr {
-  border: 0;
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 2rem 0;
-}
-
-/* --- Headers & Instructions --- */
-.intro p {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 1rem 0;
-}
-
-/* Blue info box (based on .pending-request-box) */
-#balo {
-  background-color: #ebf8ff; /* Light blue */
-  border: 1px solid #bee3f8; /* Lighter blue border */
-  border-left: 5px solid #2c5282; /* Accent border */
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-}
-
-#balo p {
-  margin: 0.5rem 0;
-  color: #2b6cb0;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-/* --- Admin: Search Form Card (Based on .gmc-form) --- */
-.form-container {
+#main_container {
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.form-container form {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  position: relative;
-}
-
-/* Search Input (Based on #comboBox) */
-#search_bar {
-  font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  flex-grow: 1; /* Takes available space */
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-#search_bar:focus {
-  outline: none;
-  border-color: #2c5282;
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
-}
-
-/* Search Suggestions Dropdown */
-#search_suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 200px;
-  overflow-y: auto;
-}
-#search_suggestions li {
-  padding: 10px 15px;
-  cursor: pointer;
-}
-#search_suggestions li:hover {
-  background-color: #f0f0f0;
-}
-
-/* Search Button (Based on .requestBtn) */
-#attend_student_list {
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
-  flex-shrink: 0;
-}
-
-#attend_student_list:hover {
-  background-color: #2a4365;
-  transform: translateY(-2px);
-}
-
-/* --- Admin: Table Card Wrapper (Based on .admin-table-wrapper) --- */
-.table-container {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden; /* Clips the table corners */
-}
-
-.table-container .intro {
-  padding: 1.5rem 1.5rem 0 1.5rem;
-}
-#historyTable,
-#trackerTable {
-  width: 100%;
-  border-collapse: collapse;
-  border: none;
-}
-
-/* Admin Table Styling (Based on #trackerTable) */
-.admintable {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-.gmc-form {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
-.admintable th,
-.admintable td {
-  border-bottom: 1px solid #ddd;
-  padding: 12px 15px;
-  font-size: 14px;
-  vertical-align: middle;
-  text-align: center;
-}
 
-.admintable th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue */
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+/* Search Bar */
+.gmc-form {
+  position: relative; /* For suggestion box positioning */
+  margin-bottom: 20px;
 }
-
-.admintable tbody tr:last-child td {
-  border-bottom: none;
+#search_bar {
+  padding: 10px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
 }
-.admintable tbody tr:hover {
-  /* background-color: #ebf8ff; Light blue hover */
-}
-
-/* "Pending" Button (Based on .status-pending) */
-.view-pdf {
-  background-color: #f39c12; /* Orange */
-  padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 12px;
-  font-weight: 600;
+#attend_student_list {
+  padding: 10px 15px;
+  background-color: #007bff;
   color: white;
-  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+#attend_student_list:hover {
+  background-color: #0056b3;
+}
+
+/* Search Suggestions */
+#search_suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 300px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 100;
+}
+#search_suggestions li {
+  padding: 10px;
+  cursor: pointer;
+}
+#search_suggestions li:hover {
+  background-color: #f4f4f4;
+}
+
+/* Admin Table */
+.admintable {
+  overflow-x: auto; /* Makes table responsive */
+}
+
+#trackerTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+#trackerTable th,
+#trackerTable td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap; /* Prevents text wrap */
+}
+#trackerTable thead th {
+  color: #2c5282;
+  font-weight: 600;
+}
+#trackerTable tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Pending Button */
+.view-pdf {
+  color: #92400e;
+  background-color: #fef3c7;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
 }
 .view-pdf:hover {
-  background-color: #e67e22;
+  background-color: #f4e29a;
 }
+
+/* =================================
+   ADMIN MODAL (PDF Viewer)
+   ================================= */
+
 .showcontainer {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  /* Flexbox for centering */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* This class is added by JS */
+.showcontainer.active {
+  display: flex;
+}
+
+.showform {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 900px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.closeform {
+  color: #aaa;
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+}
+.closeform:hover,
+.closeform:focus {
+  color: black;
+}
+
+#pdf-iframe {
+  width: 100%;
+  height: 70vh; /* Viewport height is better than fixed pixels */
+  border: 1px solid #ccc;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.accept-button,
+.decline-button,
+.close-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.accept-button {
+  background-color: #8ccfa8;
+  color: #0b552a;
+}
+.accept-button:hover {
+  background-color: #218838;
+}
+
+.decline-button {
+  background-color: #dc3545;
+  color: white;
+}
+.decline-button:hover {
+  background-color: #c82333;
+}
+
+.close-button {
+  background-color: #6c757d;
+  color: white;
+  display: block;
+  margin: 10px auto 0 auto;
+}
+.close-button:hover {
+  background-color: #5a6268;
+}
+
+/* =================================
+   STUDENT VIEW STYLES
+   ================================= */
+
+#balo {
+  background-color: #f4f8ff;
+  border: 1px solid #c7dfff;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+#balo p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.showbox {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  flex-basis: 30%; /* Gives label consistent width */
+}
+
+.file-input {
+  flex-basis: 50%; /* Gives file input consistent width */
+}
+
+/* File status text */
+.file_name,
+.pending,
+.accepted,
+.declined,
+.nofile,
+.no_file {
+  font-weight: bold;
+  font-size: 0.9em;
+  margin: 0;
+  flex-basis: 20%; /* Gives status consistent width */
+  text-align: right;
+}
+
+.file_name {
+  font-style: italic;
+  color: #555;
+}
+.pending {
+  color: #92400e;
+  background-color: #fef3c7;
+}
+.accepted {
+  background-color: #8ccfa8;
+  color: #0b552a;
+}
+.declined {
+  color: #dc3545; /* Red */
+}
+.nofile,
+.no_file {
+  color: #888; /* Gray */
+}
+
+.submit-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+}
+.submit-button:hover {
+  background-color: #218838;
+}
+
+/* =================================
+   RESPONSIVE STYLES
+   ================================= */
+
+@media (max-width: 768px) {
+  /* Stack student form on mobile */
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .form-group label,
+  .file-input,
+  .file_name,
+  .pending,
+  .accepted,
+  .declined,
+  .nofile,
+  .no_file {
+    flex-basis: auto;
+    width: 100%;
+    text-align: left;
+  }
+
+  /* Make search bar full width */
+  #search_bar {
+    width: 100%;
+    box-sizing: border-box; /* Include padding in width */
+  }
+  #attend_student_list {
+    width: 100%;
+    margin-top: 10px;
+  }
+  #search_suggestions {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Make modal wider on mobile */
+  .showform {
+    width: 95%;
+    padding: 15px;
+  }
+}
+/* =================================
+   3. ADMIN MODAL (ANIMATED)
+   ================================= */
+.showcontainer {
+  display: none; /* <-- FIX: Was 'flex', now 'none' to hide by default */
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
-
   position: fixed;
-  z-index: 100;
+  z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
@@ -220,408 +355,31 @@ hr {
   background-color: rgba(0, 0, 0, 0.6);
   justify-content: center;
   align-items: center;
-  display: flex; /* <-- MAKE SURE this is set to flex, not none */
 }
 
 .showcontainer.active {
+  display: flex; /* <-- This turns it on */
   opacity: 1;
   pointer-events: auto;
 }
+
+/* Pop-in animation */
 .showcontainer.active .showform {
   transform: scale(1);
 }
 
 .showform {
-  position: relative;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #fefefe;
+  margin: auto;
+  padding: 2rem;
+  border: none;
   width: 80%;
   max-width: 900px;
-  max-height: 90vh;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  transform: scale(0);
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: scale(0.9);
   transition: transform 0.4s ease;
 }
 
-#pdf-iframe {
-  flex-grow: 1; /* Makes iframe fill available space */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin: 1.5rem 0 0 0;
-  flex-wrap: wrap; /* Allow buttons to wrap on small screens */
-}
-.button-container form {
-  margin: 0;
-}
-
-/* Modal Buttons (Accept, Decline, Close) */
-.accept-button,
-.decline-button,
-.close-button {
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.accept-button {
-  background-color: #28a745; /* Green */
-  color: white;
-}
-.accept-button:hover {
-  background-color: #218838;
-}
-
-.decline-button {
-  background-color: #e74c3c; /* Red */
-  color: white;
-}
-.decline-button:hover {
-  background-color: #c0392b;
-}
-
-.close-button {
-  background-color: #777; /* Gray */
-  color: white;
-}
-.close-button:hover {
-  background-color: #555;
-}
-
-/* Close 'X' Button */
-.closeform {
-  position: absolute;
-  top: 1rem;
-  right: 1.5rem;
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #aaa;
-  background: none;
-  border: none;
-  cursor: pointer;
-  line-height: 1;
-}
-.closeform:hover {
-  color: #000;
-}
-
-/* --- Student View: Form Card (Based on .gmc-form) --- */
-.showbox.gmc-form {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  max-width: 800px;
-  margin: 2rem auto; /* Center the form */
-}
-
-@media (min-width: 768px) {
-  .showbox.gmc-form {
-    padding: 2.5rem; /* More padding on desktop */
-  }
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column; /* Stack on mobile */
-  gap: 0.5rem;
-  padding: 1.5rem 0;
-}
-.form-group:not(:last-child) {
-  border-bottom: 1px solid #f0f0f0;
-}
-
-@media (min-width: 768px) {
-  .form-group {
-    flex-direction: row; /* Side-by-side on desktop */
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-}
-
-.form-group label {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2c5282;
-  flex-shrink: 0;
-}
-
-.file-input {
-  font-size: 0.95rem;
-  color: #555;
-  flex-grow: 1;
-}
-
-.file-input::file-selector-button {
-  background-color: #f0f0f0;
-  color: #333;
-  font-weight: 500;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 12px;
-  transition: background-color 0.2s;
-}
-.file-input::file-selector-button:hover {
-  background-color: #e0e0e0;
-}
-
-.file_name {
-  font-size: 1rem;
-  color: #555;
-  font-style: italic;
-  margin: 0;
-  word-break: break-all;
-}
-
-/* --- Student Status Badges (from requestgmc.css) --- */
-.pending,
-.accepted,
-.declined,
-.nofile,
-.no_file {
-  padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 12px;
-  font-weight: 600;
-  color: white;
-  text-transform: uppercase;
-  display: inline-block;
-  margin: 0;
-  flex-shrink: 0;
-}
-.pending {
-  background-color: #f39c12; /* Orange */
-}
-.accepted {
-  background-color: #8ccfa8;
-  color: #0b552a;
-}
-.declined {
-  background-color: #e74c3c; /* Red */
-
-  color: #551008; /* Red */
-}
-.nofile,
-.no_file {
-  background-color: #95a5a6; /* Gray */
-}
-
-/* Student Submit Button (Based on .requestBtn) */
-.submit-button {
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 12px 28px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  width: 100%; /* Make button full width */
-  margin-top: 1rem;
-}
-.submit-button:hover {
-  background-color: #2a4365;
-  transform: translateY(-2px);
-}
-/* --- STUDENT VIEW STYLES --- */
-
-/* Instruction Box */
-#balo {
-  width: 90%;
-  max-width: 800px;
-  margin: 1.5rem auto;
-  padding: 1.5rem;
-  background-color: #f0f4f8; /* Light blue/gray background */
-  border-left: 5px solid #007bff; /* Blue accent border */
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-#balo p {
-  margin: 0.5rem 0;
-  color: #333;
-  font-size: 0.95rem;
-}
-
-/* Main Form Container */
-.showbox {
-  width: 90%;
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2.5rem;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* Form Group (each row) */
-.form-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap; /* Allows stacking on mobile */
-  padding: 1.25rem 0;
-}
-
-/* Label (e.g., "Non-Disclosure:") */
-.form-group label {
-  font-weight: 600;
-  color: #333;
-  flex-basis: 200px; /* Gives label a consistent base width */
-  flex-grow: 1;
-}
-
-/* File Name (if file exists) */
-p.file_name {
-  font-style: italic;
-  color: #555;
-  flex-basis: 300px;
-  flex-grow: 2;
-  margin: 0 1rem;
-  word-break: break-all;
-}
-
-/* Custom File Input Button */
-input.file-input {
-  flex-basis: 300px;
-  flex-grow: 2;
-  margin: 0 1rem;
-  color: #444;
-  font-size: 0.9rem;
-}
-
-input.file-input::file-selector-button {
-  font-weight: 600;
-  color: #007bff;
-  background-color: #e6f2ff;
-  border: 1px solid #b8d8ff;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-input.file-input::file-selector-button:hover {
-  background-color: #d1e6ff;
-}
-
-/* --- Status Pills --- */
-.pending,
-.accepted,
-.declined,
-.nofile,
-.no_file {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  text-align: center;
-  min-width: 80px;
-  border: 1px solid transparent;
-}
-
-.pending {
-  background-color: #fff3cd; /* Yellow */
-  color: #856404;
-  border-color: #ffeeba;
-}
-
-.accepted {
-  background-color: #d4edda; /* Green */
-  color: #155724;
-  border-color: #c3e6cb;
-}
-
-.declined {
-  background-color: #f8d7da; /* Red */
-  color: #721c24;
-  border-color: #f5c6cb;
-}
-
-.nofile,
-.no_file {
-  background-color: #e2e3e5; /* Gray */
-  color: #383d41;
-  border-color: #d6d8db;
-}
-
-/* Separator Lines */
-.showbox hr {
-  border: 0;
-  height: 1px;
-  background-color: #e9ecef; /* Light gray */
-  margin: 0.5rem 0;
-}
-
-/* Submit Button */
-.submit-button {
-  display: block;
-  width: 100%;
-  max-width: 300px;
-  margin: 2rem auto 0;
-  padding: 12px 20px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #fff;
-  background-color: #2a4365; /* Success Green */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.submit-button:hover {
-  background-color: #218838;
-}
-
-/* --- Mobile Responsiveness --- */
-@media (max-width: 768px) {
-  .showbox {
-    padding: 1.5rem;
-  }
-
-  .form-group {
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align all to the left */
-  }
-
-  .form-group label {
-    margin-bottom: 0.5rem;
-  }
-
-  p.file_name,
-  input.file-input {
-    margin: 0.5rem 0;
-    width: 100%;
-  }
-
-  .pending,
-  .accepted,
-  .declined,
-  .nofile,
-  .no_file {
-    margin-top: 0.5rem;
-  }
-}
+/* ... (rest of the modal CSS is correct) ... */

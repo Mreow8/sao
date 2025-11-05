@@ -1,82 +1,57 @@
 {% extends 'adminmain.html' %} {% block css %} {% load static %}
-<!-- prettier-ignore -->
 {% endblock %} {% block bodycontent %}
 
 <style>
   /* --- Global & Fonts --- */
   body,
-  .sub-title,
-  .buttons a {
+  .sub-title {
     font-family: "Rubik", sans-serif;
   }
 
   /* --- Container --- */
-  /* Add padding if needed, assuming one exists */
   .container {
     padding: 0 1.5rem 2rem;
     max-width: 1200px;
     margin: 0 auto;
   }
 
-  /* --- Sub-title / Breadcrumb --- */
-  .sub-title {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1rem 1.5rem;
-    margin: 2rem 0; /* Add margin */
-  }
-
-  .sub-title h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
-
-  .sub-title p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #555;
-    margin-left: 1rem;
-  }
-
-  /* --- Tab Buttons --- */
-  .buttons {
+ 
+  /* --- NEW TAB CSS (FROM YOU) --- */
+  .tabs {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     border-bottom: 1px solid #ddd;
-    margin-bottom: 2rem; /* Space below tabs */
+    margin-bottom: 2rem; /* Added margin from old style */
   }
-
-  .buttons a {
+  .tab {
+    font-family: "Rubik", sans-serif;
     font-weight: 500;
     font-size: 1rem;
-    color: #555;
+    color: #2c5282; /* Theme Blue */
     text-decoration: none;
     padding: 1rem 1.25rem;
+    border: none;
     border-bottom: 3px solid transparent;
+    border-radius: 8px 8px 0 0;
     cursor: pointer;
-    transition: color 0.2s, border-color 0.2s;
+    background-color: transparent;
+    transition: color 0.2s, background-color 0.2s;
   }
-
-  .buttons a:hover {
-    color: #333;
+  .tab:hover {
+    color: #2a4365;
+    background-color: #f0f5fa; /* Light blue hover */
   }
-
-  /* Style for the active tab (linked to JS .active class) */
-  .buttons a.active-tab {
-    /* You'll need JS to add/remove this class */
-    color: #2c5282; /* Primary Blue */
+  .tab.active {
+    color: #ffffff;
+    font-weight: 600;
+    background-color: #2c5282; /* Active tab has blue background */
     border-bottom-color: #2c5282;
   }
+  /* --- END NEW TAB CSS --- */
 
-  /* --- Sections --- */
+
+  /* --- Sections (From Old Style) --- */
   .section {
     display: none; /* Hide sections by default */
     background-color: #ffffff; /* Give sections a white card background */
@@ -95,38 +70,41 @@
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Select Donation</p>
 </div>
+<hr />
 
-<div class="buttons">
-  <a onclick="showSection('gcash')">GCash</a>
-  <a onclick="showSection('banks')">Banks</a>
-  <a onclick="showSection('volunteer')">Volunteer</a>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('gcash', this)">GCash</button>
+  <button class="tab" onclick="showSection('banks', this)">Banks</button>
+  <button class="tab" onclick="showSection('volunteer', this)">Volunteer</button>
 </div>
-
-<!-- Sections -->
-<!-- prettier-ignore -->
 
 <div id="gcash" class="section active">
   {% include "community_involvement/admin/gcash-dashboard.html" with loadGcashDonations=loadGcashDonations %}
 </div>
-<!-- prettier-ignore -->
-
 <div id="banks" class="section">
   {% include "community_involvement/admin/banks-dashboard.html" with loadBankDonations=loadBankDonations %}
 </div>
-<!-- prettier-ignore -->
-
 <div id="volunteer" class="section">
   {% include "community_involvement/admin/volunteer-dashboard.html" with loadVolunteer=loadVolunteer %}
 </div>
 
 <script>
-  function showSection(id) {
-    // Hide all sections
-    document
-      .querySelectorAll(".section")
-      .forEach((s) => s.classList.remove("active"));
-    // Show selected one
+  function showSection(id, clickedTab) {
+    // 1. Hide all sections
+    document.querySelectorAll(".section").forEach((s) => {
+      s.classList.remove("active");
+    });
+    
+    // 2. Show the selected section
     document.getElementById(id).classList.add("active");
+    
+    // 3. Remove 'active' class from all tabs
+    document.querySelectorAll(".tab").forEach((t) => {
+      t.classList.remove("active");
+    });
+    
+    // 4. Add 'active' class to the clicked tab
+    clickedTab.classList.add("active");
   }
 </script>
 {% endblock %}

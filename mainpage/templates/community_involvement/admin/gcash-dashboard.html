@@ -117,11 +117,13 @@
         </tr>
       </thead>
       <tbody>
-        {% for donates in page_obj.object_list %}
+        <!-- prettier-ignore -->
+        {% with donations_list=page_obj.object_list|default:loadGcashDonations %}
+        {% for donates in donations_list %}
         <tr>
           <td>{{ donates.donated }}</td>
           <td>{{ donates.name }}</td>
-          <td>{{ donates.amount }}</td>
+          <td>{{ donates.amount|floatformat:2 }}</td>
           <td>{{ donates.date }}</td>
           <td class="view">
             <a target="_blank" href="/media/{{ donates.image_details }}"
@@ -138,12 +140,12 @@
             No accepted GCash donations found.
           </td>
         </tr>
-        {% endfor %}
+        {% endfor %} {% endwith %}
       </tbody>
     </table>
   </div>
 
-  {# START PAGINATION BLOCK #} {% if page_obj.has_other_pages %}
+  {% if page_obj and page_obj.has_other_pages %}
   <div class="pagination">
     <span class="step-links">
       {% if page_obj.has_previous %}

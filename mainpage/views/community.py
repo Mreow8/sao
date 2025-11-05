@@ -532,33 +532,65 @@ def archive_program(request, id):
     Program.objects.filter(id=id).update(archive=True)
     return redirect("programs") # Changed from "program" to "programs"
 
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # Make sure this is imported
+from ..models import MOD, CrowdfundingProject, Program # Make sure models are imported
+
+# ... (other functions)
+
 @login_required
 def donation_validate(request):
   
-    
-    filter_status = request.GET.get('filterStatus')
+    # Get the filter status from the URL.
+    # 'filterStatus' can be 'Accepted', 'Declined', 'Pending', or None
+    filter_status = request.GET.get('filterStatus') 
 
-    if filter_status in ['Accepted', 'Declined']:
-        donation_list = MOD.objects.filter(status=filter_status).order_by('-date')
-    else:
+    if filter_status == 'Accepted':
+        donation_list = MOD.objects.filter(status='Accepted').order_by('-date')
+    elif filter_status == 'Declined':
+        donation_list = MOD.objects.filter(status='Declined').order_by('-date')
+    elif filter_status == 'Pending':
         donation_list = MOD.objects.filter(status=None).order_by('-date')
-
+    else:
+        # DEFAULT: If filter_status is None (e.g., "Clear" or first page load),
+        # show ALL donations.
+        donation_list = MOD.objects.all().order_by('-date')
+        filter_status = None # Explicitly set to None for the template
+    
     paginator = Paginator(donation_list, 10) 
-
     page_number = request.GET.get('page')
 
     try:
-        loadDonations = paginator.page(page_number)
+        loadDonations = paginator.page(page_number) # loadDonations is the Page object
     except PageNotAnInteger:
         loadDonations = paginator.page(1)
     except EmptyPage:
         loadDonations = paginator.page(paginator.num_pages)
 
+    # --- ENRICHMENT LOOP (from last time) ---
+    # This loop adds the event info for the modal
+    for donation in loadDonations.object_list:
+        project = CrowdfundingProject.objects.filter(title=donation.donated).first()
+        
+        if project:
+            donation.project_description = project.description
+            first_image = project.channels.first()
+            donation.project_image_url = first_image.imageCrowdfunding.url if first_image else ""
+        else:
+            program = Program.objects.filter(title=donation.donated).first()
+            if program:
+                donation.project_description = program.description
+                first_image = program.images.first()
+                donation.project_image_url = first_image.image.url if first_image else ""
+            else:
+                donation.project_description = ""
+                donation.project_image_url = ""
+    # --- END ENRICHMENT LOOP ---
+
     context = {
         "url": "report", 
-        "loadDonations": loadDonations,
-    
-        "selected_status": filter_status 
+        "loadDonations": loadDonations, # Pass the enriched Page object
+        "selected_status": filter_status # Pass the filter back to the template
     }
     
     return render(
@@ -566,7 +598,6 @@ def donation_validate(request):
         "community_involvement/admin/donation-validate.html",
         context,
     )
-
 @login_required
 def donation_accept(request, id):
     MOD.objects.filter(id=id).update(status="Accepted")
@@ -644,23 +675,53 @@ def gcash_dashboard(request):
         "community_involvement/admin/gcash-dashboard.html",
         context,
     )
+# ... (other functions) ...
 
 @login_required
 def banks_dashboard(request):
-    loadBanksDonations = MOD.objects.filter(donation_type="Bank", status="Accepted")
+    # 1. This is your original query, WITH SORTING ADDED
+    loadBanksDonations = MOD.objects.filter(donation_type="Bank", status="Accepted").order_by('-date')
+
+    # 2. Add pagination based on that sorted list
+    page_number = request.GET.get('page')
+    paginator = Paginator(loadBanksDonations, 15) # Use the sorted list
+    page_obj = paginator.get_page(page_number)
+
+    # 3. Create the context
+    context = {
+        # This is for the 'donation.html' include
+        "loadBanksDonations": loadBanksDonations, 
+        
+        # This is for the standalone 'banks-dashboard.html' page
+        "page_obj": page_obj 
+    }
+    
     return render(
         request,
         "community_involvement/admin/banks-dashboard.html",
-        {"loadBanksDonations": loadBanksDonations},
+        context,
     )
-
 @login_required
 def volunteer_dashboard(request):
-    loadVolunteerDonations = MOD.objects.filter(
-        donation_type="Volunteer", status="Accepted"
-    )
+    # 1. This is your original query, with sorting added
+    loadVolunteer = MOD.objects.filter(donation_type="Volunteer", status="Accepted").order_by('-date')
+
+    # 2. Add pagination based on that sorted list
+    page_number = request.GET.get('page')
+    paginator = Paginator(loadVolunteer, 15) # Use the sorted list
+    page_obj = paginator.get_page(page_number)
+
+    # 3. Create the context
+    context = {
+        # This is for the 'donation.html' include
+        "loadVolunteer": loadVolunteer, 
+        
+        # This is for the standalone 'volunteer-dashboard.html' page
+        "page_obj": page_obj 
+    }
+    
     return render(
         request,
         "community_involvement/admin/volunteer-dashboard.html",
-        {"loadVolunteerDonations": loadVolunteerDonations},
+        context,
     )

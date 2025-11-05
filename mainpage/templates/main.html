@@ -360,38 +360,27 @@
       </div>
     </div>
    <div class="right-side"><div class="custom-search-wrapper">
-  <div class="search-container"> <div class="search-box"> 
-      <span class="search-icon">
-        <i class="fa-solid fa-magnifying-glass "></i>
-      </span>
-      <input 
-        type="text" 
-        placeholder="Search..." 
-        class="search-input" 
-      />
+  <div class="search-container"> 
+  <div class="account-info-wrapper" style="margin-left: auto;">
+    <div id="profile-trigger" class="profile-summary">
+      <i class="fas fa-user-circle profile-icon"></i>
+      <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
+      <i class="fas fa-caret-down caret-icon"></i>
     </div>
- <div class="account-info-wrapper">
-                    
-                    <div id="profile-trigger" class="profile-summary">
-                        <i class="fas fa-user-circle profile-icon"></i>
-                        <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
-                        <i class="fas fa-caret-down caret-icon"></i>
-                    </div>
 
-                    <div id="profile-dropdown" class="profile-popup">
-                        <div class="popup-header">
-                            <strong></strong>
-                            <span class="popup-username">{{ user.username }}</span>
-                        </div>
-                        <div class="popup-divider"></div>
-                        <a href="{% url 'logout' %}" class="popup-logout-link">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
-                    </div>
-                    
-                    </div>
-  </div> </div>
+    <div id="profile-dropdown" class="profile-popup">
+      <div class="popup-header">
+        <strong></strong>
+        <span class="popup-username">{{ user.username }}</span>
+      </div>
+      <div class="popup-divider"></div>
+      <a href="{% url 'logout' %}" class="popup-logout-link">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+</div>
   <main class="main_content"> {% block bodycontent %}{% endblock %}
   </main>
 </div>

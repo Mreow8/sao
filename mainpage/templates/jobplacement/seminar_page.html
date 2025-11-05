@@ -36,6 +36,12 @@
     width: 16px;
     height: 16px;
   }
+  .desc {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
 </style>
 <div class="container">
   <div class="sub-title">
@@ -43,7 +49,15 @@
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Career Guidance Tracker</p>
   </div>
-
+  <hr />
+  <div class="desc">
+    <p>
+      Stay ahead in your career with our expertly curated seminars. Designed to
+      equip you with the latest industry insights, practical skills, and
+      networking opportunities, our seminars are your gateway to professional
+      growth and success.
+    </p>
+  </div>
   {% if user.is_staff %}
   <div class="post-box">
     <div class="collapsed" id="collapsedBox">Add Event...</div>

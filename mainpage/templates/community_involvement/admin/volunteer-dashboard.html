@@ -1,56 +1,186 @@
+{% block bodycontent %}
+<style>
+  /* === Page Container === */
+  .data {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: "Rubik", sans-serif;
+  }
+
+  /* === Table Styling === */
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+  }
+
+  .table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px; /* Added min-width for more columns */
+  }
+
+  .table-wrapper th,
+  .table-wrapper td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+    font-size: 0.95rem;
+    color: #333;
+    vertical-align: middle;
+  }
+
+  .table-wrapper th {
+    background-color: #f9f9f9;
+    font-weight: 600;
+    color: #2c5282;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .table-wrapper tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+
+  /* Styling for the "View" link cell */
+  .table-wrapper td.view a {
+    color: #2c5282;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .table-wrapper td.view a:hover {
+    text-decoration: underline;
+  }
+
+  /* === Pagination Styling === */
+  .pagination {
+    margin: 2rem 0 1rem;
+    text-align: center;
+  }
+
+  .step-links {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-links a,
+  .step-links .current {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    transition: background-color 0.2s;
+  }
+
+  .step-links a {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+
+  .step-links a:hover {
+    background-color: #e0e0e0;
+  }
+
+  .step-links .current {
+    background-color: #2c5282;
+    color: white;
+    border-color: #2c5282;
+    cursor: default;
+  }
+</style>
 <div class="data">
-  <div class="table">
+  <div class="table-wrapper">
     <table>
       <thead>
         <tr>
-          <th>Donated</th>
+          <th>Donated By</th>
           <th>Name</th>
           <th>Contact Number</th>
           <th>Kind of Donation</th>
           <th>Date Schedule</th>
-          <th>Recepient</th>
+          <th>Recipient</th>
           <th>Amount</th>
           <th>Date</th>
           <th>Details</th>
         </tr>
       </thead>
       <tbody>
-        {% for donates in loadVolunteerDonations %}
+        {% with donations_list=page_obj.object_list|default:loadVolunteer %}
+        {% for donates in donations_list %}
         <tr>
           <td>{{ donates.donated }}</td>
           <td>{{ donates.name }}</td>
           <td>{{ donates.contact_number }}</td>
           <td>{{ donates.what_kind }}</td>
 
-          {% if donates.what_kind == "SERVICE" %}
-          <td>{{ donates.date_sched }}</td>
-          {% else %}
-          <td></td>
-          {% endif %} {% if donates.what_kind == "RELIEF GOODS" %}
-          <td>{{ donates.recepient_things}}</td>
-          {% elif donates.what_kind == "BELONGINGS" %}
-          <td>{{ donates.recepient_things}}</td>
-          {% elif donates.what_kind == "EQUIPMENTS" %}
-          <td>{{ donates.recepient_things}}</td>
-          {% elif donates.what_kind == "MONEY" %}
-          <td>{{ donates.recepient }}</td>
-          {% elif donates.what_kind == "SERVICE" %}
-          <td></td>
-          {% endif %} {% if donates.what_kind == "MONEY" %}
-          <td>{{ donates.amount }}</td>
-          {% else %}
-          <td></td>
-          {% endif %}
+          <td>{% if donates.what_kind == "SERVICE" %}{{ donates.date_sched }}{% endif %}</td>
+          
+          <td>
+            {% if donates.what_kind == "MONEY" %}
+              {{ donates.recepient }}
+            {% elif donates.what_kind != "SERVICE" %}
+              {{ donates.recepient_things}}
+            {% endif %}
+          </td>
+          
+          <td>
+            {% if donates.what_kind == "MONEY" %}
+              {{ donates.amount|floatformat:2 }}
+            {% endif %}
+          </td>
 
           <td>{{ donates.date }}</td>
+          
           <td class="view">
-            <a target="_blank" href="/media/{{ donates.image_details }}"
-              >View</a
-            >
+            {% if donates.what_kind != "SERVICE" and donates.image_details %}
+              <a target="_blank" href="/media/{{ donates.image_details }}">View</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td
+            colspan="9"
+            style="text-align: center; color: #777; padding: 20px"
+          >
+            No accepted Volunteer donations found.
           </td>
         </tr>
         {% endfor %}
+        {% endwith %}
       </tbody>
     </table>
   </div>
+
+  {% if page_obj and page_obj.has_other_pages %}
+  <div class="pagination">
+    <span class="step-links">
+      {% if page_obj.has_previous %}
+      <a href="?page=1">&laquo; First</a>
+      <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      <span class="current">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Next</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+      {% endif %}
+    </span>
+  </div>
+  {% endif %} {# END PAGINATION BLOCK #}
+
 </div>
+{% endblock %}

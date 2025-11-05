@@ -1,0 +1,103 @@
+/* === Page Container === */
+.data {
+  /* Using 1200px max-width, but you can adjust */
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  /* Assuming Rubik font is loaded from adminmain.html */
+  font-family: "Rubik", sans-serif;
+}
+
+/* === Table Styling === */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  /* Ensures table scrolls horizontally on small screens */
+  min-width: 600px;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #333;
+  vertical-align: middle;
+}
+
+.table-wrapper th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  /* Using the theme blue from Manage.css */
+  color: #2c5282;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table-wrapper tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Styling for the "View" link cell */
+.table-wrapper td.view a {
+  color: #2c5282; /* Primary Blue for action link */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.table-wrapper td.view a:hover {
+  text-decoration: underline;
+}
+
+/* === Pagination Styling (from Manage.css) === */
+.pagination {
+  margin: 2rem 0 1rem;
+  text-align: center;
+}
+
+.step-links {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-links a,
+.step-links .current {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s;
+}
+
+/* Style for clickable page links */
+.step-links a {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.step-links a:hover {
+  background-color: #e0e0e0;
+}
+
+/* Style for the current page indicator */
+.step-links .current {
+  background-color: #2c5282; /* Theme Blue */
+  color: white;
+  border-color: #2c5282;
+  cursor: default;
+}

@@ -23,27 +23,35 @@ body {
   padding: 0 1.5rem 2rem;
 }
 
-/* --- Tabs (from memory) --- */
+/* --- Tabs (Adapted for <button>) --- */
 .tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   border-bottom: 1px solid #ddd;
-  margin-bottom: 2rem;
 }
 .tab {
+  font-family: "Rubik", sans-serif;
   font-weight: 500;
   font-size: 1rem;
-  color: #555;
+  color: #2c5282; /* Theme Blue */
   text-decoration: none;
   padding: 1rem 1.25rem;
+  border: none;
   border-bottom: 3px solid transparent;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  background-color: transparent;
+  transition: color 0.2s, background-color 0.2s;
 }
 .tab:hover {
-  color: #333;
+  color: #2a4365;
+  background-color: #f0f5fa; /* Light blue hover */
 }
 .tab.active {
-  color: #2c5282; /* Theme Blue */
+  color: #ffffff;
+  font-weight: 600;
+  background-color: #2c5282; /* Active tab has blue background */
   border-bottom-color: #2c5282;
 }
 

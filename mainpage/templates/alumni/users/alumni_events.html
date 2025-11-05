@@ -125,6 +125,12 @@
     border-radius: var(--border-radius-md);
     border: 1px dashed var(--border-color);
   }
+  .desc {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
 </style>
 
 <section>
@@ -134,7 +140,15 @@
       <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
       <p class="certxt">&gt; Alumni Reunion and Events</p>
     </div>
-
+    <hr />
+    <div class="desc">
+      <p>
+        Stay connected with your alma mater and fellow alumni through our
+        vibrant events calendar. From reunions to networking opportunities,
+        discover upcoming events designed to foster lifelong connections and
+        celebrate our shared heritage.
+      </p>
+    </div>
     {% if events %}
     <div class="event-grid">
       {% for event in events %}

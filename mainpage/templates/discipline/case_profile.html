@@ -15,6 +15,8 @@
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Student Case Profile</p>
 </div>
+<hr>
+
 <div class="container">
     {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
     <form method="post" enctype="multipart/form-data">

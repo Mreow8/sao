@@ -6,6 +6,14 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
   />
+  <style>
+    
+    
+.desc{font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+    line-height: 1.6;}
+  </style>
 {% endblock %}
 
 {% block bodycontent %}
@@ -15,7 +23,8 @@
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Events</p>
   </div>
-
+<hr>
+<div class="desc"><p>Crowdfunding empowers students and the university community to come together in times of need. Whether it’s for emergencies, disasters, or personal challenges, this platform connects those seeking support with generous individuals who want to make a difference.</p></div>
   {% if user.is_staff %}
   <div class="post-box">
       <div class="collapsed" id="collapsedBox">Add Events...</div>

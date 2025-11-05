@@ -30,7 +30,7 @@ $(document).ready(function () {
     $.ajax({
       type: "POST",
       // use absolute path (adjust if your route differs)
-      url: `/jobplacement/view/iframe/${ojtRequirementId}`,
+      url: `/jobplacement/ojt/requirements/tracker/view/iframe/${ojtRequirementId}`,
       headers: { "X-CSRFToken": csrftoken },
       data: {
         id: ojtRequirementId,
