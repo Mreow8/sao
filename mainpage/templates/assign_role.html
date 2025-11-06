@@ -3,108 +3,7 @@
 
 {% block headcontent %}
   <link rel="stylesheet" href="{% static 'styles/role.css' %}">
-  <style>/* --- Custom Pagination Styles (to match image) --- */
-.search-bar {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  overflow: hidden; /* This keeps the corners rounded */
-}
-
-.search-input {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: none;
-  outline: none;
-  flex-grow: 1; /* Allows input to fill available space */
-}
-
-.search-btn {
-  padding: 8px 12px;
-  background-color: #2c5282;
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
-}
-
-.search-btn:hover {
-  background-color: #0056b3;
-}
-.action-row {
-  display: flex; /* Aligns items horizontally */
-  align-items: center; /* Vertically centers them */
-  gap: 8px; /* Adds space between the select and button */
-}
-
-/* This styles the organization dropdown when it appears */
-.org-dropdown {
-  /* Adds spacing above it when it becomes visible */
-  margin-top: 8px; 
-}
-/* Main container */
-.pagination {
-  margin: 2rem 0;
-  text-align: center;
-  font-family: "Rubik", sans-serif;
-  font-size: 0.9rem;
-  /* Ensure it behaves like a flex container */
-  display: flex;
-  justify-content: center;
-  padding-left: 0;
-  list-style: none;
-}
-
-/* Remove default Bootstrap li styles */
-.page-item {
-  margin: 0 4px; /* Creates space between buttons */
-}
-
-/* Base style for all items (links and spans) */
-.page-link {
-  display: inline-block;
-  padding: 8px 12px;
-  border-radius: 6px; /* Rounded corners */
-  text-decoration: none;
-  border: 1px solid #ccc;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-/* Style for clickable links (First, Previous, Next, Last) */
-.page-item a.page-link {
-  background-color: #f0f0f0; /* Light gray background */
-  color: #333; /* Dark text */
-}
-
-/* Hover effect for clickable links */
-.page-item a.page-link:hover {
-  background-color: #e0e0e0; /* Darker gray on hover */
-}
-
-/* Style for the CURRENT page text ("Page X of Y")
-  This targets the <li class="page-item disabled"><span class="page-link">...
-*/
-.page-item.disabled .page-link {
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  font-weight: 600;
-  border-color: #2c5282; /* Match background */
-  cursor: default;
-}
-
-/* This rule ensures that if Bootstrap's .active class is used,
-  it also gets the primary blue style.
-*/
-.page-item.active .page-link {
-  background-color: #2c5282;
-  color: white;
-  font-weight: 600;
-  border-color: #2c5282;
-}</style>
+ 
 {% endblock headcontent %}
 
 {% block bodycontent %}
@@ -116,23 +15,51 @@
 <hr>
 <div class="container mt-5">
   
-  <form method="GET" class="mb-3">
-   <div class="search-bar">
-  <input type="text" class="search-input" placeholder="Search..." />
-  <button class="search-btn" aria-label="Search">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="currentColor"
-      viewBox="0 0 16 16"
-    >
-      <path
-        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-      />
-    </svg>
-  </button>
-</div>
+  <form method="GET">
+    <div class="filter-controls">
+      <div class="search-bar">
+        <input
+          type="text"
+          name="q"
+          class="search-input"
+          placeholder="Search..."
+          value="{{ query }}"
+        />
+        <button class="search-btn" aria-label="Search" type="submit">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="role-filter-group">
+        <label for="role-filter" class="form-label mb-0">Role:</label>
+        <select
+          name="role"
+          id="role-filter"
+          class="form-select"
+          onchange="this.form.submit()"
+        >
+          <option value="">All Roles</option>
+          {% for value, display_name in role_choices %}
+          <option
+            value="{{ value }}"
+            {% if role_filter == value %}selected{% endif %}
+          >
+            {{ display_name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
   </form>
 
   <div class="table-responsive">
@@ -140,21 +67,21 @@
       <thead>
         <tr>
           <th>
-            <a href="?sort=username&dir={% if sort_by == 'username' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">
+            <a href="?sort=username&dir={% if sort_by == 'username' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}&role={{ role_filter }}">
               Username
               {% if sort_by == 'username' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
             </a>
           </th>
           
           <th>
-            <a href="?sort=email&dir={% if sort_by == 'email' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">
+            <a href="?sort=email&dir={% if sort_by == 'email' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}&role={{ role_filter }}">
               Email
               {% if sort_by == 'email' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
             </a>
           </th>
           
           <th>
-            <a href="?sort=role&dir={% if sort_by == 'role' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">
+            <a href="?sort=role&dir={% if sort_by == 'role' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}&role={{ role_filter }}">
               Current Role
               {% if sort_by == 'role' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
             </a>
@@ -172,31 +99,31 @@
             <td>{{ user.email }}</td>
             <td>{{ user.get_role_display }}</td>
             <td>
-            <input type="hidden" name="user_id" value="{{ user.id }}" />
+              <input type="hidden" name="user_id" value="{{ user.id }}" />
 
-<div class="action-row">
-  <select name="role" class="form-select form-select-sm role-select" required onchange="toggleOrgDropdown(this)">
-    {% for value, display_name in role_choices %}
-      <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>
-        {{ display_name }}
-      </option>
-    {% endfor %}
-  </select>
-  
-  <button type="submit" class="btn btn-sm btn-primary">Save</button>
-</div>
+              <div class="action-row">
+                <select name="role" class="form-select form-select-sm role-select" required onchange="toggleOrgDropdown(this)">
+                  {% for value, display_name in role_choices %}
+                    <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>
+                      {{ display_name }}
+                    </option>
+                  {% endfor %}
+                </select>
+                
+                <button type="submit" class="btn btn-sm btn-primary">Save</button>
+              </div>
 
-<div class="org-dropdown" style="{% if user.role != 'org_admin' %}display:none;{% endif %}">
-  <select name="organization_id" class="form-select form-select-sm">
-    <option value="">None</option>
-    {% for org in organizations %}
-      <option value="{{ org.org_id }}"
-        {% if user.organization and user.organization.org_id == org.org_id %}selected{% endif %}>
-        {{ org.name }}
-      </option>
-    {% endfor %}
-  </select>
-</div>
+              <div class="org-dropdown" style="{% if user.role != 'org_admin' %}display:none;{% endif %}">
+                <select name="organization_id" class="form-select form-select-sm">
+                  <option value="">None</option>
+                  {% for org in organizations %}
+                    <option value="{{ org.org_id }}"
+                      {% if user.organization and user.organization.org_id == org.org_id %}selected{% endif %}>
+                      {{ org.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
             </td>
           </form>
         </tr>
@@ -209,10 +136,10 @@
     <ul class="pagination justify-content-center">
       {% if page_obj.has_previous %}
         <li class="page-item">
-          <a class="page-link" href="?page=1&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}">&laquo; First</a>
+          <a class="page-link" href="?page=1&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}&role={{ role_filter }}">&laquo; First</a>
         </li>
         <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}">Previous</a>
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}&role={{ role_filter }}">Previous</a>
         </li>
       {% endif %}
 
@@ -224,10 +151,10 @@
 
       {% if page_obj.has_next %}
         <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}">Next</a>
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}&role={{ role_filter }}">Next</a>
         </li>
         <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}">Last &raquo;</a>
+          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}&dir={{ direction }}&q={{ query }}&role={{ role_filter }}">Last &raquo;</a>
         </li>
       {% endif %}
     </ul>
@@ -249,6 +176,6 @@ function toggleOrgDropdown(roleSelect) {
 }
 
 // The filterTable() JavaScript function is no longer needed
-// as searching is now done on the server.
+// as searching and filtering are now done on the server.
 </script>
 {% endblock %}

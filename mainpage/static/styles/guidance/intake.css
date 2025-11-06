@@ -37,44 +37,66 @@ body {
   flex-direction: column;
   gap: 1rem;
 }
+/* --- Search Bar Styling --- */
 
+/* 1. The main container for the search input and button */
 #search_id {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-}
-#search_id label {
-  font-weight: 500;
-  color: #333;
+  display: flex; /* Aligns input and button side-by-side */
+  width: 100%;
+  max-width: 500px; /* Set a max width for the search bar */
+  margin-bottom: 1.5rem; /* Space below the search bar */
 }
 
-/* Styled like #comboBox */
+/* 2. The search text input */
 #studentIDBox {
-  font-family: "Rubik", sans-serif;
+  flex-grow: 1; /* Allows the input to take up remaining space */
+  padding: 10px 15px;
   font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  color: #333;
-  flex-grow: 1;
-}
-#studentIDBox:focus {
+  border: 2px solid #ccc;
+  border-radius: 8px 0 0 8px; /* Rounded corners on the left */
+  border-right: none; /* The button's border will act as the right border */
   outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
+  transition: border-color 0.3s;
 }
 
+/* 3. Style for when the user clicks into the search box */
+#studentIDBox:focus {
+  border-color: #2c5282; /* Highlight color (orange) */
+}
+
+/* 4. The search button */
+#searchButton {
+  /* This assumes .OrangeButton is defined elsewhere, but we can style it here */
+  background-color: #2c5282; /* A nice orange color */
+  border: 2px solid #2c5282;
+  color: white;
+  padding: 0 15px; /* Padding for the icon */
+  cursor: pointer;
+  border-radius: 0 8px 8px 0; /* Rounded corners on the right */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+/* 5. Darker shade when hovering over the button */
+#searchButton:hover {
+  background-color: #2c5282;
+  border-color: #2c5282;
+}
+
+/* 6. Style the SVG icon inside the button */
+#searchButton svg {
+  width: 18px; /* Make icon slightly larger */
+  height: 18px;
+}
 /* Orange button (as per your HTML) */
 .OrangeButton {
   font-family: "Rubik", sans-serif;
   background-color: #718096;
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
@@ -132,7 +154,7 @@ body {
 #info_table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -164,7 +186,7 @@ body {
 #intakeForm > label {
   font-family: "Rubik", sans-serif;
   font-size: 1.25rem;
-  font-weight: 600;
+
   color: #2c5282;
   margin-top: 1.5rem;
   margin-bottom: 1rem;

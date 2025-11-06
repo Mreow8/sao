@@ -234,13 +234,17 @@
                         {% endif %}
                     </td>
                     <td>{{ case.date_reported|date:"Y-m-d" }}</td>
-                    <td>
-                        <span
-                            class="status-badge {% if case.status == 'Pending' %}status-pending{% elif case.status == 'Resolved' %}status-resolved{% else %}status-default{% endif %}"
-                        >
-                            {{ case.status }}
-                        </span>
-                    </td>
+                   <td class="status-clickable" data-id="{{ case.id }}" data-status="{{ case.status }}" style="cursor: pointer; min-width: 160px;">
+    {% if case.status == 'Pending' %}
+        <span class="status-badge status-pending">Pending Review</span>
+    {% elif case.status == 'Under Investigation' %}
+        <span class="status-badge status-investigating">Under Investigation</span>
+    {% elif case.status == 'Resolved' %}
+        <span class="status-badge status-resolved">Resolved/Closed</span>
+    {% else %}
+        <span class="status-badge status-default">{{ case.status }}</span>
+    {% endif %}
+</td>
                     
                     <td>
                         {% if user.is_authenticated %} 
@@ -519,6 +523,63 @@
                                 Swal.fire("Error", "Could not delete case.", "error");
                             }
                         });
+                    }
+                });
+            });
+        });
+        document.querySelectorAll(".status-clickable").forEach((cell) => {
+            cell.addEventListener("click", function () {
+                const caseId = this.dataset.id;
+                const currentStatus = this.dataset.status;
+
+                // These are the values your MODEL uses
+                const statusModelValues = {
+                    'Pending': 'Pending Review',
+                    'Under Investigation': 'Under Investigation',
+                    'Resolved': 'Resolved/Closed'
+                };
+
+                Swal.fire({
+                    title: "Update Case Status",
+                    input: "select",
+                    inputOptions: statusModelValues,
+                    inputValue: currentStatus, // Pre-selects the current status
+                    confirmButtonText: "Update",
+                    showCancelButton: true,
+                    
+                    preConfirm: (newStatus) => {
+                        if (newStatus === currentStatus) {
+                            Swal.showValidationMessage('You did not change the status.');
+                            return false;
+                        }
+                        return newStatus;
+                    },
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const newStatusValue = result.value;
+                        
+                        // This URL must match your urls.py
+                        fetch(`/discipline/update-status/${caseId}/`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": "{{ csrf_token }}",
+                            },
+                            body: JSON.stringify({ status: newStatusValue }),
+                        })
+                        .then((res) => res.json())
+                        .then((data) => {
+                            if (data.success) {
+                                Swal.fire("Updated!", "Status has been updated.", "success")
+                                .then(() => location.reload()); // Reload to show change
+                            } else {
+                                Swal.fire("Error", data.error || "Something went wrong", "error");
+                            }
+                        })
+                        .catch((err) =>
+                            Swal.fire("Error", "Something went wrong", "error")
+                        );
                     }
                 });
             });

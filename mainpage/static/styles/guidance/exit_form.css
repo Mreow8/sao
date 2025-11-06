@@ -35,11 +35,6 @@
   /*margin: 5px 0;*/
 }
 
-hr {
-  border: 1px solid black;
-  margin-bottom: 20px;
-}
-
 .title {
   text-align: center;
   margin-bottom: 20px;
@@ -153,42 +148,10 @@ body {
 .form-container h2 {
   font-family: "Rubik", sans-serif;
   font-size: 1.5rem;
-  font-weight: 600;
+
   color: #333;
   margin-top: 0;
   margin-bottom: 1rem;
-}
-
-/* --- Search Bar --- */
-#search_id {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  align-items: center;
-}
-#search_id label {
-  font-weight: 500;
-  color: #333;
-}
-
-/* Styled like #comboBox */
-#studentIDBox {
-  font-family: "Rubik", sans-serif;
-  font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  color: #333;
-  flex-grow: 1;
-}
-#studentIDBox:focus {
-  outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
 }
 
 /* Orange button (as per your HTML) */
@@ -197,7 +160,7 @@ body {
   background-color: #2c5282;
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
@@ -267,7 +230,7 @@ body {
 #info_table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -299,7 +262,7 @@ body {
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 12px;
-  font-weight: 600;
+
   color: white;
   text-transform: uppercase;
 }

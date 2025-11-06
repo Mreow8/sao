@@ -29,12 +29,21 @@ from ..forms import (
 )
 
 logger = logging.getLogger(__name__)
-
-# ---
-# VIEW 1: For case_profile.html (Create Form)
-# ---
-# This view combines the GET (show form) and POST (create case)
-# from your original case_profile_view
+def _format_decimal_hours(decimal_hours):
+    """Converts decimal hours (e.g., 2.5) into a string ('2h 30m')"""
+    if decimal_hours is None:
+        decimal_hours = 0.0
+    
+    hours = int(decimal_hours)
+    # Calculate minutes from the fractional part
+    minutes = int(round((decimal_hours - hours) * 60))
+    
+    # Handle rollover if rounding pushes minutes to 60
+    if minutes == 60:
+        hours += 1
+        minutes = 0
+        
+    return f"{hours}h {minutes}m"
 @login_required
 def serviceTracker(request, student_id):
     student = get_object_or_404(studentInfo, studID=student_id)
@@ -92,7 +101,29 @@ def serviceTracker(request, student_id):
         'total_minutes': total_minutes,
     }
     return render(request, 'discipline/comm_service.html', context)
+@require_POST  # Make sure @require_POST is imported
 @login_required
+def update_case_status(request, case_id):
+    try:
+        case = get_object_or_404(CaseProfile, id=case_id)
+        
+        # Load the new status from the request
+        data = json.loads(request.body)
+        new_status = data.get('status')
+
+        # A list of valid statuses from your model
+        valid_statuses = ['Pending', 'Under Investigation', 'Resolved']
+
+        if new_status in valid_statuses:
+            case.status = new_status
+            case.save()
+            return JsonResponse({"success": True, "new_status": new_status})
+        else:
+            return JsonResponse({"success": False, "error": "Invalid status value"}, status=400)
+            
+    except Exception as e:
+        logger.error(f"Error updating status for case {case_id}: {e}")
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 @login_required
 def case_profile_create(request):
     user = request.user
@@ -104,21 +135,41 @@ def case_profile_create(request):
     )
 
     if request.method == 'POST':
-        form = CaseProfileForm(request.POST, request.FILES) # Added request.FILES
+        form = CaseProfileForm(request.POST, request.FILES)
         if form.is_valid():
-            student_id = request.POST.get('student')  # text input
+            student_id = request.POST.get('student')
             if not student_id:
                 messages.error(request, "Student ID is required.")
             else:
                 try:
                     student = studentInfo.objects.get(studID=student_id)
+                    
+                    # Save the case (this is the same as your code)
                     case = form.save(commit=False)
                     case.student = student
-                    # Set reported_by from the form's initial value (which should be user.username)
                     case.reported_by = form.cleaned_data.get('reported_by', user.username)
                     case.save()
+                    
                     messages.success(request, "Case profile saved successfully.")
-                    return redirect('case_list') # Redirect to the new list view
+
+                    # --- THIS IS THE NEW LOGIC YOU ASKED FOR ---
+                    
+                    # 1. We check the 'action_taken' value from the saved case
+                    #    (This assumes the value in your dropdown is "Counseling")
+                    if case.action_taken == 'Counseling':
+                        
+                        # 2. Add a message to prompt the admin
+                        messages.info(request, f"Please create a counseling schedule for {student.firstname}.")
+                        
+                        # 3. Redirect to your *existing* counseling_form_view
+                        return redirect('counseling_form', case_id=case.id)
+                    
+                    else:
+                        # 4. If it's not counseling, just go to the list as normal
+                        return redirect('case_list')
+                    
+                    # --- END OF NEW LOGIC ---
+
                 except studentInfo.DoesNotExist:
                     messages.error(request, f"Student with ID {student_id} not found.")
                 except Exception as e:
@@ -137,7 +188,6 @@ def case_profile_create(request):
         'base_template': base_template,
     }
     return render(request, 'discipline/case_profile.html', context)
-
 # Make sure to add this import at the top of your views.py
 from django.core.paginator import Paginator
 
@@ -409,46 +459,95 @@ def counseling_form_view(request, case_id):
         "case": case
     }
     return render(request, "discipline/counseling_form.html", context)
-# Your original student_hours_view
+
+# In 'discipline copy 2.py', replace your old student_hours_view with this:
+
 @login_required
 def student_hours_view(request, case_id):
     case = get_object_or_404(CaseProfile, pk=case_id)
     records = CommunityServiceTracker.objects.filter(case=case).order_by('-service_date')
+    
+    # --- NEW CALCULATION LOGIC ---
+    
+    # 1. Get TOTAL REQUIRED hours from the case
+    #    (We use the community_service_hours field from the CaseProfile model)
+    total_required_decimal = float(case.community_service_hours or 0.0)
+
+    # 2. Calculate TOTAL RENDERED hours (from all tracker records)
+    total_rendered_decimal = 0.0
+    for r in records:
+        rendered = r.total_hours_decimal()
+        if rendered:
+            total_rendered_decimal += rendered
+
+    # 3. Calculate REMAINING hours and check completion
+    remaining_decimal = max(0.0, total_required_decimal - total_rendered_decimal)
+    is_completed = (total_rendered_decimal >= total_required_decimal) and (total_required_decimal > 0)
+    
+    # 4. Format all values as strings for the template
+    #    (These variable names match your student_hours_rendered.html template)
+    total_required_str = _format_decimal_hours(total_required_decimal)
+    total_rendered_str = _format_decimal_hours(total_rendered_decimal)
+    remaining_str = _format_decimal_hours(remaining_decimal)
+
+    # --- END NEW LOGIC ---
+
     if request.method == 'POST':
-        form = CommunityServiceForm(request.POST, request.FILES)
+        # This POST logic is from your discipline.py (forms file)
+        # and discipline copy 2.py (views file)
+        
+        # Note: Your template just has fields 'date', 'time_in', 'time_out'.
+        # Your form expects 'session'. This will cause a mismatch.
+        # For now, I am using the form defined in your 'discipline.py' (forms) file.
+        
+        form = CommunityServiceForm(request.POST) 
+        
         if form.is_valid():
             tracker = form.save(commit=False)
-            tracker.case = case
+            tracker.case = case # Link to the current case
+            
+            # Check for duplicates (from your original code)
             exists = CommunityServiceTracker.objects.filter(
                 case=case,
                 service_date=tracker.service_date,
                 session=tracker.session
             ).exists()
+            
             if exists:
                 messages.error(request, f"{tracker.session.capitalize()} session already exists for {tracker.service_date}.")
             else:
                 tracker.save()
                 messages.success(request, "Community service record added successfully!")
+                # Redirect to refresh the page and see new totals
                 return redirect('student_hours', case_id=case.id)
         else:
             messages.error(request, "Please correct the errors below.")
     else:
+        # Show a blank form on GET request
         form = CommunityServiceForm()
 
+    # This 'existing_sessions' logic was in your view, but your template doesn't use it.
+    # I've left it in case you need it.
     existing_sessions = {}
     for r in records:
         date_str = r.service_date.isoformat()
         existing_sessions.setdefault(date_str, []).append(r.session)
 
-    total_hours = sum([r.total_hours_decimal() for r in records])
-    total_hours_display = f"{int(total_hours)}h {int((total_hours % 1) * 60)}m"
-
+    # This context dictionary now provides ALL variables your template needs
     context = {
         'case': case,
         'form': form,
-        'records': records,
-        'total_hours': total_hours_display,
-        'rendered_hours': total_hours_display, # Fixed this from your code
+        
+        # FIX: Your template loops 'sessions', but your view used 'records'.
+        # We now pass 'sessions' correctly.
+        'sessions': records, 
+        
+        # Pass the new calculated values to the template
+        'total_required_str': total_required_str,
+        'total_rendered_str': total_rendered_str,
+        'remaining_str': remaining_str,
+        'is_completed': is_completed,
+        
         'existing_sessions': existing_sessions,
     }
     return render(request, 'discipline/student_hours_rendered.html', context)

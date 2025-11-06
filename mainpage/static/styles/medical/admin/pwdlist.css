@@ -44,7 +44,7 @@ body {
   font-size: 14px;
 }
 .search-form input:focus {
-  outline-color: #ff8000;
+  outline-color: #2c5282;
 }
 
 /* --- Table Styling (from requestgmc.css) --- */
@@ -72,8 +72,7 @@ body {
 }
 .pwd-table thead th {
   background-color: #f7f7f7;
-  color: #ff8000; /* Orange accent */
-  font-weight: 600;
+  color: #2c5282; /* Orange accent */
 }
 .pwd-table tbody tr:hover {
   background-color: #f1f3f5;
@@ -95,7 +94,7 @@ body {
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 12px;
-  font-weight: 600;
+
   color: white;
 }
 .status-verified {
@@ -110,7 +109,7 @@ body {
   border: none;
   padding: 10px 20px;
   font-size: 14px;
-  font-weight: 600;
+
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -173,7 +172,6 @@ body {
 }
 .modal-title {
   font-size: 18px;
-  font-weight: 600;
 }
 .close-modal {
   color: #aaa;

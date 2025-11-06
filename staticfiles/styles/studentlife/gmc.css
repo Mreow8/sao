@@ -10,14 +10,14 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-.school-year{
+.school-year {
   font-size: 20px;
   width: 243px;
   border: 1px solid black;
   border-radius: 5px;
 }
 
-.school-year:focus{
+.school-year:focus {
   outline: none;
 }
 
@@ -40,7 +40,7 @@ body::-webkit-scrollbar {
   margin-left: -50px;
 }
 
-.content2{
+.content2 {
   color: black;
   font-weight: bold;
   font-family: Arial;
@@ -67,17 +67,16 @@ body::-webkit-scrollbar {
   margin-left: 50px;
 }
 
-.ornum{
+.ornum {
   margin-top: 90px;
   margin-left: 50px;
   text-align: left;
 }
 
-.ornum p{
+.ornum p {
   font-size: 12px;
   color: black;
 }
-
 
 .content3,
 .content4 {
@@ -111,13 +110,13 @@ body::-webkit-scrollbar {
   font-family: Arial, sans-serif;
 }
 
-.maincontents h4{
+.maincontents h4 {
   font-size: 18px;
   font-family: Algerian;
   color: black;
 }
 
-.maincontents h3{
+.maincontents h3 {
   font-size: 25px;
   font-family: Algerian;
   color: black;
@@ -158,13 +157,13 @@ body::-webkit-scrollbar {
 }
 
 .Dean p {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
   color: black;
   text-align: right;
   text-decoration: underline;
 }
 
-#lower-content{
+#lower-content {
   margin-top: 60px;
 }
 
@@ -175,46 +174,41 @@ body::-webkit-scrollbar {
   text-decoration: none;
 }
 
-.footerImg{
+.footerImg {
   margin-top: 25px;
   width: 650px;
 }
 
-
 .print {
-  display: flex; 
-  justify-content: center; 
+  display: flex;
+  justify-content: center;
   align-items: center;
-  margin: 20px; 
- 
+  margin: 20px;
 }
 
-
 #print {
-  background-color: #ff8000; 
+  background-color: #2c5282;
   width: 200px;
-  color: white; 
-  border: none; 
-  padding: 15px 32px;  
-  text-align: center; 
-  text-decoration: none; 
-  display: inline-block; 
-  font-size: 16px; 
-  margin: 4px 2px; 
-  cursor: pointer; 
-  border-radius: 12px; 
-  transition: background-color 0.3s ease; 
+  color: white;
+  border: none;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background-color 0.3s ease;
   margin-bottom: 30px;
 }
 
-
 #print i {
-  font-size: 25px; 
-  margin-right: 8px; 
-  color: white; 
-  vertical-align: middle; 
+  font-size: 25px;
+  margin-right: 8px;
+  color: white;
+  vertical-align: middle;
 }
-
 
 .underline {
   text-decoration: underline;
@@ -222,8 +216,6 @@ body::-webkit-scrollbar {
 }
 
 @media print {
-  
-
   .side-nav,
   .search-container,
   .orange-bar,
@@ -244,7 +236,7 @@ body::-webkit-scrollbar {
     height: 90px;
   }
 
-  .underline{
+  .underline {
     font-weight: bold;
   }
   .content1 {
@@ -267,7 +259,7 @@ body::-webkit-scrollbar {
     margin-right: 20px;
     text-decoration: none;
   }
-  .school-year{
+  .school-year {
     width: 170px;
     font-size: 14px;
     border: none;

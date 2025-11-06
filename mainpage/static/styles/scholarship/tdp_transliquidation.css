@@ -1,529 +1,516 @@
 @media print {
+  .side_nav_box,
+  .side_nav_box *,
+  #trans_date,
+  .search-container,
+  #summary,
+  #back,
+  .content::-webkit-scrollbar {
+    display: none !important;
+  }
+  .form_div {
+    position: absolute;
+    left: -10px;
+  }
+  .onod {
+    position: absolute;
+    box-shadow: none !important;
+  }
+  main {
+    top: 0px !important;
+  }
+  .head {
+    border: none !important;
+  }
+}
+@media print and (orientation: landscape) {
+  .onod {
+    width: 115% !important;
+    text-align: center;
+  }
+}
 
-    .side_nav_box, .side_nav_box *, #trans_date,.search-container,#summary,#back,.content::-webkit-scrollbar {
-        display: none !important;
-    }
-    .form_div{
-        position:absolute;
-        left:-10px;
-    }
-    .onod {
-        position: absolute;
-        box-shadow: none !important;
-    }
-    main{
-        top:0px !important;
-    }
-    .head{
-        border:none !important;
-    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  color: white;
+  list-style-type: none;
 }
-@media print and (orientation: landscape) {  
-    .onod{
-            width:115% !important;
-            text-align: center;
-        }
+body {
+  display: flex;
+  font-size: 14px;
 }
-
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-    color: white;
-    list-style-type: none;
+#side_nav_box {
+  height: 100vh;
+  width: fit-content;
 }
-body{
-    display: flex;
-    font-size: 14px;
+.side-nav {
+  width: 299px;
+  height: 91vh;
+  background: #4682b4;
+  overflow: auto;
 }
-#side_nav_box{
-    height: 100vh;
-    width: fit-content;
-}
-.side-nav
-{
-    width: 299px;
-    height: 91vh;
-    background: #4682B4;
-    overflow: auto;
-}
-.side-nav::-webkit-scrollbar{
-    display: none;
+.side-nav::-webkit-scrollbar {
+  display: none;
 }
 .orange-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 60px;
-    padding: 0px 18px;
-    background-color: #FF8000;
-    width: 299px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  padding: 0px 18px;
+  background-color: #2c5282;
+  width: 299px;
 }
 
-.logo{
-    height: 55px;
+.logo {
+  height: 55px;
 }
-.bars{
-    height: 25px;
+.bars {
+  height: 25px;
 }
-.side-nav li
-{
-    line-height: 30px;
-}
-
-
-.side-nav ul li{
-    line-height: 50px;
-    border-bottom: 1px solid #2B40D1;
+.side-nav li {
+  line-height: 30px;
 }
 
-.side-nav ul ul{
-    position: static;
-    display: none;
+.side-nav ul li {
+  line-height: 50px;
+  border-bottom: 1px solid #2b40d1;
 }
 
-.side-nav ul.studentlife.show{
-    display: block;
+.side-nav ul ul {
+  position: static;
+  display: none;
 }
 
-.side-nav ul.scholar-show.show2{
-    display: block;
+.side-nav ul.studentlife.show {
+  display: block;
 }
 
-.side-nav ul.jobplace-show.show3{
-    display: block;
+.side-nav ul.scholar-show.show2 {
+  display: block;
 }
 
-.side-nav ul.student_disc-show.show4{
-    display: block;
+.side-nav ul.jobplace-show.show3 {
+  display: block;
 }
 
-.side-nav ul.guide-show.show5{
-    display: block;
+.side-nav ul.student_disc-show.show4 {
+  display: block;
 }
 
-.side-nav ul.alumni-show.show6{
-    display: block;
+.side-nav ul.guide-show.show5 {
+  display: block;
 }
 
-.side-nav ul.community-show.show7{
-    display: block;
+.side-nav ul.alumni-show.show6 {
+  display: block;
 }
 
-.side-nav ul.student_org-show.show8{
-    display: block;
+.side-nav ul.community-show.show7 {
+  display: block;
 }
 
-.side-nav ul.medical-show.show9{
-    display: block;
+.side-nav ul.student_org-show.show8 {
+  display: block;
 }
 
-
-
-.side-nav ul ul li{
-    line-height: 40px;
+.side-nav ul.medical-show.show9 {
+  display: block;
 }
 
-.side-nav ul ul li a{
-    font-size: 15px;
-    padding-left: 60px;
+.side-nav ul ul li {
+  line-height: 40px;
 }
 
-.side-nav ul li a:hover{
-    background: #3e74a0;
-    border-left-color: white;
+.side-nav ul ul li a {
+  font-size: 15px;
+  padding-left: 60px;
 }
 
-.side-nav ul li a
-{
-    position: relative;
-    color: white;
-    padding-left: 30px;
-    text-decoration: none;
-    font-size: 14px;  
-    display: block;
-    width: 100%;
-    border-left: 5px solid transparent;
+.side-nav ul li a:hover {
+  background: #3e74a0;
+  border-left-color: white;
 }
 
-.side-nav ul li a span{
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    font-size: 18px;
-    transition: transform 0.4s;
+.side-nav ul li a {
+  position: relative;
+  color: white;
+  padding-left: 30px;
+  text-decoration: none;
+  font-size: 14px;
+  display: block;
+  width: 100%;
+  border-left: 5px solid transparent;
 }
 
-.side-nav ul li a span.rotate{
-    transform:  translateY(-50%) rotate(-180deg);
+.side-nav ul li a span {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 18px;
+  transition: transform 0.4s;
+}
+
+.side-nav ul li a span.rotate {
+  transform: translateY(-50%) rotate(-180deg);
 }
 .search-container {
-    width: 100%;
-    background-color: #f1f1f1; 
-    padding: 12.5px;
-    display: flex;
-    align-items: center;
+  width: 100%;
+  background-color: #f1f1f1;
+  padding: 12.5px;
+  display: flex;
+  align-items: center;
 }
 
 .search-icon i {
-    margin-right: 10px;
-    cursor: pointer;
-    color: black;
-    font-size: 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  color: black;
+  font-size: 20px;
 }
 
-input[type="text"] 
-{
-    padding: 9.6px;
-    border: transparent;
-    border-radius: 10px;
-    box-sizing: border-box;
-    padding-left: 10px;
-    align-items:left;
-    color: black ;
-    width: 300px;
-    background-color: #fff;
-    
+input[type="text"] {
+  padding: 9.6px;
+  border: transparent;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  align-items: left;
+  color: black;
+  width: 300px;
+  background-color: #fff;
 }
-.content_box{
-    height: 100vh;
-    width: 100%;
+.content_box {
+  height: 100vh;
+  width: 100%;
 }
-.content{
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    height: 89.5vh;
-    overflow: auto;
-    background-color: #fff;
+.content {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  height: 89.5vh;
+  overflow: auto;
+  background-color: #fff;
 }
-.content h1{
-    color: black;
+.content h1 {
+  color: black;
 }
 
-.form_div{
-    display: flex;
-    height: 700px;
-    width: 98%;
-    padding: 20px;
+.form_div {
+  display: flex;
+  height: 700px;
+  width: 98%;
+  padding: 20px;
 }
 
-.form_div *{
-    color:black !important;
+.form_div * {
+  color: black !important;
 }
 
 /* ------------------------------dayag code-------------------------- */
-.content .form_div{
-    display: flex;
+.content .form_div {
+  display: flex;
 }
 
-.content .scholarship-section{
-    position:relative;
-    top:-60px;
-    width:84%;
-    left:-10%;
-
-}.content .dropdown{
-    height: 100px;
-    position: relative;
-    right: 20px;
-    top:-20px;
+.content .scholarship-section {
+  position: relative;
+  top: -60px;
+  width: 84%;
+  left: -10%;
+}
+.content .dropdown {
+  height: 100px;
+  position: relative;
+  right: 20px;
+  top: -20px;
 }
 
-.dropdown span{
-    color:blue;
-    cursor:pointer;
+.dropdown span {
+  color: blue;
+  cursor: pointer;
 }
-a{
-    font-size: 12px;
+a {
+  font-size: 12px;
 }
-span{
-    font-size: 13px;
+span {
+  font-size: 13px;
 }
-.dropbtn:hover, .dropbtn:focus {
-    background-color: #df7b17;;
+.dropbtn:hover,
+.dropbtn:focus {
+  background-color: #df7b17;
 }
 
 .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 200px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
 }
 
 .dropdown-content .dropdown-section {
-    padding: 8px 12px;
+  padding: 8px 12px;
 }
 
 .dropdown-content a {
-    color: black;
-    padding: 8px 12px;
-    text-decoration: none;
-    display: block;
+  color: black;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
 }
 
 .dropdown-content a:hover {
-    background-color: #f1f1f1;
+  background-color: #f1f1f1;
 }
 
 .dropdown-content .dropdown-section span {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 4px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .show {
-    display: block;
+  display: block;
 }
 
 /* ------------------templates------------------- */
-  
+
 form {
-    font-size: 12px;
+  font-size: 12px;
 }
-table{
-    border-collapse: collapse;
-    width: 100% !important;
+table {
+  border-collapse: collapse;
+  width: 100% !important;
 }
-th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    padding: 8px;
-    text-align: center;
-    color: black !important;
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 8px;
+  text-align: center;
+  color: black !important;
 }
 
 th {
-    background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 tfoot td {
-    text-align: right;
-    font-weight: bold;
-    color: black;
+  text-align: right;
+  font-weight: bold;
+  color: black;
 }
 
 input[disabled] {
-    background-color: #e7e3e3;
-    border: none;
-    text-align: center;
-    width: 100%;
+  background-color: #e7e3e3;
+  border: none;
+  text-align: center;
+  width: 100%;
 }
 
-th{
-    background-color: rgb(71, 149, 212);
+th {
+  background-color: rgb(71, 149, 212);
 }
 
-
-
-#print{
-    background-color: #4CAF50; 
-    color: white; 
-    border: none; 
-    padding:  2px;
-    height:40px;
-    width: 120px;
-    display: inline-block; 
-    position:absolute;
-    bottom:30px;
-    right:50px;
-    font-size: 16px;
-    cursor: pointer; 
-    border-radius: 4px; 
-    transition: background-color 0.3s;
+#print {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 2px;
+  height: 40px;
+  width: 120px;
+  display: inline-block;
+  position: absolute;
+  bottom: 30px;
+  right: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
-.dropdown.semester{
-position:relative;
-width:0px;
-top:-30px;
-right:1%;
-cursor:pointer;
+.dropdown.semester {
+  position: relative;
+  width: 0px;
+  top: -30px;
+  right: 1%;
+  cursor: pointer;
 }
-.dropdown.semester .dropbtn{
-    width:125px;
+.dropdown.semester .dropbtn {
+  width: 125px;
 }
 /* -------------  print    ------------------- */
 
 #print {
-    display: inline-block;
-    margin: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #FF8000;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  display: inline-block;
+  margin: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #2c5282;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 #print:hover {
-    background-color: #aa5603;
+  background-color: #aa5603;
 }
 
 /* ---------------- date --------------------- */
 
-#trans_date form{
-    display:flex;
+#trans_date form {
+  display: flex;
 }
 
-.start_date{
-    margin-right:20px;
+.start_date {
+  margin-right: 20px;
 }
-
 
 /* --------------- transaction content ------------- */
-main{
-    position:relative;
-    top:40px;
-
+main {
+  position: relative;
+  top: 40px;
 }
 
-#filter{
-    padding:10px !important;
-    color:white !important;
-    height:45px;
-    margin-top:15px;
-    border-radius: 4px;
-    background-color: #FF8000;
-    margin-left:20px;
-    border:none;
-    position:relative;
-    top:-20px;
-    cursor:pointer;
+#filter {
+  padding: 10px !important;
+  color: white !important;
+  height: 45px;
+  margin-top: 15px;
+  border-radius: 4px;
+  background-color: #2c5282;
+  margin-left: 20px;
+  border: none;
+  position: relative;
+  top: -20px;
+  cursor: pointer;
 }
 
-#filter_summary{
-    padding:10px 20px !important;
-    color:white !important;
-    height:36px;
-    border-radius: 4px;
-    border:none;
-    background-color: green;
-    position:absolute;
-    right:10%;
-    top:10px;
-    cursor:pointer;
+#filter_summary {
+  padding: 10px 20px !important;
+  color: white !important;
+  height: 36px;
+  border-radius: 4px;
+  border: none;
+  background-color: green;
+  position: absolute;
+  right: 10%;
+  top: 10px;
+  cursor: pointer;
 }
-.scholar-report{
-    position:relative;
-    left:-20px;
-    margin-top:-135px;
- }
-
- 
-.scholar-report h3{
-    color:green;
+.scholar-report {
+  position: relative;
+  left: -20px;
+  margin-top: -135px;
 }
 
-
-.school_year{
-    display:flex;
-    position:relative;
-    top:10px;
-    left:25%;
+.scholar-report h3 {
+  color: green;
 }
-.school_year input{
-    width:200px;
-    height:35px;
-    border:1px solid #FF8000;
+
+.school_year {
+  display: flex;
+  position: relative;
+  top: 10px;
+  left: 25%;
+}
+.school_year input {
+  width: 200px;
+  height: 35px;
+  border: 1px solid #2c5282;
 }
 
 /*  semester dropdown */
 
-#semesterForm{
-    width:300px;
-    cursor:default;
-}#semesterForm #semester {
-    margin-right: 50px;
-    padding: 5px;
-    background-color: #ff8000fb;
-    color: white !important;
-    text-align: center; 
-    width:100px;
-    border-radius: 50px;
-    outline: none;
-    border: none;
-    cursor: pointer;
-    appearance: none;
-
+#semesterForm {
+  width: 300px;
+  cursor: default;
+}
+#semesterForm #semester {
+  margin-right: 50px;
+  padding: 5px;
+  background-color: #2c5282fb;
+  color: white !important;
+  text-align: center;
+  width: 100px;
+  border-radius: 50px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  appearance: none;
 }
 
 #semesterForm #semester option {
-    color: black;
-    background-color: white; 
+  color: black;
+  background-color: white;
 }
 
 #semesterForm #semester::after {
-    content: '\25BC'; 
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: white; 
+  content: "\25BC";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: white;
 }
 
 #semesterForm {
-    position: relative;
-
+  position: relative;
 }
 
 #scholarship_year {
-    padding: 5px;
-    border-radius: 50px;
-    border: none;
-    outline: none;
-    width: 150px;
-    text-indent: 6px;
-    padding: 7px;
-    border: 1px solid #ff8000fb;
-    color: white;
-    margin-right: 20px;
+  padding: 5px;
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  width: 150px;
+  text-indent: 6px;
+  padding: 7px;
+  border: 1px solid #2c5282fb;
+  color: white;
+  margin-right: 20px;
 }
-
 
 #allYearsButton {
-    padding: 10px;
-    background-color: #FF8000;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: white !important;
+  padding: 10px;
+  background-color: #2c5282;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white !important;
 }
 
-
-
-
-.academicYear{
-    display:flex;
-    position:relative;
-    top:-130px;
-    left:30%;
-    width:450px;
-    height: 30px;
+.academicYear {
+  display: flex;
+  position: relative;
+  top: -130px;
+  left: 30%;
+  width: 450px;
+  height: 30px;
 }
 
-#summary{
-    margin-bottom: 20px;
+#summary {
+  margin-bottom: 20px;
 }
 
-.general{
-    margin-bottom: 20px;
-    margin-left:100px;
-    color:green !important;
+.general {
+  margin-bottom: 20px;
+  margin-left: 100px;
+  color: green !important;
 }
-.onod{
-    position:relative;
-    left:4%;
+.onod {
+  position: relative;
+  left: 4%;
 }
 
-
-#back{
-    width:30px;
-    height:30px;
+#back {
+  width: 30px;
+  height: 30px;
 }

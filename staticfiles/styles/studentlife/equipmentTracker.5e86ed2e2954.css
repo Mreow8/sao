@@ -2,7 +2,7 @@
   color: black;
 
   font-size: 20px;
-  font-weight: 600;
+
   margin-bottom: 15px;
 }
 
@@ -15,7 +15,7 @@
 }
 .certxt {
   margin-left: 5px;
-  color: #ff8000;
+  color: #2c5282;
 }
 
 .equipmentContents {
@@ -48,7 +48,7 @@ table td {
 
 table th {
   background-color: #f2f2f2;
-  color: #ff8000;
+  color: #2c5282;
 }
 
 table td {

@@ -44,7 +44,7 @@
 
 .form-grid label {
   font-size: 0.9rem;
-  font-weight: 600;
+
   color: #333;
   margin-bottom: 0.5rem;
 }
@@ -77,7 +77,7 @@
   background-color: #2c5282; /* Primary Blue */
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
@@ -136,7 +136,7 @@
 .equipmentTable th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }

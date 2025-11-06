@@ -91,7 +91,7 @@
                             {{form.track}}
                         </div>
                         <div class="center_object">
-                            <button class="OrangeButton nextpage">Next</button>
+                          <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
     
@@ -146,11 +146,43 @@
             </div>
         {% endif %}
     </div>
+    
     <style>
     .form-error-message {
         color: red;
         font-size: 0.9em;
         margin-top: 5px;
+    }
+
+    /* General message shown at the top of the form page */
+    .validation-summary {
+        color: #721c24; /* Dark red text */
+        background-color: #f8d7da; /* Light red background */
+        border: 1px solid #f5c6cb; /* Red border */
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Style for invalid input fields (text, select, etc.) */
+    input.invalid-field,
+    select.invalid-field,
+    textarea.invalid-field {
+        border-color: #dc3545 !important; /* Red border */
+        background-color: #fbeeed !important; /* Light red background */
+        box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+    }
+
+    /* Style for containers of invalid radio/checkbox groups */
+    .field_container.invalid-field,
+    .side-way.invalid-field,
+    .yes_no_question_cotainer.invalid-field {
+         background-color: #fbeeed;
+         border: 1px solid #dc3545;
+         border-radius: 5px;
+         padding: 5px; /* Add padding to make the highlight obvious */
     }
 </style>
                             {{form.email}}
@@ -178,8 +210,8 @@
                             {{form.placeOfLivingOthers}}
                         </div>
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
-                            <button class="OrangeButton nextpage">Next</button>
+                       <button type="button" class="OrangeButton prevPage">Previous</button>
+                          <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
                     <div class="fill_out_container hidden">
@@ -298,8 +330,8 @@
                             <button id="addanother" class="OrangeButton">Add another</button>
                         </div>
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
-                            <button class="OrangeButton nextpage">Next</button>
+                       <button type="button" class="OrangeButton prevPage">Previous</button>
+                     <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
                     <div class="fill_out_container hidden">
@@ -323,8 +355,8 @@
                             {{form.personInCaseofEmergencyMobileNo}}
                         </div>
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
-                            <button class="OrangeButton nextpage">Next</button>
+                     <button type="button" class="OrangeButton prevPage">Previous</button>
+                     <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
                     <div class="fill_out_container hidden">
@@ -340,8 +372,8 @@
                             {{form.bloodType}}
                         </div>
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
-                            <button class="OrangeButton nextpage">Next</button>
+                          <button type="button" class="OrangeButton prevPage">Previous</button>
+                     <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
                     <div class="fill_out_container hidden">
@@ -437,8 +469,8 @@
                             {{form.specifyScholarship}}
                         </div>
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
-                            <button class="OrangeButton nextpage">Next</button>
+                            <button type="button" class="OrangeButton prevPage">Previous</button>
+                     <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
                     <div class="fill_out_container hidden">
@@ -492,8 +524,8 @@
                             <button id="addOrganization" class="OrangeButton">Add Organization</button>
                         </div>
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
-                            <button class="OrangeButton nextpage">Next</button>
+                         <button type="button" class="OrangeButton prevPage">Previous</button>
+                     <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
                     <div class="fill_out_container hidden">
@@ -505,14 +537,25 @@
                         <label>Do you have any present concerns/problems?</label>
                         {{form.presentConcerns}}
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
-                            <button class="OrangeButton nextpage">Next</button>
+                         <button type="button" class="OrangeButton prevPage">Previous</button>
+                     <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
                     <div class="fill_out_container hidden">
                         <h2>H. Student's General Personality Make-Up</h2>
                         <label>Please select any of this following items taht describe you best.</label>
                         <table>
+                            <tr>
+                                <td><input type="checkbox" name="describeYouBest[]" value="Friendly">Friendly</td>
+                                <td><input type="checkbox" name="describeYouBest[]" value="Self-Confident">Self-Confident</td>
+                                <td><input type="checkbox" name="describeYouBest[]" value="Calm">Calm</td>
+                                <td><input type="checkbox" name="describeYouBest[]" value="Quick-Tempered">Quick-Tempered</td>
+                                <td><input type="checkbox" name="describeYouBest[]" value="Feels Inferior">Feels Inferior</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" name="describeYouBest[]" value="Unhappy">Unhappy</td>
+                                <td><input type="checkbox" name="describeYouBest[]" value="Easily Bored">Easily Bored</td>
+                                <table>
                             <tr>
                                 <td><input type="checkbox" name="describeYouBest[]" value="Friendly">Friendly</td>
                                 <td><input type="checkbox" name="describeYouBest[]" value="Self-Confident">Self-Confident</td>
@@ -542,7 +585,7 @@
                                 <td><input type="checkbox" name="describeYouBest[]" value="Independent">Independent</td>
                             </tr>
                             <tr>
-                                <td><input type="checkbox" name="describeYouBest[]" value="Depressed">Depressed</td>
+                                D<td><input type="checkbox" name="describeYouBest[]" value="Depressed">Depressed</td>
                                 <td><input type="checkbox" name="describeYouBest[]" value="Suspicious">Suspicious</td>
                                 <td><input type="checkbox" name="describeYouBest[]" value="Irritable">Irritable</td>
                                 <td><input type="checkbox" name="describeYouBest[]" value="Stubborn">Stubborn</td>
@@ -560,34 +603,35 @@
                                 <td><input type="checkbox" name="describeYouBest[]" value="Submissive">Submissive</td>
                                 <td><input type="checkbox" name="describeYouBest[]" value="Optimistic">Optimistic</td>
                                 <td><input type="checkbox" name="describeYouBest[]" value="Happy-go-lucky">Happy-go-lucky</td>
+                                Example: 
                                 <td><input type="checkbox" name="describeYouBest[]" value="Goal-oriented">Goal-oriented</td>
                             </tr>
                         </table>
                         <label>Is there other things describe you the best? <label style="color: rgb(0, 4, 255);">* please specify</label></label>
                         {{form.describeYouBestOther}}
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
-                            <button class="OrangeButton nextpage">Next</button>
+                             <button type="button" class="OrangeButton prevPage">Previous</button>
+                     <button type="button" class="OrangeButton nextpage">Next</button>
                         </div>
                     </div>
                     <div class="fill_out_container hidden">
                         <h2>I. School/Career-Related</h2>
                         <label>Whose decision was it to take this college course?</label>
                         {{form.decisionForTheCourse}}
-                        <div class="others_container hidden" id="preferedCourse">
+                        <div class"others_container hidden" id="preferedCourse">
                             <label >If you did not choose your current course, which course do you prefer?</label>
                             {{form.specifyTheDecision}}
                         </div>
                         <label>Do you plan to work on your specizlization after graduation?</label>
                         {{form.doYouPlanToWork}}
-                        <div class="others_container hidden" id="specifyDontWork">
+                        <div class"others_container hidden" id="specifyDontWork">
                             <label>Specify why:</label>
                             {{form.specifyIfNo}}
                         </div>
                         <label>What possible factors will hinder you to continue your college education?</label>
                         {{form.possibleFactors}}
                         <div class="center_object">
-                            <button class="OrangeButton prevPage">Previous</button>
+                    <button type="button" class="OrangeButton prevPage">Previous</button>
                             <button class="OrangeButton" type="submit">Submit</button>
                         </div>
                     </div>

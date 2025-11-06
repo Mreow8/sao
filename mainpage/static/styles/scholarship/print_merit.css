@@ -152,7 +152,7 @@ tbody td {
 #semesterForm #semester {
   margin-right: 50px;
   padding: 5px;
-  background-color: #ff8000fb;
+  background-color: #2c5282fb;
   color: white !important;
   text-align: center;
   width: 100px;
@@ -191,7 +191,7 @@ tbody td {
   width: 150px;
   text-indent: 6px;
   padding: 7px;
-  border: 1px solid #ff8000fb;
+  border: 1px solid #2c5282fb;
   color: white;
   margin-right: 20px;
 }
@@ -212,7 +212,7 @@ tbody td {
 
 #allYearsButton {
   padding: 10px 20px;
-  background-color: #ff8000;
+  background-color: #2c5282;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -222,7 +222,7 @@ tbody td {
 
 #logOut {
   padding: 10px 20px;
-  background-color: #ff8000;
+  background-color: #2c5282;
   border-radius: 5px;
   border: none;
 }

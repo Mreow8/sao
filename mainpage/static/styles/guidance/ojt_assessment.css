@@ -50,7 +50,7 @@ body {
 .alert-warning .alert-heading {
   /* h4 */
   font-size: 1.25rem;
-  font-weight: 600;
+
   color: #2b6cb0;
   margin-top: 0;
   margin-bottom: 1rem;
@@ -72,7 +72,7 @@ body {
 /* --- New Request Form --- */
 .form-container h4 {
   font-size: 1.5rem;
-  font-weight: 600;
+
   color: #333;
   margin-top: 0;
   margin-bottom: 0.5rem;
@@ -86,7 +86,7 @@ body {
 
 #requestForm label {
   display: block;
-  font-weight: 600;
+
   color: #2c5282; /* Primary Blue */
   margin-top: 1rem;
   margin-bottom: 0.5rem;
@@ -122,7 +122,7 @@ body {
   padding: 0;
   margin: 0.5rem 0 0 0;
   font-size: 0.9rem;
-  font-weight: 600;
+
   color: #dc3545; /* Red for errors */
 }
 
@@ -133,7 +133,7 @@ body {
   background-color: #2c5282; /* Primary Blue */
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
@@ -164,7 +164,7 @@ hr {
 .history-container h3 {
   /* Styled like .history-wrapper h4 from guide */
   font-size: 1.5rem; /* 24px */
-  font-weight: 600;
+
   margin-bottom: 20px;
   color: #333;
   font-family: "Rubik", sans-serif;
@@ -204,7 +204,7 @@ hr {
   /* Header style from guide */
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -220,7 +220,7 @@ hr {
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 12px;
-  font-weight: 600;
+
   color: white;
   text-transform: uppercase;
 }
@@ -294,7 +294,7 @@ hr {
     position: absolute;
     left: 16px;
     top: 12px; /* Align with padding */
-    font-weight: 600;
+
     color: #2c5282; /* Primary Blue */
     white-space: nowrap;
     width: calc(50% - 32px); /* 50% - (left padding + right padding) */

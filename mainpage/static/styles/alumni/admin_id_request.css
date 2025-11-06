@@ -30,53 +30,54 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* --- Search Bar --- */
+/* --- Search Form Styling --- */
+
+/* 1. The form container */
 .search-form {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  align-items: center;
+  width: 100%;
+  max-width: 500px; /* Or whatever width you prefer */
+  margin-bottom: 1.5rem; /* Space below the search bar */
 }
 
-/* Styled like #comboBox */
+/* 2. The text input field */
 .search-input {
-  font-family: "Rubik", sans-serif;
-  font-size: 1rem;
-  padding: 10px 12px;
+  flex-grow: 1; /* Allows the input to take up available space */
+  padding: 10px 15px;
+  font-size: 0.95rem;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  color: #333;
-  flex-grow: 1;
-}
-.search-input:focus {
+  border-radius: 6px 0 0 6px; /* Rounded left corners */
+  border-right: none; /* Button border will handle this */
   outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
+  transition: border-color 0.2s;
 }
 
-/* Styled like .requestBtn */
+/* 3. Highlight on focus (using a blue color) */
+.search-input:focus {
+  border-color: #2c5282;
+}
+
+/* 4. The search button */
 .search-btn {
-  background-color: #2c5282; /* Primary Blue */
+  /* Colors (Blue) */
+  background-color: #2c5282;
+  border: 1px solid #2c5282;
   color: white;
-  font-size: 1rem;
+
+  /* Sizing and Layout */
+  padding: 10px 20px;
+  font-size: 0.95rem;
   font-weight: 600;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
-}
-.search-btn:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
+  border-radius: 0 6px 6px 0; /* Rounded right corners */
+  transition: background-color 0.2s;
 }
 
+/* 5. Hover effect for the button */
+.search-btn:hover {
+  background-color: #2c5282; /* Darker blue */
+  border-color: #2c5282;
+}
 /* --- Table (Responsive Style from #historyTable) --- */
 .gmc-table-wrapper {
   border: 1px solid #ddd;
@@ -102,7 +103,7 @@ table td {
 table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -143,7 +144,7 @@ table th a.sorted.desc::after {
   background-color: #2c5282;
   color: white;
   font-size: 0.875rem;
-  font-weight: 600;
+
   padding: 8px 14px;
   border: none;
   border-radius: 8px;
@@ -160,7 +161,7 @@ table th a.sorted.desc::after {
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 12px;
-  font-weight: 600;
+
   color: white;
   text-transform: uppercase;
   background-color: #2ecc71; /* Green */
@@ -248,7 +249,7 @@ table th a.sorted.desc::after {
     position: absolute;
     left: 16px;
     top: 12px;
-    font-weight: 600;
+
     color: #2c5282;
     white-space: nowrap;
   }

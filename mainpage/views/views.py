@@ -48,16 +48,24 @@ User = get_user_model()
 
 def is_admin(user):
     return user.is_authenticated and user.is_superuser
-@login_required
-@user_passes_test(is_admin)
+# In your views.py file
+
+from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from django.contrib import messages
+from django.db.models import Q
+from ..models import CustomUser, Organization # Make sure all models are imported
+
 def assign_role(request):
-    # --- Get parameters for Search, Sort, and Pagination ---
+    # --- Get parameters for Filter, Search, Sort, and Pagination ---
     
-    # 1. Search query
+    # 1. NEW: Role Filter
+    role_filter = request.GET.get('role', '') # Get the role filter
+    
+    # 2. Search query
     query = request.GET.get('q', '')
     
-    # 2. Sort column and direction
-    # Default sort is username ascending
+    # 3. Sort column and direction
     sort_by = request.GET.get('sort', 'username')
     direction = request.GET.get('dir', 'asc')
 
@@ -66,13 +74,17 @@ def assign_role(request):
     # Start with all users
     users_list = CustomUser.objects.all()
 
-    # 1. Apply Search Filter (if a query exists)
+    # 1. NEW: Apply Role Filter (if one was selected)
+    if role_filter:
+        users_list = users_list.filter(role=role_filter)
+
+    # 2. Apply Search Filter (if a query exists)
     if query:
         users_list = users_list.filter(
             Q(username__icontains=query) | Q(email__icontains=query)
         )
 
-    # 2. Apply Sorting
+    # 3. Apply Sorting
     valid_sort_fields = ['username', 'email', 'role']
     if sort_by not in valid_sort_fields:
         sort_by = 'username' # Default to username if invalid
@@ -80,7 +92,7 @@ def assign_role(request):
     order_field = f"{'-' if direction == 'desc' else ''}{sort_by}"
     users_list = users_list.order_by(order_field)
 
-    # 3. Apply Pagination
+    # 4. Apply Pagination
     paginator = Paginator(users_list, 25)  # Show 25 users per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -105,22 +117,22 @@ def assign_role(request):
         except CustomUser.DoesNotExist:
             messages.error(request, "User not found.")
         
-        # Redirect back to the same page, preserving search/sort/page
-        # request.get_full_path() keeps all GET parameters
+        # Redirect back to the same page, preserving all GET parameters
         return redirect(request.get_full_path())
 
     # --- Prepare Context for Template ---
     organizations = Organization.objects.all()
     
     context = {
-        'page_obj': page_obj,  # Pass the page object (not 'users')
+        'page_obj': page_obj,
         'organizations': organizations,
         'role_choices': CustomUser.ROLE_CHOICES,
         
-        # Pass back search/sort state to the template
+        # Pass back search/sort/filter state to the template
         'query': query,
         'sort_by': sort_by,
         'direction': direction,
+        'role_filter': role_filter, # NEW: Pass the role filter back
     }
     
     return render(request, 'assign_role.html', context)

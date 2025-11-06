@@ -35,7 +35,7 @@ td {
 }
 
 th {
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: #fff;
 }
 
@@ -150,10 +150,10 @@ input:checked + .slider:before {
   top: 10%;
   right: 2%;
   padding: 8px 16px;
-  font-weight: 600;
+
   outline: none;
   border: none;
-  background-color: #ff8000;
+  background-color: #2c5282;
   border-radius: 6px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
   cursor: pointer;
@@ -169,7 +169,7 @@ input:checked + .slider:before {
   font-size: 30px;
   font-weight: bold;
   cursor: pointer;
-  color: #ff8000;
+  color: #2c5282;
 }
 
 .showform_container {
@@ -232,7 +232,7 @@ input:checked + .slider:before {
 }
 
 #col_container input[type="submit"] {
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: white;
   border: none;
   cursor: pointer;

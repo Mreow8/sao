@@ -4,26 +4,17 @@ from django.urls import path
 from .. import views  # Assumes your views are in the app's views.py
 
 urlpatterns = [
-    # --- URLs for Case Profile (Split from your main file) ---
-    
-    # 1. Page for CREATING a new case (case_profile.html)
-    # This REPLACES your old 'case_profile' URL
+   path('update-status/<int:case_id>/', views.update_case_status, name='update_case_status'),
+  
     path('case-profile/', views.case_profile_create, name='case_profile'),
-    
-    # 2. Page for LISTING all cases (case_list.html)
+  
     path('cases/list/', views.case_list, name='case_list'),
 
-    # --- AJAX/Modal Endpoints ---
-    
-    # 3. EDIT modal (from your mainurls.py, points to new view)
     path('cases/edit/<int:case_id>/', views.case_edit, name='case_edit'),
 
-    # 4. DELETE modal (from your mainurls.py, points to new view)
+ 
     path('cases/delete/<int:case_id>/', views.case_delete, name='case_delete'),
 
-    # --- Other Discipline-Related URLs (from your mainurls.py) ---
-    
-    # 5. AJAX for student details
     path('get-student/<str:studID>/', views.get_student, name='get_student'),
     
     # 6. AJAX for suspension update

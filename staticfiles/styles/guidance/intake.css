@@ -16,7 +16,7 @@ body {
 /* Section Title */
 .container h3 {
   font-size: 24px;
-  font-weight: 600;
+
   color: #2b2b2b;
   margin-bottom: 5px;
 }
@@ -30,7 +30,7 @@ body {
 }
 
 #dir-orange {
-  color: #ff8000;
+  color: #2c5282;
   font-weight: 500;
 }
 
@@ -51,8 +51,8 @@ table td {
 
 table th {
   background-color: #f7f7f7;
-  color: #ff8000;
-  font-weight: 600;
+  color: #2c5282;
+
   text-align: left;
 }
 
@@ -84,7 +84,7 @@ table input[type="date"] {
 
 /* Button Styling */
 .OrangeButton {
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -122,7 +122,7 @@ table input[type="date"] {
 /* Labels */
 form label {
   display: block;
-  font-weight: 600;
+
   font-size: 16px;
   margin: 30px 0 10px;
   color: #2c2c2c;
@@ -165,8 +165,8 @@ form label {
     position: absolute;
     left: 16px;
     top: 12px;
-    font-weight: 600;
-    color: #ff8000;
+
+    color: #2c5282;
     white-space: nowrap;
   }
 

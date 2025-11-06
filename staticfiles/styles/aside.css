@@ -19,7 +19,7 @@ body::-webkit-scrollbar {
 
 .orange-bar {
   height: 60px;
-  background-color: #ff8000;
+  background-color: #2c5282;
   width: 299px;
   z-index: 100;
   position: fixed;

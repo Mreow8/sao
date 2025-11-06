@@ -6,7 +6,7 @@
   left: 0;
   width: 299px;
   height: 100vh;
-  background: #ff8000;
+  background: #2c5282;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -23,8 +23,8 @@
   font-size: 60px;
   text-align: center;
   margin-left: 100px;
-  -webkit-text-stroke: 2px #ff8000;
-  text-shadow: 2px 2px 4px #ff8000;
+  -webkit-text-stroke: 2px #2c5282;
+  text-shadow: 2px 2px 4px #2c5282;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   color: #fff;
 }

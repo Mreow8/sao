@@ -12,87 +12,254 @@
   href="{% static 'styles/guidance/exit_form.css'%}"
 />
 <script src="{% static 'scripts/guidance/html2pdf.js'%}"></script>
+
+<style>
+  /* --- Toolbar Wrapper --- */
+  .search-and-filter-toolbar {
+    display: flex;
+    flex-wrap: wrap; /* Allows stacking on small screens */
+    align-items: center; /* Vertically center items */
+    gap: 12px; /* Space between search and filter groups */
+    margin-bottom: 1.5rem;
+  }
+  
+  /* --- 1. The Search Form --- */
+  .search-form {
+    display: flex;
+    flex-grow: 1; /* Allows search bar to take available space */
+    min-width: 300px; /* Prevents it from getting too small */
+  }
+  
+  /* The search input */
+  .search-form input[type="text"] {
+    flex-grow: 1;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 6px 0 0 6px; /* Rounded left */
+    border-right: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  
+  .search-form input[type="text"]:focus {
+    border-color: #2c5282; /* Blue highlight on focus */
+  }
+  
+  /* The search button (styled blue like image) */
+  .search-form button {
+    /* This can override .OrangeButton if needed */
+    background-color: #2c5282; /* Blue */
+    border: 1px solid #2c5282;
+    color: white;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 0 6px 6px 0; /* Rounded right */
+    transition: background-color 0.2s;
+  }
+  
+  .search-form button:hover {
+    background-color: #2c5282; /* Darker blue */
+  }
+  
+  
+  /* --- 2. The Filter Buttons --- */
+  .filter-buttons {
+    display: flex;
+    gap: 8px; /* Space between individual buttons */
+  }
+  
+  /* Base style for filter buttons (like "Processed" and "All") */
+  .btn-status-filter {
+    /* Sizing and Layout */
+    padding: 10px 16px; 
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid #2c5282; 
+    border-radius: 6px; 
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap; /* Prevents text wrap */
+    
+    /* Color (Inactive state) */
+    background-color: #ffffff; /* White background */
+    color: #2c5282; /* Blue text */
+  }
+  
+  /* The "active" state (like "Pending" button) */
+  .btn-status-filter.active {
+    background-color: #2c5282; /* Blue background */
+    color: #ffffff; /* White text */
+  }
+  
+  /* Hover on inactive button */
+  .btn-status-filter:not(.active):hover {
+    background-color: #f0f6ff; /* Light blue tint */
+  }
+  
+  /* Hover on active button */
+  .btn-status-filter.active:hover {
+    background-color: #2c5282; /* Darker blue */
+    border-color: #2c5282;
+  }
+ /* --- Action Buttons in Table --- */
+
+/* This styles the <div> holding the buttons */
+.horizontal {
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping if cell is narrow */
+  gap: 6px; /* Space between buttons */
+}
+
+/* This is a BASE style for all buttons in that div */
+.horizontal button {
+  padding: 8px 12px;
+  font-size: 0.8rem; /* Small but readable */
+  font-weight: 700;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Add a little "press" effect on click */
+.horizontal button:active {
+  transform: scale(0.96);
+}
+
+/* --- ACCEPT Button (Green) --- */
+.horizontal button.accept {
+  background-color: #28a745; /* Success Green */
+}
+
+.horizontal button.accept:hover {
+  background-color: #218838; /* Darker Green */
+}
+
+/* --- DECLINE Button (Red) --- */
+.horizontal button.decline {
+  background-color: #dc3545; /* Danger Red */
+}
+
+.horizontal button.decline:hover {
+  background-color: #c82333; /* Darker Red */
+}
+
+/* --- DELETE Button (Dark Gray) --- */
+.horizontal button.delete {
+  background-color: #6c757d; /* Neutral Dark Gray */
+}
+
+.horizontal button.delete:hover {
+  background-color: #5a6268; /* Darker Gray */
+}
+</style>
 {% endblock %} 
 
 {% block bodycontent %}
- 
-<div class="container">
-  <div class="sub-title">
+ <div class="sub-title">
     <h3>GUIDANCE (Admin)</h3>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Exit Interview</p>
   </div>
+<div class="container">
+
 <hr>
 
   <div class="form-container">
     {% csrf_token %}
 
+    <div class="search-and-filter-toolbar">
+  
+      <form id="search_id" method="GET" action="" class="search-form">
+        
+        <input
+          type="text"
+          name="search"
+          placeholder="Search by Student Name or ID"
+          id="studentIDBox"
+          value="{{ current_search|default:"" }}"
+        />
+        <button class="OrangeButton" id="searchButton" type="submit">Search</button>
+      </form>
     
-    <form id="search_id" method="GET" action="">
-      
-      <input
-        type="text"
-        name="search"
-        placeholder="Search by Student ID or Name"
-        id="studentIDBox"
-        value="{{ request.GET.search }}"
-      />
-      <button class="OrangeButton" id="searchButton" type="submit">Search</button>
-
-      <ul class="messages">
-        {% for message in messages %}
-          {% if 'exit_interview_admin' in message.tags %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </form>
-
+      <div class="filter-buttons">
+        
+        {% with other_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|add:"&order="|add:current_order %}
+    
+        <a href="?{{ other_params|slice:"1:" }}" class="btn-status-filter {% if not current_status_filter %}active{% endif %}">
+          All
+        </a>
+    
+        <a href="?status_filter=Pending{{ other_params }}"
+          class="btn-status-filter {% if current_status_filter == 'Pending' %}active{% endif %}">
+          Pending
+        </a>
+    
+        <a href="?status_filter=Accepted{{ other_params }}"
+          class="btn-status-filter {% if current_status_filter == 'Accepted' %}active{% endif %}">
+          Accepted
+        </a>
+    
+        <a href="?status_filter=Declined{{ other_params }}"
+          class="btn-status-filter {% if current_status_filter == 'Declined' %}active{% endif %}">
+          Declined
+        </a>
+        
+        {% endwith %}
+      </div>
+    
+    </div>
     <div class="admin-table-wrapper">
       <table id="info_table">
         <thead>
-  <tr id="info_table_head">
-    
-    <th class="sortable">
-      {% if current_sort == 'dateRecieved' %}
-        <a href="?sort=dateRecieved&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
-           class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Received</a>
-      {% else %}
-        <a href="?sort=dateRecieved&order=asc{{ search_params }}">Date Received</a>
-      {% endif %}
-    </th>
-    
-    <th class="sortable">
-      {% if current_sort == 'studentID__studID' %}
-        <a href="?sort=studentID__studID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
-           class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student ID</a>
-      {% else %}
-        <a href="?sort=studentID__studID&order=asc{{ search_params }}">Student ID</a>
-      {% endif %}
-    </th>
-    
-    <th class="sortable">
-      {% if current_sort == 'studentID__lastname' %}
-        <a href="?sort=studentID__lastname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
-           class="sorted {% if current_order == 'desc' %}desc{% endif %}">Name</a>
-      {% else %}
-        <a href="?sort=studentID__lastname&order=asc{{ search_params }}">Name</a>
-      {% endif %}
-    </th>
-    
-    <th class="sortable">
-      {% if current_sort == 'status' %}
-        <a href="?sort=status&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}"
-           class="sorted {% if current_order == 'desc' %}desc{% endif %}">Status</a>
-      {% else %}
-        <a href="?sort=status&order=asc{{ search_params }}">Status</a>
-      {% endif %}
-    </th>
-    
-    <th>ACTION</th>
-    <th>FORM</th>
-  </tr>
-</thead>
+          <tr id="info_table_head">
+            
+            {% with other_params="&search="|add:current_search|default:""|add:"&status_filter="|add:current_status_filter|default:"" %}
+            
+            <th class="sortable">
+              {% if current_sort == 'dateRecieved' %}
+                <a href="?sort=dateRecieved&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ other_params }}"
+                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Received</a>
+              {% else %}
+                <a href="?sort=dateRecieved&order=asc{{ other_params }}">Date Received</a>
+              {% endif %}
+            </th>
+            
+            <th class="sortable">
+              {% if current_sort == 'studentID__studID' %}
+                <a href="?sort=studentID__studID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ other_params }}"
+                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student ID</a>
+              {% else %}
+                <a href="?sort=studentID__studID&order=asc{{ other_params }}">Student ID</a>
+              {% endif %}
+            </th>
+            
+            <th class="sortable">
+              {% if current_sort == 'studentID__lastname' %}
+                <a href="?sort=studentID__lastname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ other_params }}"
+                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Name</a>
+              {% else %}
+                <a href="?sort=studentID__lastname&order=asc{{ other_params }}">Name</a>
+              {% endif %}
+            </th>
+            
+            <th>
+              Status
+            </th>
+            
+            <th>ACTION</th>
+            <th>FORM</th>
+
+            {% endwith %}
+          </tr>
+        </thead>
         <tbody>
           {% for interview_request in page_obj %}
           <tr>
@@ -157,9 +324,12 @@
 
     <div class="pagination">
         <span class="step-links">
+            
+            {% with all_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|add:"&order="|add:current_order|add:"&status_filter="|add:current_status_filter|default:"" %}
+
             {% if page_obj.has_previous %}
-                <a href="?page=1&search={{ request.GET.search }}&sort={{ current_sort }}">&laquo; First</a>
-                <a href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}&sort={{ current_sort }}">Previous</a>
+                <a href="?page=1{{ all_params }}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{{ all_params }}">Previous</a>
             {% endif %}
 
             <span class="current">
@@ -167,13 +337,14 @@
             </span>
 
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}&sort={{ current_sort }}">Next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}&search={{ request.GET.search }}&sort={{ current_sort }}">Last &raquo;</a>
+                <a href="?page={{ page_obj.next_page_number }}{{ all_params }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{{ all_params }}">Last &raquo;</a>
             {% endif %}
+
+            {% endwith %}
         </span>
     </div>
-
-  </div>
+    </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="{% static 'scripts/guidance/exit_interview_admin.js'%}"></script>

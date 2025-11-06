@@ -20,6 +20,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem 2rem;
+  font-size: 14px;
 }
 
 /* --- Main Card (from requestgmc.css) --- */
@@ -29,15 +30,6 @@ body {
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* --- Search Bar --- */
-#search_id {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  align-items: center;
 }
 
 /* Styled like #comboBox */
@@ -65,7 +57,7 @@ body {
   background-color: #2c5282;
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
@@ -78,36 +70,39 @@ body {
   background-color: #4c81c2; /* Darker Orange */
   transform: translateY(-2px);
 }
+#search_id {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  overflow: hidden;
+  max-width: 400px;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
 
-/* --- Django Messages (Themed) --- */
-.messages {
-  list-style: none;
-  padding: 0;
+#search_id #studentIDBox {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  background: transparent;
+}
+
+#search_id .OrangeButton {
+  border: none;
+  outline: none;
+  border-radius: 0;
   margin: 0;
-  width: 100%;
-  order: 3; /* Move messages below search bar on wrap */
-}
-.messages li {
-  padding: 1rem;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: left;
-  margin-top: 1rem;
-}
-.messages li.error {
-  color: #c53030;
-  background-color: #fff5f5;
-  border: 1px solid #fc8181;
-  border-left: 5px solid #c53030;
-}
-.messages li.success {
-  color: #2f855a;
-  background-color: #f0fff4;
-  border: 1px solid #9ae6b4;
-  border-left: 5px solid #2f855a;
+  padding: 10px 15px;
+  cursor: pointer;
 }
 
+#search_id .OrangeButton:hover {
+  filter: brightness(90%);
+}
 /* --- Table (Responsive, from requestgmc.css) --- */
 .table-responsive-wrapper {
   width: 100%;
@@ -136,7 +131,7 @@ body {
 #info_table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -167,7 +162,7 @@ body {
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: bold;
   color: white;
   text-transform: uppercase;
 }
@@ -178,6 +173,7 @@ body {
 .pending {
   color: #92400e;
   background-color: #fef3c7;
+  font-style: bold;
 } /* Orange */
 .declined,
 .expired {
@@ -195,7 +191,7 @@ body {
 .delete {
   font-family: "Rubik", sans-serif;
   font-size: 0.875rem;
-  font-weight: 600;
+
   padding: 8px 12px;
   border: none;
   border-radius: 8px;
@@ -307,7 +303,7 @@ body {
     position: absolute;
     left: 16px;
     top: 12px;
-    font-weight: 600;
+
     color: #2c5282; /* Primary Blue */
     white-space: nowrap;
   }

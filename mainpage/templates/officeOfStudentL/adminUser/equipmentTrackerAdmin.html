@@ -13,14 +13,21 @@
   rel="stylesheet"
 />
 {% endblock headcontent %} {% block bodycontent %}
+<div class="sub-title">
+  <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+  <p class="certxt">> Equipment Tracker</p>
+</div>
+<hr />
 <div class="container">
-  <div class="sub-title">
-    <h3>OFFICE OF STUDENT LIFE (Admin)</h3>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">> Equipment Tracker</p>
+  <div class="top-button-group">
+    <a href="{% url 'addEquipment' %}" id="addbtn">ADD EQUIPMENT</a>
+    <div class="button-container">
+      <a href="{% url 'equipmentborrowed' %}" class="saveBtn">
+        Students that Borrowed
+      </a>
+    </div>
   </div>
-  <hr />
-
   <div class="equipmentContents">
     <!-- prettier-ignore -->
 
@@ -113,16 +120,9 @@
       </div>
 
       <div class="button-container">
-        <a href="{% url 'addEquipment' %}" id="addbtn">ADD EQUIPMENT</a>
         <button class="saveBtn" type="submit">SAVE RECORD</button>
       </div>
     </form>
-    <div class="button-container">
-      <!-- Make the button a clickable link by wrapping it in <a> -->
-      <a href="{% url 'equipmentborrowed' %}" class="saveBtn">
-        Students that Borrowed
-      </a>
-    </div>
   </div>
 </div>
 

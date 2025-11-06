@@ -1,183 +1,186 @@
-@media print and (orientation: landscape) {  
-    .onod{
-            position: absolute;
-            width:120% !important;
-            left:-15px !important;
-        }
+@media print and (orientation: landscape) {
+  .onod {
+    position: absolute;
+    width: 120% !important;
+    left: -15px !important;
+  }
 }
 @media print {
-    *{
-        font-size: 12px !important;
-    }
-    .side_nav_box, .side_nav_box,.content form, .content section,.search-container,.content #back{
-        display: none !important;
-    }
-    .content::-webkit-scrollbar{
-        display:none ;
-    }
-    .onod {
-        position: absolute;
-        top:0px !important;
-        box-shadow: none !important;
-        border:none !important;
-    }
-    .content{
-        height:fit-content !important;
-    }
-    .head {
-        border: none !important;
-    }
+  * {
+    font-size: 12px !important;
+  }
+  .side_nav_box,
+  .side_nav_box,
+  .content form,
+  .content section,
+  .search-container,
+  .content #back {
+    display: none !important;
+  }
+  .content::-webkit-scrollbar {
+    display: none;
+  }
+  .onod {
+    position: absolute;
+    top: 0px !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .content {
+    height: fit-content !important;
+  }
+  .head {
+    border: none !important;
+  }
 }
 
 .onod {
-    width: 100%;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border:1px solid black;
-    position:relative;
-    top:-59px;
-    right:40px;
-    box-shadow: 0 0 6px 2px rgba(51, 51, 53, 0.3) inset;
-    margin-bottom: 50px !important;
+  width: 100%;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid black;
+  position: relative;
+  top: -59px;
+  right: 40px;
+  box-shadow: 0 0 6px 2px rgba(51, 51, 53, 0.3) inset;
+  margin-bottom: 50px !important;
 }
-.onod td{
-    text-align: center !important;
+.onod td {
+  text-align: center !important;
 }
 .onod img {
-    width: 630px;
-    height: 100px;
-    align-self: center;
+  width: 630px;
+  height: 100px;
+  align-self: center;
 }
 header {
-    text-align: center;
+  text-align: center;
 }
-
 
 #sum-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
-#summary-table{
-    display:flex;
+#summary-table {
+  display: flex;
 }
-.sum-table{
-    border: 2px solid blue !important;
+.sum-table {
+  border: 2px solid blue !important;
 }
-table, th, td {
-    border: 1px solid black;
+table,
+th,
+td {
+  border: 1px solid black;
 }
 
 tr th {
-    background-color: #B3C6E6;
-    text-align: center;
-    
+  background-color: #b3c6e6;
+  text-align: center;
 }
 
-th, td {
-    padding: 8px;
-    text-align: left;
-    font-weight: bold;
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  font-weight: bold;
 }
 
 th {
-    background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 .section-header {
-    background-color: #FFFF00;
-    font-weight: bold;
+  background-color: #ffff00;
+  font-weight: bold;
 }
 
 .sub-section-header {
-    background-color: #365623;
-    font-weight: bold;
+  background-color: #365623;
+  font-weight: bold;
 }
 
 .sub1-section-header {
-    background-color: #91CF50;
-    font-weight: bold;
+  background-color: #91cf50;
+  font-weight: bold;
 }
 
 .sub2-section-header {
-    background-color:  #FFFF00;
-    font-weight: bold;
+  background-color: #ffff00;
+  font-weight: bold;
 }
 
 footer {
-    text-align: left;
-    margin-top: 20px;
-    font-weight: bold;
+  text-align: left;
+  margin-top: 20px;
+  font-weight: bold;
 }
 
 footer label {
-    font-weight: bold;
-    margin-right: 10px;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 footer #notedBy[type="text"] {
-    padding: 5px;
-    margin: 10px 0;
-    margin-left: 160px;
-    width: 200px;
-    text-align: center;
-    border: none;
-    border-bottom: 1px solid black; 
+  padding: 5px;
+  margin: 10px 0;
+  margin-left: 160px;
+  width: 200px;
+  text-align: center;
+  border: none;
+  border-bottom: 1px solid black;
 }
 
 .footer1 input {
-    font-weight: bold;
-    font-size: 16px;
-    border: none; 
-    border-bottom: 1px solid black; 
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid black;
 }
 
 .head {
-    font-weight: bold;
-    background-color: #833B0C;
-    text-align: center;
-    border: 1px solid black;
-    color: white;
-    padding-bottom: 5px;
-    height: 40px; 
-    font-size: 16px;
+  font-weight: bold;
+  background-color: #833b0c;
+  text-align: center;
+  border: 1px solid black;
+  color: white;
+  padding-bottom: 5px;
+  height: 40px;
+  font-size: 16px;
 }
 /* --------------------- academic year  ----------- */
 #scholarship_year {
-    padding: 5px;
-    border-radius: 50px;
-    border: none;
-    outline: none;
-    width: 150px;
-    text-indent: 6px;
-    padding: 7px;
-    border: 1px solid #ff8000fb;
-    color: white;
-    margin-right: 20px;
+  padding: 5px;
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  width: 150px;
+  text-indent: 6px;
+  padding: 7px;
+  border: 1px solid #2c5282fb;
+  color: white;
+  margin-right: 20px;
 }
-
 
 #allYearsButton {
-    padding: 10px;
-    background-color: #FF8000;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: white !important;
+  padding: 10px;
+  background-color: #2c5282;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white !important;
 }
 
-
-
-.academicYear{
-    display:flex;
-    position:relative;
-    top:-130px;
-    left:30%;
-    width:450px;
-    height: 30px;
+.academicYear {
+  display: flex;
+  position: relative;
+  top: -130px;
+  left: 30%;
+  width: 450px;
+  height: 30px;
 }
-#back{
-    width:30px;
-    height:30px;
+#back {
+  width: 30px;
+  height: 30px;
 }

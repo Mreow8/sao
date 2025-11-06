@@ -156,7 +156,7 @@ ul {
 .sidebar-link.active {
   background-color: var(--primary-dark);
   color: #ffffff;
-  font-weight: 600;
+
   border-right-color: var(--accent-gold);
 }
 .sidebar-link.active .sidebar-link-icon {
@@ -260,7 +260,6 @@ ul {
 }
 
 .profile-name {
-  font-weight: 600;
   color: var(--text-light);
   display: block;
   white-space: nowrap;
@@ -287,7 +286,7 @@ ul {
   color: var(--primary-dark);
   border-radius: 0.5rem;
   text-decoration: none;
-  font-weight: 600;
+
   transition: background-color 0.2s;
 }
 

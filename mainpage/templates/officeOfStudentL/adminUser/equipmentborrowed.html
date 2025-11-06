@@ -1,247 +1,304 @@
 {% extends 'adminmain.html' %}
 {% load static %}
 {% block bodycontent %}
-<style>/* --- Core Table, Pagination, and Sorting Styles --- */
+<style>/*
+ * CSS for the Equipment Tracker Admin List
+ */
+
+/* --- Import Font --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.container,
+.sub-title,
+input,
+select,
+button,
+table {
+  font-family: "Rubik", sans-serif;
+  box-sizing: border-box;
+}
+table{
+  font-size: 14px;
+}
+body {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem 2rem;
-}
-/* --- Action Button Wrapper --- */
-.action-btn-wrapper {
-  display: flex;
-  gap: 8px; /* Adds space between buttons */
+  max-width: 1400px; /* Wider container for a big table */
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 2rem;
 }
 
-/* --- Base Button Style --- */
-.action-btn {
-  padding: 6px 14px; /* Smaller padding */
-  font-size: 13px; /* Smaller font */
-  font-weight: 600;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
-  transition: background-color 0.2s ease-in-out;
+hr {
+  margin: 1.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
 }
 
-/* --- Solid Button Colors --- */
-.btn-edit {
-  background-color: #007bff;
-  color: white;
-}
-.btn-edit:hover {
-  background-color: #0056b3;
-}
-
-.btn-delete {
-  background-color: #dc3545;
-  color: white;
-}
-.btn-delete:hover {
-  background-color: #c82333;
-}
-/* --- Status Badges --- */
-.status-badge {
-  padding: 5px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-/* Green for "Returned" or "Completed" */
-.status-returned {
-  background-color: #e6f7ec; /* Light green */
-  color: #28a745; /* Dark green */
-}
-
-/* Orange/Yellow for "Borrowed", "Pending", or "Return" */
-.status-borrowed {
-  background-color: #fff8e6; /* Light orange */
-  color: #ffc107; /* Dark orange */
-}
-.equipment{
-  background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* --- Search Bar & Button (Enhanced) --- */
+/* --- Search Container --- */
 .search-container {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .search-form {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  width: 100%;
+  max-width: 500px; /* Or 100% if you want it full-width */
 }
 
 .search-form input[type="text"] {
-    font-family: "Rubik", sans-serif;
-    font-size: 1rem;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    transition: border-color 0.2s;
-    color: #333;
-    flex-grow: 1;
-    min-width: 300px;
+  flex-grow: 1;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-#search-box {
-    background-color: #2c5282; /* Primary Blue */
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 10px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: background-color 0.2s;
+.search-form input[type="text"]:focus {
+  outline: none;
+  border-color: #2c5282;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
 }
 
-#search-box:hover {
-    background-color: #2a4365;
+.searchBtn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1px solid #2c5282;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  cursor: pointer;
+  border-radius: 0 8px 8px 0;
+  transition: background-color 0.2s;
+  -webkit-appearance: none;
 }
 
-/* --- Table Wrapper --- */
+.searchBtn:hover {
+  background-color: #2a4365; /* Darker Blue */
+}
+
+/* --- Table Wrapper Card --- */
 .equipmentContents {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* Clips the table corners */
+}
+.equipment{
+  padding: 2.5rem;
+  
     width: 100%;
     overflow-x: auto;
-    border: 1px solid #ddd;
+    border: 1px solid #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
 
-/* --- Table Styles (equipmentTable) --- */
+
+}
+/* --- Equipment Table --- */
 .equipmentTable {
-    width: 100%;
-    min-width: 1000px; /* Ensures horizontal scroll */
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px; /* Ensures table scrolls on small screens */
 }
 
 .equipmentTable th,
 .equipmentTable td {
-    border-bottom: 1px solid #ddd;
-    padding: 12px 15px;
-    text-align: left;
-    font-size: 14px;
-    vertical-align: middle;
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
 }
 
 .equipmentTable th {
-    background-color: #f9f9f9;
-    color: #2c5282; /* Theme Blue */
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.equipmentTable tbody tr:hover {
-    background-color: #f5f5f5;
+  background-color: #f9f9f9;
+  color: #2c5282;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.8rem;
 }
 
 /* --- Sortable Headers --- */
-.equipmentTable th.sortable a {
-    color: inherit;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.equipmentTable th.sortable a:hover {
-    text-decoration: underline;
+.sortable a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* Requires Font Awesome 5 */
-.equipmentTable th.sortable a::after {
-    font-family: "Font Awesome 5 Free";
-    content: "\f0dc"; /* fa-sort */
-    font-weight: 900;
-    opacity: 0.5;
+.sortable a::after {
+  content: " \2195"; /* Up/Down Arrow */
+  color: #bbb; /* Neutral color */
+  font-size: 0.9em;
+  margin-left: 5px;
 }
 
-.equipmentTable th.sorted a::after {
-    opacity: 1;
+.sorted:not(.desc) a::after {
+  content: " \25BC"; /* Down Arrow */
+  color: #333;
 }
 
-.equipmentTable th.sorted.desc a::after {
-    content: "\f0d7"; /* fa-sort-down */
-}
-.equipmentTable th.sorted:not(.desc) a::after {
-    content: "\f0d8"; /* fa-sort-up (asc) */
+.sorted.desc a::after {
+  content: " \25B2"; /* Up Arrow */
+  color: #333;
 }
 
-/* --- Action Buttons & Status Badges --- */
-.equipmentTable td button {
-    font-family: "Rubik", sans-serif;
-    font-size: 0.875rem;
-    font-weight: 600;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    color: white;
-    transition: background-color 0.2s;
-    margin-right: 5px;
+.sortable:hover {
+  background-color: #f0f4f8;
 }
 
-.returnBtn {
-    background-color: #f39c12; /* Yellow for attention */
-    color: #333;
-}
-.returnBtn:hover {
-    background-color: #218838;
+/* --- Table Body --- */
+.equipmentTable tbody tr:hover {
+  background-color: #f7faff;
 }
 
+.equipmentTable tbody tr:last-child td {
+  border-bottom: none;
+}
 
+.no-applicants {
+  text-align: center;
+  color: #777;
+  padding: 40px 0;
+  font-size: 1.1rem;
+}
+
+/* --- Status Badges & Buttons --- */
 .status-badge {
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 0.85em;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
 }
+
 .status-processed {
-      background-color: #8ccfa8;
+  background-color: #8ccfa8;
   color: #0b552a;
 }
 
-/* --- Pagination (from Manage.css) --- */
+.returnBtn {
+  font-family: "Rubik", sans-serif;
+  background-color: #e66000; /* Orange */
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.returnBtn:hover {
+  background-color: #c05000; /* Darker Orange */
+}
+
+/* --- Action Buttons (Edit/Delete) --- */
+.action-btn-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-edit {
+  background-color: #ebf8ff;
+  color: #2c5282;
+}
+.btn-edit:hover {
+  background-color: #bee3f8;
+  color: #2a4365;
+}
+
+.btn-delete {
+  background-color: #fff5f5;
+  color: #c53030;
+}
+.btn-delete:hover {
+  background-color: #fed7d7;
+  color: #9b2c2c;
+}
+
+/* --- Pagination --- */
 .pagination {
-    margin: 2rem 0 1rem;
-    text-align: center;
+  margin-top: 2rem;
+  text-align: center;
 }
-.step-links a,
-.step-links .current {
-    display: inline-block;
-    padding: 8px 14px;
-    margin: 0 4px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
-    border: 1px solid #ccc;
+
+.pagination .step-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
-.step-links a {
-    background-color: #f0f0f0;
-    color: #333;
+
+.pagination .step-links a {
+  text-decoration: none;
+  color: #2c5282;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
 }
-.step-links a:hover {
-    background-color: #e0e0e0;
+
+.pagination .step-links a:hover {
+  background-color: #ebf8ff;
+  border-color: #2c5282;
 }
-.step-links .current {
-    background-color: #2c5282; /* Theme Blue */
-    color: white;
-    border-color: #2c5282;
+
+.pagination .current {
+  padding: 8px 12px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .search-form {
+    flex-direction: column;
+    max-width: 100%;
+  }
+  .search-form input[type="text"] {
+    border-radius: 8px 8px 0 0;
+    border-right: 1px solid #ccc;
+  }
+  .searchBtn {
+    border-radius: 0 0 8px 8px;
+  }
+
+  /* --- Table Scrolling --- */
+  /*
+    On mobile, the .equipmentContents wrapper (the card)
+    will provide the horizontal scrollbar for the table.
+  */
+  .equipmentContents {
+    overflow-x: auto;
+  }
+
+  .pagination .step-links {
+    flex-wrap: wrap;
+  }
 }</style>
 <div class="container">
   <div class="sub-title">
@@ -345,52 +402,75 @@
   </div>
   {% endif %}
 </div>
-
 <script>
- document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".returnBtn").forEach(function (button) {
       button.addEventListener("click", function () {
         const recordId = this.getAttribute("data-record-id");
         const button = this;
         const row = button.closest("tr");
 
-        if (confirm("Are you sure you want to mark this item as returned?")) {
-          fetch("{% url 'update_return_status' %}", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: JSON.stringify({ record_id: recordId }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.status === "success") {
-                // 1. Update the status cell
-                const statusCell = button.parentElement;
-                // Replace button with "Returned" badge
-                statusCell.innerHTML =
-                  '<span class="status-badge status-processed">Returned</span>';
-
-                // 2. Update the date returned cell (FIXED: was 7, now 8)
-                const dateReturnedCell = row.querySelector("td:nth-child(8)");
-                dateReturnedCell.textContent = data.date_returned;
-
-                // You can replace the alert with a less disruptive message
-                // (e.g., using your success-message logic)
-                alert("Item marked as returned.");
-              } else {
-                alert("Failed to update return status: " + data.message);
-              }
+        // --- MODIFICATION HERE ---
+        // Replaced window.confirm with Swal.fire
+        Swal.fire({
+          title: "Are you sure?",
+          text: "Mark this item as returned?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, mark as returned!",
+        }).then((result) => {
+          // If the user clicks "Yes"
+          if (result.isConfirmed) {
+            fetch("{% url 'update_return_status' %}", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+              },
+              body: JSON.stringify({ record_id: recordId }),
             })
-            .catch((error) => {
-              console.error("Error:", error);
-              alert("An error occurred while updating the return status.");
-            });
-        }
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.status === "success") {
+                  // 1. Update the status cell
+                  const statusCell = button.parentElement;
+                  statusCell.innerHTML =
+                    '<span class="status-badge status-processed">Returned</span>';
+
+                  // 2. Update the date returned cell
+                  const dateReturnedCell = row.querySelector("td:nth-child(8)");
+                  dateReturnedCell.textContent = data.date_returned;
+
+                  // Show a success alert
+                  Swal.fire(
+                    "Returned!",
+                    "Item has been marked as returned.",
+                    "success"
+                  );
+                } else {
+                  // Show an error alert
+                  Swal.fire(
+                    "Error!",
+                    "Failed to update return status: " + data.message,
+                    "error"
+                  );
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                Swal.fire(
+                  "Error!",
+                  "An error occurred while updating the return status.",
+                  "error"
+                );
+              });
+          }
+        });
+        // --- END OF MODIFICATION ---
       });
     });
   });
 </script>
-
 {% endblock %}

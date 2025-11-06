@@ -26,7 +26,7 @@ section {
 
 .button-container button {
   padding: 0.5rem 1rem;
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: white;
   border: none;
   border-radius: 6px;
@@ -59,7 +59,7 @@ section {
 }
 
 .card__content h1 {
-  color: #ff8000;
+  color: #2c5282;
   font-size: 1.8rem;
   margin-bottom: 1rem;
 }
@@ -89,7 +89,7 @@ section {
   margin-top: 1.5rem;
 }
 .btnshow {
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: white;
 }
 .btnshow,
@@ -111,7 +111,7 @@ section {
 #myForm button {
   background: none;
   border: none;
-  color: #ff8000;
+  color: #2c5282;
   cursor: pointer;
   padding: 0.25rem;
 }
@@ -177,7 +177,7 @@ section {
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: #ff8000;
+  color: #2c5282;
   cursor: pointer;
 }
 
@@ -195,7 +195,6 @@ form {
 }
 
 form label {
-  font-weight: 600;
   margin-top: 1rem;
 }
 
@@ -212,9 +211,9 @@ form select {
 
 form input[type="submit"] {
   margin-top: 1.2rem;
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: #fff;
-  font-weight: 600;
+
   border: none;
   border-radius: 6px;
   cursor: pointer;

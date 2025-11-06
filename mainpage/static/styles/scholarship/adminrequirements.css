@@ -1,8 +1,7 @@
 /* Container & Layout */
 .content {
   max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
+  margin: 50px auto;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f9f9f9; /* --- Import Font --- */
   @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
@@ -24,11 +23,6 @@
   /* This .content block will act as your main .container.
   If you have a .container class in adminmain.html, you can remove this.
 */
-  .content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem 2rem;
-  }
 
   /* --- Top Control Card --- */
   .form_div {
@@ -44,7 +38,7 @@
     margin-top: 0;
     margin-bottom: 2rem;
     color: #2c5282;
-    font-weight: 600;
+
     font-size: 1.75rem;
   }
 
@@ -102,7 +96,7 @@
   #close-btn,
   #grant-btn {
     font-size: 1rem;
-    font-weight: 600;
+
     padding: 10px 24px;
     border: none;
     border-radius: 8px;
@@ -176,7 +170,7 @@
   #requirements-table th {
     background-color: #f9f9f9;
     color: #2c5282; /* Theme Blue */
-    font-weight: 600;
+
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -239,7 +233,7 @@
   #btns3 button {
     font-family: "Rubik", sans-serif;
     font-size: 0.875rem;
-    font-weight: 600;
+
     padding: 8px 14px;
     border: none;
     border-radius: 8px;

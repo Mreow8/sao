@@ -68,13 +68,13 @@
             style="padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 10px; color: #fff; font-family: 'Rubik', sans-serif; font-size: 0.95rem;">
             
             {% if message.tags == 'success' %}
-                <strong style="font-weight: 600;">✅ Success!</strong>
+                <strong style="">✅ Success!</strong>
             {% elif message.tags == 'error' %}
-                <strong style="font-weight: 600;">❌ Error!</strong>
+                <strong style="">❌ Error!</strong>
             {% elif message.tags == 'warning' %}
-                <strong style="font-weight: 600;">⚠️ Warning!</strong>
+                <strong style="">⚠️ Warning!</strong>
             {% else %}
-                <strong style="font-weight: 600;">ℹ️ Notice:</strong>
+                <strong style="">ℹ️ Notice:</strong>
             {% endif %}
             
             <p style="margin: 4px 0 0 0; line-height: 1.4;">{{ message }}</p>

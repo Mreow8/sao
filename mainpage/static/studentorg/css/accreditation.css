@@ -60,7 +60,7 @@ body {
 /* --- NEW: Accreditation Review Content --- */
 .gmc-form h1 {
   font-size: 1.75rem;
-  font-weight: 600;
+
   color: #2c5282; /* Theme Blue */
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
@@ -115,7 +115,7 @@ table td {
 table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Theme Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
   width: 30%; /* Give the header column a set width */
@@ -151,7 +151,7 @@ td a:hover {
 .buttons .print {
   font-family: "Rubik", sans-serif;
   font-size: 0.9rem;
-  font-weight: 600;
+
   padding: 10px 18px;
   border: none;
   border-radius: 8px;

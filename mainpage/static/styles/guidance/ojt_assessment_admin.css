@@ -34,7 +34,7 @@ body {
 .form-container h2 {
   font-family: "Rubik", sans-serif;
   font-size: 1.5rem;
-  font-weight: 600;
+
   color: #333;
   margin-top: 0;
   margin-bottom: 2rem;
@@ -78,7 +78,7 @@ body {
   background-color: #2a4365;
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
@@ -149,7 +149,7 @@ body {
 #info_table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -191,7 +191,7 @@ body {
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 12px;
-  font-weight: 600;
+
   color: white;
   text-transform: uppercase;
 }

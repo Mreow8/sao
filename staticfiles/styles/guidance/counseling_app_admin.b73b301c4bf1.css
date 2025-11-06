@@ -19,7 +19,7 @@
   padding: 20px;
 }
 #dir-orange {
-  color: #ff8000;
+  color: #2c5282;
 }
 .form-container {
   display: flex;
@@ -39,7 +39,7 @@
 .success {
   font-size: 18px;
   font-weight: 400;
-  color: #ff8000;
+  color: #2c5282;
 }
 .error {
   font-size: 18px;
@@ -59,7 +59,7 @@
   width: 200px;
 }
 .OrangeButton {
-  background-color: #ff8000;
+  background-color: #2c5282;
   padding: 9.6px;
   color: white;
   border: none;
@@ -74,7 +74,7 @@
   padding: 9.6px;
   margin: 0;
   text-align: left;
-  color: #ff8000;
+  color: #2c5282;
 }
 #info_table td {
   padding: 9.6px;
@@ -149,10 +149,10 @@
   top: 10%;
   right: 2%;
   padding: 8px 16px;
-  font-weight: 600;
+
   outline: none;
   border: none;
-  background-color: #ff8000;
+  background-color: #2c5282;
   border-radius: 6px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
   cursor: pointer;
@@ -168,7 +168,7 @@
   font-size: 30px;
   font-weight: bold;
   cursor: pointer;
-  color: #ff8000;
+  color: #2c5282;
 }
 
 .showform_container {
@@ -209,7 +209,7 @@
   position: sticky;
   width: 100%;
   bottom: 0;
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: white;
   height: 25px;
   border: none;

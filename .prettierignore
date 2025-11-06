@@ -3,6 +3,7 @@ mainpage/templates/studentorg/Main/OrgMain.html
 mainpage/templates/officeOfStudentL/adminUser/equipmentborrowed.html
 mainpage/templates/discipline/case_profile.html
 mainpage/templates/discipline/edit_case.html
+mainpage/templates/discipline/student_hours_rendered.html
 mainpage/templates/discipline/case_list.html
 mainpage/templates/alumni/users/graduateTracer.html
 mainpage/templates/alumni/users/id_alumni.html

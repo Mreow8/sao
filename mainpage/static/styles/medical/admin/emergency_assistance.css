@@ -66,7 +66,7 @@ input[type="date"] {
 }
 input:focus {
   outline: none;
-  border-color: #ff8000;
+  border-color: #2c5282;
   background-color: #fff;
 }
 
@@ -81,7 +81,7 @@ input:focus {
   border: none;
   padding: 12px;
   font-size: 14px;
-  font-weight: 600;
+
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -95,7 +95,7 @@ input:focus {
   width: 100px;
 }
 .btn-primary {
-  background-color: #ff8000; /* Orange */
+  background-color: #2c5282; /* Orange */
   color: white;
 }
 .btn-secondary {

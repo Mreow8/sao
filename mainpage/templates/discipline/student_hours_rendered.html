@@ -1,9 +1,8 @@
-{% extends "main.html" %} {% block bodycontent %} {% load static %}
+{% extends 'adminmain.html' %}
+{% load static %}
 
-<link
-  rel="stylesheet"
-  href="{% static 'styles/discipline/hoursRendered.css' %}"
-/>
+{% block bodycontent %}
+<link rel="stylesheet" href="{% static 'hours.css' %}">
 
 <div class="sub-title">
   <h3>STUDENT DISCIPLINE</h3>
@@ -13,177 +12,81 @@
 </div>
 <hr />
 
-<div class="case-details">
-  <div class="case-container">
-    <h2>Case Details</h2>
-    {% if case %}
-    <ul>
-      <li>
-        <!-- prettier-ignore -->
-        <strong>Student:</strong> {{ case.student.studID }} -
-        {{case.student.firstname }} {{ case.student.lastname }}
-      </li>
-      <li><strong>Offense:</strong> {{ case.offense_type }}</li>
-      <li><strong>Date of Incident:</strong> {{ case.date_reported }}</li>
-      <li><strong>Status:</strong> {{ case.status }}</li>
-      <li><strong>Remarks:</strong> {{ case.remarks }}</li>
-      <!-- prettier-ignore -->
-      <li>
-        <strong>Hours Needed to Render:</strong> {{ case.community_service_hours   }}
-      </li>
-    </ul>
-    {% endif %}
-  </div>
+<div class="container">
 
-  <div class="case-container">
-    <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
+  <div class="grid">
 
-      <div class="form-group">
-        <label for="id_session">Session:</label>
-        {{ form.session }}
+    <div>
+      <div class="card">
+        <div class="card-header">Case Details</div>
+        <p><strong>Student:</strong> {{ case.student.studID }} - {{ case.student.lastname }}, {{ case.student.firstname }}</p>
+        <p><strong>Offense:</strong> {{ case.offense_type|default:case.custom_offense }}</p>
+        <p><strong>Date Reported:</strong> {{ case.date_reported|date:"M. d, Y" }}</p>
+        <p><strong>Status:</strong> {{ case.get_status_display }}</p>
+        <p><strong>Description:</strong> {{ case.description|default:"N/A" }}</p>
+        <p><strong>Hours Needed to Render:</strong> {{ total_required_str }}</p>
       </div>
 
-      <div class="form-group">
-        <label for="id_service_date">Date of Service:</label>
-        {{ form.service_date }}
-      </div>
+      <div class="card">
+        <div class="card-header">Hours Rendered</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Session</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+              <th>Rendered</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for session in sessions %}
+            <tr>
+              <td>{{ session.service_date|date:"M. d, Y" }}</td>
+              <td>{{ session.get_session_display }}</td>
+              <td>{{ session.time_in|time:"h:i A" }}</td>
+              <td>{{ session.time_out|time:"h:i A" }}</td>
+              <td>{{ session.get_duration_str }}</td>
+              <td>{{ session.remarks|default:"" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" style="text-align:center;">No records yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
 
-      <div class="form-group">
-        <label for="id_time_in">Time In:</label>
-        {{ form.time_in }}
+        <div class="summary-table">
+          <div class="summary-row"><strong>Total Hours Required:</strong> <span>{{ total_required_str }}</span></div>
+          <div class="summary-row"><strong>Hours Already Rendered:</strong> <span>{{ total_rendered_str }}</span></div>
+          <div class="summary-row" style="color:green;"><strong>Hours Remaining:</strong> <span>{{ remaining_str }}</span></div>
+        </div>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label for="id_time_out">Time Out:</label>
-        {{ form.time_out }}
+    <div>
+      <div class="card">
+        <div class="card-header">Add New Session</div>
+
+        {% if is_completed %}
+          <div class="success-box">
+            <h3>Completed!</h3>
+            <p>All community service hours have been fulfilled.</p>
+          </div>
+        {% else %}
+          <form action="{% url 'student_hours' case.id %}" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit Session</button>
+          </form>
+        {% endif %}
+
       </div>
+    </div>
 
-      <div class="form-group">
-        <label for="id_student_signature">Student Signature:</label>
-        {{ form.student_signature }}
-      </div>
-
-      <div class="form-group">
-        <label for="id_remarks">Remarks:</label>
-        {{ form.remarks }}
-      </div>
-
-      <button type="submit">Submit</button>
-    </form>
   </div>
 </div>
 
-<hr />
-
-<h2>Hours Rendered</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Time In</th>
-      <th>Time Out</th>
-      <th>Rendered</th>
-      <th>Remarks</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for r in records %}
-    <tr>
-      <td>{{ r.service_date }}</td>
-      <td>{{ r.time_in }}</td>
-      <td>{{ r.time_out }}</td>
-      <td>{{ r.time_rendered }}</td>
-      <td>{{ r.remarks }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="5">No records yet.</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<p>
-  <strong>Hours Needed to Render:</strong> {{ case.community_service_hours }}h
-</p>
-<p><strong>Hours Already Rendered:</strong> {{ rendered_hours }}</p>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const sessionSelect = document.getElementById("id_session");
-    const timeInInput = document.getElementById("id_time_in");
-    const timeOutInput = document.getElementById("id_time_out");
-
-    if (!timeInInput || !timeOutInput) return;
-
-    // allow 1-minute granularity (60 seconds). Use 1 for second-level precision.
-    timeInInput.step = 60;
-    timeOutInput.step = 60;
-
-    // Define inclusive time ranges
-    const sessionTimes = {
-      morning: { start: "07:00", end: "13:00" },
-      afternoon: { start: "12:00", end: "18:00" },
-    };
-
-    function setTimeLimits(session) {
-      if (session && sessionTimes[session]) {
-        const { start, end } = sessionTimes[session];
-
-        // Set min/max for Time In/Out
-        timeInInput.min = start;
-        timeInInput.max = end;
-        timeOutInput.min = start;
-        timeOutInput.max = end;
-
-        // Clear invalid values
-        if (
-          timeInInput.value &&
-          (timeInInput.value < start || timeInInput.value > end)
-        )
-          timeInInput.value = "";
-        if (
-          timeOutInput.value &&
-          (timeOutInput.value < start || timeOutInput.value > end)
-        )
-          timeOutInput.value = "";
-
-        // Ensure Time Out >= Time In
-        if (
-          timeInInput.value &&
-          timeOutInput.value &&
-          timeOutInput.value < timeInInput.value
-        )
-          timeOutInput.value = "";
-      } else {
-        // No session selected: remove restrictions
-        timeInInput.removeAttribute("min");
-        timeInInput.removeAttribute("max");
-        timeOutInput.removeAttribute("min");
-        timeOutInput.removeAttribute("max");
-      }
-    }
-
-    // Update on session change
-    if (sessionSelect) {
-      sessionSelect.addEventListener("change", function () {
-        setTimeLimits(this.value);
-      });
-      // Apply on page load if editing existing record
-      setTimeLimits(sessionSelect.value);
-    } else {
-      // If session rendered as radios, handle them
-      const radios = document.querySelectorAll('input[name="session"]');
-      if (radios.length) {
-        radios.forEach((r) =>
-          r.addEventListener("change", () => setTimeLimits(r.value))
-        );
-        const checked = [...radios].find((r) => r.checked);
-        setTimeLimits(checked ? checked.value : null);
-      } else {
-        setTimeLimits(null);
-      }
-    }
-  });
-</script>
 {% endblock %}

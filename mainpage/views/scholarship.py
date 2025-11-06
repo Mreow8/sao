@@ -432,16 +432,27 @@ def adminreqsubmission(request):
         print(scholar_type)
         req_data = Requirement.objects.filter(status="PENDING", record="NEW")
     
+  
     if 'form' not in locals():
         form = AdminRequestForm()
 
+    # --- ADD THIS LINE ---
+    # Get all distinct years from all AdminRequest objects, ordered from newest to oldest
+    requested_years = AdminRequest.objects.values_list('year', flat=True).distinct().order_by('-year')
+    # --- END ADD ---
+    # Get all distinct year/semester pairs from all AdminRequest objects
+    request_history = AdminRequest.objects.values('year', 'semester').distinct().order_by('-year', '-semester')
     context = {
         'is_requesting': is_requesting,
         'form': form,
         'msg': msg,  # Add msg to the context
         'active_request': active_request,
-        'req_data': req_data
+        'req_data': req_data,
+        'request_history': request_history,
+        'requested_years': requested_years  # <-- Pass the list to the template
     }
+
+    return render(request, 'scholarship/adminrequirements.html', context)
 
     return render(request, 'scholarship/adminrequirements.html', context)
 def studentreqsubmission(request):

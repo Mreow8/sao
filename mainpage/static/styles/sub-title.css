@@ -5,8 +5,9 @@
 }
 
 .sub-title h3 {
+  font-weight: bold;
   font-size: 24px;
-  font-weight: 600;
+
   color: #2b2b2b;
 }
 hr {

@@ -13,7 +13,7 @@ body {
 
 .sub-title h3 {
   font-size: 24px;
-  font-weight: 600;
+
   color: #2b2b2b;
 }
 
@@ -28,7 +28,7 @@ body {
 
 .certxt {
   margin-left: 5px;
-  color: #ff8000;
+  color: #2c5282;
   font-weight: 500;
 }
 
@@ -72,8 +72,8 @@ table td {
 
 table th {
   background-color: #f7f7f7;
-  color: #ff8000;
-  font-weight: 600;
+  color: #2c5282;
+
   text-align: left;
 }
 
@@ -96,7 +96,7 @@ table td {
 
 #comboBox:focus {
   outline: none;
-  border-color: #ff8000;
+  border-color: #2c5282;
   background-color: #fff;
 }
 
@@ -104,7 +104,7 @@ table td {
 .requestBtn,
 .searchBtn,
 .printBtn {
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -169,7 +169,7 @@ table td {
 
 .searchID:focus {
   outline: none;
-  border-color: #ff8000;
+  border-color: #2c5282;
   background-color: #fff;
 }
 
@@ -236,8 +236,8 @@ input[name="ornum"] {
     position: absolute;
     left: 16px;
     top: 12px;
-    font-weight: 600;
-    color: #ff8000;
+
+    color: #2c5282;
     white-space: nowrap;
   }
 

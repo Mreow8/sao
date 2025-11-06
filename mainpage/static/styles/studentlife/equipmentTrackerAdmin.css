@@ -1,134 +1,119 @@
-/* --- Global & Fonts --- */
-.equipmentContents,
-.search,
-.form-grid {
+/*
+ * A fresh CSS design for equipmentTrackerAdmin.css
+ */
+
+/* --- Global & Font Styles --- */
+body {
   font-family: "Rubik", sans-serif;
+  background-color: #f8f9fa; /* Very light gray background */
+  color: #212529; /* Dark gray text */
+  margin: 0;
 }
 
-/* --- Container --- */
+/* --- Container & Page Layout --- */
 .container {
-  padding: 0 1.5rem; /* Add some horizontal padding */
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #dee2e6; /* Light border color */
+  margin: 1.5rem 0;
 }
 
 /* --- Main Content Card --- */
 .equipmentContents {
   background-color: #ffffff;
-
-  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 16px; /* Larger radius */
   padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07); /* Softer shadow */
 }
 
-/* --- Alert Messages --- */
-.messages {
-  list-style: none;
-  padding: 1rem 1.5rem;
-  margin: 0 0 1.5rem 0;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-.success-message {
-  background-color: #ebf8ff; /* Light blue */
-  border: 1px solid #bee3f8;
-  border-left: 5px solid #2c5282; /* Accent border */
-  color: #2b6cb0;
-}
-.error-message {
-  background-color: #ffebeb; /* Light red */
-  border: 1px solid #ffcdd2;
-  border-left: 5px solid #e53e3e; /* Accent red */
-  color: #c53030;
-}
-
-/* --- Form Title --- */
+/* --- Search Bar --- */
 .title-txt {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  margin: 0;
-  margin-bottom: 0.5rem; /* Space before search bar */
+  margin-bottom: 0.75rem;
 }
 
-/* --- Search Form --- */
+.title-txt p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #343a40;
+  margin: 0;
+}
+
 .search {
   display: flex;
-  gap: 0.5rem;
   margin-bottom: 2rem;
 }
 
 .search input[type="text"] {
-  flex-grow: 1; /* Take up available space */
-  font-family: "Rubik", sans-serif;
+  flex-grow: 1;
+  padding: 12px 16px; /* Slightly more padding */
   font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  font-family: "Rubik", sans-serif;
+  border: 1px solid #ced4da;
+  border-radius: 8px 0 0 8px; /* Rounded left corner */
+  border-right: none;
+  background-color: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .search input[type="text"]:focus {
   outline: none;
-  border-color: #2c5282;
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  border-color: #2c5282; /* Indigo focus */
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(76, 81, 191, 0.15); /* Light indigo glow */
+  z-index: 2; /* Bring to front */
 }
 
 .searchBtn {
-  font-family: "Rubik", sans-serif;
-  background-color: #718096; /* Gray for search */
+  padding: 0 16px;
+  border: 1px solid #2c5282;
+  background-color: #2c5282; /* Indigo Accent */
   color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  border-radius: 0 8px 8px 0; /* Rounded right corner */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.2s;
 }
 
 .searchBtn:hover {
-  background-color: #4a5568;
+  background-color: #2c5282; /* Darker Indigo */
 }
 
 /* --- Main Form Grid --- */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 1.75rem; /* More space */
 }
 
-.form-grid div {
-  display: flex;
-  flex-direction: column;
-}
-
+/* Form Elements */
 .form-grid label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.5rem;
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #495057;
 }
 
-/* General input styling */
 .form-grid input[type="text"],
 .form-grid input[type="date"],
 .form-grid select {
-  font-family: "Rubik", sans-serif;
+  width: 100%;
+  padding: 12px 16px;
   font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
+  font-family: "Rubik", sans-serif;
+  border: 1px solid #ced4da;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #fff;
+  box-sizing: border-box; /* Important for padding */
   transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-grid input[type="date"] {
-  /* Fix for date input padding */
-  padding-top: 9px;
-  padding-bottom: 9px;
 }
 
 .form-grid input[type="text"]:focus,
@@ -136,79 +121,100 @@
 .form-grid select:focus {
   outline: none;
   border-color: #2c5282;
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(76, 81, 191, 0.15);
 }
 
-/* Read-only inputs */
+/* Style for readonly inputs */
 .form-grid input[readonly] {
-  background-color: #e9ecef; /* Gray background */
-  color: #495057;
+  background-color: #f1f3f5; /* Lighter than gray */
+  color: #6c757d;
   cursor: not-allowed;
+  border-color: #dee2e6;
 }
-/* This container aligns the buttons to the right */
+
+/* --- Button Containers --- */
 .button-container {
   display: flex;
-  justify-content: flex-end; /* Aligns button(s) to the right */
-  gap: 1rem; /* Adds space between buttons in the same container */
-  margin-top: 2rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 1rem; /* Add gap for wrapping */
+  margin-top: 2.5rem;
 }
 
-/* --- Base Button Styles (Shared by all) --- */
+/* The second button container */
+form + .button-container {
+  justify-content: flex-start; /* Aligns "Students that Borrowed" */
+  margin-top: 1.5rem;
+}
+
+/* --- Button Styles --- */
+
+/* Base style for buttons */
 #addbtn,
 .saveBtn {
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
+  font-family: "Rubik", sans-serif;
   font-size: 0.9rem;
-  text-decoration: none;
-  text-transform: uppercase;
-  text-align: center;
-  border: none;
-  border-radius: 6px;
+
+  padding: 10px 20px;
+  border: 2px solid transparent; /* For layout consistency */
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+  text-decoration: none;
   display: inline-block;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
 }
 
-/* --- "ADD EQUIPMENT" (Grey) --- */
-#addbtn {
-  background-color: #6c757d; /* Grey */
-  color: white;
-}
-
-#addbtn:hover {
-  background-color: #5a6268;
-}
-
-/* --- "SAVE RECORD" & "STUDENTS THAT BORROWED" (Green) --- */
+#addbtn,
 .saveBtn {
-  background-color: #2c5282; /* Green */
+  background-color: #2c5282; /* Indigo Accent */
   color: white;
+  border-color: #2c5282;
+}
+#addbtn,
+.saveBtn:hover {
+  background-color: #2c5282; /* Darker Indigo */
+  border-color: #2c5282;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 81, 191, 0.2); /* Shadow with color */
 }
 
-.saveBtn:hover {
-  background-color: #3b6aa3;
-}
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .equipmentContents {
     padding: 1.5rem;
   }
 
-  .search {
-    flex-direction: column; /* Stack search bar */
-  }
-
   .form-grid {
-    grid-template-columns: 1fr; /* Stack form */
+    grid-template-columns: 1fr; /* Stack columns on mobile */
   }
 
   .button-container {
     flex-direction: column; /* Stack buttons */
-    align-items: stretch; /* Make buttons full-width */
+    gap: 1rem;
   }
 
-  .saveBtn,
-  #addbtn {
-    width: 100%; /* Full-width buttons on mobile */
+  #addbtn,
+  .saveBtn {
+    width: 100%; /* Make buttons full-width */
   }
+}
+.top-button-group {
+  display: flex; /* Uses Flexbox to align the items */
+  justify-content: flex-end; /* Pushes all items to the right side */
+  align-items: center; /* Keeps them vertically aligned in the middle */
+  gap: 16px; /* Adds some space (e.g., 16px) between the two buttons */
+  margin-bottom: 16px; /* Adds some space below the button group, before the form */
+}
+
+/* You might also need to remove any default margin 
+  from the original .button-container so it looks right 
+  inside the flex group.
+*/
+.top-button-group .button-container {
+  margin: 0;
 }

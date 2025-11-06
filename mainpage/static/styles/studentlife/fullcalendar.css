@@ -29,7 +29,7 @@
 /* Toolbar Title (e.g., "October 2025") */
 #calendar .fc-toolbar-title {
   font-size: 1.75rem; /* Larger title */
-  font-weight: 600;
+
   color: #1a202c;
 }
 
@@ -39,7 +39,7 @@
   color: white;
   border: none;
   text-transform: uppercase;
-  font-weight: 600;
+
   font-size: 0.875rem;
   letter-spacing: 0.5px;
   transition: background-color 0.2s;
@@ -67,7 +67,7 @@
 /* Day Headers (Sun, Mon, Tue) */
 #calendar .fc-col-header-cell-cushion {
   font-size: 0.9rem;
-  font-weight: 600;
+
   color: #2c5282; /* Primary Blue */
   text-decoration: none;
   padding: 8px 4px;

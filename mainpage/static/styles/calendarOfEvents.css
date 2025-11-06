@@ -1,3 +1,8 @@
+/*
+ * CSS for Monthly Calendar of Activities
+ * (calendarOfEvents.css)
+ */
+
 /* --- Import Font --- */
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
 
@@ -11,13 +16,11 @@ button,
 table {
   font-family: "Rubik", sans-serif;
 }
-.fc .fc-daygrid-day.fc-day-today {
-  background-color: #87caee !important; /* Light blue highlight */
-}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem 2rem;
+  padding: 1.5rem 1.5rem 2rem; /* Added top padding */
 }
 
 /* --- SweetAlert (Add Schedule) Theming --- */
@@ -63,14 +66,10 @@ table {
   color: #2c5282;
   border-bottom: 1px solid #e0e0e0;
 }
-.modal-header .modal-title {
-  font-weight: 600;
-}
 .modal-body dl {
   margin-bottom: 0;
 }
 .modal-body dt {
-  font-weight: 600;
   color: #2c5282;
 }
 .modal-body dd {
@@ -112,6 +111,11 @@ table {
   border: 1px solid #e0e0e0;
   padding: 1.5rem;
   background: #ffffff;
+
+  /* --- MODIFICATION --- */
+  /* This makes the calendar smaller and centers it */
+  max-width: 800px; /* <--- Adjust this value as needed */
+  margin: 0 auto; /* <--- This centers the calendar */
 }
 
 /* --- Toolbar / Header --- */
@@ -155,7 +159,6 @@ table {
 .fc .fc-col-header-cell {
   background: #f9f9f9;
   font-size: 0.875rem;
-  font-weight: 600;
   color: #555;
   border: none;
 }
@@ -178,13 +181,14 @@ table {
 
 /* --- "Today" Cell Highlight --- */
 .fc .fc-day-today {
-  background-color: #ebf8ff; /* Light blue highlight */
+  /* Note: The user's provided CSS used !important, so we keep it */
+  background-color: #87caee !important; /* Light blue highlight */
 }
 
 /* --- "Other Month" Day Cells --- */
 .fc .fc-day-other {
   background: #fff;
-  border-color: #f1f1f1;
+  border-color: #f1f1ff;
 }
 
 /* --- Day Number (1, 2, 3) --- */

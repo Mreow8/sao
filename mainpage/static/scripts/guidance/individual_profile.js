@@ -34,13 +34,10 @@ $(document).ready(function () {
 
   var csrftoken = getCookie("csrftoken");
 
+  // --- (Search button AJAX, no changes) ---
   $("#searchButton").on("click", function (event) {
     event.preventDefault(); // Prevent default form submission behavior
-
-    // Get the entered ID number
     var idNumber = $("#studentIDBox").val();
-
-    // Send AJAX request to fetch student info
     $.ajax({
       url: "/search_student_info_for_individual_profile/",
       method: "POST",
@@ -51,11 +48,8 @@ $(document).ready(function () {
       success: function (response) {
         $("#info_table").removeClass("hidden");
         $("#individualProfileForm").removeClass("hidden");
-
         $("#student_id_val").val(response.student_id);
         $("#info_table tr").empty();
-
-        // Append new row with retrieved data
         $("#info_table").append(
           '<tr id="info_table_head">' +
             "<th>NAME</th>" +
@@ -94,6 +88,7 @@ $(document).ready(function () {
     });
   });
 
+  // --- (Dynamic row and field visibility logic, no changes) ---
   $("#addanother").on("click", function (event) {
     event.preventDefault();
     let newRow = `<tr class="sibllingsrowTemplate">
@@ -179,10 +174,10 @@ $(document).ready(function () {
                     </tr>`;
     $("#organizationTable").append(newRow);
   });
+
+  // --- (All other field visibility toggles, no changes) ---
   $("#id_sourceOfIncome").change(function (event) {
     let selectedValue = $(this).val();
-
-    console.log(selectedValue);
     if (
       selectedValue == "familyownedbusiness" ||
       selectedValue == "relatives"
@@ -196,8 +191,6 @@ $(document).ready(function () {
   });
   $("#id_studentType").change(function (event) {
     let selectedValue = $(this).val();
-
-    console.log(selectedValue);
     if (selectedValue == "newStudent") {
       $("#hs_curriculum").removeClass("hidden");
       $("#id_curriculumtype").attr("required", "required");
@@ -208,8 +201,6 @@ $(document).ready(function () {
   });
   $("#id_curriculumtype").change(function (event) {
     let selectedValue = $(this).val();
-
-    console.log(selectedValue);
     if (selectedValue == "seniorhigh") {
       $("#hs_track").removeClass("hidden");
       $("#id_track").attr("required", "required");
@@ -220,7 +211,6 @@ $(document).ready(function () {
   });
   $("#id_livingWith").change(function (event) {
     let selectedValue = $(this).val();
-
     if (selectedValue == "relative" || selectedValue == "others") {
       $("#living_specify").removeClass("hidden");
       $("#id_livingSpecify").attr("required", "required");
@@ -229,11 +219,8 @@ $(document).ready(function () {
       $("#id_livingSpecify").removeAttr("required", "required");
     }
   });
-
   $("#id_placeOfLiving").change(function (event) {
     let selectedValue = $(this).val();
-
-    console.log(selectedValue);
     if (selectedValue == "others") {
       $("#place_of_living_other").removeClass("hidden");
       $("#id_placeOfLivingOthers").attr("required", "required");
@@ -242,11 +229,8 @@ $(document).ready(function () {
       $("#id_placeOfLivingOthers").removeAttr("required", "required");
     }
   });
-
   $("#id_fatherOccupation").change(function (event) {
     let selectedValue = $(this).val();
-
-    console.log(selectedValue);
     if (selectedValue == "others") {
       $("#father_occupation_other").removeClass("hidden");
       $("#id_fatherOtherOccupation").attr("required", "required");
@@ -257,8 +241,6 @@ $(document).ready(function () {
   });
   $("#id_motherOccupation").change(function (event) {
     let selectedValue = $(this).val();
-
-    console.log(selectedValue);
     if (selectedValue == "others") {
       $("#mother_occupation_other").removeClass("hidden");
       $("#id_motherOtherOccupation").attr("required", "required");
@@ -277,11 +259,8 @@ $(document).ready(function () {
       $("#reasonOfLeaving").addClass("hidden");
     }
   });
-
   $("#id_finaciallySupporting").change(function (event) {
     let selectedValue = $(this).val();
-
-    console.log(selectedValue);
     if (selectedValue == "scholarship") {
       $("#scholarship").removeClass("hidden");
       $("#id_typeOfScholarship").attr("required", "required");
@@ -294,8 +273,6 @@ $(document).ready(function () {
   });
   $("#id_typeOfScholarship").change(function (event) {
     let selectedValue = $(this).val();
-
-    console.log(selectedValue);
     if (selectedValue == "organizations") {
       $("#specifyScholarShip").removeClass("hidden");
     } else {
@@ -323,46 +300,103 @@ $(document).ready(function () {
     }
   });
 
+  // --- (NEW CODE ADDED HERE) ---
+  // This function removes any non-numeric characters from the input
+  function enforceNumericOnly(event) {
+    var $this = $(this);
+    var value = $this.val();
+    var numericValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric chars
+
+    // Update the value only if it changed to prevent cursor jumping
+    if (value !== numericValue) {
+      $this.val(numericValue);
+    }
+  }
+
+  // Apply this function to all phone number fields on the 'input' event
+  $(
+    "#id_mobileNo, #id_fatherMobilePhone, #id_motherMobilePhone, #id_personInCaseofEmergencyMobileNo"
+  ).on("input", enforceNumericOnly);
+  // --- (END OF NEW CODE) ---
+
+  // --- VALIDATION FUNCTION (Unchanged) ---
   function validateFields(container) {
     var isValid = true;
-    var radioGroups = {};
+    var radioGroups = {}; // To track validity of all radio groups on the page
 
+    // Clear all previous errors on this page
+    container.find("input, select, textarea").each(function () {
+      $(this).removeClass("invalid-field");
+      $(this)
+        .closest(".field_container, .side-way, .yes_no_question_cotainer")
+        .removeClass("invalid-field");
+    });
+
+    // Find all required fields
     container.find("input, select, textarea").each(function () {
       var $this = $(this);
-      if ($this.prop("required")) {
-        if (!$this.val()) {
-          isValid = false;
-        } else if ($this.attr("type") === "email") {
-          var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-          if (!emailPattern.test($this.val())) {
-            isValid = false;
-          }
-        } else if ($this.attr("type") === "radio") {
-          var name = $this.attr("name");
+      var isRequired = $this.prop("required");
+      var isVisible = $this.is(":visible") || $this.attr("type") === "hidden";
+
+      if (!isVisible && $this.closest(".hidden").length > 0) {
+        isVisible = false;
+      } else {
+        isVisible = true;
+      }
+
+      if (!isRequired || !isVisible) {
+        if ($this.attr("type") === "radio") {
+          // Still need to track radio groups
+        } else {
+          return; // Skip non-required or hidden fields
+        }
+      }
+
+      // --- Validation Logic ---
+      if ($this.attr("type") === "radio") {
+        var name = $this.attr("name");
+        if (isRequired) {
           if (!(name in radioGroups)) {
-            radioGroups[name] = false;
-          }
-          if ($this.prop("checked")) {
-            radioGroups[name] = true;
+            radioGroups[name] =
+              container.find('input[type="radio"][name="' + name + '"]:checked')
+                .length > 0;
           }
         }
+      } else if ($this.attr("type") === "email") {
+        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!$this.val() || !emailPattern.test($this.val())) {
+          isValid = false;
+          $this.addClass("invalid-field");
+        }
+      } else if (!$this.val()) {
+        // General check for empty text, select, textarea, etc.
+        isValid = false;
+        $this.addClass("invalid-field");
       }
     });
 
-    Object.values(radioGroups).forEach(function (value) {
-      if (!value) {
+    // After checking all fields, process the radio groups for highlighting
+    Object.keys(radioGroups).forEach(function (name) {
+      if (!radioGroups[name]) {
         isValid = false;
+        container
+          .find('input[type="radio"][name="' + name + '"]')
+          .closest(".field_container, .side-way, .yes_no_question_cotainer")
+          .addClass("invalid-field");
       }
     });
 
     return isValid;
   }
 
+  // --- NEXT PAGE HANDLER (Unchanged) ---
   $(".nextpage").on("click", function () {
     let current = $(".current-page-activated");
     let next = current.next(".fill_out_container");
     let curret_page_counter = $(".current-fill-out");
     let next_page_counter = curret_page_counter.next(".page_viewer");
+
+    current.find(".validation-summary").remove();
 
     if (validateFields(current)) {
       current
@@ -375,8 +409,16 @@ $(document).ready(function () {
         next.removeClass("hidden").addClass("current-page-activated");
         current.removeClass("current-page-deactivated");
       }, 200);
+    } else {
+      var $errorMessage = $(
+        '<div class="validation-summary">Please correct all highlighted fields before proceeding.</div>'
+      );
+      current.prepend($errorMessage);
+      $errorMessage[0].scrollIntoView({ behavior: "smooth", block: "center" });
     }
   });
+
+  // --- (Previous Page handler, no changes) ---
   $(".prevPage").on("click", () => {
     let current = $(".current-page-activated");
     let prev = current.prev(".fill_out_container");

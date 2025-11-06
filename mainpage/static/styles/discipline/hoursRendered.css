@@ -128,7 +128,7 @@ hr {
 }
 .sub-title h3 {
   font-size: 24px;
-  font-weight: 600;
+
   color: #2b2b2b;
 }
 .sub-title p {
@@ -140,7 +140,7 @@ hr {
 }
 .certxt {
   margin-left: 5px;
-  color: #ff8000;
+  color: #2c5282;
   font-weight: 500;
 }
 
@@ -163,9 +163,9 @@ hr {
 }
 .case-container h2 {
   font-size: 20px;
-  font-weight: 600;
+
   margin-bottom: 18px;
-  color: #ff8000;
+  color: #2c5282;
 }
 .case-container ul {
   margin-bottom: 18px;
@@ -179,7 +179,7 @@ form {
   margin-top: 10px;
 }
 form button[type="submit"] {
-  background-color: #ff8000;
+  background-color: #2c5282;
   color: #fff;
   border: none;
   padding: 10px 24px;
@@ -212,8 +212,7 @@ table td {
 }
 table th {
   background: #f7f7f7;
-  color: #ff8000;
-  font-weight: 600;
+  color: #2c5282;
 }
 table td {
   color: #444;

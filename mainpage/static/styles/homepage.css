@@ -26,7 +26,7 @@ body {
 }
 .page-header h1 {
   font-size: 2.25rem;
-  font-weight: 600;
+
   color: #2a4365; /* Dark Theme Blue */
   margin: 0;
 }
@@ -63,7 +63,7 @@ body {
 }
 .tab.active {
   color: #ffffff;
-  font-weight: 600;
+
   background-color: #2c5282; /* Active tab has blue background */
   border-bottom-color: #2c5282;
 }
@@ -82,7 +82,7 @@ body {
 /* --- Content Headers & Text --- */
 .main-content-card h2 {
   font-size: 1.75rem;
-  font-weight: 600;
+
   color: #2a4365; /* Darker blue */
   margin-top: 0;
   margin-bottom: 1.5rem;
@@ -119,7 +119,7 @@ body {
 }
 .info-card h3 {
   font-size: 1.25rem;
-  font-weight: 600;
+
   color: #2c5282;
   margin-top: 0;
   margin-bottom: 0.5rem;
@@ -139,7 +139,7 @@ body {
 }
 .contact-callout h3 {
   font-size: 1.15rem;
-  font-weight: 600;
+
   color: #2a4365;
   margin-top: 0;
   margin-bottom: 1rem;
@@ -149,7 +149,6 @@ body {
   margin-bottom: 0.75rem;
 }
 .contact-callout strong {
-  font-weight: 600;
   color: #2c5282;
 }
 
@@ -202,7 +201,6 @@ body {
   margin-bottom: 0;
 }
 .accordion-content strong {
-  font-weight: 600;
   color: #333;
 }
 

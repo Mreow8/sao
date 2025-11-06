@@ -2,7 +2,60 @@
 {% block title %}OJT Assessments/Psychological Issuance Admin{% endblock %} 
 
 {% block headcontent %}
+<style>/* --- Action Buttons in Table --- */
 
+/* This styles the <div> holding the buttons */
+.horizontal {
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping if cell is narrow */
+  gap: 6px; /* Space between buttons */
+}
+
+/* This is a BASE style for all buttons in that div */
+.horizontal button {
+  padding: 8px 12px;
+  font-size: 0.8rem; /* Small but readable */
+  font-weight: 700;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Add a little "press" effect on click */
+.horizontal button:active {
+  transform: scale(0.96);
+}
+
+/* --- ACCEPT Button (Green) --- */
+.horizontal button.accept {
+  background-color: #28a745; /* Success Green */
+}
+
+.horizontal button.accept:hover {
+  background-color: #218838; /* Darker Green */
+}
+
+/* --- DECLINE Button (Red) --- */
+.horizontal button.decline {
+  background-color: #dc3545; /* Danger Red */
+}
+
+.horizontal button.decline:hover {
+  background-color: #c82333; /* Darker Red */
+}
+
+/* --- DELETE Button (Dark Gray) --- */
+.horizontal button.delete {
+  background-color: #6c757d; /* Neutral Dark Gray */
+}
+
+.horizontal button.delete:hover {
+  background-color: #5a6268; /* Darker Gray */
+}</style>
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"

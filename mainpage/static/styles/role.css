@@ -1,8 +1,32 @@
-/* --- Main Content Card --- */
+/*
+ * CSS for role.css (Assign Role to Users page)
+ */
+
+/* --- Import Font --- */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+/* --- Global, Container, & Font --- */
+body,
+.container,
+.sub-title,
+input,
+select,
+button,
+table {
+  font-family: "Rubik", sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
 .container {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
+  font-size: 14px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   max-width: 1200px; /* Constrain width for large screens */
@@ -10,137 +34,224 @@
   margin-right: auto;
 }
 
-/* --- Search Bar --- */
-#userSearch {
-  font-family: "Rubik", sans-serif;
+hr {
+  margin: 1.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+/* --- Filter & Search Controls --- */
+.filter-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-bar {
+  display: flex;
+  flex-grow: 1; /* Allows it to take up space */
+  min-width: 250px;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 8px 12px;
   font-size: 1rem;
-  padding: 10px 12px;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  max-width: 400px; /* Don't let it get too wide */
+  border-radius: 8px 0 0 8px;
+  border-right: none;
   background-color: #f9f9f9;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-#userSearch:focus {
-  outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
-  background-color: #fff;
-}
-
-/* --- Table Styles --- */
-.table-responsive {
-  width: 100%;
-  overflow-x: auto; /* Adds horizontal scroll on small screens */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-#userTable {
-  width: 100%;
-  min-width: 800px; /* Force scroll if content is too wide */
-  border-collapse: collapse;
-  border: none;
-}
-
-#userTable th,
-#userTable td {
-  border-bottom: 1px solid #ddd;
-  padding: 12px 15px;
-  text-align: left;
-  font-size: 14px;
-  vertical-align: middle; /* Align content vertically */
-}
-
-#userTable th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue */
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Remove bottom border from last row */
-#userTable tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* --- Form Elements in Table --- */
-.role-select,
-.org-dropdown select {
-  font-family: "Rubik", sans-serif;
-  font-size: 0.9rem;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  width: 100%;
-  max-width: 250px; /* Stop it from being too wide */
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.role-select:focus,
-.org-dropdown select:focus {
+.search-input:focus {
   outline: none;
   border-color: #2c5282;
+  background-color: #fff;
   box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
 }
 
-.org-dropdown {
+.search-btn {
+  padding: 0 12px;
+  border: 1px solid #2c5282;
+  background-color: #2c5282;
+  color: white;
+  cursor: pointer;
+  border-radius: 0 8px 8px 0;
+  transition: background-color 0.2s;
+}
+
+.search-btn:hover {
+  background-color: #2a4365;
+}
+
+.role-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 500;
+  white-space: nowrap; /* Prevents "Role:" from wrapping */
+}
+
+/* --- Table Wrapper --- */
+.table-responsive {
   width: 100%;
-  max-width: 250px;
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: #fff;
+}
+
+/* --- Main User Table --- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.table th,
+.table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+
+.table thead th {
+  background-color: #f9f9f9;
+  color: #2c5282;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background-color: #f7faff;
+}
+
+/* Sortable Header Links */
+.table thead th a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.table thead th:hover {
+  background-color: #f0f4f8;
+}
+
+/* --- In-Table Actions --- */
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap; /* For narrow cells */
+}
+
+.role-select {
+  min-width: 150px;
+  flex-grow: 1; /* Takes available space in the cell */
+}
+
+.org-dropdown {
+  margin-top: 0.75rem;
+}
+
+/* --- Generic Form/Button Styles (Bootstrap-like) --- */
+.form-select {
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  background-color: #fff;
+}
+
+.form-select-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.2rem;
+}
+
+.btn {
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.2rem;
 }
 
 .btn-primary {
-  font-family: "Rubik", sans-serif;
-  background-color: #2c5282; /* Primary Blue */
+  background-color: #2c5282;
+  border-color: #2c5282;
   color: white;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 6px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.btn-primary:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-1px);
-}
-
-/* --- Alert / Messages --- */
-.alert-info {
-  background-color: #ebf8ff; /* Light blue */
-  border: 1px solid #bee3f8;
-  border-left: 5px solid #2c5282; /* Accent border */
-  border-radius: 8px;
-  padding: 1.5rem;
-  color: #2b6cb0;
   font-weight: 500;
 }
 
-.alert-info p {
-  margin: 0;
+.btn-primary:hover {
+  background-color: #2a4365;
+  border-color: #2a4365;
 }
 
-/* --- Responsive Adjustments --- */
+/* --- Pagination --- */
+.pagination {
+  margin-top: 2rem;
+  flex-wrap: wrap; /* Allow wrapping on mobile */
+}
+
+.page-item {
+  margin: 0 2px;
+}
+
+.page-link {
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  color: #2c5282;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.page-item.disabled .page-link {
+  color: #6c757d;
+  background-color: #f9f9f9;
+  border-color: #ddd;
+}
+
+.page-item:not(.disabled) .page-link:hover {
+  background-color: #ebf8ff;
+  border-color: #2c5282;
+}
+
+/* --- Responsive --- */
 @media (max-width: 768px) {
-  .container {
-    padding: 1.5rem;
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch; /* Make children full-width */
   }
-
-  #userSearch {
-    max-width: 100%; /* Full width on mobile */
+  .search-bar {
+    width: 100%;
   }
-
-  /* Reduce padding on mobile for table cells */
-  #userTable th,
-  #userTable td {
-    padding: 10px;
+  .role-filter-group {
+    width: 100%;
+  }
+  .role-filter-group .form-select {
+    flex-grow: 1; /* Make select fill remaining space */
   }
 }

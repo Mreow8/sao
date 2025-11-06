@@ -45,7 +45,7 @@ table {
 }
 .tab.active {
   color: #ffffff;
-  font-weight: 600;
+
   background-color: #2c5282; /* Active tab has blue background */
   border-bottom-color: #2c5282;
 }
@@ -65,7 +65,7 @@ table {
 .guidance-form h2,
 .maincontain h2 {
   font-size: 1.5rem; /* 24px */
-  font-weight: 600;
+
   color: #333;
   margin-top: 0;
   margin-bottom: 2rem;
@@ -149,7 +149,7 @@ table {
   background-color: #2c5282; /* Primary Blue */
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 12px 24px;
   border: none;
   border-radius: 8px; /* Override inline 5px */
@@ -193,7 +193,7 @@ table td {
 table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }

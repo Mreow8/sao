@@ -206,7 +206,34 @@ class CommunityServiceTracker(models.Model):
     def __str__(self):
         student = getattr(self.case, 'student', None)
         return f"{student} - {self.service_date}"
+    def get_duration(self):
+        """Calculates the duration in hours and minutes."""
+        if not self.time_in or not self.time_out:
+            return 0, 0
+        
+        try:
+            # Combine with a dummy date to create datetime objects
+            today = date.today()
+            datetime_in = datetime.combine(today, self.time_in)
+            datetime_out = datetime.combine(today, self.time_out)
+            
+            # Handle overnight or invalid times
+            if datetime_out <= datetime_in:
+                return 0, 0
+                
+            delta = datetime_out - datetime_in
+            total_minutes = delta.total_seconds() / 60
+            hours = int(total_minutes // 60)
+            minutes = int(total_minutes % 60)
+            return hours, minutes
+        except Exception:
+            # Catch any errors (e.g., invalid time format)
+            return 0, 0
 
+    def get_duration_str(self):
+       
+        hours, minutes = self.get_duration()
+        return f"{hours}h {minutes}m"
 
 # class CommunityServiceTracker(models.Model):
 #     student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)

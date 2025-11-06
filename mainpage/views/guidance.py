@@ -413,9 +413,12 @@ def counseling_app_admin_view(request):
     
     # 1. Get parameters from URL
     search_query = request.GET.get('search', None)
-    sort_by = request.GET.get('sort', '-sort_date') # Default sort by the new common date field
+    sort_by = request.GET.get('sort', '-sort_date') # Default sort
+    
+    # --- NEW: Get the status filter parameter ---
+    status_filter = request.GET.get('status_filter') # e.g., 'Pending', 'Accepted'
 
-    # --- Define a common set of fields for the UNION ---
+    # --- Define a common set of fields ---
     # These are the new field names we will use in the template
     common_fields = [
         'student_studID', 'student_lastname', 'student_firstname', 
@@ -424,7 +427,7 @@ def counseling_app_admin_view(request):
         'display_status', 'item_type', 'item_pk'
     ]
 
-    # 2. Get Counseling Schedules (from student requests)
+    # 2. Get Counseling Schedules (from student requests OR admin-created)
     counseling_requests = counseling_schedule.objects.select_related('studentID').annotate(
         student_studID=F('studentID__studID'),
         student_lastname=F('studentID__lastname'),
@@ -432,35 +435,21 @@ def counseling_app_admin_view(request):
         student_degree=F('studentID__degree'),
         student_yearlvl=F('studentID__yearlvl'),
         student_contact=F('studentID__contact'),
-        sort_date=F('dateRecieved'),          # Used for sorting by "Date Received"
-        display_date=F('scheduled_date'),     # The actual meeting date to show
-        display_time=F('scheduled_time'),     # The meeting time to show
+        sort_date=F('dateRecieved'),          # Used for sorting
+        display_date=F('scheduled_date'),     # The actual meeting date
+        display_time=F('scheduled_time'),     # The meeting time
         display_reason=F('reason'),
         display_status=F('status'),
         item_type=Value('counseling', output_field=CharField()), # Identifier
         item_pk=F('counselingID')             # Primary Key
-    ).values(*common_fields).order_by() # <-- Fix for DatabaseError
+    ).values(*common_fields).order_by() # <-- .order_by() is correct
 
-    # 3. Get Case Profiles where action is 'Counseling' (from discipline)
-    case_profiles = CaseProfile.objects.filter(action_taken='Counseling').select_related('student').annotate(
-        # Create matching common field names
-        student_studID=F('student__studID'),
-        student_lastname=F('student__lastname'),
-        student_firstname=F('student__firstname'),
-        student_degree=F('student__degree'),
-        student_yearlvl=F('student__yearlvl'),
-        student_contact=F('student__contact'),
-        sort_date=F('date_reported'),         # Used for sorting by "Date Received"
-        display_date=F('date_reported'),      # No meeting date, so show report date
-        display_time=Value(None, output_field=CharField()), # No time
-        display_reason=F('offense_type'),     # Use offense as the "reason"
-        display_status=F('status'),
-        item_type=Value('case', output_field=CharField()), # Identifier
-        item_pk=F('id')                       # Primary Key
-    ).values(*common_fields).order_by() # <-- Fix for DatabaseError
+    # 4. Use counseling_requests as the main list (NO UNION)
+    combined_list = counseling_requests
 
-    # 4. Combine the two QuerySets
-    combined_list = counseling_requests.union(case_profiles)
+    # --- NEW: Apply Status Filter (if one was provided) ---
+    if status_filter:
+        combined_list = combined_list.filter(display_status=status_filter)
 
     # 5. Apply Search Filter
     if search_query:
@@ -470,7 +459,7 @@ def counseling_app_admin_view(request):
             Q(student_firstname__icontains=search_query)
         )
         
-    # 6. Apply Sorting (AFTER the union)
+    # 6. Apply Sorting
     valid_sort_map = {
         'dateRecieved': 'sort_date',
         '-dateRecieved': '-sort_date',
@@ -478,8 +467,7 @@ def counseling_app_admin_view(request):
         '-studentID__lastname': '-student_lastname',
         'scheduled_date': 'display_date',
         '-scheduled_date': '-display_date',
-        'status': 'display_status',
-        '-status': '-display_status',
+        # 'status' is no longer a sort field
     }
     
     sort_field = valid_sort_map.get(sort_by, '-sort_date') 
@@ -509,12 +497,21 @@ def counseling_app_admin_view(request):
     }
 
     # 8. Build Context
+    # In guidance.py, inside the counseling_app_admin_view function:
+
+    # 8. Build Context
     context = {
         'page_obj': page_obj,
         'time': time,
         'page': 'counseling_app_admin',
         'user': request.user,
         'current_sort': sort_by,
+        
+        # --- NEW: Pass the filter back to the template ---
+        'current_status_filter': status_filter,
+        
+        # --- ADD THIS LINE ---
+        'current_search': search_query,
     }
     
     return render(request, 'guidance/counseling_app_admin_view.html', context)
@@ -615,16 +612,21 @@ def print_exit_interview(request, request_id): # <-- 1. Accept the 'request_id' 
         'interview': interview
     }
     return render(request, 'guidance/print_exit.html', context)
+
+
+# In guidance.py
+
 def exit_interview_admin_view(request):
-    
-    # --- GET Logic (To display the data) ---
     
     # 1. Get parameters from URL
     search_query = request.GET.get('search', None)
     
+    # --- ADD THIS LINE ---
+    status_filter = request.GET.get('status_filter', None) # Get the new filter
+    
     # [FIX] Get 'sort' and 'order' separately
-    sort_by = request.GET.get('sort', 'dateRecieved') # Default field to sort by
-    order = request.GET.get('order', 'desc')         # Default order (descending for newest first)
+    sort_by = request.GET.get('sort', 'dateRecieved') 
+    order = request.GET.get('order', 'desc')         
 
     # 2. Start with base query
     exit_list = exit_interview_db.objects.select_related('studentID').all()
@@ -637,24 +639,29 @@ def exit_interview_admin_view(request):
             Q(studentID__firstname__icontains=search_query)
         )
 
+    # --- ADD THIS BLOCK ---
+    # Apply Status Filter
+    if status_filter:
+        exit_list = exit_list.filter(status=status_filter)
+    # --- END OF NEW BLOCK ---
+
     # 4. Apply Sorting
     valid_sort_map = {
         'dateRecieved': 'dateRecieved',
         'studentID__studID': 'studentID__studID',
         'studentID__lastname': 'studentID__lastname',
-        'status': 'status',
+        # 'status': 'status', # <-- You were right to remove this!
     }
     
     sort_field = valid_sort_map.get(sort_by, 'dateRecieved')
     
-    # [FIX] Add '-' prefix if order is descending
     if order == 'desc':
         sort_field = f"-{sort_field}"
         
     exit_list = exit_list.order_by(sort_field)
         
-    # 5. Apply Pagination
-    paginator = Paginator(exit_list, 10) # 10 items per page
+    # 5. Apply Pagination (No changes needed here)
+    paginator = Paginator(exit_list, 10) 
     page_number = request.GET.get('page')
     
     try:
@@ -670,12 +677,15 @@ def exit_interview_admin_view(request):
         'user': request.user, 
         'page': 'exit_interview_admin',
         
-        # [NEW] Pass sort/order info back to the template
-        'current_sort': sort_by,  # e.g., 'dateRecieved'
-        'current_order': order,   # e.g., 'desc'
+        'current_sort': sort_by,
+        'current_order': order,
         
-        # Pass search query back to all links
-        'search_params': f"&search={search_query}" if search_query else ""
+        # --- UPDATE THESE LINES ---
+        'current_search': search_query, # Pass the raw search query
+        'current_status_filter': status_filter, # Pass the new filter
+        
+        # 'search_params' is no longer needed if we build it in the template
+        # 'search_params': f"&search={search_query}" if search_query else ""
     }
     
     return render(request, 'guidance/exit_interview_admin.html', context)

@@ -52,7 +52,7 @@ table td {
 table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -86,7 +86,7 @@ th.sortable a.sorted.desc::after {
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 12px;
-  font-weight: 600;
+
   color: white;
   text-transform: uppercase;
 }
@@ -105,7 +105,7 @@ th.sortable a.sorted.desc::after {
 /* Action Links (Themed, replaces inline styles) */
 td a {
   text-decoration: none;
-  font-weight: 600;
+
   transition: text-decoration 0.2s;
 }
 td a:hover {

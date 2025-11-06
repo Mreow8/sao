@@ -50,7 +50,7 @@ body {
 }
 .tab.active {
   color: #ffffff;
-  font-weight: 600;
+
   background-color: #2c5282; /* Active tab has blue background */
   border-bottom-color: #2c5282;
 }
@@ -67,7 +67,7 @@ body {
 /* --- Project Form Styles --- */
 form .hd {
   font-size: 1.5rem; /* 24px */
-  font-weight: 600;
+
   margin-bottom: 1.5rem;
   color: #333;
 }
@@ -114,7 +114,7 @@ form .maincontain {
 /* --- Form Input Styling (from requestgmc.css) --- */
 .form-group label {
   font-size: 0.95rem;
-  font-weight: 600;
+
   color: #333;
 }
 
@@ -147,7 +147,7 @@ form .maincontain {
 
 .form-group input[type="file"]::file-selector-button {
   font-family: "Rubik", sans-serif;
-  font-weight: 600;
+
   padding: 4px 10px;
   border: none;
   border-radius: 6px;
@@ -181,7 +181,7 @@ form .maincontain {
   background-color: #2c5282; /* Primary Blue */
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
@@ -223,7 +223,7 @@ form .maincontain {
 .maincontain th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }

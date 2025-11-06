@@ -21,6 +21,7 @@ body {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
+  font-size: 14px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   margin-top: 2rem;
@@ -29,13 +30,66 @@ body {
 /* --- Generic Form Element Styles --- */
 .form-container label {
   display: block;
-  font-weight: 600;
+
   color: #2c5282; /* Primary Blue */
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
   font-size: 1rem;
 }
+/* --- Search Bar Styling (for intake_interview.html) --- */
 
+/* 1. The main container for the search input and button */
+#search_id {
+  display: flex; /* Aligns input and button side-by-side */
+  width: 100%;
+  max-width: 500px; /* Set a max width for the search bar */
+  margin-bottom: 1.5rem; /* Space below the search bar */
+}
+
+/* 2. The search text input */
+#studentIDBox {
+  flex-grow: 1; /* Allows the input to take up remaining space */
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 8px 0 0 8px; /* Rounded corners on the left */
+  border-right: none; /* The button's border will act as the right border */
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+/* 3. Style for when the user clicks into the search box */
+#studentIDBox:focus {
+  border-color: #f39c12; /* Highlight color (orange) */
+  box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
+}
+
+/* 4. The search button */
+#searchButton {
+  /* This assumes .OrangeButton is defined elsewhere, but we can style it here */
+  background-color: #f39c12; /* A nice orange color */
+  border: 2px solid #f39c12;
+  color: white;
+  padding: 0 15px; /* Padding for the icon */
+  cursor: pointer;
+  border-radius: 0 8px 8px 0; /* Rounded corners on the right */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+/* 5. Darker shade when hovering over the button */
+#searchButton:hover {
+  background-color: #e67e22;
+  border-color: #e67e22;
+}
+
+/* 6. Style the SVG icon inside the button */
+#searchButton svg {
+  width: 18px; /* Make icon slightly larger */
+  height: 18px;
+}
 /* Style all Django Form Inputs */
 .form-container input[type="text"],
 .form-container input[type="email"],
@@ -74,7 +128,7 @@ body {
 /* --- Form Structure & Sections --- */
 .questions h2 {
   font-size: 1.5rem;
-  font-weight: 600;
+
   color: #333;
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 0.5rem;
@@ -132,7 +186,7 @@ body {
 #info_table th {
   background-color: #f9f9f9;
   color: #2c5282; /* Primary Blue */
-  font-weight: 600;
+
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -180,7 +234,7 @@ table.table td {
 table.table th {
   background-color: #f9f9f9;
   color: #2c5282;
-  font-weight: 600;
+
   text-transform: uppercase;
 }
 
@@ -220,7 +274,7 @@ table.table input[type="number"]:focus {
   background-color: #2c5282; /* Primary Blue */
   color: white;
   font-size: 1rem;
-  font-weight: 600;
+
   padding: 10px 24px;
   border: none;
   border-radius: 8px;
@@ -293,7 +347,7 @@ table.table input[type="number"]:focus {
     position: absolute;
     left: 16px;
     top: 12px;
-    font-weight: 600;
+
     color: #2c5282; /* Primary Blue */
     white-space: nowrap;
   }
@@ -321,7 +375,7 @@ table.table input[type="number"]:focus {
 .alert-warning .alert-heading {
   /* h4 */
   font-size: 1.25rem;
-  font-weight: 600;
+
   color: #2b6cb0; /* Darker blue text */
   margin-top: 0;
   margin-bottom: 1rem;
