@@ -1,3 +1,45 @@
+from functools import wraps
+from django.shortcuts import redirect
+from django.contrib import messages
+from mainpage.models import studentInfo
+from mainpage.models.alumni import graduateForm # <-- Import graduateForm
+
+def tracer_gatekeeper_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login') 
+
+        try:
+            student = studentInfo.objects.get(studID=request.user.username)
+        except studentInfo.DoesNotExist:
+            messages.error(request, 'Your user account is not linked to a student profile.')
+            return redirect('homepage') 
+
+        try:
+            form = graduateForm.objects.get(student=student)
+            
+            if form.approval_status == 'Accepted':
+                return view_func(request, *args, **kwargs)
+            
+            if request.resolver_match.url_name == 'graduateTracer':
+                return view_func(request, *args, **kwargs)
+
+            if form.approval_status == 'Pending':
+                messages.warning(request, 'Your tracer form is still pending approval. Please check back later.')
+            elif form.approval_status == 'Declined':
+                messages.error(request, 'Your tracer form submission was declined. Please contact an administrator.')
+            
+            return redirect('graduateTracer') 
+
+        except graduateForm.DoesNotExist:
+            if request.resolver_match.url_name == 'graduateTracer':
+                return view_func(request, *args, **kwargs)
+            
+            messages.warning(request, 'You must complete the Graduate Tracer form to access any alumni features.')
+            return redirect('graduateTracer')
+        
+    return _wrapped_view
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
 

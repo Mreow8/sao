@@ -7,7 +7,7 @@ from django.db.models import Avg
 import socket
 from mainpage.models import studentInfo
 from mainpage.models.alumni import Alumni, graduateForm, Event, JobFair, Yearbook
-from ..decorators import sao_admin_required, alumni_required 
+from ..decorators import sao_admin_required, tracer_gatekeeper_required
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -94,7 +94,7 @@ def update_form_status(request, pk):
     Handles the Accept/Decline/Pending button clicks from the modal.
     """
     if request.method == 'POST':
-        form_to_update = get_object_or_404(graduateForm, alumniID_id=pk)
+        form_to_update = get_object_or_404(graduateForm, pk=pk)
         new_status = request.POST.get('status')
 
         if new_status in ['Accepted', 'Declined', 'Pending']:
@@ -107,7 +107,10 @@ def update_form_status(request, pk):
     # IMPORTANT: Redirects back to the main LIST page
     return redirect('admin_tracer_list')
 from datetime import date
-@alumni_required  # <-- ADD THIS
+from datetime import date # Make sure this import is at the top of your file
+
+@login_required
+@tracer_gatekeeper_required
 def idRequest(request):
     user = request.user
     student = None
@@ -115,23 +118,28 @@ def idRequest(request):
 
     if user.is_authenticated:
         try:
+            # 1. Get the student profile
             student = studentInfo.objects.get(studID=user.username)
             
-            # ALL THE CHECKS ARE GONE. The decorator handles them.
-            
-            alumni, created = Alumni.objects.get_or_create(student=student)
-            
+            # 2. Try to get their existing alumni record
+            try:
+                alumni = Alumni.objects.get(student=student)
+            except Alumni.DoesNotExist:
+                alumni = None # This is fine, it just means they haven't submitted the ID form yet
+
         except studentInfo.DoesNotExist:
+            # This 'except' matches the first 'try'
             student = None
             messages.error(request, 'Your user account is not linked to a student profile.')
             return redirect('homepage') 
 
+    # --- This code is for your form's date validation ---
     today = date.today()
     sixteen_years_ago = date(today.year - 16, today.month, today.day)
 
     context = {
         'student': student,
-        'alumni': alumni, 
+        'alumni': alumni, # This will be None or the existing Alumni object
         'today': today,
         'sixteen_years_ago': sixteen_years_ago,
     }
@@ -157,6 +165,7 @@ def search_id(request):
         return render(request, 'alumni/users/id_alumni.html')
     
 @login_required
+@tracer_gatekeeper_required
 def add_alumni(request):
     if request.method == 'POST':
         student_id = request.POST.get('student_id')
@@ -193,8 +202,7 @@ def add_alumni(request):
     else:
         return redirect('idRequest')
     
-
-@alumni_required  # <-- ADD THIS
+@tracer_gatekeeper_required
 @login_required
 def graduateTracer(request):
     # No login check needed.
@@ -205,20 +213,22 @@ def graduateTracer(request):
         
         # ALL THE CHECKS ARE GONE.
  
-        alumni_obj, created = Alumni.objects.get_or_create(student=student)
+        
 
-        existing_form = graduateForm.objects.filter(alumniID=alumni_obj).first()
+        # In graduateTracer(request):
+
+        existing_form = graduateForm.objects.filter(student=student).first()
         
         if existing_form:
             return render(request, 'alumni/users/graduateTracer.html', {
-                'alumni': alumni_obj,
+                'student': student,  # <--- FIX
                 'student_id': student_id,
                 'already_submitted': True,
                 'submitted_form': existing_form,
             })
         
         return render(request, 'alumni/users/graduateTracer.html', {
-            'alumni': alumni_obj,
+            'student': student,  # <--- FIX
             'student_id': student_id,
             'already_submitted': False,
         })
@@ -260,8 +270,6 @@ def search_id2(request):
     except Exception as e:
         messages.error(request, f'An error occurred: {str(e)}')
         return render(request, 'alumni/users/graduateTracer.html')
-    
-@alumni_required
 @login_required
 def graduateTracer_submit(request):
     if request.method == 'POST':
@@ -336,20 +344,13 @@ def graduateTracer_submit(request):
             messages.error(request, 'Student ID not found.')
             return redirect('graduateTracer')
 
-        try:
-            # Alumni record already exists due to the decorator, so we fetch it.
-            alumni = get_object_or_404(Alumni, student=student)
-        except:
-            messages.error(request, 'No Alumni matches the given query.')
-            return redirect('graduateTracer')
-            
-        existing_form = graduateForm.objects.filter(alumniID=alumni).first()
+        # This is the only check you need.
+        existing_form = graduateForm.objects.filter(student=student).first()
         if existing_form:
-            messages.error(request, f"A graduate tracer form already exists for Alumni ID {alumni.alumniID}.")
+            messages.error(request, "You have already submitted the graduate tracer form.")
             return redirect('graduateTracer')
             
-        # --- Create Graduate Form (No Change) ---
-        gradform = graduateForm.objects.create( alumniID=alumni,student=student,
+        gradform = graduateForm.objects.create( student=student,
                                     degree=degree,
                                     email_add=email_add,
                                     contactnum=contactnum,
@@ -407,6 +408,7 @@ def graduateTracer_submit(request):
                                     meetingprofessionalneeds=meetingprofessionalneeds,
                                     salaryimprovement=salaryimprovement,
                                     opportunitiesabroad=opportunitiesabroad,
+                                    approval_status='Pending',
                                     personalitydevelopment=personalitydevelopment,
                                     technologiesvaluesformation=technologiesvaluesformation,
                                     
@@ -419,7 +421,7 @@ def graduateTracer_submit(request):
         return redirect('graduateTracer')
     else:
         return redirect('graduateTracer')
-@alumni_required
+@tracer_gatekeeper_required
 @login_required
 def alumni_events(request):
     events = Event.objects.all()    
@@ -428,8 +430,6 @@ def alumni_events(request):
 def alumni_events_admin(request):
     events = Event.objects.all()    
     return render(request, 'alumni/users/alumni_events_admin.html', {'events': events})    
-
-@alumni_required
 def jobfairs(request):
     job_fairs = JobFair.objects.order_by('-posted_date')
     return render(request, 'alumni/users/jobfairs.html', {'job_fairs': job_fairs})
@@ -588,7 +588,7 @@ def claim_alumni_id(request, alumni_id):
 # @sao_admin_required
 @login_required
 def admin_gradTracer(request):
-    graduate_requests = graduateForm.objects.select_related('alumniID').all()
+    graduate_requests = graduateForm.objects.select_related('student').all()
     return render(request, 'alumni/users/admin_gradTracer.html', {'graduate_requests': graduate_requests})
 # @sao_admin_required
 from ..forms import EventForm

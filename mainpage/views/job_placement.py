@@ -139,7 +139,7 @@ def ojt_requiremets_download(request):
     return render(request, 'jobplacement/ojt_download_page.html', context)
 
 def ojt_assign_student(request):
-    # --- Access control ---
+    base_template = "adminmain.html" if (request.user.role != 'student' or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard') else "main.html"    # --- Access control ---
     if not (request.user.role != 'student' or request.user.is_superuser):
         messages.info(request, 'Must be staff/admin to access page')
         return redirect('admin_login')
@@ -287,7 +287,7 @@ def ojt_assign_student(request):
                     print(new_ojt_form.errors)
                     messages.error(request, f"Failed to assign student: Invalid form data. {new_ojt_form.errors.as_text()}")
                 return redirect('ojt_hiring')
-                base_template = "adminmain.html" if (request.user.role != 'student' or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard') else "main.html"
+                
                 context = {
                     'form': OjtHiringForm(),
                     'assign_form': new_ojt_form,

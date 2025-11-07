@@ -34,7 +34,7 @@ class CustomUser(AbstractUser):
         ('alumni_officer', 'Alumni Officer'),
         ('student_life_staff', 'Student Life Staff'),
     ]
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
     organization = models.ForeignKey(Organization, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):

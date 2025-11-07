@@ -5,7 +5,6 @@ class Alumni(models.Model):
     
     student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
     alumniID = models.AutoField(primary_key=True)
-
     alumnidate = models.DateField(null=True, blank=True)
     alumnibirthday = models.DateField(null=True, blank=True)
     alumnicontact = models.CharField(max_length=15, null=True, blank=True)
@@ -27,8 +26,9 @@ class Alumni(models.Model):
 
         
 class graduateForm(models.Model):
-    alumniID = models.OneToOneField(Alumni, on_delete=models.CASCADE, primary_key=True)
-    student = models.ForeignKey(studentInfo, on_delete=models.CASCADE, default=0)
+    graduateID = models.AutoField(primary_key=True)
+
+    student = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
     organizationType = models.CharField(max_length=100, null=True, blank=True)
     firstname = models.CharField(max_length=100, null=False)
     lastname = models.CharField(max_length=100, null=False)

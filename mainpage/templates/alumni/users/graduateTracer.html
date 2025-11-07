@@ -124,6 +124,176 @@
   height: 1px;
   background-color: #bee3f8;
 }
+
+/* --- REFACTORED STYLES --- */
+.tracer-form-main { 
+    width: 100%; 
+    height: auto; 
+    background-color: white; 
+}
+.detail-item-label { 
+    font-size: 10px; 
+    text-transform: uppercase; 
+    color: #6b7280; 
+    margin-bottom: 4px; 
+}
+.detail-item-value { 
+    font-size: 17px; 
+    color: #0f172a; 
+    font-weight: 500; 
+}
+
+.already-submitted-box { 
+    background-color: #e9fbf0; 
+    color: #065f46; 
+    padding: 24px; 
+    border-radius: 12px; 
+    border: 1px solid #a7f3d0; 
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); 
+}
+.already-submitted-box-title { 
+    font-size: 20px; 
+    margin-bottom: 8px; 
+}
+.already-submitted-box-footer { 
+    margin-top: 8px; 
+    font-size: 14px; 
+    color: #4b5563; 
+}
+
+.form-section-title { 
+    font-size: 26px; 
+    font-weight: bold; 
+    margin-bottom: 20px; 
+}
+.form-subsection-title { 
+    font-size: 19px; 
+    font-weight: bold; 
+    margin-bottom: 15px; 
+}
+
+.form-input-wrapper { 
+    width: 100%; 
+}
+.form-label { 
+    font-size: 14px; 
+    color: #4b5563; 
+    margin-bottom: 8px; 
+}
+.form-label-simple { 
+    font-size: 14px; 
+    margin-bottom: 8px; 
+}
+.form-label-italic { 
+    font-size: 13px; 
+    font-weight: bold; 
+    font-style: italic; 
+    margin-bottom: 8px; 
+}
+.form-label-bold-italic { 
+    font-size: 14px; 
+    font-weight: bold; 
+    font-style: italic; 
+    margin-bottom: 8px; 
+}
+.form-label-bold { 
+    font-size: 14px; 
+    font-weight: bold; 
+    margin-bottom: 8px; 
+}
+.form-label-block { 
+    display: block; 
+    font-size: 14px; 
+    font-weight: 500; 
+    color: #374151; 
+}
+
+.option-placeholder { 
+    color: #9ca3af; 
+}
+
+/* --- Base Input/Textarea Styles --- */
+.tracer-form-input {
+    background-color: #f3f4f6; 
+    border: 1px solid #d1d5db; 
+    height: 49px; 
+    padding: 8px; 
+    border-radius: 4px; 
+    outline: none;
+}
+.tracer-form-textarea {
+    background-color: #f3f4f6; 
+    border: 1px solid #d1d5db; 
+    width: 800px; 
+    height: 300px; 
+    padding: 20px; 
+    border-radius: 4px; 
+    outline: none;
+}
+
+/* --- Width Utilities --- */
+.w-full { width: 100%; }
+.w-456 { width: 456px; }
+.w-204 { width: 204px; }
+.w-203 { width: 203px; }
+
+/* Text Area Wrappers */
+.textarea-wrapper { 
+    width: 100%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+}
+.textarea-inner-wrap { 
+    display: flex; 
+}
+
+/* Toggle Select */
+.tracer-select-toggle {
+    margin-top: 4px; 
+    display: block; 
+    width: 100%; 
+    padding: 8px 16px; 
+    border: 1px solid #d1d5db; 
+    border-radius: 12px; 
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+    outline: none;
+}
+
+/* JS Target */
+#studyDetailsContainer { 
+    margin-top: 16px; 
+    display: none; 
+}
+
+/* Button */
+.submit-button { 
+    background-color: #2563eb; 
+    padding: 12px; 
+    color: white; 
+    width: 150px; 
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer; 
+}
+
+/* Fallback */
+.fallback-text { 
+    text-align: center; 
+    padding: 20px; 
+}
+
+/* Layout Utilities */
+.mt-20 { margin-top: 20px; }
+.mb-15 { margin-bottom: 15px; }
+.mb-20 { margin-bottom: 20px; }
+.align-start { align-items: flex-start; }
+
+/* Width wrappers (for parent divs) */
+.wrapper-w204 { width: 204px; }
+.wrapper-w203 { width: 203px; }
+.wrapper-w230 { width: 230px; }
+/* --- END REFACTORED STYLES --- */
 </style>
 <div class="container">
     {% if already_submitted %}
@@ -135,10 +305,7 @@
             Thank you for submitting your graduate tracer form. 
             Your submission is now **pending approval** from an administrator.
         </p>
-        <hr>
-        <p class="mb-0">
-            You cannot edit your form at this time. Please check back later.
-        </p>
+        
     </div>
 </div>
         {% elif submitted_form.approval_status == 'Accepted' %}
@@ -172,7 +339,7 @@
     <div class="alumni-page">
         <div class="alumni-content">
 
-            <form style="width: 100%; height: auto; background-color: white;" method="post" action="{% url 'graduateTracer_submit' %}">
+            <form class="tracer-form-main" method="post" action="{% url 'graduateTracer_submit' %}">
                 {% csrf_token %}
                 <div class="alumni-form-wrapper">
 
@@ -180,84 +347,84 @@
 
                     <div class="form-section-wrapper">
                         <div class="sub-title">
-                            <h3 style="font-size: 24px; font-weight: bold;">Alumni</h3>
-                            <p class="hometext" style="display: inline;">Home</p>
-                            <p class="certxt" style="display: inline;">&gt; Graduates Form</p>
+                            <h3>Alumni</h3>
+                            <p class="hometext" >Home</p>
+                            <p class="certxt">&gt; Graduates Form</p>
                         </div>
 <hr>
 
-                        {% if alumni %}
+                        {% if student %}
                         <div class="alumni-details-header">
                             
                             <div class="detail-item">
-                                <p style="font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Student ID</p>
-                                <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.student.studID }}</p>
+                                <p class="detail-item-label">Student ID</p>
+                                <p class="detail-item-value">{{ student.studID }}</p>
                             </div>
 
                             <div class="detail-item">
-                                <p style="font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">First Name</p>
-                            <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.student.firstname }}</p>
+                                <p class="detail-item-label">First Name</p>
+                            <p class="detail-item-value">{{ student.firstname }}</p>
                             </div>
 
                             <div class="detail-item">
-                                <p style="font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Last Name</p>
-                                <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.student.lastname }}</p>
+                                <p class="detail-item-label">Last Name</p>
+                                <p class="detail-item-value">{{ student.lastname }}</p>
                             </div>
 
                             <div class="detail-item">
-                                <p style="font-size: 10px; text-transform: uppercase; color: #6b7280; margin-bottom: 4px;">Degree</p>
-                                <p style="font-size: 17px; color: #0f172a; font-weight: 500;">{{ alumni.student.degree }}</p>
+                                <p class="detail-item-label">Degree</p>
+                                <p class="detail-item-value">{{ student.degree }}</p>
                             </div>
                         </div>
                         
                         {% if already_submitted %}
-                            <div style="background-color: #e9fbf0; color: #065f46; padding: 24px; border-radius: 12px; border: 1px solid #a7f3d0; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);">
-                                <h2 style="font-size: 20px;  margin-bottom: 8px;">✅ Already Submitted</h2>
+                            <div class="already-submitted-box">
+                                <h2 class="already-submitted-box-title">✅ Already Submitted</h2>
                                 <p>You have already submitted the Graduate Tracer Form.</p>
-                                <p style="margin-top: 8px; font-size: 14px; color: #4b5563;">If you need to update your submission, please contact the alumni office.</p>
+                                <p class="already-submitted-box-footer">If you need to update your submission, please contact the alumni office.</p>
                             </div>
                         {% else %}
-                            <input type="hidden" name="student_id" value="{{ alumni.student.studID }}" />
-                            <input type="hidden" name="firstname" value="{{ alumni.firstname }}" />
-                            <input type="hidden" name="lastname" value="{{ alumni.lastname }}" />
-                            <input type="hidden" name="degree" value="{{ alumni.degree }}" />
-                            <input type="hidden" name="sex" value="{{ alumni.sex }}" />
-                            <input type="hidden" name="email_add" value="{{ alumni.email_add }}" />
-                            <input type="hidden" name="contactnum" value="{{ alumni.alumnicontact }}" />
-                            <input type="hidden" name="alumniaddress" value="{{ alumni.alumniaddress }}" />
+                            <input type="hidden" name="student_id" value="{{ student.studID }}" />
+                            <input type="hidden" name="firstname" value="{{ student.firstname }}" />
+                            <input type="hidden" name="lastname" value="{{ student.lastname }}" />
+                            <input type="hidden" name="degree" value="{{ student.degree }}" />
+                            <input type="hidden" name="sex" value="{{ student.sex }}" />
+                            <input type="hidden" name="email_add" value="{{ student.email_add }}" />
+                            <input type="hidden" name="contactnum" value="{{ student.alumnicontact }}" />
+                            <input type="hidden" name="alumniaddress" value="{{ student.alumniaddress }}" />
                         </div> 
                         <div class="form-section">
-                            <h1 style="font-size: 26px; font-weight: bold; margin-bottom: 20px;">Educational Background</h1>
+                            <h1 class="form-section-title">Educational Background</h1>
                             <div class="form-row">
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">Date Graduated</p>
-                                    <input type="date" name="dategraduated" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 456px; padding: 8px; border-radius: 4px; outline: none;" />
+                                <div class="form-input-wrapper">
+                                    <p class="form-label">Date Graduated</p>
+                                    <input type="date" name="dategraduated" class="tracer-form-input w-456" required />
                                 </div>
                             </div>
                         </div>
                         <div>
                             <div class="form-section">
-                                <h1 style="font-size: 26px; font-weight: bold; margin-bottom: 20px;">4. Employment Information</h1>
-                                <h6 style="font-size: 19px; font-weight: bold; margin-bottom: 15px;">A. EMPLOYER'S DETAILS</h6>
+                                <h1 class="form-section-title">4. Employment Information</h1>
+                                <h6 class="form-subsection-title">A. EMPLOYER'S DETAILS</h6>
                                 <div class="form-row">
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">Name of Organization /Employer</p>
-                                        <input type="text" name="nameoforganization" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;" />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label">Name of Organization /Employer</p>
+                                        <input type="text" name="nameoforganization" required class="tracer-form-input w-full" />
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;">Type of Organization</p>
-                                        <select name="organizationType" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple">Type of Organization</p>
+                                        <select name="organizationType" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="Private">Private</option>
                                             <option value="Public">Public</option>
                                             <option value="NGO">NGO</option>
                                             <option value="Non-Profit">Non-Profit</option>
                                         </select>
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;">Employment Type</p>
-                                        <select name="employmentype" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple">Employment Type</p>
+                                        <select name="employmentype" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="Working Fulltime">Working Fulltime</option>
                                             <option value="Working Partime">Working Partime</option>
                                             <option value="Working Part-time but seeking fulltime work">Working Part-time but seeking fulltime work</option>
@@ -265,10 +432,10 @@
                                             <option value="other">Other</option>
                                         </select>
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;">Occupational Classification</p>
-                                        <select class="tracer-form-input" name="occupationalClass" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Selecet</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple">Occupational Classification</p>
+                                        <select class="tracer-form-input w-full" name="occupationalClass" required>
+                                            <option value="" disabled selected class="option-placeholder">Selecet</option>
                                             <option value="Official of Government and Special-Interest Organizations">Official of Government and Special-Interest Organizations</option>
                                             <option value="Corporate Executive or Manager">Corporate Executive or Manager</option>
                                             <option value="Managing Proprietor or Supervisor">Managing Proprietor or Supervisor</option>
@@ -285,18 +452,18 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 13px; font-weight: bold; font-style: italic; margin-bottom: 8px;">Is your job related to your grad course?</p>
-                                        <select name="gradscholrelated" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-italic">Is your job related to your grad course?</p>
+                                        <select name="gradscholrelated" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="male">Yes</option>
                                             <option value="female">No</option>
                                         </select>
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;"> Number of years in the company</p>
-                                        <select name="yearscompany" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple"> Number of years in the company</p>
+                                        <select name="yearscompany" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="1-5">1-5</option>
                                             <option value="6-10">6-10</option>
                                             <option value="11-15">11-15</option>
@@ -305,51 +472,51 @@
                                             <option value="21 Above">21 Above</option>
                                         </select>
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;">Place of work</p>
-                                        <select class="tracer-form-input" name="placework" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple">Place of work</p>
+                                        <select class="tracer-form-input w-full" name="placework" required>
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="Working Fulltime">Local</option>
                                             <option value="Working Fulltime">Abroad</option>
                                         </select>
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; font-weight: bold; font-style: italic; margin-bottom: 8px;">Is this your first job post-graduation?</p>
-                                        <select name="firstjobgraduate" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-bold-italic">Is this your first job post-graduation?</p>
+                                        <select name="firstjobgraduate" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="Official of Government and Special-Interest Organizations">Yes</option>
                                             <option value="Corporate Executive or Manager">No</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
-                                    <p style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Please state your reasons for staying on the job</p>
-                                    <div style="display: flex;">
-                                        <textarea required name="reasonstayingjob" style="background-color: #f3f4f6; border: 1px solid #d1d5db; width: 800px; height: 300px; padding: 20px; border-radius: 4px; outline: none;"></textarea>
+                                <div class="textarea-wrapper">
+                                    <p class="form-label-bold">Please state your reasons for staying on the job</p>
+                                    <div class="textarea-inner-wrap">
+                                        <textarea required name="reasonstayingjob" class="tracer-form-textarea"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">Designation</p>
-                                        <input type="text" name="designation" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;" />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label">Designation</p>
+                                        <input type="text" name="designation" required class="tracer-form-input w-full" />
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">Department/Division</p>
-                                        <input type="text" name="department" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;" />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label">Department/Division</p>
+                                        <input type="text" name="department" required class="tracer-form-input w-full" />
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;">Status</p>
-                                        <select name="status" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple">Status</p>
+                                        <select name="status" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="Permanent">Permanent</option>
                                             <option value="Contractual">Contractual</option>
                                             <option value="Casual">Casual</option>
                                         </select>
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;">Monthly Income Range</p>
-                                        <select name="monthlyincome" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple">Monthly Income Range</p>
+                                        <select name="monthlyincome" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="Below 10,000">Below 10,000</option>
                                             <option value="10,000-20,000">10,000-20,000</option>
                                             <option value="21,000-30,000">21,000-30,000</option>
@@ -362,48 +529,48 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; font-weight: bold; font-style: italic; margin-bottom: 8px;">Did you work while studying at CTU?</p>
-                                        <select name="workwhileworking" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-bold-italic">Did you work while studying at CTU?</p>
+                                        <select name="workwhileworking" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="Permanent">Yes</option>
                                             <option value="Contractual">No</option>
                                         </select>
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; font-weight: bold; font-style: italic; margin-bottom: 8px;">If not, how long did it take to find a job after graduating from CTU?</p>
-                                        <input type="text" name="ifnotworking" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;" />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-bold-italic">If not, how long did it take to find a job after graduating from CTU?</p>
+                                        <input type="text" name="ifnotworking" required class="tracer-form-input w-full" />
                                     </div>
                                 </div>
-                                <div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
-                                    <p style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Please give reasons for any time gap between obtaining your degree and your first employment</p>
-                                    <div style="display: flex;">
-                                        <textarea required name="reasontimegap" style="background-color: #f3f4f6; border: 1px solid #d1d5db; width: 800px; height: 300px; padding: 20px; border-radius: 4px; outline: none;"></textarea>
+                                <div class="textarea-wrapper">
+                                    <p class="form-label-bold">Please give reasons for any time gap between obtaining your degree and your first employment</p>
+                                    <div class="textarea-inner-wrap">
+                                        <textarea required name="reasontimegap" class="tracer-form-textarea"></textarea>
                                     </div>
                                 </div>
                                 </div>
 
-                            <div class="form-section" style="margin-top: 20px;">
-                                <h6 style="font-size: 19px; font-weight: bold; margin-bottom: 15px;">B. IN THE CASE OF SELF EMPLOYMENT</h6>
+                            <div class="form-section mt-20">
+                                <h6 class="form-subsection-title">B. IN THE CASE OF SELF EMPLOYMENT</h6>
                                 <div class="form-row">
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">Nature of Employment</p>
-                                        <input type="text" name="natureemployment" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;" />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label">Nature of Employment</p>
+                                        <input type="text" name="natureemployment" required class="tracer-form-input w-full" />
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;">Number of Years</p>
-                                        <select name="numberofyears" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple">Number of Years</p>
+                                        <select name="numberofyears" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="0-5">0-5</option>
                                             <option value="6-10">6-10</option>
                                             <option value="10-15">10-15</option>
                                             <option value="16 above">16 above</option>
                                         </select>
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; margin-bottom: 8px;">Monthly Income Range</p>
-                                        <select name="monthlyincome2" required class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                            <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label-simple">Monthly Income Range</p>
+                                        <select name="monthlyincome2" required class="tracer-form-input w-full">
+                                            <option value="" disabled selected class="option-placeholder">Select</option>
                                             <option value="Below 10,000">Below 10,000</option>
                                             <option value="10,000-20,000">10,000-20,000</option>
                                             <option value="21,000-30,000">21,000-30,000</option>
@@ -416,64 +583,64 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-section" style="margin-top: 20px;">
-                                <h6 style="font-size: 19px; font-weight: bold; margin-bottom: 15px;">C. IN THE CASE OF UNEMPLOYED</h6>
-                                <div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
-                                    <p style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Please give reasons for any time gap between obtaining your degree and your first employment</p>
-                                    <div style="display: flex;">
-                                        <textarea required name="reasontimegap" style="background-color: #f3f4f6; border: 1px solid #d1d5db; width: 800px; height: 300px; padding: 20px; border-radius: 4px; outline: none;"></textarea>
+                            <div class="form-section mt-20">
+                                <h6 class="form-subsection-title">C. IN THE CASE OF UNEMPLOYED</h6>
+                                <div class="textarea-wrapper">
+                                    <p class="form-label-bold">Please give reasons for any time gap between obtaining your degree and your first employment</p>
+                                    <div class="textarea-inner-wrap">
+                                        <textarea required name="reasontimegap" class="tracer-form-textarea"></textarea>
                                     </div>
                                 </div>
                             </div>
                             </div>
                         <div class="form-section">
-                            <h1 style="font-size: 26px; font-weight: bold; margin-bottom: 20px;">5. HOW WOULD YOU RATE THE CONTRIBUTION OF THE PROGRAM OF YOUR STUDY AT THE CTU-AC GRADUATE SCHOOL TO YOUR PERSONAL AND PROFESSIONAL GROWTH IN TERMS OF THE FOLLOWING: </h1>
-                            <h6 style="margin-bottom: 15px;">(1-poorly 2-fairly 3-highly 4-very highly)</h6>
+                            <h1 class="form-section-title">5. HOW WOULD YOU RATE THE CONTRIBUTION OF THE PROGRAM OF YOUR STUDY AT THE CTU-AC GRADUATE SCHOOL TO YOUR PERSONAL AND PROFESSIONAL GROWTH IN TERMS OF THE FOLLOWING: </h1>
+                            <h6 class="mb-15">(1-poorly 2-fairly 3-highly 4-very highly)</h6>
                             <div class="form-row">
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Academic Profession</p>
-                                    <select name="academicprofession" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Academic Profession</p>
+                                    <select name="academicprofession" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Research Capability</p>
-                                    <select name="researchcapability" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Research Capability</p>
+                                    <select name="researchcapability" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Learning Efficiency</p>
-                                    <select name="learningefficiency" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Learning Efficiency</p>
+                                    <select name="learningefficiency" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;"> People Skills</p>
-                                    <select name="peopleskills" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple"> People Skills</p>
+                                    <select name="peopleskills" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Problem Solving Skills</p>
-                                    <select name="problemsolvingskills" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Problem Solving Skills</p>
+                                    <select name="problemsolvingskills" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -482,50 +649,50 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Information Technology Skills</p>
-                                    <select name="informationtechnologyskills" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Information Technology Skills</p>
+                                    <select name="informationtechnologyskills" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Meeting Professional Needs</p>
-                                    <select name="meetingprofessionalneeds" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Meeting Professional Needs</p>
+                                    <select name="meetingprofessionalneeds" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Community Engagement in Field</p>
-                                    <select name="communityfield" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Community Engagement in Field</p>
+                                    <select name="communityfield" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Global Engagement in Field</p>
-                                    <select name="globalfield" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Global Engagement in Field</p>
+                                    <select name="globalfield" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;"> Critical Thinking Skills</p>
-                                    <select name="criticalskills" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple"> Critical Thinking Skills</p>
+                                    <select name="criticalskills" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -533,40 +700,40 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-row" style="align-items: flex-start;">
-                                <div style="width: 204px;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Salary Improvement </p>
-                                    <select name="salaryimprovement" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 204px; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                            <div class="form-row align-start">
+                                <div class="wrapper-w204">
+                                    <p class="form-label-simple">Salary Improvement </p>
+                                    <select name="salaryimprovement" class="tracer-form-input w-204" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 204px;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Opportunities Abroad</p>
-                                    <select name="opportunitiesabroad" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 204px; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="wrapper-w204">
+                                    <p class="form-label-simple">Opportunities Abroad</p>
+                                    <select name="opportunitiesabroad" class="tracer-form-input w-204" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 204px;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Personality Development</p>
-                                    <select name="personalitydevelopment" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 204px; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="wrapper-w204">
+                                    <p class="form-label-simple">Personality Development</p>
+                                    <select name="personalitydevelopment" class="tracer-form-input w-204" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 204px;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Technologies Values Formation</p>
-                                    <select name="technologiesvaluesformation" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 204px; padding: 8px; border-radius: 4px; outline: none;">
+                                <div class="wrapper-w204">
+                                    <p class="form-label-simple">Technologies Values Formation</p>
+                                    <select name="technologiesvaluesformation" class="tracer-form-input w-204" required>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -576,105 +743,53 @@
                             </div>
                             </div>
                         <div class="form-section">
-                            <h1 style="font-size: 26px; font-weight: bold; margin-bottom: 20px;">6. HOW WOULD YOU RATE THE DEGREE PROGRAM YOU FINISHED AT THE UST GRADUATE SCHOOL IN TERMS OF:</h1>
-                            <h6 style="margin-bottom: 15px;">(1-poorly 2-fairly 3-highly 4-very highly)</h6>
+                            <h1 class="form-section-title">6. HOW WOULD YOU RATE THE DEGREE PROGRAM YOU FINISHED AT THE UST GRADUATE SCHOOL IN TERMS OF:</h1>
+                            <h6 class="mb-15">(1-poorly 2-fairly 3-highly 4-very highly)</h6>
                             <div class="form-row">
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Range of Courses</p>
-                                    <select name="rangeofcourses" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Range of Courses</p>
+                                    <select name="rangeofcourses" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Relevance to your Profession</p>
-                                    <select name="relevanceprofession" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Relevance to your Profession</p>
+                                    <select name="relevanceprofession" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Extracurricular Activies</p>
-                                    <select name="extracurricular" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Extracurricular Activies</p>
+                                    <select name="extracurricular" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Premium Given Research</p>
-                                    <select name="premiumresearch" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Premium Given Research</p>
+                                    <select name="premiumresearch" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Interdisciplinary Learning</p>
-                                    <select name="interlearning" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;"> Teaching Environment</p>
-                                    <select name="teachingenvironment" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Quality of Instruction</p>
-                                    <select name="qualityinstruction" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Teacher-Student Relationships</p>
-                                    <select name="teachrelationship" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Library Resources</p>
-                                    <select name="libraryresources" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                </div>
-                                <div style="width: 100%;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Laboratory Resources</p>
-                                    <select name="labresources" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Interdisciplinary Learning</p>
+                                    <select name="interlearning" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -683,30 +798,82 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div style="width: 203px;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Class Size</p>
-                                    <select name="classize" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 203px; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple"> Teaching Environment</p>
+                                    <select name="teachingenvironment" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 203px;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;">Prof. Pedagogical Expertise</p>
-                                    <select name="profexpertise" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 203px; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Quality of Instruction</p>
+                                    <select name="qualityinstruction" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-                                <div style="width: 230px;">
-                                    <p style="font-size: 14px; margin-bottom: 8px;"> Prof. Knowledge of Subject Matte</p>
-                                    <select name="profsubjectmatter" class="tracer-form-input" required style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 203px; padding: 8px; border-radius: 4px; outline: none;">
-                                        <option value="" disabled selected style="color: #9ca3af;">Select</option>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Teacher-Student Relationships</p>
+                                    <select name="teachrelationship" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Library Resources</p>
+                                    <select name="libraryresources" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                                <div class="form-input-wrapper">
+                                    <p class="form-label-simple">Laboratory Resources</p>
+                                    <select name="labresources" class="tracer-form-input w-full" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="wrapper-w203">
+                                    <p class="form-label-simple">Class Size</p>
+                                    <select name="classize" class="tracer-form-input w-203" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                                <div class="wrapper-w203">
+                                    <p class="form-label-simple">Prof. Pedagogical Expertise</p>
+                                    <select name="profexpertise" class="tracer-form-input w-203" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                                <div class="wrapper-w230">
+                                    <p class="form-label-simple"> Prof. Knowledge of Subject Matte</p>
+                                    <select name="profsubjectmatter" class="tracer-form-input w-203" required>
+                                        <option value="" disabled selected class="option-placeholder">Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -715,14 +882,14 @@
                                 </div>
                             </div>
                             </div>
-                        <div style="margin-bottom: 20px;">
-                            <label for="further_studies" style="display: block; font-size: 14px; font-weight: 500; color: #374151;">
+                        <div class="mb-20">
+                            <label for="further_studies" class="form-label-block">
                                 Are you pursuing further studies?
                             </label>
                             <select
                                 id="further_studies"
                                 name="further_studies"
-                                style="margin-top: 4px; display: block; width: 100%; padding: 8px 16px; border: 1px solid #d1d5db; border-radius: 12px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); outline: none;"
+                                class="tracer-select-toggle"
                                 onchange="toggleStudyDetails(this.value)"
                             >
                                 <option value="">-- Select an option --</option>
@@ -731,43 +898,43 @@
                             </select>
                         </div>
 
-                        <div id="studyDetailsContainer" style="margin-top: 16px; display: none;">
+                        <div id="studyDetailsContainer">
                         
                             <div id="study_details" class="form-section">
-                                <h1 style="font-size: 26px; font-weight: bold; margin-bottom: 20px;">7. If Pursuing Further Studies</h1>
+                                <h1 class="form-section-title">7. If Pursuing Further Studies</h1>
                                 <div class="form-row">
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">Enrollment Date</p>
-                                        <input type="date" name="enrollmentdate" class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;"  />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label">Enrollment Date</p>
+                                        <input type="date" name="enrollmentdate" class="tracer-form-input w-full"  />
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">Degree Program</p>
-                                        <input type="text" name="studiesdegree" class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;"  />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label">Degree Program</p>
+                                        <input type="text" name="studiesdegree" class="tracer-form-input w-full"  />
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">University/Institution</p>
-                                        <input type="text" name="universityinstitution" class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;"  />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label">University/Institution</p>
+                                        <input type="text" name="universityinstitution" class="tracer-form-input w-full"  />
                                     </div>
-                                    <div style="width: 100%;">
-                                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">Address</p>
-                                        <input type="text" name="studiesAddress" class="tracer-form-input" style="background-color: #f3f4f6; border: 1px solid #d1d5db; height: 49px; width: 100%; padding: 8px; border-radius: 4px; outline: none;"  />
+                                    <div class="form-input-wrapper">
+                                        <p class="form-label">Address</p>
+                                        <input type="text" name="studiesAddress" class="tracer-form-input w-full"  />
                                     </div>
                                 </div>
-                                <div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
-                                    <p style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Reasons for pursuing further studies</p>
-                                    <div style="display: flex;">
-                                        <textarea name="pursuingstudies" style="background-color: #f3f4f6; border: 1px solid #d1d5db; width: 800px; height: 300px; padding: 20px; border-radius: 4px; outline: none;"></textarea>
+                                <div class="textarea-wrapper">
+                                    <p class="form-label-bold">Reasons for pursuing further studies</p>
+                                    <div class="textarea-inner-wrap">
+                                        <textarea name="pursuingstudies" class="tracer-form-textarea"></textarea>
                                     </div>
                                 </div>
                                 </div>
                         </div>
 
                         
-                        <button style="background-color: #2563eb; padding: 12px; color: white; width: 150px; border: none; border-radius: 4px; cursor: pointer;" type="submit" name='s'>Submit</button>
+                        <button class="submit-button" type="submit" name='s'>Submit</button>
                     {% endif %}
                     
                     {% else %}
-                    <p style="text-align: center; padding: 20px;">ejrjrtjertj</p>
+                    <p class="fallback-text">ejrjrtjertj</p>
                     {% endif %}
                 </div>
             </form>
