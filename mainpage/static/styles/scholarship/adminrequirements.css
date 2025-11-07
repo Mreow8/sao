@@ -20,10 +20,6 @@
     background-color: #f8f9fa; /* Light grey background */
   }
 
-  /* This .content block will act as your main .container.
-  If you have a .container class in adminmain.html, you can remove this.
-*/
-
   /* --- Top Control Card --- */
   .form_div {
     background-color: #ffffff;
@@ -128,11 +124,11 @@
 
   /* "Grant" button (styled like approve) */
   #grant-btn {
-    background-color: #28a745; /* Green */
+    background-color: #2c5282; /* Green */
     margin-top: 1.5rem; /* Space above the button */
   }
   #grant-btn:hover {
-    background-color: #218838;
+    background-color: #2c5282;
   }
 
   /* Text for "Requesting Requirements..." */
