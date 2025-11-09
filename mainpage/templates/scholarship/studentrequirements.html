@@ -73,8 +73,8 @@
     {% else %} {% if passed and not note %}
     <div class="form_div_2">
       <h4>
-        Your requirements for this {{ active_request.semester }} year {{
-        active_request.year }} are still being processed.
+        <!-- prettier-ignore -->
+        Your requirements for this {{ active_request.semester }} year {{  active_request.year }} are still being processed.
       </h4>
       <a href="{% url 'profile_student' %}"
         ><button class="checkbtn">CHECK PROFILE</button></a

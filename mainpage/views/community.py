@@ -192,9 +192,24 @@ def add_programs(request):
 
 @login_required
 def programs(request):
-    program_list = Program.objects.filter(archive=False).order_by("-date_time")
+    # --- MODIFICATION START ---
+    # 1. Get sort parameter, default to 'newest'
+    sort_by = request.GET.get('sort', 'newest')
+
+    # 2. Base queryset
+    program_list_query = Program.objects.filter(archive=False)
+
+    # 3. Apply sorting
+    if sort_by == 'oldest':
+        program_list = program_list_query.order_by("date_time")
+    else:
+        # Default to newest (also catches 'newest' and invalid values)
+        program_list = program_list_query.order_by("-date_time")
+        sort_by = 'newest' # Explicitly set for the context
+    # --- MODIFICATION END ---
+    
     items_per_page = 5 
-    paginator = Paginator(program_list, items_per_page)
+    paginator = Paginator(program_list, items_per_page) # Use the sorted list
     page_number = request.GET.get('page')
 
     try:
@@ -217,14 +232,30 @@ def programs(request):
             "qrCodeID": qrCodeID, 
             "base_template": base_template,
             "user": request.user,
+            "current_sort": sort_by, # --- ADDED: Pass sort status to template
         },
     )
 
 @login_required
 def crowdfunding_list(request):
-    project_list = CrowdfundingProject.objects.filter(active=True).order_by("-created_at")
+    # --- MODIFICATION START ---
+    # 1. Get sort parameter, default to 'newest'
+    sort_by = request.GET.get('sort', 'newest')
+
+    # 2. Base queryset
+    project_list_query = CrowdfundingProject.objects.filter(active=True)
+
+    # 3. Apply sorting
+    if sort_by == 'oldest':
+        project_list = project_list_query.order_by("created_at")
+    else:
+        # Default to newest (also catches 'newest' and invalid values)
+        project_list = project_list_query.order_by("-created_at")
+        sort_by = 'newest' # Explicitly set for the context
+    # --- MODIFICATION END ---
+
     items_per_page = 5
-    paginator = Paginator(project_list, items_per_page)
+    paginator = Paginator(project_list, items_per_page) # Use the sorted list
     page_number = request.GET.get('page')
 
     try:
@@ -240,6 +271,7 @@ def crowdfunding_list(request):
         "page_obj": page_obj,
         "base_template": base_template,
         "user": request.user,
+        "current_sort": sort_by, # --- ADDED: Pass sort status to template
     }
 
     return render(
@@ -555,7 +587,7 @@ def donation_validate(request):
         # DEFAULT: If filter_status is None (e.g., "Clear" or first page load),
         # show ALL donations.
         donation_list = MOD.objects.all().order_by('-date')
-        filter_status = None # Explicitly set to None for the template
+        filter_status = None # Explicitly set to the template
     
     paginator = Paginator(donation_list, 10) 
     page_number = request.GET.get('page')
@@ -709,7 +741,7 @@ def volunteer_dashboard(request):
     # 2. Add pagination based on that sorted list
     page_number = request.GET.get('page')
     paginator = Paginator(loadVolunteer, 15) # Use the sorted list
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(page_obj)
 
     # 3. Create the context
     context = {

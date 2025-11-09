@@ -9,9 +9,20 @@
     <p class="certxt">&gt;Scholarship Submission Tracker</p>
   </div>
 
+
 <hr>
 
-<style>/* This container pushes the button to the right */
+<style>
+/* --- MODIFIED .cot STYLE --- */
+.cot{
+    padding: 24px; /* Increased padding for better spacing */
+    background-color: white;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Subtle shadow for depth */
+    margin-top: 20px; /* Space from the form above */
+}
+
+/* This container pushes the button to the right */
 .history-btn-container {
   width: 100%;
   margin: -20px auto;
@@ -138,10 +149,14 @@
                     });
                 </script>
             </div>
+
+            <div class="cot">
             {% if is_requesting and active_request %}
                 <h3 style="color: black;">Year: {{ active_request.year }} || Semester: {{ active_request.semester }}</h4>
             {% endif %}
             {% if is_requesting %}
+
+            
                 <form method="POST">
                     {% csrf_token %}
                     <table id="requirements-table">
@@ -197,8 +212,9 @@
                 </form>
             {% endif %}
             {% if is_requesting %}
-                <a href="{% url "admingrant" %}"><button id="grant-btn">GRANT</button></a>
+                <button id="grant-btn">GRANT</button>
             {% endif %}
+            </div>
         </div>
     </div>
   <div id="historyModal" class="modal">
@@ -269,6 +285,66 @@
             }
         }
 
+    </script>
+
+    <script>
+        // --- Grant Button Confirmation (NEW) ---
+        var grantBtn = document.getElementById("grant-btn");
+        if (grantBtn) {
+            grantBtn.onclick = function(event) {
+                // Prevent default button behavior
+                event.preventDefault(); 
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Are you sure you want to GRANT these scholarships?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, grant them!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If confirmed, redirect to the grant page
+                        window.location.href = "{% url 'admingrant' %}";
+                    }
+                });
+            }
+        }
+
+        // --- Close Button Confirmation (NEW) ---
+        var closeBtn = document.getElementById("close-btn");
+        if (closeBtn) {
+            closeBtn.onclick = function(event) {
+                // Prevent the form from submitting immediately
+                event.preventDefault(); 
+                
+                var formToSubmit = document.getElementById('yearsemester');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This will close the current scholarship request. Are you sure?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, close it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If confirmed, add a hidden input for the button's value
+                        // This ensures the backend receives 'action' = 'CLOSE'
+                        var actionInput = document.createElement('input');
+                        actionInput.type = 'hidden';
+                        actionInput.name = 'action';
+                        actionInput.value = 'CLOSE';
+                        formToSubmit.appendChild(actionInput);
+                        
+                        // Now submit the form
+                        formToSubmit.submit();
+                    }
+                });
+            }
+        }
     </script>
     <script src="{% static 'js/main.js' %}"></script>
 {% endblock bodycontent %}

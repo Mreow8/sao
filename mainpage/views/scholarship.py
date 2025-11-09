@@ -340,8 +340,6 @@ from ..models import Requirement, AdminRequest
 
 
 
-
-
 def adminreqsubmission(request):
     studID = request.user.username
     scholar_type = request.GET.get('scholar_type')
@@ -414,7 +412,11 @@ def adminreqsubmission(request):
                             print("10")
                             req_data.delete()
                             print("requirement rejected and deleted")
-                    except applicants.DoesNotExist:
+                    
+                    # --- THIS IS THE FIX ---
+                    # It was "applicants.DoesNotExist", which was incorrect.
+                    except Requirement.DoesNotExist: 
+                    # --- END OF FIX ---
                         print("requirement_id not found")
     else:
         form = AdminRequestForm()
@@ -451,8 +453,6 @@ def adminreqsubmission(request):
         'request_history': request_history,
         'requested_years': requested_years  # <-- Pass the list to the template
     }
-
-    return render(request, 'scholarship/adminrequirements.html', context)
 
     return render(request, 'scholarship/adminrequirements.html', context)
 def studentreqsubmission(request):

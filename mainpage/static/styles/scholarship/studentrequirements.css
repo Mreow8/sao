@@ -75,11 +75,11 @@ body {
 
 /* "Check Profile" Button */
 .checkbtn {
-  background-color: #28a745; /* Green */
+  background-color: #2c5282; /* Green */
 }
 
 .checkbtn:hover {
-  background-color: #218838; /* Darker Green */
+  background-color: #3969a2; /* Darker Green */
 }
 
 /* "Submit" Button */

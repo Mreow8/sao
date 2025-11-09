@@ -25,7 +25,25 @@
   </div>
 <hr>
 <div class="desc"><p>Crowdfunding empowers students and the university community to come together in times of need. Whether it’s for emergencies, disasters, or personal challenges, this platform connects those seeking support with generous individuals who want to make a difference.</p></div>
-  {% if user.is_staff %}
+
+<div class="sort-controls" style="margin-bottom: 1.5rem; text-align: right; font-size: 0.9rem;">
+  <span style="margin-right: 0.5rem; color: #4a5568;">Sort by:</span>
+  <a href="?sort=newest" class="sort-link {% if current_sort == 'newest' %}active{% endif %}" style="margin-right: 0.5rem;">Newest</a>
+  <a href="?sort=oldest" class="sort-link {% if current_sort == 'oldest' %}active{% endif %}">Oldest</a>
+</div>
+
+<style>
+  .sort-link {
+    color: #3182ce; /* blue-600 */
+    text-decoration: none;
+  }
+  .sort-link.active {
+    font-weight: bold;
+    color: #2c5282; /* blue-800 */
+    text-decoration: underline;
+  }
+</style>
+{% if user.is_staff %}
   <div class="post-box">
       <div class="collapsed" id="collapsedBox">Add Events...</div>
       <form
@@ -74,8 +92,7 @@
         <div class="flex justify-between items-start">
           <h3 class="text-lg font-semibold program-title">
             {{ program.title }}
-          </h4>
-          {% if user.is_staff %}
+          </h3> {% if user.is_staff %}
           <div class="relative">
             <button type="button" class="menu-btn">⋮</button>
             <div class="menu hidden">
@@ -122,8 +139,8 @@
       <div class="pagination">
           <span class="step-links">
               {% if page_obj.has_previous %}
-                  <a href="?page=1">&laquo; First</a>
-                  <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                  <a href="?page=1&sort={{ current_sort }}">&laquo; First</a>
+                  <a href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}">Previous</a>
               {% endif %}
 
               <span class="current">
@@ -131,8 +148,8 @@
               </span>
 
               {% if page_obj.has_next %}
-                  <a href="?page={{ page_obj.next_page_number }}">Next</a>
-                  <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                  <a href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}">Next</a>
+                  <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}">Last &raquo;</a>
               {% endif %}
           </span>
       </div>
