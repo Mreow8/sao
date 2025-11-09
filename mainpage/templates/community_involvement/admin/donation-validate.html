@@ -122,7 +122,7 @@
   }
 </style>
 <div class="sub-title">
-  <h3>COMMUNITY INVOLVEMENT</h3>
+  <h4>COMMUNITY INVOLVEMENT</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Donation Validate</p>
 </div>
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const row = target.closest('.donation-row');
       const data = row.dataset;
       
-      let html = `<h3>Donation for: ${data.event}</h3>`;
+      let html = `<h4>Donation for: ${data.event}</h4>`;
       html += `<p><strong>Donor Name:</strong> ${data.name}</p>`;
       html += `<p><strong>Donation Mode:</strong> ${data.mode}</p>`;
       html += `<p><strong>Amount:</strong> ${data.amount}</p>`;

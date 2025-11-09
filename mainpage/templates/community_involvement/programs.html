@@ -19,7 +19,7 @@
 {% block bodycontent %}
 <div class="container">
   <div class="sub-title">
-    <h3>COMMUNITY INVOLVEMENT</h3>
+    <h4>COMMUNITY INVOLVEMENT</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Events</p>
   </div>
@@ -74,7 +74,7 @@
         <div class="flex justify-between items-start">
           <h3 class="text-lg font-semibold program-title">
             {{ program.title }}
-          </h3>
+          </h4>
           {% if user.is_staff %}
           <div class="relative">
             <button type="button" class="menu-btn">⋮</button>

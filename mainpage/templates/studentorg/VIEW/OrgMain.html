@@ -5,7 +5,12 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
-
+<style>
+  .button-container {
+    display: flex;
+    justify-content: flex-end; /* This pushes the button to the right */
+  }
+</style>
 <link rel="stylesheet" href="{% static 'studentorg/css/org.css' %}" />
 <link
   rel="stylesheet"
@@ -20,17 +25,18 @@
 {% endblock %} {% block bodycontent %}
 <div class="container">
   <div class="sub-title">
-    <h3>STUDENT ORGANIZATION</h3>
+    <h4>STUDENT ORGANIZATION</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; CTU-AC STUDENT ORGS</p>
   </div>
   <hr />
 
   {% if user.is_authenticated and user.role == 'superadmin'%}
-
-  <button class="add-org-btn" id="addOrgBtn">
-    <i class="fa fa-plus"></i> Add Organization
-  </button>
+  <div class="button-container">
+    <button class="add-org-btn" id="addOrgBtn">
+      <i class="fa fa-plus"></i> Add Organization
+    </button>
+  </div>
   {% endif %}
 
   <div class="row" id="orgImagesRow1">

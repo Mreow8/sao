@@ -2,7 +2,7 @@ from django import forms
 from ..models import Officer
 from ..models import Project
 from ..models import FinancialStatement
-from ..models import Accreditation, Adviser, Organization
+from ..models import Accreditation, Adviser, Organization, OrganizationCBL
 # forms.py
 
 class OrganizationForm(forms.ModelForm):
@@ -13,7 +13,13 @@ class OrganizationForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 4}),
            
         }
-
+class OrganizationCBLForm(forms.ModelForm):
+  class Meta:
+    model = OrganizationCBL
+    fields = ['cbl_file']
+    labels = {
+        'cbl_file': 'Upload New CBL (PDF, DOCX, etc.)'
+    }
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project

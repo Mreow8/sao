@@ -15,7 +15,7 @@
 
 <div class="container">
   <div class="sub-title">
-    <h3>CROWDFUNDING PROJECTS</h3>
+    <h4>CROWDFUNDING PROJECTS</h4>
     <p class="hometext"><a href="{% url 'homepage' %}"></a>Home</p>
     <p class="certxt">&gt; Crowdfunding</p>
   </div>
@@ -115,7 +115,7 @@
      {% for project in page_obj %}
      <div class="program-card relative" id="program-{{ project.id }}">
         <div class="flex justify-between items-start">
-          <h3 class="text-lg font-semibold">{{ project.title }}</h3>
+          <h3 class="text-lg font-semibold">{{ project.title }}</h4>
 
           <div class="relative">
             {% if user.is_staff %}

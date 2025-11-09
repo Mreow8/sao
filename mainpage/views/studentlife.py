@@ -24,7 +24,7 @@ from django.core.mail import send_mail, BadHeaderError
 from django.utils.decorators import method_decorator
 from ..models import (
     studentInfo, Equipment, BorrowingRecord, RequestedGMC, Schedule,
-    ProcurementItem, Storage, ExcelData
+    ProcurementItem, Storage, ExcelData, Organization
 )
 from ..forms import (
     ScheduleForm, UploadFileForm, UpdateSerialNoForm, UploadExcelForm, ExcelDataForm

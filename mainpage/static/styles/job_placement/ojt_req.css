@@ -258,6 +258,97 @@
   text-align: center;
 }
 
+/* Main form layout */
+.filter-form {
+  display: flex;
+  flex-wrap: wrap; /* Allows items to stack on small screens */
+  align-items: center; /* Vertically align items */
+  gap: 10px; /* Space between items */
+  margin-bottom: 20px;
+
+  /* This is the anchor for the search suggestions */
+  position: relative;
+}
+
+/* Common style for dropdowns and search bar */
+.filter-form select,
+.filter-form #search_bar {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Make the search bar grow */
+.filter-form #search_bar {
+  flex-grow: 1; /* Takes up available space */
+  min-width: 200px; /* Prevents it from getting too small */
+}
+
+/* Style the dropdowns */
+.filter-form select {
+  cursor: pointer;
+  flex-basis: 180px; /* Give them a consistent base size */
+  flex-grow: 0;
+}
+
+/* Search button */
+.filter-form #attend_student_list {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #2a4365; /* Using the dark blue you identified */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filter-form #attend_student_list:hover {
+  background-color: #1e3048; /* A darker shade */
+}
+
+/* Search suggestions dropdown 
+  IMPORTANT: This CSS positions the list. You will need JavaScript 
+  to set the 'top', 'left', and 'width' properties to match 
+  the search bar dynamically, and to set 'display: block' when showing it.
+*/
+#search_suggestions {
+  display: none; /* Hide by default */
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+
+  /* --- Positioning --- */
+  position: absolute;
+  z-index: 100;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+
+  /* Example positioning. 
+    You MUST set these with JavaScript.
+  */
+  /* top: 48px;  */ /* (Set with JS) */
+  /* left: 380px; */ /* (Set with JS) */
+  /* width: 300px; */ /* (Set with JS) */
+}
+
+#search_suggestions li {
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+#search_suggestions li:hover {
+  background-color: #f0f0f0;
+}
+
 .file_name {
   font-style: italic;
   color: #555;

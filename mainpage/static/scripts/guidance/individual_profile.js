@@ -1,6 +1,14 @@
 $(document).ready(function () {
-  $("#consent_container").addClass("active");
+  // --- (Remove error highlight, no changes) ---
+  $(document).on("input change focus", "input, select, textarea", function () {
+    $(this).removeClass("invalid-field");
+    $(this)
+      .closest(".field_container, .side-way, .yes_no_question_cotainer")
+      .removeClass("invalid-field");
+  });
 
+  // --- (Consent modal, no changes) ---
+  $("#consent_container").addClass("active");
   $("#agreeCheck").change((event) => {
     if ($("#agreeCheck").is(":checked")) {
       $("#proceedBtn").prop("disabled", false);
@@ -10,19 +18,18 @@ $(document).ready(function () {
       $("#proceedBtn").addClass("disabled");
     }
   });
-
   $(document).on("click", "#proceedBtn", function (event) {
     event.preventDefault();
     $("#consent_container").removeClass("active");
   });
 
+  // --- (getCookie, no changes) ---
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== "") {
       var cookies = document.cookie.split(";");
       for (var i = 0; i < cookies.length; i++) {
         var cookie = cookies[i].trim();
-        // Does this cookie string begin with the name we want?
         if (cookie.substring(0, name.length + 1) === name + "=") {
           cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           break;
@@ -31,12 +38,11 @@ $(document).ready(function () {
     }
     return cookieValue;
   }
-
   var csrftoken = getCookie("csrftoken");
 
   // --- (Search button AJAX, no changes) ---
   $("#searchButton").on("click", function (event) {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
     var idNumber = $("#studentIDBox").val();
     $.ajax({
       url: "/search_student_info_for_individual_profile/",
@@ -92,24 +98,10 @@ $(document).ready(function () {
   $("#addanother").on("click", function (event) {
     event.preventDefault();
     let newRow = `<tr class="sibllingsrowTemplate">
-                        <td>
-                            <div class="field_container">
-                                <input type="text" name="name[]">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="field_container">
-                                <input type="number" name="age[]">
-                            </div>      
-                        </td>
-                        <td>
-                            <div class="field_container">
-                                <input type="text" name="placework[]">
-                            </div>
-                        </td>
-                        <td>
-                            <button class="deleteRow OrangeButton">Delete</button>
-                        </td>
+                        <td><div class="field_container"><input type="text" name="name[]"></div></td>
+                        <td><div class="field_container"><input type="number" name="age[]"></div></td>
+                        <td><div class="field_container"><input type="text" name="placework[]"></div></td>
+                        <td><button class="deleteRow OrangeButton">Delete</button></td>
                     </tr>`;
     $("#siblings").append(newRow);
   });
@@ -136,41 +128,20 @@ $(document).ready(function () {
   $("#addOrganization").on("click", function (event) {
     event.preventDefault();
     let newRow = `<tr class="orgRowTemplate">
-                        <td>
-                            <div class="field_container">
-                                <input type="text" name="name_of_organization[]" required>
-                            </div>
-                        </td>
+                        <td><div class="field_container"><input type="text" name="name_of_organization[]" required></div></td>
                         <td>
                             <div class="inoutschool field_container">    
                                 <div id="inoutSchool" class="side-way"><div>
-                                    <label for="id_elementaryType_0"><input type="radio" name="inoutSchool[]" value="True" class="side-way" required="" id="inoutSchool_0">
-                                        Yes
-                                    </label>
-                                
+                                    <label for="id_elementaryType_0"><input type="radio" name="inoutSchool[]" value="True" class="side-way" required="" id="inoutSchool_0">Yes</label>
                                 </div>
                                 <div id="inoutSchool" class="side-way">
-                                    <label for="id_elementaryType_1"><input type="radio" name="inoutSchool[]" value="False" class="side-way" required="" id="inoutSchool_1">
-                                        No
-                                    </label>
+                                    <label for="id_elementaryType_1"><input type="radio" name="inoutSchool[]" value="False" class="side-way" required="" id="inoutSchool_1">No</label>
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <div class="field_container">
-                                <input type="text" name="position[]">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="field_container">
-                                <input type="text" name="inclusiveyears[]">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="field_container">
-                                <button class="deleteRow OrangeButton">Delete</button>
-                            </div>
-                        </td>
+                        <td><div class="field_container"><input type="text" name="position[]"></div></td>
+                        <td><div class="field_container"><input type="text" name="inclusiveyears[]"></div></td>
+                        <td><div class="field_container"><button class="deleteRow OrangeButton">Delete</button></div></td>
                     </tr>`;
     $("#organizationTable").append(newRow);
   });
@@ -205,7 +176,7 @@ $(document).ready(function () {
       $("#hs_track").removeClass("hidden");
       $("#id_track").attr("required", "required");
     } else {
-      $("#trackbox").addClass("hidden");
+      $("#hs_track").addClass("hidden");
       $("#id_track").removeAttr("required", "required");
     }
   });
@@ -249,14 +220,13 @@ $(document).ready(function () {
       $("#id_motherOtherOccupation").removeAttr("required", "required");
     }
   });
-  $("#id_schoolLeaver_0").change(function (event) {
-    if ($(this).val()) {
+  $('input[name="schoolLeaver"]').on("change", function (event) {
+    if ($(this).val() === "True") {
       $("#reasonOfLeaving").removeClass("hidden");
-    }
-  });
-  $("#id_schoolLeaver_1").change(function (event) {
-    if ($(this).val()) {
+      $("#id_schoolLeaverWhy").attr("required", "required");
+    } else {
       $("#reasonOfLeaving").addClass("hidden");
+      $("#id_schoolLeaverWhy").removeAttr("required", "required");
     }
   });
   $("#id_finaciallySupporting").change(function (event) {
@@ -264,7 +234,6 @@ $(document).ready(function () {
     if (selectedValue == "scholarship") {
       $("#scholarship").removeClass("hidden");
       $("#id_typeOfScholarship").attr("required", "required");
-      $("#id_specifyScholarship").attr("required", "required");
     } else {
       $("#scholarship").addClass("hidden");
       $("#id_typeOfScholarship").removeAttr("required", "required");
@@ -275,20 +244,19 @@ $(document).ready(function () {
     let selectedValue = $(this).val();
     if (selectedValue == "organizations") {
       $("#specifyScholarShip").removeClass("hidden");
+      $("#id_specifyScholarship").attr("required", "required");
     } else {
       $("#specifyScholarShip").addClass("hidden");
+      $("#id_specifyScholarship").removeAttr("required", "required");
     }
   });
-  $("#id_doYouPlanToWork_0").change(function (event) {
-    if ($(this).val()) {
-      $("#specifyDontWork").addClass("hidden");
-      $("#id_specifyIfNo").removeAttr("required", "required");
-    }
-  });
-  $("#id_doYouPlanToWork_1").change(function (event) {
-    if ($(this).val()) {
+  $('input[name="doYouPlanToWork"]').on("change", function (event) {
+    if ($(this).val() === "False") {
       $("#specifyDontWork").removeClass("hidden");
       $("#id_specifyIfNo").attr("required", "required");
+    } else {
+      $("#specifyDontWork").addClass("hidden");
+      $("#id_specifyIfNo").removeAttr("required", "required");
     }
   });
   $("#id_decisionForTheCourse").change(function (event) {
@@ -300,31 +268,27 @@ $(document).ready(function () {
     }
   });
 
-  // --- (NEW CODE ADDED HERE) ---
-  // This function removes any non-numeric characters from the input
+  // --- (enforceNumericOnly, no changes) ---
   function enforceNumericOnly(event) {
     var $this = $(this);
     var value = $this.val();
-    var numericValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric chars
-
-    // Update the value only if it changed to prevent cursor jumping
+    var numericValue = value.replace(/[^0-9]/g, "");
     if (value !== numericValue) {
       $this.val(numericValue);
     }
   }
-
-  // Apply this function to all phone number fields on the 'input' event
   $(
     "#id_mobileNo, #id_fatherMobilePhone, #id_motherMobilePhone, #id_personInCaseofEmergencyMobileNo"
   ).on("input", enforceNumericOnly);
-  // --- (END OF NEW CODE) ---
 
-  // --- VALIDATION FUNCTION (Unchanged) ---
+  // --- MODIFIED VALIDATION FUNCTION ---
+  // This function now returns an object: { isValid: bool, firstInvalidField: $element }
   function validateFields(container) {
     var isValid = true;
-    var radioGroups = {}; // To track validity of all radio groups on the page
+    var radioGroups = {};
+    var firstInvalidField = null; // Track the first field that fails
 
-    // Clear all previous errors on this page
+    container.find(".validation-summary").remove();
     container.find("input, select, textarea").each(function () {
       $(this).removeClass("invalid-field");
       $(this)
@@ -332,64 +296,86 @@ $(document).ready(function () {
         .removeClass("invalid-field");
     });
 
-    // Find all required fields
     container.find("input, select, textarea").each(function () {
       var $this = $(this);
       var isRequired = $this.prop("required");
-      var isVisible = $this.is(":visible") || $this.attr("type") === "hidden";
+      var isVisible = $this.closest(".hidden").length === 0;
 
-      if (!isVisible && $this.closest(".hidden").length > 0) {
-        isVisible = false;
-      } else {
-        isVisible = true;
+      if (!isVisible) {
+        return;
       }
 
-      if (!isRequired || !isVisible) {
-        if ($this.attr("type") === "radio") {
-          // Still need to track radio groups
-        } else {
-          return; // Skip non-required or hidden fields
-        }
-      }
-
-      // --- Validation Logic ---
-      if ($this.attr("type") === "radio") {
+      // 1. Handle Radio Buttons
+      if ($this.attr("type") === "radio" && isRequired) {
         var name = $this.attr("name");
-        if (isRequired) {
-          if (!(name in radioGroups)) {
-            radioGroups[name] =
-              container.find('input[type="radio"][name="' + name + '"]:checked')
-                .length > 0;
+        if (!(name in radioGroups)) {
+          radioGroups[name] =
+            container.find(
+              'input[type="radio"][name="' + name + '"]:visible:checked'
+            ).length > 0;
+          if (!radioGroups[name]) {
+            isValid = false; // Set main validity to false
+            if (!firstInvalidField) {
+              // Store this as the first error
+              firstInvalidField = $this;
+            }
           }
         }
-      } else if ($this.attr("type") === "email") {
-        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        if (!$this.val() || !emailPattern.test($this.val())) {
-          isValid = false;
-          $this.addClass("invalid-field");
-        }
-      } else if (!$this.val()) {
-        // General check for empty text, select, textarea, etc.
+      }
+      // 2. Handle Required & Empty (for non-radios)
+      else if (isRequired && !$this.val() && $this.attr("type") !== "radio") {
         isValid = false;
         $this.addClass("invalid-field");
+        if (!firstInvalidField) {
+          firstInvalidField = $this;
+        }
+      }
+      // 3. Handle Pattern (for phone numbers, etc.)
+      else if ($this.attr("pattern") && $this.val()) {
+        // --- THIS IS THE FIX ---
+        // We create the regex directly from the pattern, *without* adding extra "^" and "$"
+        var regex = new RegExp($this.attr("pattern"));
+        // --- END OF FIX ---
+
+        if (!regex.test($this.val())) {
+          isValid = false;
+          $this.addClass("invalid-field");
+          if (!firstInvalidField) {
+            firstInvalidField = $this;
+          }
+        }
+      }
+      // 4. Handle Email
+      else if ($this.attr("type") === "email" && $this.val()) {
+        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!emailPattern.test($this.val())) {
+          isValid = false;
+          $this.addClass("invalid-field");
+          if (!firstInvalidField) {
+            firstInvalidField = $this;
+          }
+        }
       }
     });
 
-    // After checking all fields, process the radio groups for highlighting
+    // Process radio groups for highlighting (only highlight, validity is already set)
     Object.keys(radioGroups).forEach(function (name) {
       if (!radioGroups[name]) {
-        isValid = false;
-        container
+        var $radioGroupContainer = container
           .find('input[type="radio"][name="' + name + '"]')
-          .closest(".field_container, .side-way, .yes_no_question_cotainer")
-          .addClass("invalid-field");
+          .closest(".field_container, .side-way, .yes_no_question_cotainer");
+        $radioGroupContainer.addClass("invalid-field");
       }
     });
 
-    return isValid;
+    return {
+      isValid: isValid,
+      firstInvalidField: firstInvalidField,
+    };
   }
+  // --- END MODIFIED VALIDATION FUNCTION ---
 
-  // --- NEXT PAGE HANDLER (Unchanged) ---
+  // --- (MODIFIED NEXT PAGE HANDLER, no changes from last time) ---
   $(".nextpage").on("click", function () {
     let current = $(".current-page-activated");
     let next = current.next(".fill_out_container");
@@ -398,7 +384,9 @@ $(document).ready(function () {
 
     current.find(".validation-summary").remove();
 
-    if (validateFields(current)) {
+    var validationResult = validateFields(current);
+
+    if (validationResult.isValid) {
       current
         .removeClass("current-page-activated")
         .addClass("current-page-deactivated");
@@ -410,8 +398,22 @@ $(document).ready(function () {
         current.removeClass("current-page-deactivated");
       }, 200);
     } else {
+      var errorMessage = "Please correct all highlighted fields.";
+
+      if (validationResult.firstInvalidField) {
+        var $field = validationResult.firstInvalidField;
+        var title = $field.attr("title");
+        var label = $("label[for='" + $field.attr("id") + "']").text();
+
+        if (title) {
+          errorMessage = title;
+        } else if (label) {
+          errorMessage = "Please check the '" + label.trim() + "' field.";
+        }
+      }
+
       var $errorMessage = $(
-        '<div class="validation-summary">Please correct all highlighted fields before proceeding.</div>'
+        '<div class="validation-summary">' + errorMessage + "</div>"
       );
       current.prepend($errorMessage);
       $errorMessage[0].scrollIntoView({ behavior: "smooth", block: "center" });

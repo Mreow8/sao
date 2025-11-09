@@ -9,6 +9,60 @@
     href="{% static 'styles/discipline/case_list.css' %}"
 />
 <style>
+    /* --- SweetAlert2 Modal Styling --- */
+
+/* Main modal container */
+.swal2-popup {
+  border-radius: 12px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Title text */
+.swal2-title {
+  color: #2a4365; /* Using your requested color */
+  font-weight: 600;
+  font-size: 1.6em;
+}
+
+/* The <select> dropdown */
+.swal2-select {
+  width: 80%; /* Make it wide, but not 100% */
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 12px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* "Update" button (Confirm) */
+.swal2-confirm {
+  /* Use !important to override default inline styles from the library */
+  background-color: #2a4365 !important; 
+  border-radius: 5px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  padding: 10px 24px;
+}
+
+.swal2-confirm:hover {
+  background-color: #1e3048 !important; /* A darker shade for hover */
+}
+
+/* "Cancel" button */
+.swal2-cancel {
+  background-color: #6c757d !important; /* A standard gray */
+  border-radius: 5px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  padding: 10px 24px;
+}
+
+.swal2-cancel:hover {
+  background-color: #5a6268 !important; /* Darker gray for hover */
+}
     /* --- Pagination --- */
     .pagination {
         margin-top: 20px;
@@ -19,13 +73,13 @@
         margin: 0 3px;
         border: 1px solid #ddd;
         text-decoration: none;
-        color: #337ab7;
+        color: #2a4365;
         border-radius: 4px;
     }
     .pagination .current {
-        background-color: #337ab7;
+        background-color: #2a4365;
         color: white;
-        border-color: #337ab7;
+        border-color: #2a4365;
     }
     .pagination a:hover {
         background-color: #f4f4f4;
@@ -44,7 +98,7 @@
     }
     th.sortable a:hover {
         text-decoration: underline;
-        color: #337ab7;
+        color: #2a4365;
     }
     th.sortable a.sorted::after {
         content: ' ▲';
@@ -67,7 +121,7 @@
     .filter-controls .search button {
         padding: 8px 12px;
         border: none;
-        background-color: #007bff;
+        background-color: #2a4365;
         color: white;
         cursor: pointer;
         border-radius: 0 4px 4px 0;
@@ -144,10 +198,40 @@
     #editFormFields .submit-btn:hover {
         background-color: #218838;
     }
+    /* --- Search Bar --- */
+    .filter-controls {
+        display: flex;
+        flex-wrap: wrap; /* Allow wrapping on small screens */
+        gap: 10px; /* Add space between filter items */
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .filter-controls .search { flex-grow: 1; display: flex; min-width: 250px; }
+    .filter-controls .search input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; }
+    .filter-controls .search button {
+        padding: 8px 12px;
+        border: none;
+        background-color: #2a4365;
+        color: white;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+    }
+
+    /* --- NEW CSS FOR DROPDOWNS --- */
+    .filter-controls .filter-select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #fff;
+        height: 38px; /* Match search bar height */
+        flex-basis: 180px; /* Give a base width */
+        flex-grow: 1; /* Allow to grow */
+    }
 </style>
 
 <div class="sub-title">
-    <h3>STUDENT DISCIPLINE</h3>
+    <h4>STUDENT DISCIPLINE</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Case History</p>
 </div>
@@ -156,9 +240,9 @@
 
 <div class="container">
 
-    <form method="GET" action="{% url 'case_list' %}">
+ <form method="GET" action="{% url 'case_list' %}">
         <div class="filter-controls">
-            <div class="search">
+                        <div class="search">
                 <input
                     type="text"
                     name="search"
@@ -167,11 +251,31 @@
                 />
                 <button type="submit">Search</button>
             </div>
+            
+            <select name="status_filter" class="filter-select" onchange="this.form.submit()">
+
+                <option value="">All Statuses</option>
+                {% for status in status_choices %}
+                    <option value="{{ status }}" {% if status == current_status_filter %}selected{% endif %}>
+                        {{ status }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="offense_filter" class="filter-select" onchange="this.form.submit()">
+                <option value="">All Offenses</option>
+                {% for offense in offense_choices %}
+                    <option value="{{ offense }}" {% if offense == current_offense_filter %}selected{% endif %}>
+                        {{ offense }}
+                    </option>
+                {% endfor %}
+            </select>
+
+
         </div>
         <input type="hidden" name="sort" value="{{ current_sort }}">
         <input type="hidden" name="order" value="{{ current_order }}">
     </form>
-
     <div style="overflow-x: auto">
         <table>
             <thead>
@@ -280,16 +384,16 @@
                             href="#"
                             class="editBtn"
                             data-id="{{ case.id }}"
-                            style="color: rgb(121, 213, 77)"
+                            
                             >Edit</a
                         >
-                        <a
+                        <!-- <a
                             href="#"
                             class="deleteBtn"
                             data-id="{{ case.id }}"
                             style="color: red; margin-left: 10px;"
                             >Delete</a
-                        >
+                        > -->
                         {% endif %}
                     </td>
                 </tr>

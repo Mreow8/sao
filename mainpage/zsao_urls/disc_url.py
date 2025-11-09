@@ -9,7 +9,7 @@ urlpatterns = [
     path('case-profile/', views.case_profile_create, name='case_profile'),
   
     path('cases/list/', views.case_list, name='case_list'),
-
+    path('student-cases/<str:studID>/', views.student_case_view, name='student_case_view'),
     path('cases/edit/<int:case_id>/', views.case_edit, name='case_edit'),
 
  

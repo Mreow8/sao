@@ -15,6 +15,46 @@
 <link rel="stylesheet" href="{% static 'studentorg/css/orgfinal.css' %}" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %} {% block bodycontent %}<style>
+  /* --- Basic Modal Styles --- */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 5% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px; /* Max width */
+  border-radius: 8px;
+}
+
+/* The Close Button */
+.close-btn {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -121,7 +161,7 @@
   </div>
 </div>
  <div class="sub-title">
-    <h3>STUDENT ORGANIZATION</h3>
+    <h4>STUDENT ORGANIZATION</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
   </div>
@@ -136,7 +176,14 @@
     >
     <a href="{% url 'view_financial_by_slug' slug=org.slug %}" class="tab"
       >Financial Statements</a
+    > 
+    <!-- prettier-ignore -->
+    {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
+
+    <a href="{% url 'view_accreditation_by_slug' slug=org.slug %}" class="tab"
+      >Accreditation Application</a
     >
+    {%endif%}
   </div>
 
   <div class="maincontain">
@@ -202,7 +249,35 @@
           <p>{{ org.description|linebreaksbr }}</p>
         </div>
         <div class="con bot">
-          <a href="/main/{{ org.slug }}_CBL" class="button">View CBL</a>
+  {% if active_cbl %}
+  <a href="{% url 'view_org_cbl' organization.slug %}" class="button" target="_blank">View CBL</a>
+{% else %}
+  {% if user.is_staff or user.role == 'superadmin' %}
+    <button type="button" class="button" id="openCblModalBtn">
+      <i class="fa fa-upload"></i> Upload CBL
+    </button>
+  {% else %}
+    <button type="button" class="button-disabled" disabled>CBL Not Available</button>
+  {% endif %}
+{% endif %}
+
+
+<div id="cblModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    
+    <h4>Upload New CBL for {{ organization.name }}</h4>
+    <p>This will replace any existing CBL as the new active document.</p>
+    
+    <form action="{% url 'upload_org_cbl' organization.slug %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{ cbl_form.as_p }}
+        
+        <button type="submit" class="button">Upload and Save</button>
+    </form>
+  </div>
+</div>
 {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
  <a href="{% url 'view_officers' slug=org.slug %}" class="button">View Officers</a>
           <a href="{% url 'officer_form' slug=org.slug %}" class="button"
@@ -295,4 +370,37 @@
       closeAdviserModal();
     }
   });
-</script>{% endblock %}
+</script>
+
+<script>document.addEventListener("DOMContentLoaded", function() {
+    // Get the modal
+    var modal = document.getElementById("cblModal");
+    
+    // Get the button that opens the modal
+    var btn = document.getElementById("openCblModalBtn");
+    
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close-btn")[0];
+    
+    // When the user clicks the button, open the modal 
+    if(btn) {
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+    }
+    
+    // When the user clicks on <span> (x), close the modal
+    if(span) {
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+    }
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+});</script>
+{% endblock %}

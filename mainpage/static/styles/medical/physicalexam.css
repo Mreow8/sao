@@ -132,6 +132,7 @@ h3 {
 }
 
 .input-box input[type="text"],
+.input-box input[type="email"],
 .input-box input[type="number"],
 .input-box input[type="date"],
 .input-box input[type="file"],

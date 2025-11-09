@@ -1,5 +1,4 @@
-{% extends 'adminmain.html' %} {% load static %}
-<!-- prettier-ignore -->
+{% extends base_template|default:"main.html" %} {% load static %}
 {% block title %}Medical{% endblock %}
 
 {% block extra_css %}
@@ -14,7 +13,13 @@
 <div class="container">
   <form method="POST" enctype="multipart/form-data" id="physical-exam-form">
     {% csrf_token %}
-    <h1>PATIENT'S BASIC INFORMATION</h1>
+    <div class="sub-title">
+      <h4>MEDICAL</h4>
+      <p class="hometext">Home</p>
+      <p class="certxt">&gt; PATIENT'S BASIC INFORMATION</p>
+    </div>
+    <hr />
+
     <fieldset>
       <legend><strong>Personal Information</strong></legend>
       <div class="user-details">
@@ -23,7 +28,7 @@
           <input
             type="text"
             name="id-number"
-            value="{{ student.student_id }}"
+            value="{{ student.studID}}"
             disabled
           />
         </div>
@@ -58,7 +63,7 @@
         <div class="input-box">
           <span class="details">Email Address:</span>
           <input
-            type="text"
+            type="email"
             name="email-add"
             value="{{ student.email }}"
             required
@@ -67,7 +72,7 @@
         <div class="input-box">
           <span class="details">Contact Number:</span>
           <input
-            type="text"
+            type="number"
             value="{{ student.contact_number }}"
             name="contact-number"
           />
@@ -127,12 +132,69 @@
         </div>
         <div class="input-box">
           <span class="details">Blood Type:</span>
-          <input
-            type="text"
-            value="{{ patient.bloodtype }}"
-            name="bloodtype"
-            required
-          />
+          <select name="bloodtype" required>
+            <option
+              value=""
+              disabled
+              {% if not patient.bloodtype %}selected{% endif %}
+            >
+              Select blood type:
+            </option>
+            <option
+              value="A+"
+              {% if patient.bloodtype == "A+" %}selected{% endif %}
+            >
+              A+
+            </option>
+            <option
+              value="A-"
+              {% if patient.bloodtype == "A-" %}selected{% endif %}
+            >
+              A-
+            </option>
+            <option
+              value="B+"
+              {% if patient.bloodtype == "B+" %}selected{% endif %}
+            >
+              B+
+            </option>
+            <option
+              value="B-"
+              {% if patient.bloodtype == "B-" %}selected{% endif %}
+            >
+              B-
+            </option>
+            <option
+              value="AB+"
+              {% if patient.bloodtype == "AB+" %}selected{% endif %}
+            >
+              AB+
+            </option>
+            <option
+              value="AB-"
+              {% if patient.bloodtype == "AB-" %}selected{% endif %}
+            >
+              AB-
+            </option>
+            <option
+              value="O+"
+              {% if patient.bloodtype == "O+" %}selected{% endif %}
+            >
+              O+
+            </option>
+            <option
+              value="O-"
+              {% if patient.bloodtype == "O-" %}selected{% endif %}
+            >
+              O-
+            </option>
+            <option
+              value="Unknown"
+              {% if patient.bloodtype == "Unknown" %}selected{% endif %}
+            >
+              Unknown
+            </option>
+          </select>
         </div>
         <div class="input-box">
           <span class="details">Allergies:</span>
@@ -183,7 +245,7 @@
         <div class="input-box">
           <span class="details">Postal/ZIP Code:</span>
           <input
-            type="text"
+            type="number"
             name="postal-zip-code"
             value="{{ patient.postal_zipcode }}"
             required
@@ -295,5 +357,62 @@
   </form>
 </div>
 {% endblock %} {% block extra_js %}
-<script></script>
+<script>
+  document
+    .getElementById('physical-exam-form')
+    .addEventListener('submit', function (event) {
+      const contactInput = document.querySelector('input[name="contact-number"]');
+      const guardianContactInput = document.querySelector(
+        'input[name="parent_guardian_contact_number"]'
+      );
+      // ADDED: Email input
+      const emailInput = document.querySelector('input[name="email-add"]');
+
+      // Trim whitespace from values
+      const contactVal = contactInput.value.trim();
+      const guardianContactVal = guardianContactInput.value.trim();
+      // ADDED: Email value
+      const emailVal = emailInput.value.trim();
+
+      // Regex for valid PH phone numbers:
+      const phRegex = /^(\+63|0)9\d{9}$/;
+      
+      // ADDED: Regex for practical email validation
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      let errors = [];
+
+      // --- ADDED: Validate Email Address ---
+      // This field is required and must be in a valid format
+      if (emailVal === '' || !emailRegex.test(emailVal)) {
+          errors.push(
+            '- Email Address is required and must be in a valid format (e.g., user@example.com).'
+          );
+      }
+
+      // --- Validate Student Contact Number ---
+      // This field is optional, but if it's not empty, it must be valid
+      if (contactVal !== '' && !phRegex.test(contactVal)) {
+        errors.push(
+          '- Contact Number must be a valid PH phone number (e.g., 09xxxxxxxxx or +639xxxxxxxxx).'
+        );
+      }
+
+      // --- Validate Parent/Guardian Contact Number ---
+      // This field is required and must be valid
+      if (!phRegex.test(guardianContactVal)) {
+        errors.push(
+          '- Parent/Guardian Contact Number is required and must be a valid PH phone number (e.g., 09xxxxxxxxx or +639xxxxxxxxx).'
+        );
+      }
+
+      // --- Check for errors ---
+      if (errors.length > 0) {
+        event.preventDefault(); // Stop the form from submitting
+        
+        // Show a single alert with all errors
+        alert('Please fix the following errors:\n\n' + errors.join('\n'));
+      }
+    });
+</script>
 {% endblock %}

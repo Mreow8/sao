@@ -22,7 +22,7 @@ title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
 </style>
 <div class="container">
   <div class="sub-title">
-    <h3>STUDENT ORGANIZATION</h3>
+    <h4>STUDENT ORGANIZATION</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
   </div>
@@ -35,9 +35,13 @@ title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
       >Projects</a
     >
     <a href="#" class="tab active">Financial Statements</a>
+    <!-- prettier-ignore -->
+    {% if user.role == 'superadmin' or user.role == 'student_life_staff' or  user.role == 'org_admin' and user.organization == org %}
+
     <a href="{% url 'view_accreditation_by_slug' slug=org.slug %}" class="tab"
       >Accreditation Application</a
     >
+    {% endif %}
   </div>
   <!-- prettier-ignore -->
   {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}

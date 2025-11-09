@@ -107,7 +107,13 @@ class graduateForm(models.Model):
     pursuingstudies = models.TextField(null=True)
 
     def alumni_id(self):
-        return self.alumni.alumniID
+        try:
+            # Find the Alumni object that matches this form's student
+            alumni_record = Alumni.objects.get(student=self.student)
+            # Return that object's ID
+            return alumni_record.alumniID
+        except Alumni.DoesNotExist:
+            return None # Handle case where no alumni record exists yet
 
     alumni_id.short_description = "Alumni ID"
 
@@ -144,4 +150,3 @@ class Yearbook(models.Model):
 
     def __str__(self):
         return f"{self.yearbookFirstname} {self.yearbookLastname}"
-

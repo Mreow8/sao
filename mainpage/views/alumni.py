@@ -12,31 +12,25 @@ from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 
-
 @login_required
 def admin_id_request(request):
     
-    # 1. Get parameters from URL
     search_query = request.GET.get('search', None)
-    sort_by = request.GET.get('sort', 'alumnidate') # Default field to sort by
-    order = request.GET.get('order', 'desc')         # Default order (newest first)
+    sort_by = request.GET.get('sort', 'alumnidate')
+    order = request.GET.get('order', 'desc')
     
-    # 2. Start with base query (using select_related for efficiency)
     alumni_list = Alumni.objects.select_related('student').all()
 
-    # 3. Apply Search Filter (based on your template's fields)
     if search_query:
         alumni_list = alumni_list.filter(
-            Q(student__studID__icontains=search_query) |     # Search Student ID
-            Q(student__lastname__icontains=search_query) |    # Search Last Name
-            Q(student__firstname__icontains=search_query) | # Search First Name
-            Q(alumniID__icontains=search_query)           # Search Alumni ID
+            Q(student__studID__icontains=search_query) |
+            Q(student__lastname__icontains=search_query) |
+            Q(student__firstname__icontains=search_query) |
+            Q(graduateID__icontains=search_query)  # <-- Fixed
         )
 
-    # 4. Apply Sorting
-    # Whitelist of valid fields to sort by (from your template)
     valid_sort_map = {
-        'alumniID': 'alumniID',
+        'alumniID': 'graduateID',  # <-- Fixed
         'student__studID': 'student__studID',
         'student__firstname': 'student__firstname',
         'student__lastname': 'student__lastname',
@@ -46,14 +40,12 @@ def admin_id_request(request):
     
     sort_field = valid_sort_map.get(sort_by, 'alumnidate')
     
-    # Add '-' prefix if order is descending
     if order == 'desc':
         sort_field = f"-{sort_field}"
         
     alumni_list = alumni_list.order_by(sort_field)
         
-    # 5. Apply Pagination
-    paginator = Paginator(alumni_list, 10) # Show 10 items per page
+    paginator = Paginator(alumni_list, 10)
     page_number = request.GET.get('page')
     
     try:
@@ -63,12 +55,9 @@ def admin_id_request(request):
     except EmptyPage:
         page_obj = paginator.page(paginator.num_pages)
 
-    # 6. Build Context
     context = {
-        'page_obj': page_obj, # This replaces 'alumni_requests'
+        'page_obj': page_obj,
         'user': request.user,
-        
-        # Pass sort/order info back to the template
         'current_sort': sort_by,
         'current_order': order,
         'search_params': f"&search={search_query}" if search_query else ""

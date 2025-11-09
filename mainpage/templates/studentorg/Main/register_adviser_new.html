@@ -174,10 +174,10 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <h3>A. Personal Data</h3>
+    <h4>A. Personal Data</h4>
     <div class="form-section">{{ adviser_form.as_p }}</div>
 
-    <h3>Education</h3>
+    <h4>Education</h4>
     {{ education_formset.management_form }}
     <div id="education-form-list">
       {% for form in education_formset %} 
@@ -213,7 +213,7 @@
       <i class="fa fa-plus"></i> Add Another Education Entry
     </button>
 
-    <h3>Work Experience</h3>
+    <h4>Work Experience</h4>
     {{ work_formset.management_form }}
     <div id="work-form-list">
       {% for form in work_formset %} 
@@ -245,7 +245,7 @@
       <i class="fa fa-plus"></i> Add Another Work Entry
     </button>
 
-    <h3>Membership in Other Organizations</h3>
+    <h4>Membership in Other Organizations</h4>
     {{ org_formset.management_form }}
     <div id="org-form-list">
       {% for form in org_formset %} 
@@ -277,7 +277,7 @@
       <i class="fa fa-plus"></i> Add Another Organization Entry
     </button>
 
-    <h3>Advisory History</h3>
+    <h4>Advisory History</h4>
     {{ advisory_formset.management_form }}
     <div id="advisory-form-list">
       {% for form in advisory_formset %} 

@@ -188,6 +188,8 @@ def case_profile_create(request):
         'base_template': base_template,
     }
     return render(request, 'discipline/case_profile.html', context)
+
+
 # Make sure to add this import at the top of your views.py
 from django.core.paginator import Paginator
 
@@ -202,9 +204,13 @@ def case_list(request):
     )
 
     # --- 1. Get all GET parameters ---
-    search_query = request.GET.get('search', '') # NEW
+    search_query = request.GET.get('search', '')
     sort_by = request.GET.get('sort', 'date')
     order = request.GET.get('order', 'desc')
+    
+    # --- NEW: Get filter parameters ---
+    status_filter = request.GET.get('status_filter', '')
+    offense_filter = request.GET.get('offense_filter', '')
 
     # --- 2. Define Sort Fields ---
     valid_sort_fields = {
@@ -216,7 +222,7 @@ def case_list(request):
     sort_field = valid_sort_fields.get(sort_by, 'date_reported')
     order_string = f'-{sort_field}' if order == 'desc' else sort_field
     
-    # --- 3. Get Base Queryset based on Role (with performance fix) ---
+    # --- 3. Get Base Queryset based on Role ---
     if user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'):
         all_cases = CaseProfile.objects.select_related('student').all() 
     elif user.is_authenticated and getattr(user, 'role', None) == 'student':
@@ -224,28 +230,34 @@ def case_list(request):
     else:
         all_cases = CaseProfile.objects.none()
 
-    # --- 4. Apply Search Filter (NEW) ---
+    # --- 4. Apply Search Filter ---
     if search_query:
         all_cases = all_cases.filter(
             Q(student__studID__icontains=search_query) |
             Q(student__firstname__icontains=search_query) |
             Q(student__lastname__icontains=search_query) |
             Q(offense_type__icontains=search_query) |
-            Q(custom_offense__icontains=search_query) # So it can find "Others"
+            Q(custom_offense__icontains=search_query)
         )
+    
+    # --- NEW: Apply Dropdown Filters ---
+    if status_filter:
+        all_cases = all_cases.filter(status=status_filter)
+    
+    if offense_filter:
+        all_cases = all_cases.filter(offense_type=offense_filter)
 
     # --- 5. Apply Sorting ---
     all_cases = all_cases.order_by(order_string)
 
-    # --- 6. Prepare Query Strings for Links (NEW/FIXED) ---
-    
-    # For Pagination (preserves search, sort, order)
+    # --- 6. Prepare Query Strings for Links ---
+    # This logic already works! It copies all GET params,
+    # so 'status_filter' and 'offense_filter' will be included.
     pagination_params = request.GET.copy()
     if 'page' in pagination_params:
         del pagination_params['page']
     pagination_params_str = f"&{pagination_params.urlencode()}" if pagination_params else ""
 
-    # For Sorting (preserves search, but not sort/order)
     sort_params = request.GET.copy()
     for key in ['sort', 'order', 'page']:
         if key in sort_params:
@@ -257,18 +269,61 @@ def case_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # --- NEW: Get choices for dropdowns ---
+    # Get status choices (based on what's in your JS)
+    status_choices = ['Pending', 'Under Investigation', 'Resolved']
+    # Get all unique offense types from the database
+    offense_choices = CaseProfile.objects.order_by('offense_type').values_list('offense_type', flat=True).distinct()
+
     # --- 8. Context (Updated) ---
     context = {
         'page_obj': page_obj, 
         'base_template': base_template,
         'current_sort': sort_by,
         'current_order': order,
-        'search_query': search_query, # NEW
-        'pagination_params': pagination_params_str, # NEW
-        'sort_params': sort_params_str, # NEW
+        'search_query': search_query,
+        'pagination_params': pagination_params_str,
+        'sort_params': sort_params_str,
+        
+        # --- NEW CONTEXT ---
+        'status_choices': status_choices,
+        'offense_choices': offense_choices,
+        'current_status_filter': status_filter,
+        'current_offense_filter': offense_filter,
     }
     return render(request, 'discipline/case_list.html', context)
+@login_required
+def student_case_view(request, studID):
+  
+    user = request.user
+    
+    # Determine the correct base template based on user role
+    base_template = (
+        "adminmain.html" 
+        if user.is_staff or user.is_superuser or getattr(user, 'role', None) == 'guard'
+        else "main.html"
+    )
 
+    try:
+        # 1. Get the student object from the studID in the URL
+        student = get_object_or_404(studentInfo, studID=studID)
+        
+        # 2. Get all cases for that student, ordered by most recent
+        student_cases = CaseProfile.objects.filter(student=student).order_by('-date_reported')
+
+        # 3. Pass the student and their cases to the template
+        context = {
+            'student': student,
+            'student_cases': student_cases,
+            'base_template': base_template,
+        }
+        
+        return render(request, 'discipline/student_case_view.html', context)
+
+    except Exception as e:
+        logger.error(f"Error loading student case view for {studID}: {e}")
+        messages.error(request, "Could not load student case profile.")
+        return redirect('case_list')
 @login_required
 def case_edit(request, case_id):
     case = get_object_or_404(CaseProfile, id=case_id)

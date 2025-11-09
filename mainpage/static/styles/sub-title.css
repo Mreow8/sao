@@ -1,14 +1,15 @@
 /* Page Title Section */
 .sub-title {
-  text-align: center;
+  text-align: left;
+  margin-top: -50px;
   margin-bottom: 20px;
 }
 
-.sub-title h3 {
+.sub-title h4 {
   font-weight: bold;
-  font-size: 24px;
+  /* font-size: 24px;
 
-  color: #2b2b2b;
+  color: #2b2b2b; */
 }
 hr {
   margin-bottom: 20px;

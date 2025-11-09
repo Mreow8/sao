@@ -45,7 +45,7 @@
 </style>
 <div class="container">
   <div class="sub-title">
-    <h3>JOB PLACEMENT</h3>
+    <h4>JOB PLACEMENT</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Career Guidance Tracker</p>
   </div>
@@ -131,7 +131,7 @@
             >{{ seminar.title }}</a
           >
           {% else %} {{ seminar.title }} {% endif %}
-        </h3>
+        </h4>
 
         {% if user.is_staff %}
         <div class="relative">

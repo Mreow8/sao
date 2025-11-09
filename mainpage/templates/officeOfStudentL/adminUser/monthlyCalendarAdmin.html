@@ -4,28 +4,128 @@
 
 {% block headcontent %}
   <script src="https://cdn.jsdelivr.npm/sweetalert2@11"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
   <script src="{% static 'styles/studentlife/fullcalendar/lib/main.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'styles/studentlife/fullcalendar/lib/main.min.css' %}" />
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <link rel="stylesheet" href="{% static 'styles/calendarOfEvents.css' %}" />
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="{% static 'styles/studentlife/sweetalert2/sweetalert2.min.js' %}"></script>
   <style>
-    /* Fixes for link styling within FullCalendar */
-    ol,
-    ul {
-      padding-left: 0;
+  
+    .container {
+      width: 95%;
+      max-width: 1200px; /* You can adjust this */
+      margin: 0 auto;
+      padding: 24px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
-    .fc .fc-daygrid-day-number {
-      text-decoration: none !important;
-      border-bottom: none !important;
+    .fc-event {
+  /* This is the key! It removes the solid color. */
+  background-image: linear-gradient(
+    to bottom, 
+    #2c528b, 
+    #2a4365
+  );}
+    /* * CUSTOM MODAL STYLES (Replaces Bootstrap)
+     */
+    .custom-modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5); /* Dim overlay */
+      justify-content: center;
+      align-items: center;
     }
+    .custom-modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .custom-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .custom-modal-header h5 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    .close-button {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close-button:hover,
+    .close-button:focus {
+      color: #000;
+    }
+    .custom-modal-body dl dt {
+      color: #6c757d;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .custom-modal-body dl dd {
+      margin-left: 0;
+      font-size: 1.1rem;
+    }
+    #title-display { font-size: 1.5rem; font-weight: bold; }
+    
+    .custom-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #eaeaea;
+    }
+    
+    /* Custom Button Styles (Replaces .btn, .btn-primary, etc.) */
+    .modal-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    .btn-primary {
+      background-color: #0d6efd;
+      color: white;
+    }
+    .btn-primary:hover { background-color: #0b5ed7; }
+    
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+    .btn-danger:hover { background-color: #bb2d3b; }
+    
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+    .btn-secondary:hover { background-color: #5c636a; }
+
+    /* FullCalendar Link Fixes */
+    ol, ul { padding-left: 0; }
+    .fc .fc-daygrid-day-number,
     .fc .fc-col-header-cell-cushion {
       text-decoration: none !important;
       border-bottom: none !important;
@@ -33,330 +133,294 @@
   </style>
 {% endblock headcontent %}
 
-{% block bodycontent %}  <div class="sub-title">
-    <h3>OFFICE OF STUDENT LIFE {% if is_admin %} (Admin) {% endif %}</h3>
+{% block bodycontent %}
+  <div class="sub-title">
+    <h4>OFFICE OF STUDENT LIFE {% if is_admin %} (Admin) {% endif %}</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">> Monthly Calendar of Activities</p>
   </div>
-<div class="container">
 
-<hr>
-
-  <div class="container py-3" id="page-container">
-    <div class="row">
-      <div class="col-md-12">
-        <div id="calendar"></div>
-      </div>
-    </div>
+  <div class="container">
+    <div id="calendar"></div>
   </div>
-</div>
 
-<script>
-  var scheds = JSON.parse("{{ sched_json|escapejs }}");
-</script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var calendarEl = document.getElementById("calendar");
-
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: "dayGridMonth",
-      selectable: true,
-      selectHelper: true,
-      events: Object.values(scheds), // This loads your events
-      
-      // --- This function handles clicking on an EXISTING event ---
-      eventClick: function (info) {
-        // Fill modal fields
-        document.getElementById("title").textContent = info.event.title;
-        document.getElementById("description").textContent =
-          info.event.extendedProps.description || "";
-        document.getElementById("start").textContent =
-          info.event.start.toLocaleString();
-        document.getElementById("end").textContent = info.event.end
-          ? info.event.end.toLocaleString()
-          : ""; // Note: end date will be 1 day after
-
-        // Set data-id for edit/delete buttons
-        document.getElementById("edit") &&
-          (document.getElementById("edit").dataset.id = info.event.id);
-        document.getElementById("delete") &&
-          (document.getElementById("delete").dataset.id = info.event.id);
-
-        // Show the Bootstrap modal
-        $("#event-details-modal").modal("show");
-      },
-
-      // --- This function handles clicking on an EMPTY date (for Admins) ---
-      {% if is_admin %}
-      select: function (info) {
-        
-        // Pre-fill the start date
-        const formattedStart = info.startStr; // e.g., "2025-11-01"
-
-        // Pre-fill the end date (FullCalendar's 'info.end' is exclusive, so subtract 1 day)
-        const endDate = new Date(info.end);
-        endDate.setDate(endDate.getDate() - 1);
-        const formattedEnd = endDate.toISOString().slice(0, 10); // e.g., "2025-11-05"
-
-        Swal.fire({
-          title: "Add Schedule",
-          html:
-            `<label for="swal-title">Title</label>` +
-            `<input id="swal-title" class="swal2-input" placeholder="Enter the event title">` +
-
-            `<label for="swal-description">Description</label>` +
-            `<textarea id="swal-description" class="swal2-textarea" placeholder="Enter the event description"></textarea>` +
-
-            `<label for="swal-start">Start Date</label>` +
-            `<input id="swal-start" type="date" class="swal2-input" value="${formattedStart}">` +
-
-            `<label for="swal-end">End Date</label>` +
-            `<input id="swal-end" type="date" class="swal2-input" value="${formattedEnd}">`,
-          
-          focusConfirm: false,
-          showCancelButton: true,
-          confirmButtonText: "Save",
-          preConfirm: () => {
-            const title = document.getElementById("swal-title").value;
-            const description = document.getElementById("swal-description").value;
-            const start_date = document.getElementById("swal-start").value;
-            const end_date = document.getElementById("swal-end").value;
-
-            if (!title || !description || !start_date || !end_date) {
-              Swal.showValidationMessage("All fields are required.");
-              return false;
-            }
-
-            // This now matches your Python view
-            return { title, description, start_date, end_date };
-          },
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            try {
-              const response = await fetch("{% url 'save_schedule' %}", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-CSRFToken": "{{ csrf_token }}",
-                },
-                // Send the correct JSON payload
-                body: JSON.stringify(result.value), 
-              });
-
-              const responseData = await response.json();
-
-              if (response.ok && responseData.status === "success") {
-                Swal.fire("Saved!", "Schedule has been added.", "success");
-                
-                // Add event to calendar dynamically
-                calendar.addEvent({
-                  id: responseData.id,
-                  title: responseData.title,
-                  start: responseData.start,
-                  end: responseData.end, // This should be the exclusive date
-                  description: responseData.description
-                });
-              } else {
-                throw new Error(
-                  responseData.message || "Failed to save schedule."
-                );
-              }
-            } catch (error) {
-              Swal.fire("Error", error.message, "error");
-            }
-          }
-        });
-      },
-      {% endif %}
-    });
-
-    calendar.render();
-    // --- Add click listener for the DELETE button ---
-    // This uses jQuery's 'on' method for event delegation.
-    // It listens for clicks on 'document', but only fires if the
-    // clicked element has the ID 'delete'. This works for modal buttons.
-    $(document).on("click", "#delete", function () {
-      const eventId = this.dataset.id;
-      if (!eventId) return;
-
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Hide the modal manually
-          $("#event-details-modal").modal("hide");
-          // Go to the delete URL
-          window.location.href = `/slife/delete-schedule/${eventId}/`;
-        }
-      });
-    });
-
-    // --- Add click listener for the EDIT button ---
-    $(document).on("click", "#edit", function () {
-      const eventId = this.dataset.id;
-      if (!eventId) return;
-
-      // 1. Get the event object from the calendar
-      const eventObj = calendar.getEventById(eventId); // 'calendar' variable is still accessible here
-      if (!eventObj) {
-        Swal.fire("Error", "Could not find event details.", "error");
-        return;
-      }
-
-      // 2. Get event data
-      const title = eventObj.title;
-      const description = eventObj.extendedProps.description;
-      const start_date = eventObj.start.toISOString().slice(0, 10);
-
-      // 3. Adjust end date
-      const endDate = new Date(eventObj.end);
-      endDate.setDate(endDate.getDate() - 1);
-      const end_date = endDate.toISOString().slice(0, 10);
-
-      // 4. Hide the current modal
-      $("#event-details-modal").modal("hide");
-
-      // 5. Show SweetAlert modal for editing
-      Swal.fire({
-        title: "Edit Schedule",
-        html:
-          `<label for="swal-title">Title</label>` +
-          `<input id="swal-title" class="swal2-input" value="${title}">` +
-          `<label for="swal-description">Description</label>` +
-          `<textarea id="swal-description" class="swal2-textarea">${description}</textarea>` +
-          `<label for="swal-start">Start Date</label>` +
-          `<input id="swal-start" type="date" class="swal2-input" value="${start_date}">` +
-          `<label for="swal-end">End Date</label>` +
-          `<input id="swal-end" type="date" class="swal2-input" value="${end_date}">`,
-
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: "Save Changes",
-        preConfirm: () => {
-          // ... (preConfirm logic is the same) ...
-          const newTitle = document.getElementById("swal-title").value;
-          const newDescription = document.getElementById("swal-description").value;
-          const newStart = document.getElementById("swal-start").value;
-          const newEnd = document.getElementById("swal-end").value;
-
-          if (!newTitle || !newDescription || !newStart || !newEnd) {
-            Swal.showValidationMessage("All fields are required.");
-            return false;
-          }
-          return {
-            title: newTitle,
-            description: newDescription,
-            start_date: newStart,
-            end_date: newEnd,
-          };
-        },
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            // ... (fetch logic is the same) ...
-            const response = await fetch(`/slife/update-schedule/${eventId}/`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}",
-              },
-              body: JSON.stringify(result.value),
-            });
-
-            const responseData = await response.json();
-
-            if (response.ok && responseData.status === "success") {
-              // ... (calendar update logic is the same) ...
-              eventObj.setProp("title", responseData.title);
-              eventObj.setProp("description", responseData.description);
-              eventObj.setStart(responseData.start);
-
-              const exclusiveEndDate = new Date(responseData.end);
-              exclusiveEndDate.setDate(exclusiveEndDate.getDate() + 1);
-              eventObj.setEnd(exclusiveEndDate.toISOString().slice(0, 10));
-
-              Swal.fire("Updated!", "Schedule has been updated.", "success");
-            } else {
-              throw new Error(
-                responseData.message || "Failed to update schedule."
-              );
-            }
-          } catch (error) {
-            Swal.fire("Error", error.message, "error");
-          }
-        }
-      });
-    });
-  });
-</script>
-
-<div
-  class="modal fade"
-  tabindex="-1"
-  data-bs-backdrop="static"
-  id="event-details-modal"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-0">
-      <div class="modal-header rounded-0">
-        <h5 class="modal-title">Schedule Details</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+  <div id="custom-event-modal" class="custom-modal">
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <h5>Schedule Details</h5>
+        <span class="close-button" id="modal-close-btn">&times;</span>
       </div>
-      <div class="modal-body rounded-0">
-        <div class="container-fluid">
-          <dl>
-            <dt class="text-muted">Title</dt>
-            <dd id="title" class="fw-bold fs-4"></dd>
-            <dt class="text-muted">Description</dt>
-            <dd id="description" class=""></dd>
-            <dt class="text-muted">Start</dt>
-            <dd id="start" class=""></dd>
-            <dt class="text-muted">End</dt>
-            <dd id="end" class=""></dd>
-          </dl>
-        </div>
+      <div class="custom-modal-body">
+        <dl>
+          <dt>Title</dt>
+          <dd id="title-display"></dd>
+          <dt>Description</dt>
+          <dd id="description-display"></dd>
+          <dt>Start</dt>
+          <dd id="start-display"></dd>
+          <dt>End</dt>
+          <dd id="end-display"></dd>
+        </dl>
       </div>
-      <div class="modal-footer rounded-0">
+      <div class="custom-modal-footer">
         {% if is_admin %}
-        <button
-          type="button"
-          class="btn btn-primary btn-sm rounded-0"
-          id="edit"
-          data-id=""
-        >
+        <button type="button" class="modal-btn btn-primary" id="edit-btn" data-id="">
           Edit
         </button>
-        <button
-          type="button"
-          class="btn btn-danger btn-sm rounded-0"
-          id="delete"
-          data-id=""
-        >
+        <button type="button" class="modal-btn btn-danger" id="delete-btn" data-id="">
           Delete
         </button>
         {% endif %}
-        <button
-          type="button"
-          class="btn btn-secondary btn-sm rounded-0"
-          data-bs-dismiss="modal"
-        >
+        <button type="button" class="modal-btn btn-secondary" id="modal-close-footer-btn">
           Close
         </button>
       </div>
     </div>
   </div>
-</div>
 
+  <script>
+    // This variable holds your event data
+    var scheds = JSON.parse("{{ sched_json|escapejs }}");
+
+    // This function will close the custom modal
+    function closeCustomModal() {
+      var modal = document.getElementById("custom-event-modal");
+      modal.style.display = "none";
+    }
+
+    // This function will open the custom modal
+    function openCustomModal() {
+      var modal = document.getElementById("custom-event-modal");
+      modal.style.display = "flex";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var calendarEl = document.getElementById("calendar");
+
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        selectable: true,
+        selectHelper: true,
+        events: Object.values(scheds),
+
+        // --- UPDATED: Handles clicking on an EXISTING event ---
+        eventClick: function (info) {
+          // Fill modal fields
+          document.getElementById("title-display").textContent = info.event.title;
+          document.getElementById("description-display").textContent =
+            info.event.extendedProps.description || "";
+          document.getElementById("start-display").textContent =
+            info.event.start.toLocaleString();
+          document.getElementById("end-display").textContent = info.event.end
+            ? info.event.end.toLocaleString()
+            : "";
+
+          // Set data-id for edit/delete buttons
+          var editBtn = document.getElementById("edit-btn");
+          var deleteBtn = document.getElementById("delete-btn");
+          
+          if (editBtn) editBtn.dataset.id = info.event.id;
+          if (deleteBtn) deleteBtn.dataset.id = info.event.id;
+
+          // Show the custom modal
+          openCustomModal();
+        },
+
+        // --- This function (for Admins) is unchanged ---
+        {% if is_admin %}
+        select: function (info) {
+          // (SweetAlert is not Bootstrap, so this logic is fine)
+          const formattedStart = info.startStr;
+          const endDate = new Date(info.end);
+          endDate.setDate(endDate.getDate() - 1);
+          const formattedEnd = endDate.toISOString().slice(0, 10);
+
+          Swal.fire({
+            title: "Add Schedule",
+            html:
+              `<label for="swal-title">Title</label>` +
+              `<input id="swal-title" class="swal2-input" placeholder="Enter the event title">` +
+              `<label for="swal-description">Description</label>` +
+              `<textarea id="swal-description" class="swal2-textarea" placeholder="Enter the event description"></textarea>` +
+              `<label for="swal-start">Start Date</label>` +
+              `<input id="swal-start" type="date" class="swal2-input" value="${formattedStart}">` +
+              `<label for="swal-end">End Date</label>` +
+              `<input id="swal-end" type="date" class="swal2-input" value="${formattedEnd}">`,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: "Save",
+            preConfirm: () => {
+              const title = document.getElementById("swal-title").value;
+              const description = document.getElementById("swal-description").value;
+              const start_date = document.getElementById("swal-start").value;
+              const end_date = document.getElementById("swal-end").value;
+
+              if (!title || !description || !start_date || !end_date) {
+                Swal.showValidationMessage("All fields are required.");
+                return false;
+              }
+              return { title, description, start_date, end_date };
+            },
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              try {
+                const response = await fetch("{% url 'save_schedule' %}", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                  },
+                  body: JSON.stringify(result.value), 
+                });
+                const responseData = await response.json();
+                if (response.ok && responseData.status === "success") {
+                  Swal.fire("Saved!", "Schedule has been added.", "success");
+                  calendar.addEvent({
+                    id: responseData.id,
+                    title: responseData.title,
+                    start: responseData.start,
+                    end: responseData.end,
+                    description: responseData.description
+                  });
+                } else {
+                  throw new Error(responseData.message || "Failed to save schedule.");
+                }
+              } catch (error) {
+                Swal.fire("Error", error.message, "error");
+              }
+            }
+          });
+        },
+        {% endif %}
+      });
+
+      calendar.render();
+      
+      // --- NEW: Event listeners for custom modal buttons ---
+      document.getElementById("modal-close-btn").onclick = closeCustomModal;
+      document.getElementById("modal-close-footer-btn").onclick = closeCustomModal;
+      
+      // Close modal if user clicks on the dark overlay
+      window.onclick = function(event) {
+        if (event.target == document.getElementById("custom-event-modal")) {
+          closeCustomModal();
+        }
+      }
+
+      // --- UPDATED: Click listener for the DELETE button ---
+      var deleteBtn = document.getElementById("delete-btn");
+      if (deleteBtn) {
+        deleteBtn.addEventListener("click", function () {
+          const eventId = this.dataset.id;
+          if (!eventId) return;
+
+          Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Hide the modal manually
+              closeCustomModal();
+              // Go to the delete URL
+              window.location.href = `/slife/delete-schedule/${eventId}/`;
+            }
+          });
+        });
+      }
+
+      // --- UPDATED: Click listener for the EDIT button ---
+      var editBtn = document.getElementById("edit-btn");
+      if (editBtn) {
+        editBtn.addEventListener("click", function () {
+          const eventId = this.dataset.id;
+          if (!eventId) return;
+
+          const eventObj = calendar.getEventById(eventId);
+          if (!eventObj) {
+            Swal.fire("Error", "Could not find event details.", "error");
+            return;
+          }
+
+          const title = eventObj.title;
+          const description = eventObj.extendedProps.description;
+          const start_date = eventObj.start.toISOString().slice(0, 10);
+
+          const endDate = new Date(eventObj.end);
+          endDate.setDate(endDate.getDate() - 1);
+          const end_date = endDate.toISOString().slice(0, 10);
+
+          // 4. Hide the current modal
+          closeCustomModal();
+
+          // 5. Show SweetAlert modal for editing (unchanged)
+          Swal.fire({
+            title: "Edit Schedule",
+            html:
+              `<label for="swal-title">Title</label>` +
+              `<input id="swal-title" class="swal2-input" value="${title}">` +
+              `<label for="swal-description">Description</label>` +
+              `<textarea id="swal-description" class="swal2-textarea">${description}</textarea>` +
+              `<label for="swal-start">Start Date</label>` +
+              `<input id="swal-start" type="date" class="swal2-input" value="${start_date}">` +
+              `<label for="swal-end">End Date</label>` +
+              `<input id="swal-end" type="date" class="swal2-input" value="${end_date}">`,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: "Save Changes",
+            preConfirm: () => {
+              const newTitle = document.getElementById("swal-title").value;
+              const newDescription = document.getElementById("swal-description").value;
+              const newStart = document.getElementById("swal-start").value;
+              const newEnd = document.getElementById("swal-end").value;
+
+              if (!newTitle || !newDescription || !newStart || !newEnd) {
+                Swal.showValidationMessage("All fields are required.");
+                return false;
+              }
+              return {
+                title: newTitle,
+                description: newDescription,
+                start_date: newStart,
+                end_date: newEnd,
+              };
+            },
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              try {
+                const response = await fetch(`/slife/update-schedule/${eventId}/`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                  },
+                  body: JSON.stringify(result.value),
+                });
+                const responseData = await response.json();
+                if (response.ok && responseData.status === "success") {
+                  eventObj.setProp("title", responseData.title);
+                  eventObj.setProp("description", responseData.description);
+                  eventObj.setStart(responseData.start);
+
+                  const exclusiveEndDate = new Date(responseData.end);
+                  exclusiveEndDate.setDate(exclusiveEndDate.getDate() + 1);
+                  eventObj.setEnd(exclusiveEndDate.toISOString().slice(0, 10));
+
+                  Swal.fire("Updated!", "Schedule has been updated.", "success");
+                } else {
+                  throw new Error(responseData.message || "Failed to update schedule.");
+                }
+              } catch (error) {
+                Swal.fire("Error", error.message, "error");
+              }
+            }
+          });
+        });
+      }
+    });
+  </script>
 {% endblock bodycontent %}

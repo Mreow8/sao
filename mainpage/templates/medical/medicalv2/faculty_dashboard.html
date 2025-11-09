@@ -160,27 +160,27 @@ tailwind_css %}
           <div class="tab-content active" id="general-tab">
             <div class="grid grid-cols-1 gap-4">
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Sex</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Sex</h4>
                 <p class="text-gray-900">{{ faculty.sex }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Age</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Age</h4>
                 <p class="text-gray-900">{{ patient.age }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Birth Date</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Birth Date</h4>
                 <p class="text-gray-900">{{ patient.birth_date }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Civil Status</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Civil Status</h4>
                 <p class="text-gray-900">{{ patient.civil_status }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Nationality</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Nationality</h4>
                 <p class="text-gray-900">{{ patient.nationality }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Religion</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Religion</h4>
                 <p class="text-gray-900">{{ patient.religion }}</p>
               </div>
             </div>
@@ -190,25 +190,25 @@ tailwind_css %}
           <div class="tab-content" id="medical-tab">
             <div class="grid grid-cols-1 gap-4">
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Blood Type</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Blood Type</h4>
                 <p class="text-gray-900">{{ patient.bloodtype }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Height</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Height</h4>
                 <p class="text-gray-900">{{ patient.height }} cm</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Weight</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Weight</h4>
                 <p class="text-gray-900">{{ patient.weight }} kg</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Blood Pressure</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Blood Pressure</h4>
                 <p class="text-gray-900">
                   {{ patient.blood_pressure|default:"Not recorded" }}
                 </p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Allergies</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Allergies</h4>
                 <p class="text-gray-900">
                   {{ patient.allergies|default:"None" }}
                 </p>
@@ -216,7 +216,7 @@ tailwind_css %}
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <h3 class="font-semibold text-gray-700 mb-2">
                   Current Medications
-                </h3>
+                </h4>
                 <p class="text-gray-900">
                   {{ patient.medications|default:"None" }}
                 </p>
@@ -231,7 +231,7 @@ tailwind_css %}
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <h3 class="font-semibold text-gray-700 mb-2">
                   Medical Conditions
-                </h3>
+                </h4>
                 <div class="grid grid-cols-2 gap-2">
                   {% if medical_history.tuberculosis %}
                   <p class="text-gray-900">• Tuberculosis</p>
@@ -245,7 +245,7 @@ tailwind_css %}
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <h3 class="font-semibold text-gray-700 mb-2">
                   Medical History
-                </h3>
+                </h4>
                 <p class="text-gray-900">No medical history reported</p>
               </div>
               {% endif %} {% if family_history and not family_history.no_history
@@ -253,7 +253,7 @@ tailwind_css %}
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <h3 class="font-semibold text-gray-700 mb-2">
                   Family Medical History
-                </h3>
+                </h4>
                 <div class="grid grid-cols-2 gap-2">
                   {% if family_history.hypertension %}
                   <p class="text-gray-900">• Hypertension</p>
@@ -267,7 +267,7 @@ tailwind_css %}
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <h3 class="font-semibold text-gray-700 mb-2">
                   Family Medical History
-                </h3>
+                </h4>
                 <p class="text-gray-900">No family medical history reported</p>
               </div>
               {% endif %}
@@ -278,31 +278,31 @@ tailwind_css %}
           <div class="tab-content" id="contact-tab">
             <div class="grid grid-cols-1 gap-4">
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Home Address</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Home Address</h4>
                 <p class="text-gray-900">{{ patient.home_address }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">City</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">City</h4>
                 <p class="text-gray-900">{{ patient.city }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Province</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Province</h4>
                 <p class="text-gray-900">{{ patient.state_province }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <h3 class="font-semibold text-gray-700 mb-2">Postal Code</h3>
+                <h3 class="font-semibold text-gray-700 mb-2">Postal Code</h4>
                 <p class="text-gray-900">{{ patient.postal_zipcode }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <h3 class="font-semibold text-gray-700 mb-2">
                   Emergency Contact
-                </h3>
+                </h4>
                 <p class="text-gray-900">{{ patient.parent_guardian }}</p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <h3 class="font-semibold text-gray-700 mb-2">
                   Emergency Contact Number
-                </h3>
+                </h4>
                 <p class="text-gray-900">
                   {{ patient.parent_guardian_contact_number }}
                 </p>
@@ -462,7 +462,7 @@ tailwind_css %}
               modal.innerHTML = `
                   <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
                       <div class="flex justify-between items-start mb-4">
-                          <h3 class="text-lg font-semibold">Appointment Details</h3>
+                          <h3 class="text-lg font-semibold">Appointment Details</h4>
                           <button class="text-gray-500 hover:text-gray-700" onclick="this.closest('.fixed').remove()">
                               <i class="fas fa-times"></i>
                           </button>

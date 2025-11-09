@@ -4,6 +4,7 @@ from mainpage.models.guidance import studentInfo
 
 from django.utils.text import slugify
 
+
 def validate_file_extension(value):
     valid_extensions = ('.pdf', '.docx', '.jpg', '.jpeg', '.png', '.gif')
     if not value.name.lower().endswith(valid_extensions):
@@ -30,6 +31,29 @@ from django.db import models
 # Make sure your other models are imported or defined
 # from .models import studentInfo, Organization
 
+class OrganizationCBL(models.Model):
+    cbl_id = models.AutoField(primary_key=True)
+    organization = models.ForeignKey(
+        Organization, 
+        on_delete=models.CASCADE, 
+        related_name="cbl_documents"
+    )
+    cbl_file = models.FileField(
+        upload_to='organization_cbls/', 
+        validators=[validate_file_extension],
+        verbose_name="Constitution and By-Laws File"
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Is this the currently active CBL for the organization?"
+    )
+
+    class Meta:
+        ordering = ['-uploaded_at'] # Show the newest ones first
+
+    def __str__(self):
+        return f"{self.organization.name} - CBL ({self.uploaded_at.strftime('%Y-%m-%d')})"
 class Officer(models.Model):
     officer_id = models.AutoField(primary_key=True)
     profile_picture = models.ImageField(

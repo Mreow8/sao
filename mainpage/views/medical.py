@@ -111,6 +111,8 @@ def is_admin(user):
 
 # Patient's basic information
 def patient_basic_info(request, student_id):
+    base_template = "adminmain.html" if (request.user.role != 'student' or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard') else "main.html"    # --- Access control ---
+
     student = studentInfo.objects.get(studID=student_id)
     user = User.objects.get(username=student.studID)
     if Patient.objects.filter(user=user).exists():
@@ -164,7 +166,9 @@ def patient_basic_info(request, student_id):
 
         messages.success(request, "You may now do your transactions")
         return redirect("request")
-    return render(request, "medical/students/basicinfo.html", {"student": student})
+    context ={"student": student, 'base_template': base_template,
+}
+    return render(request, "medical/students/basicinfo.html", context)
 
 # view for handling clearance form submission
 
@@ -1524,11 +1528,11 @@ def submit_request(request):
         
         # Redirect to the correct dashboard based on user type
         if student_user:
-            return redirect('main') # Redirect to main view which handles student dashboard redirection
+            return redirect('dashboard') # Redirect to main view which handles student dashboard redirection
         elif faculty_user:
-             return redirect('main') # Redirect to main view which handles faculty dashboard redirection
+             return redirect('dashboard') # Redirect to main view which handles faculty dashboard redirection
         else:
-             return redirect('main') # Fallback redirection
+             return redirect('dashboard') # Fallback redirection
              
     # For GET requests, fetch the student or faculty object for initial form display
     student = get_student_by_user(request.user)
@@ -2008,7 +2012,7 @@ def dental_services(request):
                 return redirect('patient_basicinfo', student_id=logged_in_student.studID)
             else:
                 messages.error(request, "Cannot access dental services without a patient profile.")
-                return redirect('main')
+                return redirect('dashboard')
 
         service_type = request.POST.get("service_type")
         if not service_type:

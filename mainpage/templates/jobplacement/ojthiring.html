@@ -69,7 +69,7 @@
 />
 {% endblock headcontent %} {% block bodycontent %}
 <div class="sub-title">
-  <h3>JOB PLACEMENT</h3>
+  <h4>JOB PLACEMENT</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Ojt Hiring</p>
 </div>
@@ -99,7 +99,7 @@
     
      {% if student_assignment %}
     <div class="assignment-status-box">
-      <h3>Your OJT Assignment</h3>
+      <h4>Your OJT Assignment</h4>
       <p>You are assigned to:</p>
       <h2>{{ student_assignment.company_id.company_name }}</h2>
       <div class="company-details">
@@ -383,36 +383,36 @@
       <div class="info-groups-container">
         <div class="info-group">
           <img src="{% static '/imgs/imgs/human.png' %}" alt="human" />
-          <h3 style="font-weight: bold">Employer:</h3>
-          <h3 class="hiring">{{ hiring.owner }}</h3>
+          <h3 style="font-weight: bold">Employer:</h4>
+          <h3 class="hiring">{{ hiring.owner }}</h4>
         </div>
         <div class="info-group">
           <img src="{% static '/imgs/imgs/briefcase.png' %}" alt="case" />
-          <h3 style="font-weight: bold">Position:</h3>
-          <h3 class="hiring">{{ hiring.position }}</h3>
+          <h3 style="font-weight: bold">Position:</h4>
+          <h3 class="hiring">{{ hiring.position }}</h4>
         </div>
         <div class="info-group">
           <img src="{% static '/imgs/imgs/placeholder.png' %}" alt="arrow" />
-          <h3 style="font-weight: bold">Address:</h3>
-          <h3 class="hiring">{{ hiring.address }}</h3>
+          <h3 style="font-weight: bold">Address:</h4>
+          <h3 class="hiring">{{ hiring.address }}</h4>
         </div>
         <div class="info-group">
           <img src="{% static '/imgs/imgs/phone.png' %}" alt="phone" />
-          <h3 style="font-weight: bold">Contact:</h3>
-          <h3 class="hiring">{{ hiring.company_contact }}</h3>
+          <h3 style="font-weight: bold">Contact:</h4>
+          <h3 class="hiring">{{ hiring.company_contact }}</h4>
         </div>
         <div class="info-group">
           <img src="{% static '/imgs/imgs/clock.png' %}" alt="clock" />
-          <h3 style="font-weight: bold">Work Shift:</h3>
-          <h3>{{ hiring.shift }}</h3>
+          <h3 style="font-weight: bold">Work Shift:</h4>
+          <h4>{{ hiring.shift }}</h4>
         </div>
         <div class="info-group">
           <img src="{% static '/imgs/imgs/plus.png' %}" alt="plus" />
-          <h3 style="font-weight: bold">Slots Available:</h3>
-          <h3>{{ hiring.number_of_slots }}</h3>
+          <h3 style="font-weight: bold">Slots Available:</h4>
+          <h4>{{ hiring.number_of_slots }}</h4>
         </div>
       </div>
-      <h3>Job Description:</h3>
+      <h4>Job Description:</h4>
       <p>{{ hiring.description }}</p>
       <button class="close"></button>
     </div>
@@ -454,16 +454,16 @@
 
       <h1>{{ hiring.company_name }}</h1>
       <div class="info-group">
-        <h3>Employer:</h3>
-        <h3 class="hiring">{{ hiring.owner }}</h3>
+        <h4>Employer:</h4>
+        <h3 class="hiring">{{ hiring.owner }}</h4>
       </div>
       <div class="info-group">
-        <h3>Address:</h3>
-        <h3 class="hiring">{{ hiring.address }}</h3>
+        <h4>Address:</h4>
+        <h3 class="hiring">{{ hiring.address }}</h4>
       </div>
       <div class="info-group">
-        <h3>Contact Details:</h3>
-        <h3 class="hiring">{{ hiring.company_contact }}</h3>
+        <h4>Contact Details:</h4>
+        <h3 class="hiring">{{ hiring.company_contact }}</h4>
       </div>
       <ul>
         <li>{{ hiring.description }}</li>

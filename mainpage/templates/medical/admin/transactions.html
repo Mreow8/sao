@@ -25,10 +25,10 @@
     <h2 class="font-bold xs:text-[1.3rem] sm:text-[1.5rem] my-4 text-center">Transaction Records</h2>
     {% if monthly %}
        
-        <h3 class="xs:text-[14px] sm:text-base">{{ month_name }} - {{ selected_year }} {{ transaction_type|title }}</h3>
+        <h3 class="xs:text-[14px] sm:text-base">{{ month_name }} - {{ selected_year }} {{ transaction_type|title }}</h4>
     {% elif daily %}
        
-        <h3 class="xs:text-[14px] sm:text-base">{{ transaction_type|title }} As Of  {{ month_name}} {{ date_today }}, {{ year }}</h3>
+        <h3 class="xs:text-[14px] sm:text-base">{{ transaction_type|title }} As Of  {{ month_name}} {{ date_today }}, {{ year }}</h4>
     {% endif %}
     <form class="flex w-full gap-2" method="get" action="{% url 'medical:transactions' %}">
             {% csrf_token %}

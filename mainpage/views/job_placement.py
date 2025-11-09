@@ -2,6 +2,8 @@ import csv
 import zipfile
 from django.conf import settings
 from django.shortcuts import render, redirect
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 from django.views import View
 from django.db.models import Q
 from django.contrib.auth import login, logout, authenticate
@@ -568,34 +570,86 @@ def ojt_hiring_info(request, id):   # ojt company page
 
 from ..models import OJTRequirements, studentInfo
 
+from ..models import OJTRequirements, studentInfo
+
 def ojtRequirements_tracker(request):
-    req_records = OJTRequirements.objects.all()
+    # --- Base setup ---
     existing_requirement = None
-    base_template = "adminmain.html" if request.user.role != 'student' or request.user.is_superuser else "main.html"
+    _reqform = OJTRequirementsForm()
+    stat_widgets = StatusWidget()
+    base_template = "adminmain.html" if (request.user.is_authenticated and (request.user.role != 'student' or request.user.is_superuser)) else "main.html"
 
-    # handles search (lookup by studID in studentInfo)
-    if request.method == 'POST':
-        id = request.POST.get('student_id')
-        req_records = OJTRequirements.objects.filter(student_id__studID=id)
+    # --- Initialize Admin context ---
+    req_records = []
+    all_degrees = []
+    search_query = ''
+    selected_degree = ''
+    sort_by = '' # <-- New variable for sorting
 
-    try:
-        # first get the studentInfo that belongs to the logged in user
-        student_info = studentInfo.objects.get(user=request.user)
+    if request.user.is_authenticated and (request.user.role != 'student' or request.user.is_superuser):
+        # --- ADMIN VIEW LOGIC ---
+        
+        all_degrees = OJTRequirements.objects.select_related('student_id') \
+                                              .order_by('student_id__degree') \
+                                              .values_list('student_id__degree', flat=True) \
+                                              .distinct()
 
-        existing_requirement = OJTRequirements.objects.get(student_id=student_info)
-        _reqform = OJTRequirementsForm(instance=existing_requirement)
-        stat_widgets = StatusWidget(instance=existing_requirement)
-    except (studentInfo.DoesNotExist, OJTRequirements.DoesNotExist):
-        _reqform = OJTRequirementsForm()
-        stat_widgets = StatusWidget()
-        existing_requirement = None
+        # Get filter parameters from the URL (using GET)
+        search_query = request.GET.get('student_search', '')
+        selected_degree = request.GET.get('degree_filter', '')
+        sort_by = request.GET.get('sort_by', 'latest') # <-- Get sort_by, default to 'latest'
 
+        # Start with all records
+        req_records = OJTRequirements.objects.select_related('student_id')
+
+        # Apply degree filter
+        if selected_degree:
+            req_records = req_records.filter(student_id__degree=selected_degree)
+
+        # Apply search filter
+        if search_query:
+            req_records = req_records.annotate(
+               full_name=Concat('student_id__firstname', Value(' '), 'student_id__lastname'),
+               full_name_rev=Concat('student_id__lastname', Value(' '), 'student_id__firstname')
+            )
+            req_records = req_records.filter(
+                Q(student_id__studID__icontains=search_query) |
+                Q(full_name__icontains=search_query) |
+                Q(full_name_rev__icontains=search_query)
+            )
+        
+        # --- New Sorting Logic ---
+        if sort_by == 'oldest':
+            req_records = req_records.order_by('ojt_requirement_id') # Oldest first
+        else:
+            # Default to 'latest'
+            req_records = req_records.order_by('-ojt_requirement_id') # Latest first
+    
+    elif request.user.is_authenticated:
+        # --- STUDENT VIEW LOGIC ---
+        try:
+            student_info = studentInfo.objects.get(user=request.user)
+            existing_requirement = OJTRequirements.objects.get(student_id=student_info)
+            _reqform = OJTRequirementsForm(instance=existing_requirement)
+            stat_widgets = StatusWidget(instance=existing_requirement)
+        except (studentInfo.DoesNotExist, OJTRequirements.DoesNotExist):
+            _reqform = OJTRequirementsForm()
+            stat_widgets = StatusWidget()
+            existing_requirement = None
+    
+    # --- Context for both Admin and Student ---
     context = {
         'form': _reqform,
         'existing_form': existing_requirement,
         'base_template': base_template,
         'status': stat_widgets,
-        'req_records': req_records
+        'req_records': req_records,
+        
+        # Admin filter context
+        'all_degrees': all_degrees,
+        'search_query': search_query,
+        'selected_degree': selected_degree,
+        'sort_by': sort_by, # <-- Pass sort_by to template
     }
     return render(request, 'jobplacement/ojt_requirements.html', context)
 

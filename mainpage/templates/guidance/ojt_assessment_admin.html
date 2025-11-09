@@ -10,7 +10,9 @@
   flex-wrap: wrap; /* Allows wrapping if cell is narrow */
   gap: 6px; /* Space between buttons */
 }
-
+.show-form-button {
+  white-space: nowrap;
+}
 /* This is a BASE style for all buttons in that div */
 .horizontal button {
   padding: 8px 12px;
@@ -77,7 +79,7 @@
 {% block bodycontent %}
 <div class="container">
   <div class="sub-title">
-    <h3>GUIDANCE(Admin)</h3>
+    <h4>GUIDANCE(Admin)</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; OJT Assessments/Psychological Issuance</p>
   </div>
@@ -87,7 +89,6 @@
     {% csrf_token %}
     
     <form id="search_id" method="GET" action="">
-      <label for="studentIDBox">Enter ID number:</label>
       <input
         type="text"
         name="search"

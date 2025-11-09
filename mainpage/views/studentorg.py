@@ -4,7 +4,7 @@ from django.contrib import messages
 from ..forms import OfficerForm
 from ..forms import ProjectForm
 from ..forms import FinancialStatementForm
-from ..forms import AccreditationForm, AdviserForm, OrganizationForm
+from ..forms import AccreditationForm, AdviserForm, OrganizationForm, OrganizationCBLForm
 from ..models import Project, Accreditation, Adviser
 from ..models import FinancialStatement, Officer
 from ..models import Organization
@@ -16,8 +16,42 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
 # views.py
-# views.py
+from django.views.decorators.http import require_POST
 
+@require_POST  # Ensures this view only accepts POST requests
+def upload_org_cbl(request, org_slug):
+    org = get_object_or_404(Organization, slug=org_slug)
+    form = OrganizationCBLForm(request.POST, request.FILES)
+    
+    if form.is_valid():
+        # Set all other CBLs for this org to inactive
+        org.cbl_documents.update(is_active=False)
+        
+        # Save the new one
+        new_cbl = form.save(commit=False)
+        new_cbl.organization = org
+        new_cbl.is_active = True
+        new_cbl.save()
+        
+        messages.success(request, f"New CBL for {org.name} has been uploaded.")
+    else:
+        # Send a failure message
+        messages.error(request, "Upload failed. Please check the file and try again.")
+    
+    # Always redirect back to the profile page
+    return redirect('org_profile', slug=org_slug)
+
+def view_org_cbl(request, org_slug):
+    org = get_object_or_404(Organization, slug=org_slug)
+    cbl_document = org.cbl_documents.filter(is_active=True).first()
+    
+    if cbl_document and cbl_document.cbl_file:
+        # File exists, redirect to it
+        return redirect(cbl_document.cbl_file.url)
+    else:
+        # This should rarely happen if the template logic is correct
+        messages.error(request, f"No active CBL has been uploaded for {org.name}.")
+        return redirect('org_profile', slug=org_slug)
 def is_superadmin(user):
     return user.is_authenticated and user.role == 'superadmin'
 from django.shortcuts import render, redirect, get_object_or_404
@@ -615,9 +649,7 @@ def view_project_by_slug(request, slug):
     })
 # Add this function to scholarship.py
 from django.db.models import Q # Make sure Q is imported at the top of the file
-
 @login_required
-
 def org_profile(request, slug):
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
     org = get_object_or_404(Organization, slug=slug)
@@ -631,10 +663,7 @@ def org_profile(request, slug):
 
     is_edit = request.GET.get('edit') == 'true' and can_edit
 
-    if request.method == 'POST':
-        if not can_edit:
-            return redirect('org_profile', slug=slug)  # Prevent unauthorized post
-
+    if request.method == 'POST' and is_edit: # Ensure saves only happen in edit mode
         form = OrganizationForm(request.POST, request.FILES, instance=org)
 
         # Process key elements
@@ -655,19 +684,30 @@ def org_profile(request, slug):
     else:
         form = OrganizationForm(instance=org)
 
+    # --- NEW LOGIC TO FIX THE ERROR ---
+    # Fetch the active CBL and the upload form
+    active_cbl = org.cbl_documents.filter(is_active=True).first()
+    cbl_form = OrganizationCBLForm()
+    # --- END OF NEW LOGIC ---
+
     return render(request, 'studentorg/Main/OrgMain.html', {
         'org': org,
         'form': form,
         'is_edit': is_edit,
-             'base_template': base_template, 
+        'base_template': base_template, 
         'key_elements': org.key_elements or [],
+        
+        # --- ADD THESE 3 LINES TO YOUR CONTEXT ---
+        'organization': org,  # Add this for consistency in the template
+        'active_cbl': active_cbl,
+        'cbl_form': cbl_form,
     })
-
 import json
 
 def org_profile_view(request, org_id, mode='view'):
     org = get_object_or_404(Organization, id=org_id)
-    
+    active_cbl = org.cbl_documents.filter(is_active=True).first()
+    cbl_form = OrganizationCBLForm()
     if mode == 'edit':
         if request.method == 'POST':
             form = OrganizationForm(request.POST, request.FILES, instance=org)
@@ -694,6 +734,8 @@ def org_profile_view(request, org_id, mode='view'):
             'org': org,
             'key_elements': key_elements,
             'is_edit': False,
+            'active_cbl': active_cbl,
+        'cbl_form': cbl_form,
         })
 
 def Gen_Home(request):

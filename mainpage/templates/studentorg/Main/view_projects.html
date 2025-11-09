@@ -17,7 +17,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %} {% block bodycontent %}
 <div class="sub-title">
-  <h3>{{ org.name|default:"TECHNOCRATS" }}</h3>
+  <h4>{{ org.name|default:"TECHNOCRATS" }}</h4>
   <p class="hometext"><a href="/Gen_Home">Orgs</a></p>
   <p class="certxt">&gt; Projects</p>
 </div>
@@ -30,10 +30,13 @@
     <a href="{% url 'view_financial_by_slug' slug=org.slug %}" class="tab"
       >Financial Statements</a
     >
+    <!-- prettier-ignore -->
+    {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
 
     <a href="{% url 'view_accreditation_by_slug' slug=org.slug %}" class="tab"
       >Accreditation Application</a
     >
+    {%endif%}
   </div>
 
   <!-- Project Form -->

@@ -52,12 +52,12 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
       {% csrf_token %}
 
       <div class="form-section">
-        <h3 class="section-title"><i></i> Officer Info</h3>
+        <h3 class="section-title"><i></i> Officer Info</h4>
 
         {{ officer_form.as_p }}
       </div>
 
-      <h3 class="section-title"><i></i> Membership</h3>
+      <h3 class="section-title"><i></i> Membership</h4>
       <div class="form-section">
         <p>If none, leave the form blank</p>
         <div id="membership-container">{{ membership_form.as_p }}</div>
@@ -66,7 +66,7 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
         + Add Membership
       </button>
 
-      <h3 class="section-title"><i></i> Seminar</h3>
+      <h3 class="section-title"><i></i> Seminar</h4>
 
       <div id="seminar-container">{{ seminar_form.as_p }}</div>
       <button type="button" id="add-seminar" class="button">

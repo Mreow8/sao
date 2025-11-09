@@ -163,6 +163,13 @@ class OjtAssessment(models.Model):
 
 class counseling_schedule(models.Model):
     counselingID = models.AutoField(primary_key=True)
+    case = models.ForeignKey(
+        'mainpage.CaseProfile', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True, 
+        related_name="counseling_schedule_set"
+    )
     dateRecieved = models.DateField()
     studentID = models.ForeignKey(studentInfo,on_delete=models.CASCADE)
     reason = models.CharField(max_length=255)

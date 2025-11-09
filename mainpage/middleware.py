@@ -30,7 +30,7 @@ class AlumniStatusMiddleware:
                 request.is_alumni_approved = True
 
                 # 3. If they are, check if they have filled the tracer form
-                request.has_filled_tracer = graduateForm.objects.filter(alumniID=alumni).exists()
+                request.has_filled_tracer = graduateForm.objects.filter(student=student).exists()
 
             except (studentInfo.DoesNotExist, Alumni.DoesNotExist, ValueError, TypeError) as e:
                 logger.debug("AlumniStatusMiddleware lookup failed: %s", e)

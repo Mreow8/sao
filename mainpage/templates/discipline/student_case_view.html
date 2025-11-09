@@ -1,0 +1,277 @@
+{% extends base_template|default:"main.html" %}
+{% block title %}Student Case History{% endblock %}
+{% load static %}
+
+{% block bodycontent %}
+<style>
+    /* --- Student Header --- */
+    .student-header {
+        background-color: #f4f7fa; /* Light background */
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        border: 1px solid #e5e7eb;
+    }
+    .student-header h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        color: #2a4365; /* Theme color */
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    .student-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 8px 16px;
+        color: #4a5568;
+    }
+    .student-info-grid p {
+        margin: 0;
+        font-size: 1rem;
+    }
+    .student-info-grid strong {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    /* --- Case Card Grid --- */
+    .case-grid {
+        display: grid;
+        /* Creates responsive columns:
+           - On small screens: 1 column
+           - On larger screens: Fills with columns at least 340px wide
+        */
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 20px;
+    }
+
+    /* --- Individual Case Card --- */
+    .case-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+        overflow: hidden; /* Ensures footer radius is clean */
+        display: flex;
+        flex-direction: column; /* Stacks header, body, footer */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .case-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    /* --- Card Header (Offense & Status) --- */
+    .case-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background-color: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .case-card-header h5 {
+        margin: 0;
+        color: #2a4365;
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.3;
+        /* Truncate long offense names */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 10px;
+    }
+
+    /* --- Card Body (Details) --- */
+    .case-card-body {
+        padding: 20px;
+        flex-grow: 1; /* Makes body fill available space */
+        color: #374151;
+    }
+    .case-card-body .detail-item {
+        margin-bottom: 14px;
+    }
+    .case-card-body .detail-item strong {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+    .case-card-body .detail-item span {
+        font-size: 0.95rem;
+        color: #1f2937;
+    }
+    .case-card-body .detail-item-description {
+        font-size: 0.95rem;
+        color: #1f2937;
+        background-color: #f9fafb;
+        border-radius: 8px;
+        padding: 10px;
+        border: 1px solid #f3f4f6;
+    }
+
+    /* --- Card Footer (Action Taken) --- */
+    .case-card-footer {
+        padding: 16px 20px;
+        background-color: #fdfdff;
+        border-top: 1px solid #e5e7eb;
+    }
+    .case-card-footer p {
+        margin: 0;
+        font-weight: 600;
+        color: #1e3a8a; /* Darker blue */
+        font-size: 1rem;
+    }
+    .case-card-footer .no-action {
+        color: #718096;
+        font-weight: 500;
+        font-style: italic;
+    }
+
+    /* --- Status Badges (Copied from case_list.html logic) --- */
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+    .status-pending {
+        background-color: #fef3c7; /* yellow-200 */
+        color: #92400e; /* yellow-800 */
+    }
+    .status-investigating {
+        background-color: #dbeafe; /* blue-100 */
+        color: #1e40af; /* blue-800 */
+    }
+    .status-resolved {
+        background-color: #d1fae5; /* green-100 */
+        color: #065f46; /* green-800 */
+    }
+    .status-default {
+        background-color: #e5e7eb; /* gray-200 */
+        color: #4b5563; /* gray-600 */
+    }
+
+    /* --- Empty State --- */
+    .no-cases {
+        text-align: center;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        color: #6b7280;
+    }
+    .no-cases h4 {
+        color: #4b5563;
+        font-size: 1.5rem;
+        margin-top: 0;
+    }
+
+</style>
+
+<div class="sub-title">
+    <h4>STUDENT DISCIPLINE</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+    <p class="certxt">&gt; Student Profile</p>
+</div>
+
+<hr>
+
+<div class="container">
+
+    {% if student %}
+    <div class="student-header">
+        <h3>{{ student.firstname }} {{ student.lastname }}</h3>
+        <div class="student-info-grid">
+            <p><strong>Student ID:</strong> {{ student.studID }}</p>
+            <p><strong>Course:</strong> {{ student.degree }}</p>
+            <p><strong>Email:</strong> {{ student.emailadd }}</p>
+            </div>
+    </div>
+    {% endif %}
+
+    <div class="case-grid">
+        {% for case in student_cases %}
+        <div class="case-card">
+            
+            <div class="case-card-header">
+                <h5>
+                    {% if case.offense_type == 'Others' %}
+                        {{ case.custom_offense|default:"Custom Offense" }}
+                    {% else %}
+                        {{ case.offense_type }}
+                    {% endif %}
+                </h5>
+
+                {% if case.status == 'Pending' %}
+                    <span class="status-badge status-pending">Pending Review</span>
+                {% elif case.status == 'Under Investigation' %}
+                    <span class="status-badge status-investigating">Under Investigation</span>
+                {% elif case.status == 'Resolved' %}
+                    <span class="status-badge status-resolved">Resolved/Closed</span>
+                {% else %}
+                    <span class="status-badge status-default">{{ case.status }}</span>
+                {% endif %}
+            </div>
+
+            <div class="case-card-body">
+                <div class="detail-item">
+                    <strong>Date Reported</strong>
+                    <span>{{ case.date_reported|date:"F d, Y" }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <strong>Offense Number</strong>
+                    <span>{{ case.offense_number }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <strong>Reported By</strong>
+                    <span>{{ case.reported_by }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <strong>Description</strong>
+                    <p class="detail-item-description">
+                        {{ case.description|linebreaksbr|default:"No description provided." }}
+                    </p>
+                </div>
+
+                {% if case.evidence %}
+                <div class="detail-item">
+                    <strong>Attachment</strong>
+                    <span><a href="{{ case.evidence.url }}" target="_blank">View Evidence</a></span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="case-card-footer">
+                {% if case.action_taken == 'Community Service' %}
+                    <p>Action: Community Service ({{ case.community_service_hours|default:"N/A" }} hours)</p>
+                {% elif case.action_taken == 'Suspension' %}
+                    <p>Action: Suspension ({{ case.suspension_duration|default:"N/A" }})</p>
+                {% elif case.action_taken == 'Others' %}
+                    <p>Action: {{ case.custom_action|default:"Custom Action" }}</p>
+                {% elif case.action_taken %}
+                    <p>Action: {{ case.action_taken }}</p>
+                {% else %}
+                    <p class="no-action">No Action Taken Yet</p>
+                {% endif %}
+            </div>
+
+        </div>
+        {% empty %}
+            <div class="no-cases">
+                <h4>No Cases Found</h4>
+                <p>This student does not have any disciplinary cases on record.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

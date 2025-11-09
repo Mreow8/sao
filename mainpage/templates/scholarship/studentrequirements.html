@@ -68,14 +68,14 @@
     </script>
     {% endif %} {% if not is_requesting %}
     <div class="form_div_2">
-      <h3>Wait for the admin to request your requirements</h3>
+      <h4>Wait for the admin to request your requirements</h4>
     </div>
     {% else %} {% if passed and not note %}
     <div class="form_div_2">
-      <h3>
+      <h4>
         Your requirements for this {{ active_request.semester }} year {{
         active_request.year }} are still being processed.
-      </h3>
+      </h4>
       <a href="{% url 'profile_student' %}"
         ><button class="checkbtn">CHECK PROFILE</button></a
       >
@@ -83,10 +83,10 @@
     {% elif passed_accepted_new %}
     <div class="form_div_2">
       <center>
-        <h3>
+        <h4>
           Your requirements for this {{ active_request.semester }} year {{
           active_request.year }} have already been accepted.
-        </h3>
+        </h4>
       </center>
       <a href="{% url 'profile_student' %}"
         ><button class="checkbtn">CHECK PROFILE</button></a
@@ -94,7 +94,7 @@
     </div>
     {% else %}
     <div class="sub-title">
-      <h3>SCHOLARSHIP</h3>
+      <h4>SCHOLARSHIP</h4>
       <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
       <p class="certxt">&gt; Submit Scholarship Requirements</p>
     </div>
@@ -146,8 +146,8 @@
         </div>
 
         <div class="gwa-results">
-          <h3>Total Units: <span id="live_units">0.00</span></h3>
-          <h3>Calculated GWA: <span id="live_gwa">0.00</span></h3>
+          <h4>Total Units: <span id="live_units">0.00</span></h4>
+          <h4>Calculated GWA: <span id="live_gwa">0.00</span></h4>
         </div>
 
         <input type="hidden" id="gpa" name="gpa" value="0.00" />
