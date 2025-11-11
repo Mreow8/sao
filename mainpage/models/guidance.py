@@ -7,7 +7,9 @@ class studentInfo(models.Model):
 
     from django.conf import settings
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL, 
+    null=True,                   
+    blank=True)
 
 
 

@@ -8,7 +8,27 @@ AUTH_USER_MODEL = 'mainpage.CustomUser'
 LOGIN_URL = '/main/login/' # or the correct path or name
 X_FRAME_OPTIONS = "SAMEORIGIN"
 STATIC_URL = '/static/'
+# --- EMAIL SETTINGS (PRODUCTION / LIVE - Using Gmail SMTP) ---
 
+# The email backend to use
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Gmail's SMTP server address
+EMAIL_HOST = 'smtp.gmail.com'
+
+# Standard port for TLS encryption
+EMAIL_PORT = 587
+
+# Use Transport Layer Security (TLS)
+EMAIL_USE_TLS = True
+
+# Your sender email address (Gmail account)
+EMAIL_HOST_USER = 'saoctuargao@gmail.com'
+
+EMAIL_HOST_PASSWORD = 'udyl ybgi zusn hejg'
+
+# The default address for emails (often the same as EMAIL_HOST_USER)
+DEFAULT_FROM_EMAIL = 'saoctuargao@gmail.com'
 # This will now work because BASE_DIR is a Path object
 STATICFILES_DIRS = [
     BASE_DIR / 'mainpage' / 'static',
@@ -139,5 +159,4 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# ✅ For development only: print emails to the console
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+

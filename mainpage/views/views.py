@@ -1,103 +1,219 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.contrib.auth.hashers import make_password
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth import get_user_model, authenticate, login
+from django.conf import settings
+import random
+import requests
+import logging
 
-@login_required(login_url='signinuser')  # or the URL name of your login page
+from ..models import studentInfo, staffInfo, TemporaryUser, CustomUser, Organization
+from ..forms import RoleAssignForm
+
+User = get_user_model()
+
+logger = logging.getLogger(__name__)
+
+def is_admin(user):
+    return user.is_authenticated and user.is_superuser
+
+def signupuser(request):
+    context = {}
+
+    if request.method == 'POST':
+        user_id = request.POST.get('studID', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password')
+        cpassword = request.POST.get('cpassword')
+
+        # Validate passwords
+        if cpassword != password:
+            context['error_message'] = "Passwords do not match."
+            context['studID_value'] = user_id
+            context['email_value'] = email
+            return render(request, 'scholarship/register.html', context)
+
+        if len(password) < 8:
+            context['error_message'] = "Password must be at least 8 characters."
+            context['studID_value'] = user_id
+            context['email_value'] = email
+            return render(request, 'scholarship/register.html', context)
+
+        # Check if student or staff
+        is_student = studentInfo.objects.filter(studID=user_id).exists()
+        is_staff = staffInfo.objects.filter(staffID=user_id).exists()
+
+        if not (is_student or is_staff):
+            context['error_message'] = "Invalid ID. No matching student or staff found."
+            context['studID_value'] = user_id
+            context['email_value'] = email
+            return render(request, 'scholarship/register.html', context)
+
+        try:
+            # Check 1: Does the user_id (username) already exist?
+            if User.objects.filter(username=user_id).exists():
+                context['error_message'] = "This Student/Staff ID is already registered."
+                context['studID_value'] = user_id
+                context['email_value'] = email
+                return render(request, 'scholarship/register.html', context)
+
+            # Check 2: Does the email already exist?
+            if User.objects.filter(email=email).exists():
+                context['error_message'] = "This Email is already registered."
+                context['studID_value'] = user_id
+                context['email_value'] = email
+                return render(request, 'scholarship/register.html', context)
+
+            # Generate OTP and hash password
+            otp = str(random.randint(100000, 999999))
+            hashed_password = make_password(password)
+
+            # Save temporary user or update existing one
+            temp_user, created = TemporaryUser.objects.update_or_create(
+                username=user_id,
+                defaults={
+                    'email': email,
+                    'password': hashed_password,
+                    'otp_code': otp,
+                    'created_at': timezone.now()
+                }
+            )
+
+            # Send OTP to email
+            # Send OTP to email
+            send_mail(
+                'Your Account Verification Code',
+                f'Your One-Time Password for registration is: {otp}\nIt is valid for 10 minutes.',
+                settings.EMAIL_HOST_USER,  # <-- Use this instead
+                [email],
+                fail_silently=False,
+            )
+
+            messages.info(request, f"A 6-digit verification code has been sent to {email}.")
+            return redirect('verify_otp_page', user_id=user_id)
+
+        except Exception as e:
+            context['error_message'] = f"An error occurred during signup: {e}"
+            print(f"Error during signup: {e}")
+
+    return render(request, 'scholarship/register.html', context)
 
 
+    
+def verify_otp(request, user_id):
+    context = {'user_id': user_id}
+
+    try:
+        temp_user = TemporaryUser.objects.get(username=user_id)
+        context['email'] = temp_user.email
+    except TemporaryUser.DoesNotExist:
+        messages.error(request, "Your verification session has expired. Please sign up again.")
+        return redirect('signupuser')
+
+    if request.method == 'POST':
+        otp_submitted = request.POST.get('otp', '').strip()
+
+        # Check expiration
+        if temp_user.created_at < timezone.now() - timedelta(minutes=10):
+            temp_user.delete()
+            messages.error(request, "Verification code expired. Please sign up again.")
+            return redirect('signupuser')
+
+        # Compare OTP
+        if otp_submitted == temp_user.otp_code:
+            try:
+                user = User(
+                    username=temp_user.username,
+                    email=temp_user.email,
+                    password=temp_user.password
+                )
+
+                # Determine role
+                if studentInfo.objects.filter(studID=temp_user.username).exists():
+                    user.role = 'student'
+                    info_obj = studentInfo.objects.get(studID=user.username)
+                elif staffInfo.objects.filter(staffID=temp_user.username).exists():
+                    user.role = 'staff'
+                    info_obj = staffInfo.objects.get(staffID=user.username)
+                else:
+                    messages.error(request, "No student/staff record found.")
+                    temp_user.delete()
+                    return redirect('signupuser')
+
+                user.save()
+                info_obj.user = user
+                info_obj.save()
+
+                temp_user.delete()
+                messages.success(request, "Account verified successfully! You can now log in.")
+                return redirect('signinuser')
+
+            except Exception as e:
+                context['error_message'] = f"An error occurred during verification: {e}"
+                print(f"Error creating user: {e}")
+        else:
+            context['error_message'] = "Invalid verification code. Please try again."
+
+    return render(request, 'scholarship/verify_otp.html', context)
+
+@login_required(login_url='signinuser')
 def homepage(request):
-    # This logic is correct. An anonymous user will have is_staff=False
-    # and is_superuser=False, so they will get 'main.html'.
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
     
-    # Check if the user is logged in (not an 'AnonymousUser')
     if request.user.is_authenticated:
-        # Use the user's username in the message
         messages.success(request, f'Welcome back, {request.user.username}!')
     else:
         messages.info(request, 'Welcome to the homepage!')
 
     return render(request, 'homepage.html', {
         'base_template': base_template
-        # NOTE: No need to add 'user': request.user
-        # The render() function does this automatically.
     })
+
 def alumni_main(request):
     return render(request, 'alumni/id_requests.html')
+
 def calendar(request):
     return render(request, 'officeOfStudentL/calendarOfEvents.html')
+
 def login_view(request):
     return render(request, 'login.html')
+
 def post(request):
-    return render(request, 'scrapper.html')# mainpage/views.py
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import user_passes_test
-from ..models import CustomUser
-from ..forms import RoleAssignForm
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib import messages
-from django.contrib.auth import get_user_model
-from ..models.studentorg import Organization
-
-User = get_user_model()
-
-def is_admin(user):
-    return user.is_authenticated and user.is_superuser
-# In your views.py file
-
-from django.shortcuts import render, redirect
-from django.core.paginator import Paginator
-from django.contrib import messages
-from django.db.models import Q
-from ..models import CustomUser, Organization # Make sure all models are imported
+    return render(request, 'scrapper.html')
 
 def assign_role(request):
-    # --- Get parameters for Filter, Search, Sort, and Pagination ---
-    
-    # 1. NEW: Role Filter
-    role_filter = request.GET.get('role', '') # Get the role filter
-    
-    # 2. Search query
+    role_filter = request.GET.get('role', '')
     query = request.GET.get('q', '')
-    
-    # 3. Sort column and direction
     sort_by = request.GET.get('sort', 'username')
     direction = request.GET.get('dir', 'asc')
 
-    # --- Build the QuerySet ---
-    
-    # Start with all users
     users_list = CustomUser.objects.all()
 
-    # 1. NEW: Apply Role Filter (if one was selected)
     if role_filter:
         users_list = users_list.filter(role=role_filter)
 
-    # 2. Apply Search Filter (if a query exists)
     if query:
         users_list = users_list.filter(
             Q(username__icontains=query) | Q(email__icontains=query)
         )
 
-    # 3. Apply Sorting
     valid_sort_fields = ['username', 'email', 'role']
     if sort_by not in valid_sort_fields:
-        sort_by = 'username' # Default to username if invalid
+        sort_by = 'username'
         
     order_field = f"{'-' if direction == 'desc' else ''}{sort_by}"
     users_list = users_list.order_by(order_field)
 
-    # 4. Apply Pagination
-    paginator = Paginator(users_list, 25)  # Show 25 users per page
+    paginator = Paginator(users_list, 25)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # --- Handle POST request (no change here) ---
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         role = request.POST.get('role')
@@ -117,58 +233,40 @@ def assign_role(request):
         except CustomUser.DoesNotExist:
             messages.error(request, "User not found.")
         
-        # Redirect back to the same page, preserving all GET parameters
         return redirect(request.get_full_path())
 
-    # --- Prepare Context for Template ---
     organizations = Organization.objects.all()
     
     context = {
         'page_obj': page_obj,
         'organizations': organizations,
         'role_choices': CustomUser.ROLE_CHOICES,
-        
-        # Pass back search/sort/filter state to the template
         'query': query,
         'sort_by': sort_by,
         'direction': direction,
-        'role_filter': role_filter, # NEW: Pass the role filter back
+        'role_filter': role_filter,
     }
     
     return render(request, 'assign_role.html', context)
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from django.conf import settings # Import Django settings
-import requests # Import the requests library for making HTTP requests
-import logging # Import the logging library
 
-# Make sure your User model is imported correctly
-from django.contrib.auth import get_user_model
-User = get_user_model()
 
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 def signinuser(request):
     if request.method == 'POST':
-        # --- GET FORM DATA FIRST ---
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password')
         recaptcha_response = request.POST.get('g-recaptcha-response')
 
-        # --- PREPARE CONTEXT FOR ERRORS ---
-        # This context will be passed back to the template to repopulate the email
         context = {'email': email}
 
-        # --- reCAPTCHA Verification Step ---
         if not recaptcha_response:
             messages.error(request, "Please complete the reCAPTCHA.")
-            return render(request, 'login.html', context) # Pass context
+            return render(request, 'login.html', context)
 
         secret_key = getattr(settings, 'RECAPTCHA_SECRET_KEY', None)
         if not secret_key:
             messages.error(request, "reCAPTCHA is not configured correctly (missing secret key). Please contact the administrator.")
             logger.error("RECAPTCHA_SECRET_KEY is missing in Django settings.")
-            return render(request, 'login.html', context) # Pass context
+            return render(request, 'login.html', context)
 
         try:
             data = {
@@ -182,15 +280,15 @@ def signinuser(request):
         except requests.exceptions.Timeout:
             messages.error(request, "Could not verify reCAPTCHA (timeout). Please try again.")
             logger.warning("reCAPTCHA verification request timed out.")
-            return render(request, 'login.html', context) # Pass context
+            return render(request, 'login.html', context)
         except requests.exceptions.RequestException as e:
             messages.error(request, f"Could not connect to reCAPTCHA service. Error: {e}")
             logger.error(f"reCAPTCHA connection error: {e}")
-            return render(request, 'login.html', context) # Pass context
+            return render(request, 'login.html', context)
         except Exception as e:
             messages.error(request, f"An unexpected error occurred during reCAPTCHA verification: {e}")
             logger.error(f"Unexpected reCAPTCHA error: {e}")
-            return render(request, 'login.html', context) # Pass context
+            return render(request, 'login.html', context)
 
         if not result.get('success'):
             error_codes = result.get('error-codes', [])
@@ -203,19 +301,17 @@ def signinuser(request):
             else:
                  messages.error(request, "Invalid reCAPTCHA. Please try again.")
 
-            return render(request, 'login.html', context) # Pass context
-        # --- End reCAPTCHA Validation ---
+            return render(request, 'login.html', context)
 
-        # --- User Authentication ---
         try:
             user_obj = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, "Account does not exist.")
-            return render(request, 'login.html', context) # Pass context
+            return render(request, 'login.html', context)
 
         if not user_obj.is_active:
             messages.error(request, "This account is inactive. Contact admin.")
-            return render(request, 'login.html', context) # Pass context
+            return render(request, 'login.html', context)
 
         user = authenticate(request, username=user_obj.username, password=password)
 
@@ -237,7 +333,6 @@ def signinuser(request):
                  return redirect('homepage')
         else:
             messages.error(request, "Incorrect password.")
-            return render(request, 'login.html', context) # Pass context
+            return render(request, 'login.html', context)
 
-    # If GET request, just render the login page
     return render(request, 'login.html')

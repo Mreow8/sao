@@ -1,5 +1,4 @@
-# models.py
-# from django.contrib.auth.models import User
+
 from django.db import models
 
 # class UserProfile(models.Model):
@@ -80,3 +79,17 @@ class SystemSettings(models.Model):
 
     def __str__(self):
         return "System Settings"
+class TemporaryUser(models.Model):
+    # Store the unique identifier (studID or staffID)
+    username = models.CharField(max_length=150, unique=True)
+    email = models.EmailField(unique=True)
+    
+    # Store the HASHED password
+    password = models.CharField(max_length=128) 
+    
+    # OTP details
+    otp_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.email

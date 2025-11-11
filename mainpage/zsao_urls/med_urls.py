@@ -51,7 +51,6 @@ urlpatterns = [
     path('mental-health/submit/', views.mental_health_submit, name='mental_health_submit'),
     path('mental-health/review/<int:record_id>/', views.mental_health_review, name='mental_health_review'),
     # path('logout/', views.logout_view, name='logout'),
-    path('verify-otp/', views.verify_otp, name='verify_otp'),
     path('resend-verification/', views.resend_verification, name='resend_verification'),
     # path('upload-profile-picture/', views.upload_profile_picture_view, name='upload_profile_picture'),
     # path('faculty/dashboard/', views.faculty_dashboard_view, name='faculty_dashboard'),
