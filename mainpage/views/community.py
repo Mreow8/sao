@@ -662,7 +662,7 @@ def dashboard(request):
     user = request.user.is_staff
     return render(
         request,
-        "community_involvement/admin/dashboard.html",
+        "medical/medicalv2/student_dashboard.html",
         {"user": user},
     )
 

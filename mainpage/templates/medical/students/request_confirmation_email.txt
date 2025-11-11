@@ -1,0 +1,12 @@
+Dear {{ user_name }},
+
+Thank you for submitting your request for the document '{{ request_type }}'. We have received it and our team is now processing it with utmost care and attention.
+
+Your request is currently being evaluated by our clinic nurse. You will receive another email once your document is approved.
+
+Best Regards,
+CTU - Argao Campus Kahimsug Clinic Team
+
+
+This is an automated message, please do not reply to this email.
+© 2024 HealthHub Connect. All rights reserved.

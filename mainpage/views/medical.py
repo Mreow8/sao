@@ -6,12 +6,14 @@ from django.contrib import messages
 from django.http import JsonResponse
 from datetime import datetime
 from datetime import date
+import smtplib
 from django.utils import timezone
 from datetime import timedelta  
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.conf import settings
+
 from django.contrib.auth import get_user_model
 from ..models import(
     Patient,
@@ -1379,171 +1381,114 @@ def record_transaction(patient, transac_type):
         transac_type = transac_type, 
         transac_date = timezone.now()
     )
-
-# Record students request eg. Medical Clearance for OJT/Practicum, Eligibility Form and Medical Certificate
 def submit_request(request):
-    from ..models import staffInfo as Faculty
-    if request.method == "POST":
-        request_type = request.POST.get("request_type")
-        
-        # Determine if the logged-in user is a student or faculty
-        student_user = get_student_by_user(request.user)
-        faculty_user = get_faculty_by_user(request.user)
-
-        if student_user:
-            # Logged-in user is a student
-            student = student_user
+    from ..models import staffInfo as Faculty # This import seems unused, but keeping as per your code.
+    
+    # --- GET REQUEST LOGIC ---
+    # Handle GET request first (cleaner)
+    if request.method != "POST":
+        student = get_student_by_user(request.user)
+        faculty = get_faculty_by_user(request.user)
+        id_number = ""
+        if student:
             id_number = student.studID
-            # Check if patient exists for student
-            try:
-                user = request.user
-                patient = Patient.objects.get(user=user)
-            except Patient.DoesNotExist:
-                messages.info(request, "Fill out your medical profile first before doing any transactions")
-                return redirect('patient_basicinfo', student.studID)
-
-            if PatientRequest.objects.filter(patient=patient, request_type=request_type).exists():
-                messages.error(request, "You have already submitted this type of request")
-                return render(request, "medical/students/requestform.html", {"student": student, "faculty": None, "id_number": id_number})
-            
-            # Create student request
-            request_obj = PatientRequest.objects.create(
-                patient=patient,
-                request_type=request_type,
-                date_requested=timezone.now()
-            )
-            # Set name and email for confirmation email
-            user_name = f"{student.firstname} {student.lastname}"
-            user_email = student.emailadd
-
-        elif faculty_user:
-            # Logged-in user is a faculty
-            faculty = faculty_user
+        elif faculty:
             id_number = faculty.faculty_id
+        return render(request, "medical/students/requestform.html", {"student": student, "faculty": faculty, "id_number": id_number})
 
-            if FacultyRequest.objects.filter(faculty=faculty, request_type=request_type).exists():
-                messages.error(request, "You have already submitted this type of request")
-                return render(request, "medical/students/requestform.html", {"student": None, "faculty": faculty, "id_number": id_number})
-            
-            # Create faculty request
-            request_obj = FacultyRequest.objects.create(
-                faculty=faculty,
-                request_type=request_type,
-                date_requested=timezone.now()
-            )
-            # Set name and email for confirmation email
-            user_name = faculty.user.get_full_name()
-            user_email = faculty.user.email
-        else:
-            # User is neither student nor faculty (should not happen if signinuser required)
-            messages.error(request, "User profile not found.")
-            return render(request, "medical/students/requestform.html", {"student": None, "faculty": None, "id_number": ""})
+    # --- POST REQUEST LOGIC ---
+    request_type = request.POST.get("request_type")
+    
+    # Determine if the logged-in user is a student or faculty
+    student_user = get_student_by_user(request.user)
+    faculty_user = get_faculty_by_user(request.user)
 
-        # Send confirmation email (common for both student and faculty)
-        email_subject = 'Request Confirmation'
-        email_body = f"""
-        <html>
-        <head>
-            <style>
-                body {{
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                    color: #333;
-                    margin: 0;
-                    padding: 20px;
-                    background-color: #f4f4f4;
-                    text-align: center;
-                }}
-                .top-logo {{
-                    margin-bottom: 20px;
-                }}
-                .top-logo img {{
-                    max-width: 50px;
-                }}
-                .container {{
-                    max-width: 500px;
-                    margin: 0 auto;
-                    background-color: #fff;
-                    padding: 30px;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                    text-align: left;
-                }}
-                .title {{
-                    text-align: center;
-                    font-size: 24px;
-                    color: #0056b3;
-                    margin-bottom: 20px;
-                    padding-bottom: 15px;
-                    border-bottom: 1px solid #eee;
-                }}
-                p {{
-                    margin-bottom: 15px;
-                }}
-                .footer {{
-                    margin-top: 30px;
-                    padding-top: 20px;
-                    font-size: 12px;
-                    color: #999;
-                    text-align: center;
-                    border-top: 1px solid #eee;
-                }}
-            </style>
-        </head>
-        <body>
-            <div class="top-logo">
-                <img src="https://i.ibb.co/0jZQZ9L/CTU-logo.png" alt="CTU Logo" style="max-width: 100px;">
-            </div>
+    user_name = ""
+    user_email = ""
 
-            <div class="container">
-                <div class="title">REQUEST CONFIRMATION</div>
-
-                <p>Dear <strong>{user_name}</strong>,</p>
-
-                <p>Thank you for submitting your request for the document <strong>'{request_type}'</strong>. We have received it and our team is now processing it with utmost care and attention.</p>
-
-                <p>Your request is currently being evaluated by our clinic nurse. You will receive another email once your document is approved.</p>
-
-                <p>Best Regards,</p>
-                <p><strong>CTU - Argao Campus Kahimsug Clinic Team</strong></p>
-            </div>
-
-            <div class="footer">
-                <p>This is an automated message, please do not reply to this email.</p>
-                <p>&copy; 2024 HealthHub Connect. All rights reserved.</p>
-            </div>
-        </body>
-        </html>
-        """
-        if user_email:
-            send_mail(
-                email_subject,
-                '',
-                settings.EMAIL_HOST_USER,
-                [user_email],
-                html_message=email_body,
-                fail_silently=False,
-            )
-        messages.success(request, "Request submitted. A confirmation email has been sent.")
-        
-        # Redirect to the correct dashboard based on user type
-        if student_user:
-            return redirect('dashboard') # Redirect to main view which handles student dashboard redirection
-        elif faculty_user:
-             return redirect('dashboard') # Redirect to main view which handles faculty dashboard redirection
-        else:
-             return redirect('dashboard') # Fallback redirection
-             
-    # For GET requests, fetch the student or faculty object for initial form display
-    student = get_student_by_user(request.user)
-    faculty = get_faculty_by_user(request.user)
-    id_number = ""
-    if student:
+    if student_user:
+        # Logged-in user is a student
+        student = student_user
         id_number = student.studID
-    elif faculty:
+        
+        # Check if patient exists for student
+        try:
+            patient = Patient.objects.get(user=request.user)
+        except Patient.DoesNotExist:
+            messages.info(request, "Fill out your medical profile first before doing any transactions")
+            return redirect('patient_basicinfo', student.studID)
+
+        if PatientRequest.objects.filter(patient=patient, request_type=request_type).exists():
+            messages.error(request, "You have already submitted this type of request")
+            return render(request, "medical/students/requestform.html", {"student": student, "faculty": None, "id_number": id_number})
+        
+        # Create student request
+        request_obj = PatientRequest.objects.create(
+            patient=patient,
+            request_type=request_type,
+            date_requested=timezone.now()
+        )
+        # Set name and email for confirmation email
+        user_name = f"{student.firstname} {student.lastname}"
+        user_email = student.emailadd # Note: Inconsistent, faculty uses user.email
+
+    elif faculty_user:
+        # Logged-in user is a faculty
+        faculty = faculty_user
         id_number = faculty.faculty_id
 
-    return render(request, "medical/students/requestform.html", {"student": student, "faculty": faculty, "id_number": id_number})
+        if FacultyRequest.objects.filter(faculty=faculty, request_type=request_type).exists():
+            messages.error(request, "You have already submitted this type of request")
+            return render(request, "medical/students/requestform.html", {"student": None, "faculty": faculty, "id_number": id_number})
+        
+        # Create faculty request
+        request_obj = FacultyRequest.objects.create(
+            faculty=faculty,
+            request_type=request_type,
+            date_requested=timezone.now()
+        )
+        # Set name and email for confirmation email
+        user_name = faculty.user.get_full_name()
+        user_email = faculty.user.email
+    
+    else:
+        # User is neither student nor faculty (should not happen if signinuser required)
+        messages.error(request, "User profile not found.")
+        return render(request, "medical/students/requestform.html", {"student": None, "faculty": None, "id_number": ""})
+
+  
+    messages.success(request, "Request submitted. A confirmation email will be sent shortly.")
+
+    if user_email:
+        # Prepare email context
+        email_context = {
+            'user_name': user_name,
+            'request_type': request_type,
+        }
+        
+        # 1. Render the HTML template
+        html_message = render_to_string('medical/students/request_confirmation_email.html', email_context)
+        
+        # 2. Create a plain-text version (for email clients that don't use HTML)
+        # This is a best practice.
+        plain_message = render_to_string('medical/students/request_confirmation_email.txt', email_context)
+        
+        try:
+            send_mail(
+                subject='Request Confirmation',
+                message=plain_message, # Plain text body
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user_email],
+                html_message=html_message, # HTML version
+                fail_silently=False,
+            )
+        except (smtplib.SMTPException, ConnectionRefusedError) as e:
+            # Log the error for admins to see
+            print(f"!!! CRITICAL: Email failed to send for request {request_obj.id}: {e}")
+            # Add a non-blocking warning for the user
+            messages.warning(request, "Your request was saved, but we had trouble sending the confirmation email.")
+
+    return redirect('student_dashboard')
 
 # Views for medical requirements tracker
 def student_medical_requirements_tracker(request):
@@ -2012,7 +1957,7 @@ def dental_services(request):
                 return redirect('patient_basicinfo', student_id=logged_in_student.studID)
             else:
                 messages.error(request, "Cannot access dental services without a patient profile.")
-                return redirect('dashboard')
+                return redirect('student_dashboard')
 
         service_type = request.POST.get("service_type")
         if not service_type:

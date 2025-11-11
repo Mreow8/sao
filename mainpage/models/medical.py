@@ -62,8 +62,18 @@ class Patient(models.Model):
     examination = models.OneToOneField('PhysicalExamination', on_delete=models.CASCADE, related_name='patient_for_examination', null=True, blank=True)
 
     def __str__(self):
-        # Updated to use user's information
-        return f"Patient Record for {self.user.get_full_name() or self.user.username}"
+        if self.student:
+            # Use studentInfo fields
+            return f"Patient Record for {self.student.firstname} {self.student.lastname} ({self.student.studID})"
+        elif self.faculty:
+            # Use staffInfo fields
+            return f"Patient Record for {self.faculty.firstname} {self.faculty.lastname} ({self.faculty.staffID})"
+        elif self.user:
+            # Fallback to the User model
+            return f"Patient Record for {self.user.get_full_name() or self.user.username}"
+        else:
+            # Final fallback
+            return f"Patient Record (ID: {self.id})"
 
 class PhysicalExamination(models.Model):
     # Keep link to Patient, which is now linked to User
@@ -73,8 +83,13 @@ class PhysicalExamination(models.Model):
     date_of_physical_examination = models.CharField(max_length=100)
     
     def __str__(self):
-        # Updated to use patient's user information
-        return f"Physical Exam - {self.patient.user.get_full_name() or self.patient.user.username}"
+        if self.patient and self.patient.user:
+            return f"Physical Exam - {self.patient.user.get_full_name() or self.patient.user.username}"
+        elif self.patient:
+            # Relies on the Patient.__str__ method being fixed
+            return f"Physical Exam for {self.patient}"
+        else:
+            return f"Physical Exam (ID: {self.id}, unlinked)"
 
 class MedicalHistory(models.Model):
     examination = models.OneToOneField(PhysicalExamination, on_delete=models.CASCADE)
@@ -98,8 +113,15 @@ class MedicalHistory(models.Model):
     medications = models.CharField(max_length=255, null=True, blank=True)
     
     def __str__(self):
-        # Updated to use examination's patient's user information
-        return f"Medical history of {self.examination.patient.user.get_full_name() or self.examination.patient.user.username}"
+        if self.examination and self.examination.patient and self.examination.patient.user:
+            return f"Medical history of {self.examination.patient.user.get_full_name() or self.examination.patient.user.username}"
+        elif self.examination and self.examination.patient:
+            # Relies on the Patient.__str__ method being fixed
+            return f"Medical history for {self.examination.patient}"
+        elif self.examination:
+            return f"Medical history for Exam (ID: {self.examination.id})"
+        else:
+            return f"Medical history (ID: {self.id}, unlinked)"
 
 class FamilyMedicalHistory(models.Model):
     examination = models.OneToOneField(PhysicalExamination, on_delete=models.CASCADE)
@@ -115,8 +137,15 @@ class FamilyMedicalHistory(models.Model):
     other_medical_history = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
-        # Updated to use examination's patient's user information
-        return f"Family Medical History of {self.examination.patient.user.get_full_name() or self.examination.patient.user.username}"
+        if self.examination and self.examination.patient and self.examination.patient.user:
+            return f"Family Medical History of {self.examination.patient.user.get_full_name() or self.examination.patient.user.username}"
+        elif self.examination and self.examination.patient:
+            # Relies on the Patient.__str__ method being fixed
+            return f"Family Medical History for {self.examination.patient}"
+        elif self.examination:
+            return f"Family Medical History for Exam (ID: {self.examination.id})"
+        else:
+            return f"Family Medical History (ID: {self.id}, unlinked)"
 
 class ObgyneHistory(models.Model):
     examination = models.OneToOneField(PhysicalExamination, on_delete=models.CASCADE)
@@ -129,8 +158,15 @@ class ObgyneHistory(models.Model):
     additional_history = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        # Updated to use examination's patient's user information
-        return f"OB-GYNE History of {self.examination.patient.user.get_full_name() or self.examination.patient.user.username}"
+        if self.examination and self.examination.patient and self.examination.patient.user:
+            return f"OB-GYNE History of {self.examination.patient.user.get_full_name() or self.examination.patient.user.username}"
+        elif self.examination and self.examination.patient:
+            # Relies on the Patient.__str__ method being fixed
+            return f"OB-GYNE History for {self.examination.patient}"
+        elif self.examination:
+            return f"OB-GYNE History for Exam (ID: {self.examination.id})"
+        else:
+            return f"OB-GYNE History (ID: {self.id}, unlinked)"
     
 class MedicalClearance(models.Model):
     # MedicalClearance is primary_key, linking to Patient. No direct nullability needed here,
@@ -138,8 +174,15 @@ class MedicalClearance(models.Model):
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, primary_key=True)
 
     def __str__(self):
-        # Updated to use patient's user information
-        return f"Medical clearance for {self.patient.user.get_full_name() or self.patient.user.username}"
+        # self.patient cannot be None (it's a primary key), but self.patient.user can be
+        if self.patient and self.patient.user:
+            return f"Medical clearance for {self.patient.user.get_full_name() or self.patient.user.username}"
+        elif self.patient:
+            # Relies on the Patient.__str__ method being fixed
+            return f"Medical clearance for {self.patient}"
+        else:
+            # This case should be impossible
+            return "Medical clearance (unlinked)"
 
 class RiskAssessment(models.Model):
     # Keep link to Patient, which is now linked to User (via MedicalClearance)
@@ -160,7 +203,11 @@ class RiskAssessment(models.Model):
     pwd_verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='verified_pwd')
 
     def __str__(self):
-        return f"Risk Assessment for {self.clearance}"
+        if self.clearance:
+            # self.clearance is a Patient object. Relies on Patient.__str__
+            return f"Risk Assessment for {self.clearance}"
+        else:
+            return f"Risk Assessment (ID: {self.id}, unlinked)"
 
     class Meta:
         verbose_name = "Risk Assessment"
@@ -230,12 +277,17 @@ class MedicalRequirement(models.Model):
     reviewed_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        if self.patient:
+        if self.patient and self.patient.user:
             return f"Medical Requirements for {self.patient.user.get_full_name() or self.patient.user.username}"
+        elif self.faculty and self.faculty.user:
+            # Note: self.faculty is a studentInfo object
+            return f"Medical Requirements for Student {self.faculty.user.get_full_name() or self.faculty.user.username}"
+        elif self.patient:
+            return f"Medical Requirements for {self.patient}" # Relies on Patient.__str__
         elif self.faculty:
-            return f"Medical Requirements for Faculty {self.faculty.user.get_full_name() or self.faculty.user.username}"
+            return f"Medical Requirements for {self.faculty.firstname} {self.faculty.lastname}"
         else:
-            return "Medical Requirements (No patient or faculty linked)"
+            return "Medical Requirements (unlinked)"
 
     # def delete(self, *args, **kwargs):
     #     self.chest_xray.delete(save=False)
@@ -299,12 +351,17 @@ class PatientRequest(models.Model):
     remarks = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        if self.patient:
+        if self.patient and self.patient.user:
             return f"{self.request_type} request for {self.patient.user.get_full_name() or self.patient.user.username}"
-        elif self.faculty:
+        elif self.faculty and self.faculty.user:
+            # Note: self.faculty is a studentInfo object
             return f"{self.request_type} request for {self.faculty.user.get_full_name() or self.faculty.user.username}"
+        elif self.patient:
+            return f"{self.request_type} request for {self.patient}" # Relies on Patient.__str__
+        elif self.faculty:
+            return f"{self.request_type} request for {self.faculty.firstname} {self.faculty.lastname}"
         else:
-            return f"{self.request_type} request for unknown user"
+            return f"{self.request_type} request (unlinked)"
 
 class FacultyRequest(models.Model):
     REQUEST_STATUS = [
@@ -331,7 +388,15 @@ class FacultyRequest(models.Model):
     ], default='medium')
 
     def __str__(self):
-        return f"{self.request_type} request from {self.faculty.user.get_full_name() or self.faculty.user.username}"
+        # self.faculty cannot be None (no null=True), but self.faculty.user can be
+        if self.faculty and self.faculty.user:
+            return f"{self.request_type} request from {self.faculty.user.get_full_name() or self.faculty.user.username}"
+        elif self.faculty:
+             # Fallback to studentInfo's fields
+            return f"{self.request_type} request from {self.faculty.firstname} {self.faculty.lastname}"
+        else:
+            # This case should be impossible
+            return f"{self.request_type} request (unlinked)"
 
     class Meta:
         verbose_name = "Faculty Request"
@@ -381,7 +446,14 @@ class EmergencyHealthAssistanceRecord(models.Model):
     date_assisted = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.patient.user.get_full_name() or self.patient.user.username}"
+        if self.patient and self.patient.user:
+            return f"Emergency Assistance for {self.patient.user.get_full_name() or self.patient.user.username}"
+        elif self.patient:
+            # Relies on the Patient.__str__ method being fixed
+            return f"Emergency Assistance for {self.patient}"
+        else:
+            # Fallback to the name field on this model
+            return f"Emergency Assistance for {self.name}"
 
 class TransactionRecord(models.Model):
     # Link to Patient, make nullable initially
@@ -426,6 +498,10 @@ class MentalHealthRecord(models.Model):
             return f'Mental Health Record for {self.patient.user.get_full_name() or self.patient.user.username}'
         elif self.faculty and self.faculty.user:
             return f'Mental Health Record for {self.faculty.user.get_full_name() or self.faculty.user.username}'
+        elif self.patient:
+            return f'Mental Health Record for {self.patient}' # Relies on Patient.__str__
+        elif self.faculty:
+            return f'Mental Health Record for {self.faculty.firstname} {self.faculty.lastname}'
         else:
-            return 'Mental Health Record (Unknown)'
+            return 'Mental Health Record (unlinked)'
     
