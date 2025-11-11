@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from datetime import datetime
 from datetime import date
 import smtplib
+from ..decorators import profile_complete_required
 from django.utils import timezone
 from datetime import timedelta  
 from django.contrib.auth.models import User
@@ -52,20 +53,11 @@ from ..models import staffInfo
 
 from django.db.models import Q # Make sure to import Q
 def can_access_medical_admin(user):
-    # --- START DEBUGGING ---
-    print(f"--- Checking user: {user.username} ---")
-    print(f"Is superuser? {user.is_superuser}")
-    
-    # Check if the user object even has a 'role' attribute
-    if hasattr(user, 'role'):
-        print(f"User role is: '{user.role}'")
-        print(f"Is role in allowed list? {user.role in ['superadmin', 'clinic_admin']}")
-    else:
-        print("USER HAS NO 'role' ATTRIBUTE!")
-    # --- END DEBUGGING ---
-
+    # ... (your print statements) ...
     allowed_roles = ['superadmin', 'clinic_admin'] 
-    return user.is_superuser or user.role in allowed_roles
+    
+    # Check if user has a 'role' attribute before trying to access it
+    return user.is_superuser or (hasattr(user, 'role') and user.role in allowed_roles)
 def user_suggestions(request):
     query = request.GET.get('q', '').strip()
     suggestions = []
@@ -1381,6 +1373,7 @@ def record_transaction(patient, transac_type):
         transac_type = transac_type, 
         transac_date = timezone.now()
     )
+@profile_complete_required
 def submit_request(request):
     from ..models import staffInfo as Faculty # This import seems unused, but keeping as per your code.
     
@@ -1680,8 +1673,7 @@ def student_medical_requirements_tracker(request):
     print("ID to process:", id_to_process) # Print id_to_process
 
     return render(request, "medical/medicalrequirements.html", { "user_obj": user_obj, "med_requirements": med_requirements, "student": student, "patient": patient, "faculty": faculty, "id_number": id_to_process})
-
-# Views for handling the medical requirements uploaded file
+@profile_complete_required
 def upload_requirements(request):
     from ..models import staffInfo as Faculty
     requirements = [
@@ -1858,7 +1850,7 @@ from django import template
 register = template.Library()
 register.filter('basename', basename)
 
-# Views for handling students request for dental services
+@profile_complete_required
 def dental_services(request):
     # Common variables for both admin and regular users
     id_number = None
@@ -2009,6 +2001,7 @@ def dental_services(request):
 # Views for appointing students dental requests
 @user_passes_test(can_access_medical_admin)  # <-- 1. ADD THE CORRECT SECURITY DECORATOR
 def dental_request(request):
+    
     # 2. REMOVE the 'if request.user.is_superuser...' line
     
     # 3. UN-INDENT all logic to be at the function's base level

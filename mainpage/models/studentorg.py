@@ -358,7 +358,10 @@ class Adviser(models.Model):
     )
     def __str__(self):
         return f"{self.surname}, {self.firstname} {self.middlename or ''}"
-
+    @property
+    def is_active(self):
+        """Returns True if the adviser is active (date_deactivated is empty)."""
+        return self.date_deactivated is None
 
 class AdviserEducation(models.Model):
     education_id = models.AutoField(primary_key=True)

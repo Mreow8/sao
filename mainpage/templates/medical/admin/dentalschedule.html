@@ -44,9 +44,9 @@
             />
             <input type="hidden" name="action" value="done" />
 
-            <td>{{ appointment.id_number }}</td>
-            <td>{{ appointment.lastname|title }}</td>
-            <td>{{ appointment.firstname|title }}</td>
+            <td>{{ appointment.patient.user }}</td>
+            <td>{{ appointment.patient.student.lastname|title }}</td>
+            <td>{{ appointment.patient.student.firstname|title }}</td>
             <td>{{ appointment.service_type }}</td>
             <td>{{ appointment.date_appointed|date:"F d, Y, h:i A" }}</td>
             <td class="action-cell">

@@ -1,10 +1,9 @@
 {% extends base_template|default:"main.html" %} {% load static %}
 <!-- prettier-ignore -->
-{% block title %}
-Student Organization ({{ org.name|default:"TECHNOCRATS" }})
-{% endblock %}
 
-{% block headcontent %}
+{% block title%} Student Organization ({{ org.name|default:"TECHNOCRATS" }}) {% endblock %}
+<!-- prettier-ignore -->
+{%  block headcontent %}
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -22,6 +21,7 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
 
   .container {
     max-width: 1200px;
+    font-size: 14px;
     margin: 2rem auto;
     padding: 0 1.5rem;
   }
@@ -55,7 +55,7 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
     text-align: center;
     padding: 1.5rem 1rem;
     transition: all 0.25s ease;
-    position: relative; /* <-- ADDED: So the badge stays inside */
+    position: relative;
   }
 
   .adviser-card:hover {
@@ -63,7 +63,7 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
 
-  /* === NEW: ACTIVE BADGE === */
+  /* === ACTIVE BADGE === */
   .active-badge {
     position: absolute;
     top: 10px;
@@ -71,15 +71,29 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
     background-color: #28a745; /* Green */
     color: white;
     font-size: 0.75rem;
-
     padding: 4px 8px;
     border-radius: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
   }
 
-  /* === INACTIVE OVERLAY (Alternative) === */
-  /* If adviser is not active, make the card slightly transparent */
+  /* === NOT ACTIVE BADGE (UPDATED) === */
+  .inactive-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #6c757d; /* Gray */
+    color: white;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    /* text-transform: uppercase; <-- Removed to allow normal text */
+    letter-spacing: 0.5px;
+    white-space: nowrap; /* Keep text on one line */
+  }
+
+  /* === INACTIVE OVERLAY === */
   .adviser-card.inactive {
     opacity: 0.7;
     background-color: #fafafa;
@@ -98,7 +112,6 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
   /* === NAME AND DETAILS === */
   .adviser-name {
     font-size: 1.1rem;
-
     color: #1a365d;
     margin-bottom: 0.3rem;
   }
@@ -127,6 +140,7 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
     font-weight: 500;
     text-decoration: none;
     transition: background-color 0.2s ease;
+    cursor: pointer;
   }
 
   .view-profile:hover {
@@ -146,23 +160,78 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
       font-size: 1.3rem;
     }
   }
+
+  /* === MODAL STYLES === */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 90%;
+    max-height: 90%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    text-align: center;
+  }
+  #modal-image {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+  }
+  .modal-close {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #dc3545; /* Red */
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid white;
+  }
 </style>
 {% endblock %} {% block bodycontent %}
 <div class="container">
   <div class="sub-title">
     <h4>STUDENT ORGANIZATION</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
+    <p class="certxt">
+      &gt; {{ organization.name|default:"Organization Name" }}
+    </p>
   </div>
   <hr />
 
-  <h1>Manage Advisers</h1>
+  <h1>{{ organization.name }} Advisers</h1>
 
   <div class="adviser-container">
     {% for adviser in advisers %}
-    <div class="adviser-card {% if not adviser.is_active %}inactive{% endif %}">
-      {% if adviser.is_active %}
+
+    <div
+      class="adviser-card {% if adviser.date_deactivated is not None %}inactive{% endif %}"
+    >
+      {% if adviser.date_deactivated is None %}
       <div class="active-badge">Active</div>
+      {% else %}
+      <div class="inactive-badge">
+        Active until {{ adviser.date_deactivated|date:"Y" }}
+      </div>
       {% endif %} {% if adviser.profile_picture %}
       <img
         src="{{ adviser.profile_picture.url }}"
@@ -186,8 +255,7 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
       {% if adviser.profile_picture %}
       <a
         href="{{ adviser.profile_picture.url }}"
-        target="_blank"
-        class="view-profile"
+        class="view-profile profile-modal-trigger"
         >View Profile</a
       >
       {% endif %}
@@ -199,4 +267,48 @@ Student Organization ({{ org.name|default:"TECHNOCRATS" }})
     {% endfor %}
   </div>
 </div>
+
+<div id="image-modal" class="modal-overlay">
+  <div class="modal-content">
+    <span id="modal-close-btn" class="modal-close">&times;</span>
+    <img id="modal-image" src="" alt="Adviser Profile" />
+  </div>
+</div>
+<script>
+  // Get all the necessary elements
+  const modalOverlay = document.getElementById("image-modal");
+  const modalImage = document.getElementById("modal-image");
+  const closeButton = document.getElementById("modal-close-btn");
+  const triggerLinks = document.querySelectorAll(".profile-modal-trigger");
+
+  // Function to open the modal
+  function openModal(imageUrl) {
+    modalImage.src = imageUrl; // Set the image source
+    modalOverlay.style.display = "flex"; // Show the modal
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    modalOverlay.style.display = "none"; // Hide the modal
+    modalImage.src = ""; // Clear the image source
+  }
+
+  // Add click listeners to all "View Profile" links
+  triggerLinks.forEach((link) => {
+    link.addEventListener("click", function (event) {
+      event.preventDefault(); // Stop the link from opening a new tab
+      const imageUrl = this.href; // Get the image URL from the link
+      openModal(imageUrl);
+    });
+  });
+
+  // Add click listeners to close the modal
+  closeButton.addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", function (event) {
+    // Only close if the user clicked on the dark background
+    if (event.target === modalOverlay) {
+      closeModal();
+    }
+  });
+</script>
 {% endblock %}

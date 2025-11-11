@@ -8,7 +8,6 @@
 />
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 
-<!-- UPDATED: Added simple styles for new buttons -->
 <style>
   .approve {
     background-color: #28a745;
@@ -61,13 +60,12 @@
 
   <div class="maincontain gmc-form">
   
-    <!-- UPDATED: Added new 'active' filter dropdown -->
     <form class="search-form" method="GET" action="">
       <input
         type="text"
         name="search"
         class="search-input"
-        placeholder="Search by Adviser ID, Name, or Department"
+        placeholder="Search by Adviser ID, Name, or Organization"
         value="{{ request.GET.search }}"
       >
       <select class="filter-select" name="status" id="status-filter">
@@ -77,27 +75,33 @@
           <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
       </select>
       
-      <!-- NEW: Filter for Active/Inactive -->
       <select class="filter-select" name="active" id="active-filter">
         <option value="">All Active</option>
         <option value="true" {% if request.GET.active == 'true' %}selected{% endif %}>Active</option>
         <option value="false" {% if request.GET.active == 'false' %}selected{% endif %}>Inactive</option>
       </select>
+
+      <select class="filter-select" name="organization" id="org-filter">
+          <option value="">All Organizations</option>
+          {% for org in all_organizations %}
+              <option value="{{ org.org_id }}" {% if request.GET.organization == org.org_id|stringformat:"s" %}selected{% endif %}>
+                  {{ org.name }}
+              </option>
+          {% endfor %}
+      </select>
       
       <button type="submit" class="search-btn">Search</button>
     </form>
     
-    <!-- UPDATED: Script now handles both filters -->
     <script>
         $(document).ready(function() {
-            $('#status-filter, #active-filter').change(function() {
+            $('#status-filter, #active-filter, #org-filter').change(function() {
                 $(this).closest('form').submit();
             });
         });
     </script>
 
     <div class="subcontain">
-      <!-- NOTE: Removed the outer <form> tag, it's better to have one form per row -->
       <table>
         <thead>
           <tr>
@@ -112,16 +116,17 @@
               <a href="?sort=firstname&order={% if current_sort == 'firstname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">First Name</a>
             </th>
             <th>Middle Name</th>
+
             <th class="sortable">
-              <a href="?sort=department&order={% if current_sort == 'department' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Department</a>
+              <a href="?sort=organization&order={% if current_sort == 'organization' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Organization</a>
             </th>
+            
             <th class="sortable">
               <a href="?sort=position&order={% if current_sort == 'position' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Position</a>
             </th>
             <th class="sortable">
               <a href="?sort=status&order={% if current_sort == 'status' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Status</a>
             </th>
-            <!-- NEW: 'Active' column header -->
             <th class="sortable">
               <a href="?sort=is_active&order={% if current_sort == 'is_active' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Active</a>
             </th>
@@ -132,7 +137,6 @@
           {% for adviser in page_obj %}
           <tr>
             <td>{{ adviser.adviser_id }}</td>
-                        <!-- This is the <td> for Profile Picture -->
             <td>
               {% if adviser.profile_picture %}
                 <img 
@@ -148,20 +152,17 @@
             <td>{{ adviser.surname }}</td>
             <td>{{ adviser.firstname }}</td>
             <td>{{ adviser.middlename }}</td>
-            <td>{{adviser.department}}</td>
-            <td>{{ adviser.position }}</td>
+            <td>{{ adviser.organization }}</td>
+             <td>{{ adviser.position }}</td>
             <td>{{ adviser.get_status_display }}</td>
             
-            <!-- NEW: 'Active' column data -->
             <td>
-              {% if adviser.is_active %}
-                  <span style="color: green; font-weight: bold;">&#10003; Yes</span>
+              {% if adviser.date_deactivated is None %} <span style="color: green; font-weight: bold;">&#10003; Yes</span>
               {% else %}
                   <span style="color: red;">&#10007; No</span>
               {% endif %}
             </td>
 
-            <!-- UPDATED: Actions column with new logic -->
             <td>
               <form method="post" style="margin: 0;">
                 {% csrf_token %}
@@ -172,7 +173,6 @@
                 />
                 
                 {% if adviser.status == 'pending' %}
-                <!-- Show Approve/Decline for pending applications -->
                 <button type="submit" name="action" value="approve" class="approve">
                   Approve
                 </button>
@@ -186,22 +186,16 @@
                 </button>
                 
                 {% elif adviser.status == 'approved' %}
-                  <!-- Show Activate/Deactivate for approved applications -->
-                  
-                  {% if adviser.is_active %}
-                    <!-- If they are active, show Deactivate button -->
-                    <button type="submit" name="action" value="deactivate" class="decline">
+                  {% if adviser.date_deactivated is None %} <button type="submit" name="action" value="deactivate" class="decline">
                         Deactivate
                     </button>
                   {% else %}
-                    <!-- If they are inactive, show Activate button -->
                     <button type="submit" name="action" value="activate" class="approve">
                         Activate
                     </button>
                   {% endif %}
                 
                 {% else %}
-                    <!-- This is for 'declined' status -->
                     <span style="color: #666;">Declined</span>
                 {% endif %}
               </form>
@@ -209,7 +203,6 @@
           </tr>
           {% empty %}
           <tr>
-            <!-- UPDATED: Colspan is now 10 -->
             <td colspan="10" class="no-applicants">No advisers found.</td>
           </tr>
           {% endfor %}
@@ -219,8 +212,6 @@
 
     <div class="pagination">
         <span class="step-links">
-            <!-- NOTE: No change needed here. The 'search_params' variable from your view
-                 now correctly includes all filters (search, status, and active). -->
             {% if page_obj.has_previous %}
                 <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
                 <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>

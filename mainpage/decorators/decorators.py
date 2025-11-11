@@ -42,7 +42,56 @@ def tracer_gatekeeper_required(view_func):
     return _wrapped_view
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
+# mainpage/views/decorators.py
 
+from functools import wraps
+from django.shortcuts import redirect
+from django.contrib import messages
+from ..models import Patient 
+
+def profile_complete_required(view_func):
+    """
+    Decorator to check if a user has a complete medical profile.
+    A complete profile means:
+    1. A Patient object exists.
+    2. The Patient object is linked to a PhysicalExamination (patient.examination).
+    
+    Redirects to 'patient_form' if incomplete.
+    """
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        
+        # We assume @login_required is already used
+        if not request.user.is_authenticated:
+            return redirect('login') 
+
+        try:
+            # 1. Check if Patient object exists
+            patient = Patient.objects.get(user=request.user)
+            
+            # 2. Check if profile is filled out (examination link exists)
+            #    The patient_form creates this link when submitted.
+            if not patient.examination:
+                print(f"Incomplete profile for {request.user.username}: patient.examination is None.")
+                messages.info(request, 'Please complete your medical profile to access the dashboard.')
+                return redirect('patient_form')
+
+        except Patient.DoesNotExist:
+            # Patient object doesn't even exist
+            print(f"Incomplete profile for {request.user.username}: Patient.DoesNotExist.")
+            messages.info(request, 'Please complete your medical profile to access the dashboard.')
+            return redirect('patient_form')
+        
+        except Exception as e:
+            # Catch other potential errors
+            print(f"Error in profile_complete_required decorator: {e}")
+            messages.error(request, 'An error occurred while checking your profile. Please contact support.')
+            return redirect('login') 
+
+        # --- If all checks pass, run the original view ---
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped_view
 def sao_admin_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
         if request.user.user_type == 'sao admin':

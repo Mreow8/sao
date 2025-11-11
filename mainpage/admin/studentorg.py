@@ -62,7 +62,9 @@ class AdviserAdmin(admin.ModelAdmin):
     )
     search_fields = ('surname', 'firstname', 'middlename')
     list_filter = ('department', 'organization', 'status')
-
+    @admin.display(boolean=True, description='Currently Active?')
+    def is_active_display(self, obj):
+        return obj.is_active
 
 # -------------------
 # Project Admin

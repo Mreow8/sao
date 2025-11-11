@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
+from django.utils import timezone
+
 from ..forms import OfficerForm
 from ..forms import ProjectForm
 from ..forms import FinancialStatementForm
@@ -131,6 +133,8 @@ def view_adviser(request, org_slug):
     
     return render(request, 'studentorg/VIEW/view_advisers.html', context)
 def view_adviser(request, org_slug):
+    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+
     # Get the organization by slug
     organization = get_object_or_404(Organization, slug=org_slug)
 
@@ -139,6 +143,8 @@ def view_adviser(request, org_slug):
 
     return render(request, 'studentorg/main/view_adviser.html', {
         'advisers': approved_advisers,
+        'base_template': base_template,
+
         'organization': organization
     })
 def upload_accreditation(request, slug):
@@ -981,7 +987,7 @@ def admin_manageofficer(request):
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from ..models import Adviser # Assumes your model is named Adviser
+from ..models import Adviser
 
 
 def admin_manageadviser(request):
@@ -1000,7 +1006,7 @@ def admin_manageadviser(request):
             other_active_advisers = Adviser.objects.filter(
                 organization=organization, 
                 status='approved',
-                is_active=True  # <-- Check against *active* advisers
+                date_deactivated__isnull=True  # <-- FIXED: Check against *active* advisers
             ).exclude(adviser_id=adviser_pk) 
 
             if adviser.position == 'Main':
@@ -1015,13 +1021,13 @@ def admin_manageadviser(request):
             
             # If all checks pass, approve and activate the adviser
             adviser.status = 'approved'
-            adviser.is_active = True  # <-- NEW: Set to active on approval
+            adviser.date_deactivated = None  # <-- FIXED: Set to active on approval
             messages.success(request, f"Adviser {adviser.firstname} {adviser.surname} has been approved and set to ACTIVE.")
             # --- END MODIFIED LOGIC ---
 
         elif action == 'decline':
             adviser.status = 'declined'
-            adviser.is_active = False # <-- NEW: A declined app is not active
+            adviser.date_deactivated = timezone.now().date() # <-- FIXED: A declined app is not active
             messages.info(request, f"Adviser {adviser.firstname} {adviser.surname} has been declined.")
         
         # --- NEW ACTIONS ---
@@ -1029,7 +1035,9 @@ def admin_manageadviser(request):
             if adviser.status != 'approved':
                 messages.error(request, "Only approved advisers can be deactivated.")
             else:
-                adviser.is_active = False
+                # Only set the date if they are currently active
+                if adviser.date_deactivated is None:
+                    adviser.date_deactivated = timezone.now().date() # <-- FIXED
                 messages.warning(request, f"Adviser {adviser.firstname} has been set to INACTIVE.")
 
         elif action == 'activate':
@@ -1040,7 +1048,7 @@ def admin_manageadviser(request):
                 other_active_advisers = Adviser.objects.filter(
                     organization=organization, 
                     status='approved',
-                    is_active=True
+                    date_deactivated__isnull=True # <-- FIXED
                 ).exclude(adviser_id=adviser_pk)
 
                 if adviser.position == 'Main' and other_active_advisers.filter(position='Main').exists():
@@ -1049,7 +1057,7 @@ def admin_manageadviser(request):
                         messages.error(request, f"Cannot activate: {organization.name} already has an ACTIVE Assistant Adviser.")
                 else:
                     # All checks passed, activate the adviser
-                    adviser.is_active = True
+                    adviser.date_deactivated = None # <-- FIXED
                     messages.success(request, f"Adviser {adviser.firstname} has been set to ACTIVE.")
         # --- END NEW ACTIONS ---
 
@@ -1061,13 +1069,17 @@ def admin_manageadviser(request):
     # 1. Get parameters from URL
     search_query = request.GET.get('search', None)
     status_filter = request.GET.get('status', None)
-    active_filter = request.GET.get('active', None) # <-- NEW
+    active_filter = request.GET.get('active', None)
+    org_filter = request.GET.get('organization', None) # <-- NEW: Get org filter
     
     sort_by = request.GET.get('sort', 'adviser_id') 
     order = request.GET.get('order', 'asc')
 
     # 2. Start with base query
     adviser_list = Adviser.objects.all()
+    
+    # NEW: Get all organizations for the dropdown
+    all_organizations = Organization.objects.all().order_by('name')
 
     # 3. Apply Filters
     if search_query:
@@ -1075,29 +1087,31 @@ def admin_manageadviser(request):
             Q(adviser_id__icontains=search_query) | 
             Q(surname__icontains=search_query) |
             Q(firstname__icontains=search_query) |
-            Q(department__icontains=search_query)
+            Q(organization__name__icontains=search_query) # <-- UPDATED: Search org name
         )
     
     if status_filter:
         adviser_list = adviser_list.filter(status=status_filter)
 
-    # <-- NEW FILTER LOGIC ---
     if active_filter:
         if active_filter == 'true':
-            adviser_list = adviser_list.filter(is_active=True)
+            adviser_list = adviser_list.filter(date_deactivated__isnull=True)
         elif active_filter == 'false':
-            adviser_list = adviser_list.filter(is_active=False)
-    # --- END NEW FILTER LOGIC ---
+            adviser_list = adviser_list.filter(date_deactivated__isnull=False)
+
+    # NEW: Apply the organization filter
+    if org_filter:
+        adviser_list = adviser_list.filter(organization__org_id=org_filter)
 
     # 4. Apply Sorting
     valid_sort_map = {
         'adviser_id': 'adviser_id',
         'surname': 'surname',
         'firstname': 'firstname',
-        'department': 'department',
+        'organization': 'organization__name', # <-- UPDATED: Sort by org name
         'position': 'position',
         'status': 'status',
-        'is_active': 'is_active', # <-- NEW
+        'is_active': 'date_deactivated',
     }
     
     sort_field = valid_sort_map.get(sort_by, 'adviser_id')
@@ -1111,12 +1125,8 @@ def admin_manageadviser(request):
     paginator = Paginator(adviser_list, 10) # 10 items per page
     page_number = request.GET.get('page')
     
-    try:
-        page_obj = paginator.page(page_number)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
+    # Using .get_page is safer than .page to avoid errors
+    page_obj = paginator.get_page(page_number)
 
     # 6. Build Search/Sort parameters string for template links
     search_params = ""
@@ -1124,8 +1134,10 @@ def admin_manageadviser(request):
         search_params += f"&search={search_query}"
     if status_filter:
         search_params += f"&status={status_filter}"
-    if active_filter: # <-- NEW
+    if active_filter:
         search_params += f"&active={active_filter}"
+    if org_filter: # <-- NEW: Add org filter to pagination links
+        search_params += f"&organization={org_filter}"
 
     # 7. Build Context
     context = {
@@ -1133,12 +1145,11 @@ def admin_manageadviser(request):
         'user': request.user,
         'current_sort': sort_by,
         'current_order': order,
-        'search_params': search_params
+        'search_params': search_params,
+        'all_organizations': all_organizations # <-- NEW: Pass orgs to template
     }
     
     return render(request, 'studentorg/ADMIN/admin_manageadviser.html', context)
-
-
 def admin_manageproject(request):
 
     # --- POST Logic (for Approve/Decline) ---

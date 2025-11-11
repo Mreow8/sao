@@ -1,5 +1,4 @@
 {% extends 'adminmain.html' %} {% load static %}
-<!-- prettier-ignore -->
 {% block title %}Dental Request{% endblock %}
 
 {% block extra_css %}
@@ -22,6 +21,8 @@
   <form action="" method="POST" class="form-content">
     {% csrf_token %}
 
+    <input type="hidden" id="action_request_id" name="request_id" value="" />
+
     <div class="request">
       <h3 class="request-title">Requests</h4>
       <div class="table-responsive">
@@ -35,19 +36,18 @@
               <th>Action</th>
             </tr>
           </thead>
-          <!-- prettier-ignore -->
           <tbody>
             {% for request in service_request %}
               {% if not request.date_appointed %}
               <tr>
-                <input type="hidden" name="request_id" value="{{ request.id }}" />
-                <td><a href="#">{{ request.user_id }}</a></td>
-                <td><a href="#">{{ request.user_name|title }}</a></td>
+                <td><a href="#">{{request.patient.user }}</a></td>
+              <td><a href="#">{{ request.patient.student.lastname|title }}, {{ request.patient.student.firstname|title }}</a></td>
+                
                 <td><a href="#">{{ request.service_type }}</a></td>
                 <td><a href="#">{{ request.date_requested|date:"F d, Y" }}</a></td>
                 <td class="action-cell">
-                  <button type="button" class="approve" onclick="openAppointmentForm()">Set Appointment</button>
-                  <button type="submit" class="reject" name="action" onclick="this.value = 'reject';">Reject</button>
+                  <button type="button" class="approve" onclick="openAppointmentForm('{{ request.id }}')">Set Appointment</button>
+                  <button type="submit" class="reject" name="action" value="reject" onclick="setActionRequestId('{{ request.id }}')">Reject</button>
                 </td>
               </tr>
               {% endif %}
@@ -79,19 +79,29 @@
           name="appointment_time"
           required
         />
-        <button type="submit" class="action-button">Set Appointment</button>
+        <button type="submit" class="action-button" name="action" value="set_appointment">Set Appointment</button>
       </div>
     </div>
   </form>
-</div>
-{% endblock %} {% block extra_js %}
-<script>
-  function openAppointmentForm() {
+</div><script>
+  // ⭐️ FIXED: This function now sets the hidden input value before opening the modal
+  function openAppointmentForm(requestId) {
+    document.getElementById("action_request_id").value = requestId;
     document.getElementById("appointmentModal").style.display = "block";
   }
 
   function closeAppointmentForm() {
     document.getElementById("appointmentModal").style.display = "none";
   }
+  
+  // ⭐️ FIXED: Added this function for the reject button
+  function setActionRequestId(requestId) {
+    document.getElementById("action_request_id").value = requestId;
+    // The form will now submit with this ID
+  }
 </script>
+{% endblock %} 
+
+{% block extra_js %}
+
 {% endblock %}

@@ -3,7 +3,9 @@ import json
 import re
 import random
 import uuid
+from ..decorators import profile_complete_required
 import os
+from django.db import IntegrityError
 import calendar
 import csv
 from datetime import datetime, date, timedelta
@@ -355,11 +357,30 @@ def patient_form(request):
             return redirect('admin_dashboard') # Redirect admin back if ID is bad
     else:
         try:
-            patient = Patient.objects.get(user=request.user)
-        except Patient.DoesNotExist:
-            print("Patient object does not exist for current user. Creating a new one.")
-            patient = Patient.objects.create(user=request.user)
-            messages.info(request, "A new medical profile record has been created for your account. Please fill out the form.")
+            patient, created = Patient.objects.get_or_create(user=request.user)
+
+            if patient.student is None and patient.faculty is None:
+                print(f"Patient record {patient.id} is unlinked. Trying to link...")
+                try:
+                    student_profile = studentInfo.objects.get(user=request.user)
+                    patient.student = student_profile
+                    patient.save()
+                    print(f"Found and linked student profile: {student_profile.studID}")
+                except studentInfo.DoesNotExist:
+                    try:
+                        faculty_profile = staffInfo.objects.get(user=request.user)
+                        patient.faculty = faculty_profile
+                        patient.save()
+                        print(f"Found and linked faculty profile: {faculty_profile.staffID}")
+                    except staffInfo.DoesNotExist:
+                        print(f"No matching student or faculty profile found for user: {request.user.username}")
+
+            if created:
+                messages.info(request, "A new medical profile record has been created for your account. Please fill out the form.")
+
+        except IntegrityError:
+            messages.error(request, "Error: Multiple patient records found for your account. Please contact an administrator.")
+
 
     if patient is None:
         messages.error(request, 'Could not retrieve or create patient record.')
@@ -768,7 +789,7 @@ def admin_dashboard_view(request):
     }
     
     return render(request, "medical/medicalv2/admin_dashboard.html", context)
-
+@profile_complete_required
 @login_required
 def dashboard_view(request):
     try:
