@@ -96,6 +96,7 @@ hr {
 }
 .equipment{
   padding: 2.5rem;
+  background-color: #ffffff;
   
     width: 100%;
     overflow-x: auto;
@@ -299,13 +300,13 @@ hr {
   .pagination .step-links {
     flex-wrap: wrap;
   }
-}</style>
-<div class="container">
-  <div class="sub-title">
+}</style>  <div class="sub-title">
     <h4>OFFICE OF STUDENT LIFE (Admin)</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">> Equipment Tracker</p>
   </div>
+<div class="container">
+
 <hr>
   
 <div class="equipment">
@@ -336,7 +337,7 @@ hr {
           <th class="sortable {% if current_sort == 'equipment_name' %}sorted{% if current_order == 'desc' %} desc{% endif %}{% endif %}">
             <a href="?page=1&sort=equipment_name&order={% if current_sort == 'equipment_name' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_sort_params }}">Equipment Name</a>
           </th>
-          <th>Type of Item</th>
+          <th>Serial No</th>
           <th class="sortable {% if current_sort == 'date_borrowed' %}sorted{% if current_order == 'desc' %} desc{% endif %}{% endif %}">
             <a href="?page=1&sort=date_borrowed&order={% if current_sort == 'date_borrowed' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_sort_params }}">Date Borrowed</a>
           </th>
@@ -354,7 +355,7 @@ hr {
             <td>{{ record.student.firstname }} {{ record.student.lastname }}</td>
             <td>{{ record.student.degree }}</td>
             <td>{{ record.equipment.equipmentName }}</td>
-            <td>{{ record.equipment.category }}</td>
+            <td>{{ record.equipment.equipmentSN }}</td>
             <td>{{ record.date_borrowed }}</td>
             <td>
               {% if record.is_returned %}
