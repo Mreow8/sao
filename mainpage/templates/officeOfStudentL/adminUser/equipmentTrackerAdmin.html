@@ -1,7 +1,4 @@
-{% extends 'adminmain.html' %} {% load static %}
-<!-- prettier-ignore -->
-
-{% block headcontent %}
+{% extends 'adminmain.html' %} {% load static %} {% block headcontent %}
 <link
   rel="stylesheet"
   href="{% static 'styles/studentlife/equipmentTrackerAdmin.css' %}"
@@ -12,6 +9,20 @@
   href="https://fonts.googleapis.com/css2?family=Freeman&family=Rubik:wght@300..900&display=swap"
   rel="stylesheet"
 />
+<style>
+  .student-details-box {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    transition: all 0.3s;
+  }
+  .student-details-box.hidden {
+    display: none;
+  }
+</style>
 {% endblock headcontent %} {% block bodycontent %}
 <div class="sub-title">
   <h4>OFFICE OF STUDENT LIFE (Admin)</h4>
@@ -29,45 +40,49 @@
     </div>
   </div>
   <div class="equipmentContents">
-    <!-- prettier-ignore -->
-
     <div class="title-txt">
-      <p>Enter ID number:</p>
+      <p>Enter Student ID:</p>
     </div>
-    <form
-      method="GET"
-      action="{% url 'equipmentTrackerAdmin' %}"
-      class="search"
-    >
+    <div class="search">
       <input
         type="text"
-        name="search"
-        placeholder="Search for student by ID..."
-        value="{{ request.GET.search }}"
+        name="student_id_search"
+        id="studentIdSearch"
+        list="student-options"
+        placeholder="Enter Student ID or Name"
+        value=""
       />
+      <datalist id="student-options">
+        {% for student in all_students %}
+        <option value="{{ student.studID }}">
+          {{ student.firstname }} {{ student.lastname }}
+        </option>
+        {% endfor %}
+      </datalist>
+    </div>
 
-      <!-- 
-    The input type="submit" is now a <button> 
-    with the SVG icon inside.
-  -->
-      <button type="submit" class="searchBtn" aria-label="Search">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-          />
-        </svg>
-      </button>
-    </form>
+    <div id="student_details" class="student-details-box hidden">
+      <p id="student_status_message" style="font-weight: bold"></p>
+      <p><strong>ID:</strong> <span id="student_id_display"></span></p>
+      <p><strong>Name:</strong> <span id="student_name_display"></span></p>
+      <p>
+        <strong>Course/Program:</strong>
+        <span id="student_course_display"></span>
+      </p>
+    </div>
 
-    <form method="POST" action="{% url 'save_equipment_borrowing' %}">
+    <div
+      id="ajax_messages"
+      style="margin-top: 10px; padding: 5px; font-weight: bold"
+    ></div>
+
+    <form
+      method="POST"
+      action="{% url 'save_equipment_borrowing' %}"
+      id="borrowingForm"
+    >
       {% csrf_token %}
-      <input type="hidden" name="student_id" value="{{ student.studID }}" />
+      <input type="hidden" name="student_id" id="hiddenStudentId" value="" />
 
       <div class="form-grid">
         <div>
@@ -77,13 +92,8 @@
             name="borrowername"
             id="borrowerName"
             placeholder="Name of Borrower"
-            value="{{ student.firstname }} {{ student.lastname }}"
-            {%
-            if
-            student
-            %}readonly{%
-            endif
-            %}
+            value=""
+            readonly
           />
         </div>
         <div>
@@ -93,24 +103,25 @@
             name="courseprogram"
             id="courseProgram"
             placeholder="Course/Program of Borrower"
-            value="{{ student.degree }}"
-            {%
-            if
-            student
-            %}readonly{%
-            endif
-            %}
+            value=""
+            readonly
           />
         </div>
         <div>
           <label for="equipmentName">Equipment Name:</label>
           <select id="equipmentName" name="equipmentname" required>
-            <option value="" disabled selected>Select equipment</option>
-            {% for equip in all_equipment %}
-            <option value="{{ equip.itemId }}">
-              {{ equip.equipmentName }}
+            <option value="" disabled selected>
+              Select available equipment
             </option>
-            {% endfor %}
+            {% for equip in available_equipment %}
+            <option value="{{ equip.itemId }}">
+              {{ equip.equipmentName }} (SN: {{ equip.equipmentSN }})
+            </option>
+            {% endfor %} {% if not available_equipment and all_equipment %}
+            <option value="" disabled>
+              -- All equipment is currently borrowed --
+            </option>
+            {% endif %}
           </select>
         </div>
         <div>
@@ -120,7 +131,9 @@
       </div>
 
       <div class="button-container">
-        <button class="saveBtn" type="submit">SAVE RECORD</button>
+        <button class="saveBtn" type="submit" id="saveBtn" disabled>
+          SAVE RECORD
+        </button>
       </div>
     </form>
   </div>
@@ -128,43 +141,104 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".returnBtn").forEach(function (button) {
-      button.addEventListener("click", function () {
-        const recordId = this.getAttribute("data-record-id");
-        const button = this;
-        const row = button.closest("tr");
+    // --- Element Definitions ---
+    const studentInput = document.getElementById("studentIdSearch");
+    const studentDetailsBox = document.getElementById("student_details");
+    const hiddenStudentId = document.getElementById("hiddenStudentId");
+    const borrowerNameInput = document.getElementById("borrowerName");
+    const courseProgramInput = document.getElementById("courseProgram");
+    const saveButton = document.getElementById("saveBtn");
+    const ajaxMessages = document.getElementById("ajax_messages");
 
-        if (confirm("Are you sure you want to mark this item as returned?")) {
-          fetch("{% url 'update_return_status' %}", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: JSON.stringify({ record_id: recordId }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.status === "success") {
-                // Replace button with "Returned" text
-                const statusCell = button.parentElement;
-                statusCell.innerHTML = "Returned";
+    // Display Elements (The Pop-up Box)
+    const studentIdDisplay = document.getElementById("student_id_display");
+    const studentNameDisplay = document.getElementById("student_name_display");
+    const studentCourseDisplay = document.getElementById(
+      "student_course_display"
+    );
+    const studentStatusMessage = document.getElementById(
+      "student_status_message"
+    );
 
-                // Update the date returned cell
-                const dateReturnedCell = row.querySelector("td:nth-child(7)");
-                dateReturnedCell.textContent = data.date_returned;
+    // --- Helper Function ---
+    function resetForm() {
+      hiddenStudentId.value = "";
+      borrowerNameInput.value = "";
+      courseProgramInput.value = "";
+      saveButton.disabled = true;
+      ajaxMessages.innerHTML = "";
 
-                alert("Item marked as returned.");
-              } else {
-                alert("Failed to update return status: " + data.message);
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              alert("An error occurred while updating the return status.");
-            });
-        }
-      });
+      studentIdDisplay.textContent = "";
+      studentNameDisplay.textContent = "";
+      studentCourseDisplay.textContent = "";
+      studentStatusMessage.textContent = "Searching...";
+      studentDetailsBox.classList.add("hidden");
+    }
+
+    // --- Core AJAX Fetch Function ---
+    function fetchStudentDetails(studentID) {
+      if (!studentID || studentID.trim().length === 0) {
+        resetForm();
+        return;
+      }
+
+      // Show loading state and the box
+      // studentDetailsBox.classList.remove("hidden");
+      studentStatusMessage.textContent = `Searching for Student ID: ${studentID}...`;
+      studentStatusMessage.style.color = "#2c5282";
+
+      // Note: The AJAX lookup relies on the text input being the Student ID (the value in the datalist).
+      const url = `{% url 'get_student_details_ajax' %}?stud_id=${studentID}`;
+
+      fetch(url, { method: "GET" })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            // 1. Populate the Pop-up Box
+            studentIdDisplay.textContent = data.studID;
+            studentNameDisplay.textContent = data.fullname;
+            studentCourseDisplay.textContent = data.degree;
+            studentStatusMessage.textContent = "Student Found.";
+            studentStatusMessage.style.color = "green";
+
+            // 2. Populate the Hidden Form Fields
+            hiddenStudentId.value = data.studID;
+            borrowerNameInput.value = data.fullname;
+            courseProgramInput.value = data.degree;
+            saveButton.disabled = false;
+          } else {
+            // Handle Error
+            studentStatusMessage.textContent =
+              data.error_message || "Search failed.";
+            studentStatusMessage.style.color = "red";
+
+            // Clear hidden form fields
+            hiddenStudentId.value = "";
+            borrowerNameInput.value = "";
+            courseProgramInput.value = "";
+            saveButton.disabled = true;
+          }
+        })
+        .catch((error) => {
+          studentStatusMessage.textContent =
+            "Error: Could not connect to the server.";
+          studentStatusMessage.style.color = "red";
+          console.error("Fetch error:", error);
+          saveButton.disabled = true;
+        });
+    }
+
+    // --- Event Listeners (Triggers AJAX on input/change) ---
+
+    // This handles both typing and selecting from the Datalist
+    studentInput.addEventListener("input", function () {
+      // Note: Datalist suggestion values are often the student ID.
+      fetchStudentDetails(this.value.trim());
+    });
+
+    studentInput.addEventListener("change", function () {
+      // Ensure lookup happens if user selects a suggestion
+      fetchStudentDetails(this.value.trim());
     });
   });
 </script>

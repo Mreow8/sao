@@ -49,7 +49,117 @@ from django.shortcuts import render, redirect
 from ..models import PPMPDocument
 from ..forms import PPMPDocumentForm
 
+# --- NEW AJAX VIEW ---
+@csrf_exempt
+def get_student_details_ajax(request):
+    """Fetches student details via AJAX for the equipment borrowing form."""
+    if request.method == 'GET':
+        student_id = request.GET.get('stud_id')
+        if student_id:
+            try:
+                # Use get_object_or_404 for cleaner handling of non-existent ID
+                student = get_object_or_404(studentInfo, studID=student_id)
+                
+                # Return the necessary student details as JSON
+                data = {
+                    'status': 'success',
+                    'studID': student.studID,
+                    'fullname': f"{student.firstname} {student.lastname}",
+                    'degree': student.degree,
+                    'error_message': None
+                }
+                return JsonResponse(data)
+            
+            except studentInfo.DoesNotExist:
+                return JsonResponse({
+                    'status': 'error', 
+                    'error_message': 'Student ID not found.'
+                })
+            except Exception as e:
+                 return JsonResponse({
+                    'status': 'error', 
+                    'error_message': f'An error occurred: {str(e)}'
+                })
+        
+        return JsonResponse({'status': 'error', 'error_message': 'No Student ID provided.'})
+    
+    return JsonResponse({'status': 'error', 'error_message': 'Invalid request method.'}, status=400)
+def equipmentTrackerAdmin(request):
+    student = None
+    borrowing_records = BorrowingRecord.objects.all()
+    error_message = None
 
+    # --- NEW LOGIC: Fetch all students for the datalist ---
+    try:
+        # Fetch all students ordered by last name for better searching
+        all_students = studentInfo.objects.all().order_by('lastname')
+    except Exception as e:
+        logger.error(f"Error fetching all students: {e}")
+        all_students = []
+
+    # Get IDs of all equipment that are currently NOT returned (is_returned=False)
+    borrowed_equipment_ids = BorrowingRecord.objects.filter(
+        is_returned=False
+    ).values_list('equipment_id', flat=True)
+
+    # Get all equipment objects whose itemId is NOT in the borrowed_equipment_ids list
+    available_equipment = Equipment.objects.exclude(
+        itemId__in=borrowed_equipment_ids
+    ).order_by('equipmentName')
+
+    # Get all equipment (the full inventory)
+    all_equipment = Equipment.objects.all() 
+    
+    context = {
+        'student': student,
+        'all_equipment': all_equipment,
+        'available_equipment': available_equipment, 
+        'borrowing_records': borrowing_records,
+        'error_message': error_message,  
+        'borrowed_equipment_ids': borrowed_equipment_ids,
+        'all_students': all_students,  # <--- NEW: Add the student list to the context
+    }
+    return render(request, 'officeOfStudentL/adminUser/equipmentTrackerAdmin.html', context)
+def save_equipment_borrowing(request):
+    if request.method == "POST":
+        student_id = request.POST.get("student_id")
+        equipment_id = request.POST.get("equipmentname")
+        date_borrowed = request.POST.get("dateborrowed")
+
+        if not (student_id and equipment_id and date_borrowed):
+            messages.error(request, "Please provide all required borrowing information.")
+            return redirect('equipmentTrackerAdmin')
+
+        try:
+            student = studentInfo.objects.get(studID=student_id)
+            equip = Equipment.objects.get(itemId=equipment_id)
+            
+            # --- NEW LOGIC: CHECK IF EQUIPMENT IS ALREADY BORROWED ---
+            is_currently_borrowed = BorrowingRecord.objects.filter(
+                equipment=equip, 
+                is_returned=False
+            ).exists()
+            
+            if is_currently_borrowed:
+                messages.error(request, f"The equipment '{equip.equipmentName} (SN: {equip.equipmentSN})' is already borrowed and has not been returned.")
+                return redirect('equipmentTrackerAdmin')
+
+            # --- END NEW LOGIC ---
+
+            # If not currently borrowed, proceed with saving the new record
+            BorrowingRecord.objects.create(
+                student=student, 
+                equipment=equip, 
+                date_borrowed=date_borrowed
+            )
+            messages.success(request, f"Equipment '{equip.equipmentName}' borrowing record saved successfully.")
+        
+        except studentInfo.DoesNotExist:
+            messages.error(request, "Student not found. Please search again.")
+        except Equipment.DoesNotExist:
+            messages.error(request, "Equipment not found.")
+        
+        return redirect('equipmentTrackerAdmin')
 @login_required
 def ppmp_list(request):
     base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
@@ -516,36 +626,7 @@ def equipmentTracker(request):
     }
     return render(request, 'officeOfStudentL/equipmentTracker.html', context)
 
-# @sao_admin_required
-def equipmentTrackerAdmin(request):
-    student = None
-    borrowing_records = BorrowingRecord.objects.all()
-    error_message = None  # <-- 1. Initialize error variable
 
-    if request.method == "GET" and "search" in request.GET:
-        search_id = request.GET.get("search")
-        if search_id:
-            try:
-                student = studentInfo.objects.get(studID=search_id)
-            except studentInfo.DoesNotExist:
-                # 2. REMOVE this line:
-                # messages.error(request, "Student not found")
-                
-                # 3. ADD this line instead:
-                error_message = "Student not found"
-        # (Optional) You can also handle empty searches
-        # else:
-        #     error_message = "Please enter a Student ID to search."
-
-    all_equipment = Equipment.objects.all()
-
-    context = {
-        'student': student,
-        'all_equipment': all_equipment,
-        'borrowing_records': borrowing_records,
-        'error_message': error_message,  # <-- 4. Pass the local error to the context
-    }
-    return render(request, 'officeOfStudentL/adminUser/equipmentTrackerAdmin.html', context)
 from django.core.paginator import Paginator
 # @sao_admin_required (uncomment this if you have your custom decorator)
 def equipmentborrowed(request):
@@ -617,52 +698,57 @@ def equipmentborrowed(request):
     }
 
     return render(request, 'officeOfStudentL/adminUser/equipmentborrowed.html', context)
+# In your views.py file:
 
-# Add Equipment
+from django.shortcuts import render, redirect
+from django.contrib import messages
+# Use your actual model names for import
+from ..models import Equipment, BorrowingRecord 
+from django.db.models import Exists, OuterRef 
+
 def addEquipment(request):
+    # --- POST REQUEST (Adding new equipment) ---
     if request.method == "POST":
         equipment_name = request.POST.get("equipmentname")
         serial = request.POST.get("serialnum")
         
         if equipment_name and serial:
-            # Add to Equipment table
+            # Check for existing equipment by serial number
+            if Equipment.objects.filter(equipmentSN=serial).exists():
+                messages.error(request, f"Equipment with serial number {serial} already exists.")
+                return redirect('addEquipment')
+            
+            # Save new equipment
             new_equipment = Equipment(equipmentName=equipment_name, equipmentSN=serial)
             new_equipment.save()
             
-            messages.success(request, "Equipment added successfully")
+            messages.success(request, f"{equipment_name} (SN: {serial}) added successfully.")
             return redirect('addEquipment')
         else:
-            messages.error(request, "Please provide both equipment name and serial number")
-    
-    # Fetch all equipment objects from the database
-    all_equipment = Equipment.objects.all()
+            messages.error(request, "Please provide both equipment name and serial number.")
+            return redirect('addEquipment')
 
-    # Pass the equipment objects to the template context
+    # --- GET REQUEST (Fetching equipment with status) ---
+
+    # 1. Define the subquery using your actual model and field name
+    active_borrow_subquery = BorrowingRecord.objects.filter(
+        equipment=OuterRef('pk'), 
+        is_returned=False # <--- Check if the item has NOT been returned
+    )
+
+    # 2. Fetch all equipment and annotate the results
+    all_equipment = Equipment.objects.annotate(
+        is_borrowed=Exists(active_borrow_subquery)
+    ).order_by('equipmentName') # Apply your desired default sort here
+
+    # Pass the equipment objects (now including is_borrowed status) to the template
     return render(request, 'officeOfStudentL/adminUser/addEquipment.html', {'all_equipment': all_equipment})
 
-def save_equipment_borrowing(request):
-    if request.method == "POST":
-        student_id = request.POST.get("student_id")
-        equipment_id = request.POST.get("equipmentname")
-        date_borrowed = request.POST.get("dateborrowed")
 
-        if student_id and equipment_id and date_borrowed:
-            try:
-                student = studentInfo.objects.get(studID=student_id)
-                equip = Equipment.objects.get(itemId=equipment_id)
-                BorrowingRecord.objects.create(student=student, equipment=equip, date_borrowed=date_borrowed)
-                messages.success(request, "Equipment borrowing record saved successfully")
-            except studentInfo.DoesNotExist:
-                messages.error(request, "Student not found")
-            except Equipment.DoesNotExist:
-                messages.error(request, "Equipment not found")
-        else:
-            messages.success(request, "Equipment returned successfully")
+# In studentlife.py
 
-    return redirect('equipmentTrackerAdmin')
+# ... (other imports and functions)
 
-
-#Transaction Report
 @sao_admin_required
 def transactionreport(request):
     return render(request, 'adminUSer/transactions.html')

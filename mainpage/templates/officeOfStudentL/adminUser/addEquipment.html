@@ -15,52 +15,120 @@
 <hr>
 
     <div class="equipmentContents">
-  <form id="trackerForm" action="{% url 'addEquipment' %}" method="POST">
-    {% csrf_token %}
+        <form id="trackerForm" action="{% url 'addEquipment' %}" method="POST">
+            {% csrf_token %}
 
-    {% if messages %}
-    <ul class="messages success-message">
-      {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
+            {% if messages %}
+            <ul class="messages success-message">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
 
-    <div class="form-grid">
-      <div>
-        <label for="equipmentName">Equipment Name:</label>
-        <input type="text" name="equipmentname" id="equipmentName" placeholder="Equipment Name" required>
-      </div>
-      <div>
-        <label for="serialnum">Equipment Serial Number:</label>
-        <input type="text" name="serialnum" id="serialnum" placeholder="Equipment Serial Number">
-      </div>
+            <div class="form-grid">
+                <div>
+                    <label for="equipmentName">Equipment Name:</label>
+                    <input type="text" name="equipmentname" id="equipmentName" placeholder="Equipment Name" required>
+                </div>
+                <div>
+                    <label for="serialnum">Equipment Serial Number:</label>
+                    <input type="text" name="serialnum" id="serialnum" placeholder="Equipment Serial Number">
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button class="saveBtn" type="submit">SAVE</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="equipmentTable" id="sortableTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)" data-sort-type="number">Item ID</th>
+                        <th onclick="sortTable(1)" data-sort-type="text">Equipment Name</th>
+                        <th onclick="sortTable(2)" data-sort-type="text">Equipment Serial Number</th>
+                        <th onclick="sortTable(3)" data-sort-type="text">Status</th> </tr>
+                </thead>
+                <tbody>
+                    {% for equipment in all_equipment %}
+                    <tr>
+                        <td>{{ equipment.itemId }}</td>
+                        <td>{{ equipment.equipmentName }}</td>
+                        <td>{{ equipment.equipmentSN }}</td>
+                        <td>
+                            {% if equipment.is_borrowed %}
+                                <span style="color: red; font-weight: bold;">Borrowed</span>
+                            {% else %}
+                                <span style="color: green;">Available</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+    
+    <script>
+        let sortDirection = 1; // 1 for ascending, -1 for descending
 
-    <div class="button-container">
-      <button class="saveBtn" type="submit">SAVE</button>
-    </div>
-  </form>
+        function sortTable(n) {
+            const table = document.getElementById("sortableTable");
+            let rows, switching, i, x, y, shouldSwitch;
+            switching = true;
 
-  <div class="table-responsive">
-    <table class="equipmentTable">
-      <thead>
-        <tr>
-          <th>Item ID</th>
-          <th>Equipment Name</th>
-          <th>Equipment Serial Number</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for equipment in all_equipment %}
-        <tr>
-          <td>{{ equipment.itemId }}</td>
-          <td>{{ equipment.equipmentName }}</td>
-          <td>{{ equipment.equipmentSN }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+            // Flip the sort direction if the same column is clicked again
+            if (table.rows[0].cells[n].getAttribute('data-last-sorted') === 'true') {
+                sortDirection = -sortDirection;
+            } else {
+                // Reset 'data-last-sorted' for all columns
+                for (i = 0; i < table.rows[0].cells.length; i++) {
+                    table.rows[0].cells[i].removeAttribute('data-last-sorted');
+                }
+                table.rows[0].cells[n].setAttribute('data-last-sorted', 'true');
+                sortDirection = 1; // Always start with ascending on a new column
+            }
+            
+            const sortType = table.rows[0].cells[n].getAttribute('data-sort-type');
+
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                // Start from 1 to skip the header row
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                    let xContent = x.innerHTML.toLowerCase().trim();
+                    let yContent = y.innerHTML.toLowerCase().trim();
+
+                    if (sortType === 'number') {
+                        xContent = parseFloat(xContent);
+                        yContent = parseFloat(yContent);
+                    }
+                    
+                    if (sortDirection === 1) { // Ascending
+                        if (xContent > yContent) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (sortDirection === -1) { // Descending
+                        if (xContent < yContent) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+    </script>
+
 {% endblock bodycontent %}
