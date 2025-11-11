@@ -43,6 +43,7 @@ path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
 
 
 
+path('history/transaction_report/', views.view_transaction_history, name='transaction_report_view'),
 
 
 

@@ -25,6 +25,7 @@ mainpage/templates/studentorg/Main/view_officer.html
 mainpage/templates/officeOfStudentL/adminUser/monthlyCalendarAdmin.html
 mainpage/templates/scholarship/studentrequirements.html
 mainpage/templates/medical/medicalrequirements.html
+mainpage/templates/reports/transaction_report.html
 mainpage/templates/medical/admin/viewrequest.html
 mainpage/templates/officeOfStudentL/adminUser/adminRequestedGmc.html
 mainpage/templates/community_involvement/admin/volunteer-dashboard.html

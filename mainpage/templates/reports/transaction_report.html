@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CONTENT FROM requestgmc.css --- */
+        
+        /* --- Global & Fonts --- */
+        /* Apply the fonts imported in the HTML */
+        body, /* Added body */
+        .gmc-form,
+        .sub-title,
+        .requestBtn,
+        #comboBox {
+          font-family: "Rubik", sans-serif;
+        }
+
+        /* --- Container --- */
+        .container,
+        .body-content {
+          padding: 0 1.5rem; /* Add some horizontal padding */
+        }
+        .admin-table-wrapper {
+          width: 100%;
+          overflow-x: auto; /* This adds the horizontal scrollbar */
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          overflow: hidden; /* Clips the table corners */
+        }
+        .admin-table-wrapper {
+          overflow-x: auto;
+        }
+
+        /* MODIFIED: Targets .transaction-table class */
+        .transaction-table {
+          min-width: 800px; /* Ensures all columns have space */
+        }
+        
+        /* --- Main Form Card --- */
+        .gmc-form {
+          background-color: #ffffff;
+          border: 1px solid #e0e0e0;
+          border-radius: 12px;
+          padding: 2.5rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle lift */
+        }
+
+        /* --- Student Request Form (Kept for completeness) --- */
+        .title-txt {
+          display: flex;
+          flex-direction: column; /* Mobile first */
+          gap: 1rem;
+        }
+        .title-txt p {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #333;
+          margin: 0;
+          display: flex;
+          align-items: center;
+        }
+        #comboBox {
+          font-family: "Rubik", sans-serif;
+          font-size: 1rem;
+          padding: 10px 12px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          flex-grow: 1; /* Takes available space on larger screens */
+          background-color: #f9f9f9;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #comboBox:focus {
+          outline: none;
+          border-color: #2c5282; /* Primary Blue */
+          box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
+          background-color: #fff;
+        }
+        .requestBtn {
+          font-family: "Rubik", sans-serif;
+          background-color: #2c5282; /* Primary Blue */
+          color: white;
+          font-size: 1rem;
+          padding: 10px 24px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          transition: background-color 0.2s, transform 0.2s;
+        }
+        .requestBtn:hover {
+          background-color: #2a4365; /* Darker Blue */
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .requestBtn:active {
+          transform: translateY(0);
+          box-shadow: none;
+        }
+        @media (min-width: 600px) {
+          .title-txt {
+            flex-direction: row;
+            align-items: center;
+          }
+        }
+
+        /* --- Student Pending Request Box (Kept for completeness) --- */
+        .pending-request-box {
+          background-color: #ebf8ff; /* Light blue */
+          border: 1px solid #bee3f8; /* Lighter blue border */
+          border-left: 5px solid #2c5282; /* Accent border */
+          border-radius: 8px;
+          padding: 1.5rem;
+        }
+        .pending-request-box h4 {
+          font-size: 1.25rem;
+          color: #2b6cb0; /* Darker blue text */
+          margin-top: 0;
+          margin-bottom: 1rem;
+        }
+        .pending-request-box p {
+          margin: 0.5rem 0;
+          color: #555;
+          font-size: 0.95rem;
+        }
+        .pending-request-box .alert-warning {
+          color: #2b6cb0; /* Darker blue text */
+          margin-top: 1rem;
+        }
+
+        /* --- Divider --- */
+        hr {
+          margin: 2.5rem 0; /* 40px */
+          border: 0;
+          height: 1px;
+          background-color: #e0e0e0;
+        }
+
+        /* --- Student History Table (Kept for completeness) --- */
+        .history-wrapper {
+          margin-top: 40px;
+        }
+        .history-wrapper h4 {
+          font-size: 1.5rem; /* 24px */
+          margin-bottom: 20px;
+          color: #333;
+          font-family: "Rubik", sans-serif;
+        }
+        .gmc-table-wrapper {
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          overflow: hidden; /* Clips the table corners */
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- SHARED TABLE STYLES (MODIFIED) --- */
+        /* Targets the .transaction-table class */
+        .transaction-table {
+          width: 100%;
+          border-collapse: collapse;
+          border: none;
+        }
+
+        .transaction-table th,
+        .transaction-table td {
+          border-bottom: 1px solid #ddd;
+          padding: 12px 15px;
+          text-align: left;
+          font-size: 14px;
+          vertical-align: middle; /* Align content vertically */
+        }
+
+        .transaction-table th {
+          background-color: #f9f9f9;
+          color: #2c5282; /* Primary Blue */
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        /* Remove bottom border from last row */
+        .transaction-table tbody tr:last-child td {
+          border-bottom: none;
+        }
+
+        /* --- Student Table Status Badges (MODIFIED) --- */
+        /* Base style from requestgmc.css */
+        .status-badge {
+          padding: 5px 12px;
+          border-radius: 15px;
+          font-size: 12px;
+          text-transform: uppercase;
+          /* Color/BG will be set by specific classes */
+        }
+        
+        /* Merged class names from both files */
+        .status-badge.pending,
+        .status-badge.Borrowed {
+          color: #92400e;
+          background-color: #fef3c7;
+        } /* Orange */
+        
+        .status-badge.Processed,
+        .status-badge.completed,
+        .status-badge.Returned,
+        .status-badge.Accepted {
+          background-color: #8ccfa8;
+          color: #0b552a;
+        } /* Green */
+
+        /* Added style for 'rejected' based on original HTML */
+        .status-badge.rejected {
+            background-color: #fdedec; 
+            color: #c0392b;
+        }
+
+        /* --- ADMIN TABLE SPECIFIC STYLES (Kept for completeness) --- */
+        .ornum-input {
+          border: 1px solid #ccc;
+          width: 120px;
+          height: 35px;
+          border-radius: 8px;
+          padding: 5px 10px;
+          font-size: 14px;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .ornum-input:focus {
+          outline: none;
+          border-color: #2c5282;
+          box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+        }
+        .printBtn {
+          font-family: "Rubik", sans-serif;
+          background-color: #28a745; /* Green */
+          color: white;
+          font-size: 0.875rem;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        .printBtn:hover {
+          background-color: #218838; /* Darker Green */
+        }
+
+        /* --- RESPONSIVE STYLES (MODIFIED) --- */
+        /* We removed the "card view" styles for #historyTable
+           as they require specific data-label attributes.
+           We're keeping the horizontal scroll from .admin-table-wrapper
+           as the primary responsive solution for the tables. */
+        @media (max-width: 768px) {
+          /* Adjust padding on main card for mobile */
+          .gmc-form {
+            padding: 1.5rem;
+          }
+        }
+
+        /* --- END OF requestgmc.css --- */
+
+
+        /* --- STYLES FOR INTEGRATION --- */
+        
+        /* Original styles from transaction_report.html */
+        body {
+            /* font-family is now controlled by gmc-form */
+            margin: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            /* Padding, BG, Shadow, Radius are now controlled by .gmc-form */
+        }
+        h1 {
+            color: #2c3e50; /* Original */
+            font-family: "Rubik", sans-serif; /* Added */
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Tab Navigation (Copied from original HTML) */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            padding-left: 0;
+            margin-bottom: 20px;
+            list-style: none;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-tabs .nav-link {
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: -1px;
+            background: none;
+            border: 1px solid transparent;
+            border-top-left-radius: .25rem;
+            border-top-right-radius: .25rem;
+            text-decoration: none;
+            color: #3498db;
+            cursor: pointer;
+            font-family: "Rubik", sans-serif; /* Added */
+        }
+        .nav-tabs .nav-link.active {
+            color: #495057;
+            background-color: #fff;
+            border-color: #ddd #ddd #fff;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link:hover {
+            border-color: #e9ecef #e9ecef #ddd;
+        }
+
+        /* Tab Content (Copied from original HTML) */
+        .tab-content .tab-pane {
+            display: none; /* Hidden by default */
+        }
+        .tab-content .tab-pane.active {
+            display: block; /* Shown when active */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <style>
+    /* This styles your button */
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px; /* Space between icon and text */
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        color: #333; /* Icon and text will be this color */
+        font-family: sans-serif;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .back-button:hover {
+        background-color: #f0f0f0;
+    }
+
+    /* This styles the icon inside the button */
+    .back-button svg {
+        width: 18px; /* Control icon size */
+        height: 18px;
+    }
+</style>
+
+
+<a href="{% url 'homepage' %}" class="back-button">
+    
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18L9 12L15 6" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"/>
+    </svg>
+    
+    Back to Homepage
+</a>
+        <div class="gmc-form">
+            <h1>Transaction History</h1>
+
+            <ul class="nav-tabs">
+                <li><a class="nav-link active" data-tab="all">All Transactions</a></li>
+                <li><a class="nav-link" data-tab="medical">Medical</a></li>
+                <li><a class="nav-link" data-tab="student-life">Student Life</a></li>
+                <li><a class="nav-link" data-tab="guidance">Guidance</a></li>
+                <li><a class="nav-link" data-tab="alumni">Alumni</a></li>
+                <li><a class="nav-link" data-tab="scholarship">Scholarship</a></li>
+                <li><a class="nav-link" data-tab="discipline">Discipline</a></li>
+                <li><a class="nav-link" data-tab="job-placement">Job Placement</a></li>
+                <li><a class="nav-link" data-tab="community">Community</a></li>
+            </ul>
+
+            <div class="tab-content">
+                
+                <div class="tab-pane active" id="all">
+                    <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Module</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in all_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.source_app }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="6" style="text-align: center; padding: 20px;">No transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="medical">
+                    <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in medical_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">No medical transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="tab-pane" id="student-life">
+                    <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in student_life_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">No student life transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="guidance">
+                    <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in guidance_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">No guidance transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="alumni">
+                     <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in alumni_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">No alumni transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="scholarship">
+                     <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in scholarship_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">No scholarship transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="discipline">
+                     <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in discipline_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">No discipline transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="job-placement">
+                     <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in job_placement_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">No job placement transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="community">
+                     <div class="admin-table-wrapper">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Event Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in community_transactions %}
+                                <tr>
+                                    <td>
+                                        {% if log.is_datetime %}
+                                            {{ log.date|date:"Y-m-d H:i" }}
+                                        {% else %}
+                                            {{ log.date|date:"Y-m-d" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.user_name }}</td>
+                                    <td>{{ log.event_type }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td><span class="status-badge {{ log.status }}">{{ log.status }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">No community transactions found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div> </div> </div> <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.nav-tabs .nav-link');
+            const panes = document.querySelectorAll('.tab-content .tab-pane');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panes.forEach(p => p.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const targetPaneId = tab.getAttribute('data-tab');
+                    document.getElementById(targetPaneId).classList.add('active');
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

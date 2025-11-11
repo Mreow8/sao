@@ -336,3 +336,318 @@ def signinuser(request):
             return render(request, 'login.html', context)
 
     return render(request, 'login.html')
+
+# mainpage/views.py
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from itertools import chain
+from operator import itemgetter
+import datetime  # MAKE SURE THIS IS IMPORTED
+
+# --- Import all relevant models ---
+from ..models.guidance import (
+    counseling_schedule, 
+    exit_interview_db, 
+    OjtAssessment, 
+    studentInfo
+)
+from ..models.job_placement import TransactionReport, SeminarAttendance
+from ..models.medical import (
+    TransactionRecord as MedicalTransaction, 
+    PatientRequest, 
+    FacultyRequest, 
+    DentalRecords, 
+    EmergencyHealthAssistanceRecord
+)
+from ..models.student_life import BorrowingRecord, RequestedGMC
+from ..models.community import Donation, MOD
+from ..models.alumni import Alumni, graduateForm
+from ..models.scholarship import applicants, Requirement as ScholarshipRequirement
+from ..models.discipline import CaseProfile
+
+# --- Helper Functions ---
+
+def normalize_to_date(dt_obj):
+    """
+    Converts a datetime.datetime object to a datetime.date object.
+    If it's already a date, or None, it returns it as-is.
+    """
+    if dt_obj is None:
+        return datetime.date.min
+    if isinstance(dt_obj, datetime.datetime):
+        return dt_obj.date()
+    return dt_obj
+
+def get_user_name(item):
+    """
+    Tries to get a user-friendly name from various related user/patient/student
+    fields found across the different models.
+    """
+    try:
+        if hasattr(item, 'user') and item.user:
+            if hasattr(item.user, 'get_full_name'):
+                return item.user.get_full_name() or item.user.username
+            else:
+                return str(item.user)
+        if hasattr(item, 'student') and item.student:
+            return f"{item.student.firstname} {item.student.lastname}"
+        if hasattr(item, 'studID') and item.studID:
+            return f"{item.studID.firstname} {item.studID.lastname}"
+        if hasattr(item, 'student_id') and item.student_id:
+            return f"{item.student_id.firstname} {item.student_id.lastname}"
+        if hasattr(item, 'faculty') and item.faculty:
+            return f"{item.faculty.firstname} {item.faculty.lastname}"
+        if hasattr(item, 'patient') and item.patient:
+            return get_user_name(item.patient)
+        if hasattr(item, 'donor_name') and item.donor_name:
+            return item.donor_name
+        if hasattr(item, 'name') and item.name:
+            return item.name
+    except Exception:
+        pass
+    
+    return "System/Unknown"
+
+# --- Main Transaction View ---
+
+@login_required
+def view_transaction_history(request):
+    """
+    Consolidates records from ALL app models to create a single,
+    chronological transaction history, AND provides separate lists
+    for each module to power a tabbed view.
+    """
+    
+    all_transactions = []
+    medical_transactions = []
+    alumni_transactions = []
+    guidance_transactions = []
+    student_life_transactions = []
+    job_placement_transactions = []
+    scholarship_transactions = []
+    discipline_transactions = []
+    community_transactions = []
+
+    # --- 1. Medical Module ---
+    med_records = MedicalTransaction.objects.all().select_related('patient__user')
+    for record in med_records:
+        medical_transactions.append({
+            'date': record.transac_date,
+            'is_datetime': isinstance(record.transac_date, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(record),
+            'event_type': 'Medical Transaction',
+            'description': record.transac_type,
+            'status': 'Completed',
+            'source_app': 'Medical'
+        })
+    
+    med_requests = PatientRequest.objects.all().select_related('patient__user', 'faculty')
+    for req in med_requests:
+        medical_transactions.append({
+            'date': req.date_requested,
+            'is_datetime': isinstance(req.date_requested, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(req),
+            'event_type': 'Medical Request',
+            'description': req.request_type,
+            'status': req.get_status_display(),
+            'source_app': 'Medical'
+        })
+
+    # --- 2. Alumni Module ---
+    alumni_id_reqs = Alumni.objects.all().select_related('student')
+    for req in alumni_id_reqs:
+        event_date = req.claimed_date or (datetime.datetime.combine(req.alumnidate, datetime.time()) if req.alumnidate else None)
+        if event_date:
+            alumni_transactions.append({
+                'date': event_date,
+                'is_datetime': isinstance(event_date, datetime.datetime), # <-- ADD THIS
+                'user_name': get_user_name(req),
+                'event_type': 'Alumni ID Request',
+                'description': f"Alumni ID for {get_user_name(req)}",
+                'status': 'Claimed' if req.claimed_date else ('Approved' if req.approved else 'Pending'),
+                'source_app': 'Alumni'
+            })
+
+    grad_forms = graduateForm.objects.all().select_related('student')
+    for form in grad_forms:
+        alumni_transactions.append({
+            'date': form.dategraduated,
+            'is_datetime': isinstance(form.dategraduated, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(form),
+            'event_type': 'Graduate Tracer Form',
+            'description': f"Tracer Form submitted by {form.firstname} {form.lastname}",
+            'status': form.approval_status,
+            'source_app': 'Alumni'
+        })
+
+    # --- 3. Guidance Module ---
+    counsel_reqs = counseling_schedule.objects.all().select_related('studentID')
+    for req in counsel_reqs:
+        guidance_transactions.append({
+            'date': req.dateRecieved,
+            'is_datetime': isinstance(req.dateRecieved, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(req),
+            'event_type': 'Counseling Request',
+            'description': f"Reason: {req.reason}",
+            'status': req.status,
+            'source_app': 'Guidance'
+        })
+        
+    exit_interviews = exit_interview_db.objects.all().select_related('studentID')
+    for req in exit_interviews:
+        guidance_transactions.append({
+            'date': req.dateRecieved,
+            'is_datetime': isinstance(req.dateRecieved, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(req),
+            'event_type': 'Exit Interview Request',
+            'description': f"Reason: {req.reasonForLeaving}",
+            'status': req.status,
+            'source_app': 'Guidance'
+        })
+
+    # --- 4. Student Life Module ---
+    borrow_records = BorrowingRecord.objects.all().select_related('student', 'equipment')
+    for record in borrow_records:
+        student_life_transactions.append({
+            'date': record.date_borrowed,
+            'is_datetime': isinstance(record.date_borrowed, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(record),
+            'event_type': 'Equipment Borrowing',
+            'description': f"Borrowed: {record.equipment.equipmentName}",
+            'status': 'Borrowed',
+            'source_app': 'Student Life'
+        })
+        if record.is_returned and record.date_returned:
+            student_life_transactions.append({
+                'date': record.date_returned,
+                'is_datetime': isinstance(record.date_returned, datetime.datetime), # <-- ADD THIS
+                'user_name': get_user_name(record),
+                'event_type': 'Equipment Return',
+                'description': f"Returned: {record.equipment.equipmentName}",
+                'status': 'Returned',
+                'source_app': 'Student Life'
+            })
+            
+    gmc_requests = RequestedGMC.objects.all().select_related('student')
+    for req in gmc_requests:
+        student_life_transactions.append({
+            'date': req.request_date,
+            'is_datetime': isinstance(req.request_date, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(req),
+            'event_type': 'Good Moral Request',
+            'description': f"Reason: {req.reason}",
+            'status': 'Processed' if req.processed else 'Pending',
+            'source_app': 'Student Life'
+        })
+
+    # --- 5. Job Placement Module ---
+    jp_reports = TransactionReport.objects.all().select_related('content_type')
+    for report in jp_reports:
+        user_name = get_user_name(report)
+        job_placement_transactions.append({
+            'date': report.date_created,
+            'is_datetime': isinstance(report.date_created, datetime.datetime), # <-- ADD THIS
+            'user_name': user_name,
+            'event_type': 'System Action',
+            'description': report.action,
+            'status': report.user_type,
+            'source_app': 'Job Placement'
+        })
+
+    # --- 6. Scholarship Module ---
+    applications = applicants.objects.all().select_related('studID__user')
+    for app in applications:
+        app_date = app.studID.user.date_joined if app.studID and hasattr(app.studID, 'user') and app.studID.user else datetime.datetime.now()
+        scholarship_transactions.append({
+            'date': app_date,
+            'is_datetime': isinstance(app_date, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(app),
+            'event_type': 'Scholarship Application',
+            'description': f"Applied for {app.scholar_type}",
+            'status': app.status,
+            'source_app': 'Scholarship'
+        })
+
+    req_subs = ScholarshipRequirement.objects.all().select_related('studID', 'scholar_ID')
+    for sub in req_subs:
+        scholarship_transactions.append({
+            'date': sub.submission_date,
+            'is_datetime': isinstance(sub.submission_date, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(sub),
+            'event_type': 'Scholarship Requirement',
+            'description': f"Submitted requirements for {sub.scholar_type or 'scholarship'}",
+            'status': sub.status,
+            'source_app': 'Scholarship'
+        })
+
+    # --- 7. Discipline Module ---
+    cases = CaseProfile.objects.all().select_related('student')
+    for case in cases:
+        discipline_transactions.append({
+            'date': case.date_reported,
+            'is_datetime': isinstance(case.date_reported, datetime.datetime), # <-- ADD THIS
+            'user_name': get_user_name(case),
+            'event_type': 'Discipline Case',
+            'description': f"Offense: {case.get_offense_type_display()}",
+            'status': case.status,
+            'source_app': 'Discipline'
+        })
+        
+    # --- 8. Community Module ---
+    donations = Donation.objects.all().select_related('project')
+    for donation in donations:
+        community_transactions.append({
+            'date': donation.created_at,
+            'is_datetime': isinstance(donation.created_at, datetime.datetime), # <-- ADD THIS
+            'user_name': donation.donor_name or 'Anonymous',
+            'event_type': 'Project Donation',
+            'description': f"Donated {donation.amount} to {donation.project.title}",
+            'status': 'Completed',
+            'source_app': 'Community'
+        })
+
+    mod_donations = MOD.objects.all()
+    for mod in mod_donations:
+        community_transactions.append({
+            'date': mod.date,
+            'is_datetime': isinstance(mod.date, datetime.datetime), # <-- ADD THIS
+            'user_name': mod.name,
+            'event_type': 'General Donation',
+            'description': f"Donated: {mod.donated} ({mod.donation_type})",
+            'status': mod.status or 'Unknown',
+            'source_app': 'Community'
+        })
+
+    # --- Final Consolidation and Sorting ---
+    
+    all_transactions = list(chain(
+        medical_transactions,
+        alumni_transactions,
+        guidance_transactions,
+        student_life_transactions,
+        job_placement_transactions,
+        scholarship_transactions,
+        discipline_transactions,
+        community_transactions
+    ))
+    
+    key_func = lambda item: normalize_to_date(item.get('date'))
+
+    sorted_all_transactions = sorted(all_transactions, key=key_func, reverse=True)
+    
+    # --- Prepare Context for Template ---
+    context = {
+        'all_transactions': sorted_all_transactions,
+        
+        'medical_transactions': sorted(medical_transactions, key=key_func, reverse=True),
+        'alumni_transactions': sorted(alumni_transactions, key=key_func, reverse=True),
+        'guidance_transactions': sorted(guidance_transactions, key=key_func, reverse=True),
+        'student_life_transactions': sorted(student_life_transactions, key=key_func, reverse=True),
+        'job_placement_transactions': sorted(job_placement_transactions, key=key_func, reverse=True),
+        'scholarship_transactions': sorted(scholarship_transactions, key=key_func, reverse=True),
+        'discipline_transactions': sorted(discipline_transactions, key=key_func, reverse=True),
+        'community_transactions': sorted(community_transactions, key=key_func, reverse=True),
+    }
+
+    return render(request, 'reports/transaction_report.html', context)

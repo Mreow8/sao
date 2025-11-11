@@ -1,4 +1,19 @@
-/* --- Import Font (from requestgmc.css) --- */
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* full height */
+}
+
+.nav-list {
+  flex-grow: 1; /* pushes the bottom link down */
+  padding-bottom: 10px;
+}
+
+.bottom-link {
+  margin-top: auto; /* this keeps it at the bottom */
+  padding: 10px;
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
 
 /* --- Global, Container, & Font --- */

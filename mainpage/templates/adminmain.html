@@ -55,8 +55,9 @@
 
       {% comment %} Get the name of the current URL pattern {% endcomment %}
       {% with current_url=request.resolver_match.url_name %}
-      <nav class="side-nav">
-        <ul>
+      <nav class="side-nav flex flex-col h-screen">
+
+      <ul class="flex-grow overflow-y-auto">
           {% if user.role == 'student_life_staff' or user.role == 'superadmin' %}
           {% with section_urls='assign_role,equipmentTrackerAdmin,adminRequestedGmc,monthlyCalendarAdmin,non_acad' %}
           <li>
@@ -273,9 +274,20 @@
     
   {% endwith %}
 {% endif %}
+
         </ul>
+          <div class="mt-auto mb-4">
+    <a href="{% url 'transaction_report_view' %}" 
+   class="btn btn-primary w-full text-center flex items-center justify-center gap-2">
+  <i class="fas fa-file-alt"></i>
+  <span>TRANSACTION REPORT</span>
+</a>
+
+  </div>
       </nav>
       {% endwith %}
+
+
     </div>
 
     <div class="right-side">
