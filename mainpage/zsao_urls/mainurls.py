@@ -69,18 +69,7 @@ path('officerform/<slug:slug>/', views.officer_form, name='officer_form'),
     #     name="processed_gmc_transactions",
     # ),
     path("monthlyCalendar", views.monthlyCalendar, name="monthlyCalendar"),
-    
-    # path("save-schedule/", views.save_schedule, name="save_schedule"),
-    # path(
-    #     "update-schedule/<int:schedule_id>/",
-    #     views.update_schedule,
-    #     name="update_schedule",
-    # ),
-    # path(
-    #     "delete-schedule/<int:schedule_id>/",
-    #     views.delete_schedule,
-    #     name="delete_schedule",
-    # ),
+  
     path('admin/equipment/get-student-details/', views.get_student_details_ajax, name='get_student_details_ajax'),
     # path("addEquipment/", views.addEquipment, name="addEquipment"),
    path('verify-otp/<str:user_id>/', views.verify_otp, name='verify_otp_page'),
