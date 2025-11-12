@@ -22,6 +22,58 @@ $(document).ready(function () {
 
   var csrftoken = getCookie("csrftoken");
 
+  $("#info_table").on("click", "#info_table_head th", function () {
+    const $th = $(this);
+
+    const table = $th.closest("table");
+
+    const columnIndex = $th.index();
+
+    // Default to 'asc' if no direction is set
+
+    let currentDir = $th.data("sort-dir");
+
+    const newDir = currentDir === "asc" ? "desc" : "asc";
+
+    // Get all data rows (skip the header row)
+
+    const rows = table.find("tr:not(#info_table_head)").toArray();
+
+    // Sort the rows
+
+    rows.sort(function (a, b) {
+      const textA = $(a).find("td").eq(columnIndex).text().trim();
+
+      const textB = $(b).find("td").eq(columnIndex).text().trim();
+
+      // Use localeCompare for proper string sorting
+
+      if (newDir === "asc") {
+        return textA.localeCompare(textB);
+      } else {
+        return textB.localeCompare(textA);
+      }
+    });
+
+    // --- Update UI ---
+
+    // Remove old sort classes from all headers
+
+    $th.siblings().removeClass("sort-asc sort-desc").data("sort-dir", null);
+
+    // Add new class and data attribute to the clicked header
+
+    $th
+
+      .removeClass("sort-asc sort-desc")
+
+      .addClass(newDir === "asc" ? "sort-asc" : "sort-desc")
+
+      .data("sort-dir", newDir);
+
+    table.append(rows);
+  });
+
   $("#searchButton").on("click", function (event) {
     event.preventDefault(); // Prevent default form submission behavior
 
@@ -37,6 +89,10 @@ $(document).ready(function () {
         xhr.setRequestHeader("X-CSRFToken", csrftoken);
       },
       success: function (response) {
+        // --- START: ERROR FIX ---
+        // Log the response to the console to see its actual structure
+        console.log("Server response:", response);
+
         $("#info_table").removeClass("hidden");
         $("#individualProfileForm").removeClass("hidden");
 
@@ -52,25 +108,50 @@ $(document).ready(function () {
             "<th>DATE FILLED</th>" +
             "</tr>"
         );
-        response.response.forEach(function (item, index) {
+
+        // **ATTENTION:**
+        // The original code failed here (line 55) because 'response.response' was undefined.
+        // I have changed it to 'response.profiles'.
+        //
+        // **YOU MUST** check the `console.log` output in your browser's
+        // developer tools (F12) to see the REAL key name for the array.
+        // If your array key is 'data', change 'response.profiles' to 'response.data'.
+        //
+        // I also added 'Array.isArray' to prevent errors if the key is empty.
+
+        if (response.profiles && Array.isArray(response.profiles)) {
+          response.profiles.forEach(function (item, index) {
+            $("#info_table").append(
+              "<tr>" +
+                "<td>" +
+                item.profile_number +
+                "</td>" +
+                "<td>" +
+                item.studentid +
+                "</td>" +
+                "<td>" +
+                item.name +
+                "</td>" +
+                "<td>" +
+                item.datefilled +
+                "</td>" +
+                '<td><div class="deleteBox"><button class="selectItem OrangeButton">Select</button></div></td>' +
+                "</tr>"
+            );
+          });
+        } else {
+          console.warn(
+            "Could not find array. Expected 'response.profiles' but received:",
+            response
+          );
+          // Optionally, show a "No results found" message in the table
           $("#info_table").append(
             "<tr>" +
-              "<td>" +
-              item.profile_number +
-              "</td>" +
-              "<td>" +
-              item.studentid +
-              "</td>" +
-              "<td>" +
-              item.name +
-              "</td>" +
-              "<td>" +
-              item.datefilled +
-              "</td>" +
-              '<td><div class="deleteBox"><button class="selectItem OrangeButton">Select</button></div></td>' +
+              '<td colspan="4">No profiles found for this student.</td>' +
               "</tr>"
           );
-        });
+        }
+        // --- END: ERROR FIX ---
       },
       error: function (error) {
         $("#requestForm").addClass("hidden");

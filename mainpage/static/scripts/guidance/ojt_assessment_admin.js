@@ -99,7 +99,7 @@ $(document).ready(function () {
       if (result.isConfirmed) {
         $.post({
           url: "/main/delete_ojt_assessment/", // CHECK YOURS URL
-          data: { OjtRequestID: OjtRequestID },
+          data: { OjRequestID: OjtRequestID },
           headers: { "X-CSRFToken": csrftoken },
           success: function (response) {
             parentRow.remove();

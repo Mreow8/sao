@@ -1,299 +1,239 @@
-/* --- Import Font (from requestgmc.css) --- */
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
-
-/* --- Global, Container, & Font --- */
-body,
-.container,
-.sub-title,
-input,
-select,
-button,
-table {
-  font-family: "Rubik", sans-serif;
-}
-
-body {
-  background-color: #f8f9fa; /* Light grey background */
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem 2rem;
-}
-
-/* --- Main Card (from requestgmc.css) --- */
-.form-container {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.form-container h2 {
-  font-family: "Rubik", sans-serif;
-  font-size: 1.5rem;
-
-  color: #333;
-  margin-top: 0;
-  margin-bottom: 2rem;
-}
+/* --- Search Bar --- */
 #search_id {
   display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-bottom: 2rem;
-  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 2rem;
+}
+/* Add this to your main CSS file */
+#info_table_head th {
+  cursor: pointer;
+  position: relative;
+  padding-right: 20px; /* Make space for the arrow */
 }
 
-#search_id label {
-  font-weight: 500;
-  color: #333;
-  margin-right: 1rem;
+/* Style for the sort arrows */
+#info_table_head th::before,
+#info_table_head th::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  border: 4px solid transparent;
+  opacity: 0.3;
 }
 
+#info_table_head th::before {
+  bottom: 50%; /* Arrow up */
+  border-bottom-color: #333;
+}
+
+#info_table_head th::after {
+  top: 50%; /* Arrow down */
+  border-top-color: #333;
+}
+
+/* Show active sort direction */
+#info_table_head th.sort-asc::before {
+  opacity: 1;
+}
+
+#info_table_head th.sort-desc::after {
+  opacity: 1;
+}
 #studentIDBox {
   font-family: "Rubik", sans-serif;
   font-size: 1rem;
   padding: 10px 12px;
   border: 1px solid #ccc;
-  border-radius: 8px 0 0 8px;
-  border-right: none;
+  border-radius: 8px;
   background-color: #f9f9f9;
   transition: border-color 0.2s, box-shadow 0.2s;
   color: #333;
   flex-grow: 1;
+  min-width: 250px;
 }
-
 #studentIDBox:focus {
   outline: none;
   border-color: #2c5282;
   box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
   background-color: #fff;
-  position: relative;
-  z-index: 2;
 }
-
-.OrangeButton {
+#searchButton {
   font-family: "Rubik", sans-serif;
-  background-color: #2a4365;
-  color: white;
+  font-weight: 500;
   font-size: 1rem;
   padding: 10px 24px;
-  border: 1px solid #2a4365;
-  border-radius: 0 8px 8px 0;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s, border-color 0.2s;
-  position: relative;
-  z-index: 1;
-}
-
-.OrangeButton:hover {
-  background-color: #2c5282;
-  border-color: #2c5282;
-  transform: translateY(-2px);
-}
-/* Orange button (as per your HTML) */
-.OrangeButton {
-  font-family: "Rubik", sans-serif;
-  background-color: #2a4365;
-  color: white;
-  font-size: 1rem;
-
-  padding: 10px 24px;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: background-color 0.2s, transform 0.2s;
+  height: 44px;
 }
-.OrangeButton:hover {
-  background-color: #2c5282; /* Darker Orange */
+#searchButton:hover {
+  background-color: #2a4365; /* Darker Blue */
   transform: translateY(-2px);
 }
 
-/* --- Django Messages (Themed) --- */
+/* Messages */
 .messages {
-  list-style: none;
+  list-style-type: none;
   padding: 0;
   margin: 0;
-  flex-basis: 100%; /* Make it take full width on wrap */
-  order: 3;
+  width: 100%;
 }
 .messages li {
-  padding: 1rem;
+  padding: 10px;
+  margin-top: 10px;
   border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: left;
-  margin-top: 1rem;
-}
-.messages li.error {
-  color: #c53030;
-  background-color: #fff5f5;
-  border: 1px solid #fc8181;
-  border-left: 5px solid #c53030;
-}
-.messages li.success {
-  color: #2f855a;
-  background-color: #f0fff4;
-  border: 1px solid #9ae6b4;
-  border-left: 5px solid #2f855a;
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  width: 100%;
 }
 
-/* --- Table (from requestgmc.css) --- */
+/* --- Table --- */
 .admin-table-wrapper {
   width: 100%;
   overflow-x: auto;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
 }
-
 #info_table {
   width: 100%;
-  min-width: 900px; /* Force scroll */
   border-collapse: collapse;
+  min-width: 1000px;
 }
-
 #info_table th,
 #info_table td {
-  border-bottom: 1px solid #ddd;
   padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
   text-align: left;
-  font-size: 14px;
+  font-size: 0.9rem;
   vertical-align: middle;
 }
-
 #info_table th {
   background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue */
-
+  font-weight: 500;
+  color: #2c5282;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
-/* Sortable Headers */
 #info_table th a {
-  color: inherit;
   text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  color: inherit;
 }
 #info_table th a:hover {
   text-decoration: underline;
 }
-#info_table th a::after {
-  font-family: "Font Awesome 5 Free";
-  content: "\f0dc"; /* fa-sort */
-  font-weight: 900;
-  opacity: 0.5;
+#info_table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+#info_table tbody tr:last-child td {
+  border-bottom: none;
+}
+.no-items-found {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1rem;
+  color: #777;
+  font-style: italic;
 }
 
-/* Active Sort Headers */
-#info_table th.sortable a.sorted::after {
-  opacity: 1;
-  content: "\f0d8"; /* fa-sort-up (ascending) */
-}
-#info_table th.sortable a.sorted.desc::after {
-  opacity: 1;
-  content: "\f0d7"; /* fa-sort-down (descending) */
-}
-
-.showformButton {
-  background-color: #2c5282;
-
-  /* --- ADD THESE TWO LINES --- */
-  padding: 8px 20px; /* Adjust 20px until it looks right */
-  white-space: nowrap; /* This stops the text from wrapping */
-} /* Blue */
-/* Status Badges */
-.accepted,
-.declined,
-.pending,
-.expired,
-.showformButton {
+/* --- Status Badges --- */
+.status-badge {
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 12px;
-  font-weight: bold;
-  color: white;
+  font-weight: 500;
   text-transform: uppercase;
 }
 .accepted {
-  background-color: #8ccfa8;
   color: #0b552a;
+  background-color: #c6f6d5;
 } /* Green */
+.declined {
+  color: #9b2c2c;
+  background-color: #fed7d7;
+} /* Red */
 .pending {
   color: #92400e;
   background-color: #fef3c7;
-} /* Orange */
-.declined,
+} /* Orange/Yellow */
 .expired {
-  background-color: #dc3545;
-} /* Red */
+  color: #4a5568;
+  background-color: #e2e8f0;
+} /* Gray */
 
-/* Action Buttons */
+/* --- Action Buttons --- */
 .horizontal {
   display: flex;
-  flex-direction: column; /* Stacks buttons vertically */
-  gap: 6px;
-  width: 120px; /* Give them a uniform width */
+  gap: 8px;
+  flex-wrap: wrap; /* Allow buttons to wrap on mobile */
 }
 .accept,
 .decline,
 .delete {
   font-family: "Rubik", sans-serif;
-  font-size: 0.875rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 10px;
   color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
   transition: background-color 0.2s;
-  text-align: center;
-  text-decoration: none;
+  text-transform: uppercase;
 }
 .accept {
-  background-color: #28a745;
-} /* Green */
+  background-color: #2f855a; /* Green */
+}
 .accept:hover {
-  background-color: #218838;
+  background-color: #276749;
 }
 .decline {
-  background-color: #ffc107;
-} /* Yellow/Orange */
+  background-color: #c53030; /* Red */
+}
 .decline:hover {
-  background-color: #e0a800;
+  background-color: #9b2c2c;
 }
 .delete {
-  background-color: #dc3545;
-} /* Red */
-.delete:hover {
-  background-color: #c82333;
+  background-color: #a0aec0; /* Gray */
 }
+.delete:hover {
+  background-color: #718096;
+}
+
+/* --- Form Button --- */
 .showformButton {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
   background-color: #2c5282;
-} /* Blue */
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: background-color 0.2s;
+}
 .showformButton:hover {
   background-color: #2a4365;
 }
 .showformButton.hidden {
-  display: none;
+  background-color: #e2e8f0;
+  color: #a0aec0;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
-/* "No items" message */
-.no-items-found {
-  text-align: center;
-  color: #777;
-  font-style: italic;
-  padding: 2rem;
-}
-
-/* --- Pagination (from requestgmc.css theme) --- */
+/* --- Pagination --- */
 .pagination {
   margin: 2rem 0 1rem;
   text-align: center;
@@ -317,7 +257,66 @@ body {
   background-color: #e0e0e0;
 }
 .step-links .current {
-  background-color: #2c5282; /* Primary Blue */
+  background-color: #2c5282; /* Theme Blue */
   color: white;
   border-color: #2c5282;
+}
+
+/* --- Responsive Table (Card Stacking) --- */
+@media (max-width: 768px) {
+  .admin-table-wrapper {
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+  #info_table {
+    min-width: 100%;
+  }
+  #info_table thead {
+    display: none; /* Hide table headers */
+  }
+  #info_table tbody,
+  #info_table tr,
+  #info_table td {
+    display: block;
+    width: 100%;
+  }
+  #info_table tr {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  #info_table td {
+    position: relative;
+    padding-left: 50%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #2c2c2c;
+    text-align: right;
+  }
+  #info_table td:last-child {
+    border-bottom: none;
+  }
+  #info_table td[data-label] {
+    text-align: right;
+  }
+  #info_table td[data-label]::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    font-weight: bold;
+    color: #2c5282; /* Primary Blue */
+    white-space: nowrap;
+    text-align: left;
+  }
+  .horizontal {
+    justify-content: flex-end; /* Align buttons to the right on mobile */
+  }
 }

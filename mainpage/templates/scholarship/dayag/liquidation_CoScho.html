@@ -1,164 +1,310 @@
-{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+{% extends 'adminmain.html' %} {% load static %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'styles/scholarship/liquidation_coscho.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/scholarship/transactionreports.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/scholarship/print.css' %}" media="print">
-    <style>
-         @media print{
-        #back{
-            visibility: hidden;
-        }
-         .error-message {
-            display: none;
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+  rel="stylesheet"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'styles/scholarship/liquidation_coscho.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'styles/scholarship/print.css' %}"
+  media="print"
+/>
+
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+<style>
+  @media print {
+    #back,
+    .submit-btn,
+    .print-button {
+      visibility: hidden;
     }
-    </style>
-    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    .error-message {
+      display: none;
+    }
+    /* Add other print-specific overrides here */
+  }
+</style>
+{% endblock headcontent %} {% block bodycontent %}
+<div class="body-content">
+  <div class="sub-title">
+    <h4>SCHOLARSHIP</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+    <p class="certxt">Admin Cost Liquidation</p>
+    <p class="certxt">COSCHO</p>
+  </div>
+  <hr />
 
-        <div class="content">
-            <div class="form_div"> 
-                 <a href="{% url 'liquidation' %}" style="height:fit-content;">
-                <img src="/static/scholar/back.png" alt="" id="back" >
-            </a>
-                <div class="container">
-           
-                    {% if error_message %}
-                    <div class="error-message" style="color: red !important; font-weight: bold;">
-                        <script>
-                    alert("{{ error_message }}");
-                </script>
-                    </div>
-                {% endif %}
-                    <form method="post" action="{% url 'liquidation_CoScho' %}">
-                        {% csrf_token %}
-                        <div class="header">
-                            <img src="/static/scholar/ched_o.png" id="ched-logo" alt="Logo">
-                            <h1>FUND UTILIZATION REPORT (FUR)</h1>
-                            <h2>CEBU TECHNOLOGICAL UNIVERSITY - ARGAO</h2>
-                            <h2>Ed Kintanar, Lamacan, Argao, Cebu</h2>
-                            <h4>CoScho Administrative Cost (AC)</h4>
-                            <!-- <h4>For the Covered Period of 1st semester, AY 2023-2024</h4> -->
-                        </div>
-                        <table>
-                            <tr>
-                                <th colspan="3">FUNDS RECEIVED</th>
-                            </tr>
-                            <tr>
-                                <td>DV No.:<input type="text" required name="dv_no" placeholder="DV No." style="width: 150px !important;"></td>
-                                <td>DV Date:<input type="date"  required name="dv_date" placeholder="DV Date" ></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Total Admin Cost</td>
-                                <td><input type="text"  required name="total_admin_cost" id="total_admin_cost" placeholder="Total Admin Cost" oninput="updateResults()"></td>
-                                <td class="total_admin_cost_result" style="width: 100px !important;">xxx</td>
-                            </tr>
-                        </table>
-                        <table>
-                            <tr>
-                                <th colspan="3">Less: FUND UTILIZED</th>
-                            </tr>
-                            <tr>
-                                <th>Disbursements</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <td>STIPEND</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Total Stipend per Semester basis</td>
-                                <td><input type="text"  required name="total_stipend" id="total_stipend" placeholder="Total Stipend" oninput="updateResults()"></td>
-                                <td class="total_stipend">xxx</td>
-                            </tr>
-                            <tr>
-                                <td>ADMINISTRATIVE COST (AC)</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Office Supplies Expenses</td>
-                                <td><input type="text"  required name="office_supplies" id="office_supplies" placeholder="Office Supplies Expenses" oninput="updateResults()"></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Communication Expenses</td>
-                                <td><input type="text"  required name="communication" id="communication" placeholder="Communication Expenses" oninput="updateResults()"></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Traveling Expenses - Local</td>
-                                <td><input type="text"  required name="traveling" id="traveling" placeholder="Traveling Expenses - Local" oninput="updateResults()"></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Representation Expenses (Meetings, orientation, seminars, general assembly)</td>
-                                <td><input type="text"  required name="representation" id="representation" placeholder="Representation Expenses" oninput="updateResults()"></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Other Professional Services (Salary of staff)</td>
-                                <td><input type="text"  required name="professional_services" id="professional_services" placeholder="Other Professional Services" oninput="updateResults()"></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Legal Services (Notarization of docs)</td>
-                                <td><input type="text"  required name="legal_services" id="legal_services" placeholder="Legal Services" oninput="updateResults()"></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Other Expenses (cash cards, service fee for remittance center)</td>
-                                <td><input type="text"  required name="other_expenses" id="other_expenses" placeholder="Other Expenses" oninput="updateResults()"></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td class="total_disbursement_result" style="width: 100px;height: 40px; ">xxx</td>
-                            </tr>
-                        </table>
-                        <table>
-                            <tr>
-                                <th class="balance-header">Balance</th>
-                                <td colspan="2"><input type="text" name="balance" id="balance" placeholder="Balance"  readonly onfocus="this.style.border='none'; this.style.outline='none';"></td>
-                            </tr>
-                        </table>
-                        <br><br>
-                        <div class="signature-section">
-                            <div>
-                                <p>Prepared by:</p>
-                                <br>
-                                <p>_________________________________</p>
-                                <p>(Signature over printed name)</p>
-                                <p>CoScho Scholarship Coordinator</p>
-                            </div>
-                            <div>
-                                <p>Certified Correct by:</p>
-                                <br>
-                                <p>_________________________________</p>
-                                <p>(Signature over printed name)</p>
-                                <p>Chief Accountant</p>
-                            </div>
-                        </div>
-                        <div class="signature-section" style="justify-content: center;">
-                            <div class="text-center">
-                                <p>Approved by:</p>
-                                <br>
-                                <p>_________________________________</p>
-                                <p>(Signature over printed name)</p>
-                                <p>Head/President of HEI</p>
-                            </div>
-                        </div>
-                    <button class="submit-btn" type="submit" onclick="printFormDiv()" style="background-color:green !important;">Submit</button>
-                    </form>
-                    <button class="print-button">Print</button>
-                </div>
-            </div>
+  <div class="form_div">
+    <a href="{% url 'liquidation' %}" style="height: fit-content">
+      <img src="/static/scholar/back.png" alt="Back" id="back" />
+    </a>
+
+    <div class="container">
+      {% if error_message %}
+      <div class="error-message">
+        <script>
+          alert("{{ error_message }}");
+        </script>
+      </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'liquidation_CoScho' %}">
+        {% csrf_token %}
+        <div class="header">
+          <img src="/static/scholar/ched_o.png" id="ched-logo" alt="Logo" />
+          <h1>FUND UTILIZATION REPORT (FUR)</h1>
+          <h2>CEBU TECHNOLOGICAL UNIVERSITY - ARGAO</h2>
+          <h2>Ed Kintanar, Lamacan, Argao, Cebu</h2>
+          <h4>CoScho Administrative Cost (AC)</h4>
         </div>
+
+        <table>
+          <tr>
+            <th colspan="3">FUNDS RECEIVED</th>
+          </tr>
+          <tr>
+            <td>
+              DV No.:<input
+                type="text"
+                required
+                name="dv_no"
+                placeholder="DV No."
+              />
+            </td>
+            <td>
+              DV Date:<input
+                type="date"
+                required
+                name="dv_date"
+                placeholder="DV Date"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Total Admin Cost</td>
+            <td>
+              <input
+                type="text"
+                required
+                name="total_admin_cost"
+                id="total_admin_cost"
+                placeholder="Total Admin Cost"
+                oninput="updateResults()"
+              />
+            </td>
+            <td class="total_admin_cost_result">---</td>
+          </tr>
+        </table>
+
+        <table>
+          <tr>
+            <th colspan="3">Less: FUND UTILIZED</th>
+          </tr>
+          <tr>
+            <th>Disbursements</th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr>
+            <td>STIPEND</td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Total Stipend per Semester basis</td>
+            <td>
+              <input
+                type="text"
+                required
+                name="total_stipend"
+                id="total_stipend"
+                placeholder="Total Stipend"
+                oninput="updateResults()"
+              />
+            </td>
+            <td class="total_stipend">---</td>
+          </tr>
+          <tr>
+            <td>ADMINISTRATIVE COST (AC)</td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Office Supplies Expenses</td>
+            <td>
+              <input
+                type="text"
+                required
+                name="office_supplies"
+                id="office_supplies"
+                placeholder="Office Supplies Expenses"
+                oninput="updateResults()"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Communication Expenses</td>
+            <td>
+              <input
+                type="text"
+                required
+                name="communication"
+                id="communication"
+                placeholder="Communication Expenses"
+                oninput="updateResults()"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Traveling Expenses - Local</td>
+            <td>
+              <input
+                type="text"
+                required
+                name="traveling"
+                id="traveling"
+                placeholder="Traveling Expenses - Local"
+                oninput="updateResults()"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              Representation Expenses (Meetings, orientation, seminars, general
+              assembly)
+            </td>
+            <td>
+              <input
+                type="text"
+                required
+                name="representation"
+                id="representation"
+                placeholder="Representation Expenses"
+                oninput="updateResults()"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Other Professional Services (Salary of staff)</td>
+            <td>
+              <input
+                type="text"
+                required
+                name="professional_services"
+                id="professional_services"
+                placeholder="Other Professional Services"
+                oninput="updateResults()"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Legal Services (Notarization of docs)</td>
+            <td>
+              <input
+                type="text"
+                required
+                name="legal_services"
+                id="legal_services"
+                placeholder="Legal Services"
+                oninput="updateResults()"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              Other Expenses (cash cards, service fee for remittance center)
+            </td>
+            <td>
+              <input
+                type="text"
+                required
+                name="other_expenses"
+                id="other_expenses"
+                placeholder="Other Expenses"
+                oninput="updateResults()"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td class="total_disbursement_result">---</td>
+          </tr>
+        </table>
+
+        <table>
+          <tr>
+            <th class="balance-header">Balance</th>
+            <td colspan="2">
+              <input
+                type="text"
+                name="balance"
+                id="balance"
+                placeholder="Balance"
+                readonly
+              />
+            </td>
+          </tr>
+        </table>
+
+        <br /><br />
+
+        <div class="signature-section">
+          <div>
+            <p>Prepared by:</p>
+            <br />
+            <p class="signature-line">_________________________________</p>
+            <p>(Signature over printed name)</p>
+            <p>CoScho Scholarship Coordinator</p>
+          </div>
+          <div>
+            <p>Certified Correct by:</p>
+            <br />
+            <p class="signature-line">_________________________________</p>
+            <p>(Signature over printed name)</p>
+            <p>Chief Accountant</p>
+          </div>
+        </div>
+
+        <div class="signature-section" style="justify-content: center">
+          <div class="text-center">
+            <p>Approved by:</p>
+            <br />
+            <p class="signature-line">_________________________________</p>
+            <p>(Signature over printed name)</p>
+            <p>Head/President of HEI</p>
+          </div>
+        </div>
+
+        <button class="submit-btn" type="submit">Submit</button>
+      </form>
+
+      <button class="print-button" onclick="window.print();">Print</button>
     </div>
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/liquidation_coscho.js' %}"></script>
-  {% endblock bodycontent %}
+  </div>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/liquidation_coscho.js' %}"></script>
+{% endblock bodycontent %}

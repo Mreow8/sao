@@ -1,45 +1,62 @@
-{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+{% extends 'adminmain.html' %} {% load static %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'styles/scholarship/adminliquidation.css' %}">
-    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+  rel="stylesheet"
+/>
 
-        <div class="content">
-            <div class="form_div">
-                    <div class="title">
-                        
-                        <img src="{% static 'scholar/liquidation.png' %}" alt="">
-                       <h2 style="color: black;">Admin Cost Liquiation Tracker</h2> 
+<link
+  rel="stylesheet"
+  href="{% static 'styles/scholarship/adminliquidation.css' %}"
+/>
 
-                    </div>
-                    <div class="logo-nav">
-                            
-                            <div class="logo-container" id="solo">
-                                <img src="{% static 'scholar/tdp.png' %}" alt="">
-                                <a href="{% url 'liquidation_TDP' %}">
-                                    <button>CHED TDP Scholarship</button>
-                                </a> 
-                            </div >
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+{% endblock headcontent %} {% block bodycontent %}
+<div class="body-content">
+  <div class="sub-title">
+    <h4>SCHOLARSHIP</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+    <p class="certxt">Admin Cost Liquidation Tracker</p>
+  </div>
+  <hr />
 
-                                <div class="dual">
-                                    <div class="logo-container">
-                                        <img src="{% static 'scholar/tes.png' %}" alt="">
-                                        <a href="{% url 'liquidation_TES' %}">
-                                            <button>CHED TES Scholarship</button>
-                                        </a>
-                                    </div>
-                                    <div class="logo-container" >
-                                        <img src="{% static 'scholar/coscho.png' %}" alt="">
-                                        <a href="{% url 'liquidation_CoScho' %}">
-                                            <button>CHED COSCHO Scholarship</button>
-                                        </a>
-                                    </div>
-                                </div>
-                   
-                     </div>
-               
-        </div>
-        </div>
+  <div class="form_div">
+    <div class="title">
+      <img src="{% static 'scholar/liquidation.png' %}" alt="" />
+      <h2>Admin Cost Liquidation Tracker</h2>
     </div>
-    <script src="{% static 'js/main.js' %}"></script>
-  {% endblock bodycontent %}
+
+    <div class="logo-nav">
+      <div class="logo-container" id="solo">
+        <img src="{% static 'scholar/tdp.png' %}" alt="" />
+        <a href="{% url 'liquidation_TDP' %}">
+          <button>CHED TDP Scholarship</button>
+        </a>
+      </div>
+
+      <div class="dual">
+        <div class="logo-container">
+          <img src="{% static 'scholar/tes.png' %}" alt="" />
+          <a href="{% url 'liquidation_TES' %}">
+            <button>CHED TES Scholarship</button>
+          </a>
+        </div>
+        <div class="logo-container">
+          <img src="{% static 'scholar/coscho.png' %}" alt="" />
+          <a href="{% url 'liquidation_CoScho' %}">
+            <button>CHED COSCHO Scholarship</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock bodycontent %}

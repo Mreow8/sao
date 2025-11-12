@@ -1,166 +1,122 @@
-{% extends 'adminmain.html' %} {% load static %} {% load tz %}
-{% block bodycontent  %}
+{% extends 'adminmain.html' %} 
+{% load static %} 
+{% load tz %}
+
+{% block headcontent %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{% static 'styles/scholarship/adminrequirements.css' %}">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+    
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-  <div class="sub-title">
-    <h4>SCHOLARSHIP</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt;Scholarship Submission Tracker</p>
-  </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock headcontent %}
 
-
-<hr>
-
-<style>
-/* --- MODIFIED .cot STYLE --- */
-.cot{
-    padding: 24px; /* Increased padding for better spacing */
-    background-color: white;
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Subtle shadow for depth */
-    margin-top: 20px; /* Space from the form above */
-}
-
-/* This container pushes the button to the right */
-.history-btn-container {
-  width: 100%;
-  margin: -20px auto;
-  text-align: right;
-  /* Adjust padding as needed to align with your other content */
-  padding-right: 20px; 
-  box-sizing: border-box; /* Important for layout */
-}
-
-/* Optional: Clean styling for your new button */
-#history-btn {
-  background-color: #2c5282; /* A standard blue */
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-top: 15px; /* Keeps the space from the element above it */
-}
-
-#history-btn:hover {
-  background-color: #2c5282; /* A darker blue on hover */
-}</style>
-{% if not is_requesting and request_history %}
-<div class="history-btn-container">
-    <button type="button" id="history-btn" >View Request History</button>
+{% block bodycontent  %}
+<div class="body-content"> <div class="sub-title">
+        <h4>SCHOLARSHIP</h4>
+        <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+        <p class="certxt">Scholarship Submission Tracker</p>
+    </div>
     <hr>
-</div>
 
-{% endif %}
+    {% if not is_requesting and request_history %}
+    <div class="history-btn-container">
+        <button type="button" id="history-btn" >View Request History</button>
+    </div>
+    {% endif %}
 
-
-        <div class="content">
-            <div class="form_div">
-          
-                <div class="search_id_container">
-                    <form method="POST" id="yearsemester">
-                        {% csrf_token %}
-                        {% if not is_requesting %}
-                            <select style="color: black;" id="semester" name="semester">
-                                <option style="color: black;" value="">SELECT SEMESTER</option>
-                                <option style="color: black;" value="1st Semester">1st Semester</option>
-                                <option style="color: black;" value="2nd Semester">2nd Semester</option>
-                            </select>
-                            <input type="text" id="search-box" name="years" placeholder="2020-2021 ( year format )" required>
-                        {% else %}
-                            <h4>Requesting Requirements to scholars...</h4>
-                        {% endif %}
-                        
-                        {% if not is_requesting %}
-                            <button id="req-btn" name="action" value="REQUEST" >Request</button>
-                        {% else %}
-                            <button id="close-btn" name="action" value="CLOSE" >Close</button>
-                        {% endif %}
-                    </form>
-                    
-                    {% if is_requesting %}
-                        <form method="GET">
-                            {% csrf_token %}
-                            <select style="color: black;" id="scholar_type" name="scholar_type">
-                                <option style="color: black;" value="">SELECT TYPE OF SCHOLAR</option>
-                                <option style="color: black;" value="CHED - Full Merit">CHED FULL MERIT</option>
-                                <option style="color: black;" value="CHED - Half Merit">CHED HALF MERIT</option>
-                                <option style="color: black;" value="CHED - Tulong Dunong Program">CHED TULONG DUNONG</option>
-                                <option style="color: black;" value="CHED - Coscho">DOST UNDERGRAD</option>
-                                <option style="color: black;" value="CHED - Tertiary Education Subsidy">CHED TERTIARY EDUCATION SUBSIDY</option>
-                                <option style="color: black;" value="LGU - ATEASP">ARGAO TERTIARY EDUCATION ASSISTANCE PROGRAM</option>
-                                <option style="color: black;" value="LGU - DOST Undergrad">DOST UNDERGRAD</option>
-                                <option style="color: black;" value="LGU - With High Honor">WITH HIGH HONOR</option>
-                                <option style="color: black;" value="NGU - Nature\'s Spring Foundation Inc">NATURE'S SPRING FOUNDATION INC</option>
-                                <option style="color: black;" value="NGU - Lifebank Foundation">LIFE BANK FOUNDATION</option>
-                            </select>
-                        </form>
-                    {% endif %}
-                </div>
-           
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  {% if msg %}
-  <script>
-    window.onload = function () {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Duplicate Entry',
-        text: "{{ msg|escapejs }}",
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK'
-      });
-    };
-  </script>
-  {% endif %}
-
-  
-                <script>
-                    $(document).ready(function() {
-                        // This script still handles the live-filtering
-                        $('#scholar_type').change(function() {
-                            $(this).closest('form').submit();
-                        });
-
-                        // *** NEW SCRIPT ***
-                        // This script validates the "Request" button
-                        $('#req-btn').click(function(event) {
-                            // Get the value of the semester dropdown
-                            var semester = $('#semester').val();
-
-                            // Check if the value is empty
-                            if (semester === "") {
-                                // Stop the form from submitting
-                                event.preventDefault(); 
-                                
-                                // Show a nice-looking error message
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Missing Information',
-                                    text: 'Please select a semester before you can request.',
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                            // If 'semester' is not empty, the click proceeds as normal.
-                        });
-                    });
-                </script>
-            </div>
-
-            <div class="cot">
-            {% if is_requesting and active_request %}
-                <h3 style="color: black;">Year: {{ active_request.year }} || Semester: {{ active_request.semester }}</h4>
-            {% endif %}
-            {% if is_requesting %}
-
+    <div class="form_div">
+        
+        <div class="search_id_container">
+            <form method="POST" id="yearsemester">
+                {% csrf_token %}
+                {% if not is_requesting %}
+                    <select id="semester" name="semester">
+                        <option value="">SELECT SEMESTER</option>
+                        <option value="1st Semester">1st Semester</option>
+                        <option value="2nd Semester">2nd Semester</option>
+                    </select>
+                    <input type="text" id="search-box" name="years" placeholder="2020-2021 ( year format )" required>
+                {% else %}
+                    <h4>Requesting Requirements...</h4>
+                {% endif %}
+                
+                {% if not is_requesting %}
+                    <button id="req-btn" name="action" value="REQUEST" >Request</button>
+                {% else %}
+                    <button id="close-btn" name="action" value="CLOSE" >Close</button>
+                {% endif %}
+            </form>
             
-                <form method="POST">
+            {% if is_requesting %}
+                <form method="GET" id="scholar-type-form">
+                    {% csrf_token %}
+                    <select id="scholar_type" name="scholar_type">
+                        <option value="">SELECT TYPE OF SCHOLAR</option>
+                        <option value="CHED - Full Merit">CHED FULL MERIT</option>
+                        <option value="CHED - Half Merit">CHED HALF MERIT</option>
+                        <option value="CHED - Tulong Dunong Program">CHED TULONG DUNONG</option>
+                        <option value="CHED - Coscho">DOST UNDERGRAD</option>
+                        <option value="CHED - Tertiary Education Subsidy">CHED TERTIARY EDUCATION SUBSIDY</option>
+                        <option value="LGU - ATEASP">ARGAO TERTIARY EDUCATION ASSISTANCE PROGRAM</option>
+                        <option value="LGU - DOST Undergrad">DOST UNDERGRAD</option>
+                        <option value="LGU - With High Honor">WITH HIGH HONOR</option>
+                        <option value="NGU - Nature's Spring Foundation Inc">NATURE'S SPRING FOUNDATION INC</option>
+                        <option value="NGU - Lifebank Foundation">LIFE BANK FOUNDATION</option>
+                    </select>
+                </form>
+            {% endif %}
+        </div>
+
+        {% if msg %}
+        <script>
+            window.onload = function () {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Duplicate Entry',
+                    text: "{{ msg|escapejs }}",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            };
+        </script>
+        {% endif %}
+
+        <script>
+            $(document).ready(function() {
+                // This script still handles the live-filtering
+                $('#scholar_type').change(function() {
+                    $(this).closest('form').submit();
+                });
+
+                // This script validates the "Request" button
+                $('#req-btn').click(function(event) {
+                    var semester = $('#semester').val();
+                    if (semester === "") {
+                        event.preventDefault(); 
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Missing Information',
+                            text: 'Please select a semester before you can request.',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        </script>
+
+        {% if is_requesting %}
+            {% if active_request %}
+                <h3 class="request-status">Year: {{ active_request.year }} || Semester: {{ active_request.semester }}</h3>
+            {% endif %}
+            
+            <div class="table-wrapper"> <form method="POST">
                     {% csrf_token %}
                     <table id="requirements-table">
-                        
                         <thead>
                             <tr>
                                 <th>Scholar ID</th>
@@ -176,175 +132,157 @@
                             </tr>
                         </thead>
                         <tbody>
-                                {% for data in req_data %}
-                                    <tr>
-                                        <td id="scholartd">{{ data.scholar_ID }}</td>
-                                        <td>{{ data.studID.firstname }}</td>
-                                        <td>{{ data.studID.lastname }}</td>
-                                        <td><img id="cor_pic" src="{{ data.cor_file.url }}" alt=""></td>
-                                        <td><img id="grade_pic" src="{{ data.grade_file.url }}" alt=""></td>
-                                        <td><img id="schoolid_pic" src="{{ data.schoolid_file.url }}" alt=""></td>
-                                        <td>{{ data.gpa }}</td>
-                                        <td>{{ data.scholar_type }}</td>
-                                        <td class="commentbox">
-                                            {% if data.note %}
-                                            <p style="color: red;">✔</p>
-                                            {% else %}
-                                                <input name="note_{{ data.id }}" type="text" class="comment-box">
-                                            {% endif %}
-                                        </td>
-                                        <td id="btns3">
-                                            <div>
-                                                {% if not data.note %}
-                                                <button name="action" value="ACCEPT2_{{ data.id }}" id="btn-accept">Accept</button>
-                                                {% endif %}
-                                                <button name="action" value="REJECTED2_{{ data.id }}" id="btn-reject">Reject</button>
-                                            </div>
+                            {% for data in req_data %}
+                                <tr>
+                                    <td id="scholartd">{{ data.scholar_ID }}</td>
+                                    <td>{{ data.studID.firstname }}</td>
+                                    <td>{{ data.studID.lastname }}</td>
+                                    <td><img id="cor_pic" src="{{ data.cor_file.url }}" alt="COR"></td>
+                                    <td><img id="grade_pic" src="{{ data.grade_file.url }}" alt="Grade"></td>
+                                    <td><img id="schoolid_pic" src="{{ data.schoolid_file.url }}" alt="School ID"></td>
+                                    <td>{{ data.gpa }}</td>
+                                    <td>{{ data.scholar_type }}</td>
+                                    <td class="commentbox">
+                                        {% if data.note %}
+                                            <p class="note-check">✔</p>
+                                        {% else %}
+                                            <input name="note_{{ data.id }}" type="text" class="comment-box" placeholder="Add note...">
+                                        {% endif %}
+                                    </td>
+                                    <td id="btns3">
+                                        <div>
                                             {% if not data.note %}
-                                                <button name="action" value="UPDATE2_{{ data.id }}" id="btn-update">Update</button>
+                                                <button name="action" value="ACCEPT2_{{ data.id }}" id="btn-accept">Accept</button>
                                             {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-
+                                            <button name="action" value="REJECTED2_{{ data.id }}" id="btn-reject">Reject</button>
+                                        </div>
+                                        {% if not data.note %}
+                                            <button name="action" value="UPDATE2_{{ data.id }}" id="btn-update">Update</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="10" style="text-align: center; padding: 20px;">
+                                        No scholars found for this filter.
+                                    </td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </form>
-            {% endif %}
-            {% if is_requesting %}
-                <button id="grant-btn">GRANT</button>
-            {% endif %}
-            </div>
-        </div>
+            </div> <button id="grant-btn">GRANT</button>
+        {% endif %}
+        
+    </div> </div> <div id="historyModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="close-history">&times;</span>
+        <h4>Request History</h4>
+        {% if request_history %}
+        <ul>
+            {% for req in request_history %}
+                <li>{{ req.year }} || {{ req.semester }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No request history found.</p>
+        {% endif %}
     </div>
-  <div id="historyModal" class="modal">
-        <div class="modal-content" style="padding: 20px; max-width: 400px; color: black; background-color: white; border-radius: 5px;">
-            <span class="close" id="close-history">&times;</span>
-            
-            <h4 style="color: #2c5282; font-weight: bold;">Request History</h4>
-            
-            {% if request_history %}
-            <ul style="color: black; list-style-type: disc; margin-left: 30px; max-height: 300px; overflow-y: auto; text-align: left;">
-                {% for req in request_history %}
-                    <li>{{ req.year }} || {{ req.semester }}</li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p>No request history found.</p>
-            {% endif %}
-        </div>
-    </div>
-    <div id="imageModal" class="modal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImage">
-    </div>
+</div>
 
-    <script>
-        // --- Image Modal ---
-        var modal = document.getElementById("imageModal");
-        var modalImg = document.getElementById("modalImage");
-        document.querySelectorAll('td img').forEach(function(img) {
-            img.onclick = function(){
-                modal.style.display = "block";
-                modalImg.src = this.src;
-            }
-        });
-        var span = document.getElementsByClassName("close")[0];
-        span.onclick = function() { 
+<div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+
+<script>
+    // --- Image Modal ---
+    var modal = document.getElementById("imageModal");
+    var modalImg = document.getElementById("modalImage");
+    document.querySelectorAll('td img').forEach(function(img) {
+        img.onclick = function(){
+            modal.style.display = "block";
+            modalImg.src = this.src;
+        }
+    });
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function() { 
+        modal.style.display = "none";
+    }
+
+    // --- History Modal ---
+    var historyModal = document.getElementById("historyModal");
+    var historyBtn = document.getElementById("history-btn");
+    var historyClose = document.getElementById("close-history");
+
+    if (historyBtn) {
+        historyBtn.onclick = function() {
+            historyModal.style.display = "block";
+        }
+    }
+    if (historyClose) {
+        historyClose.onclick = function() {
+            historyModal.style.display = "none";
+        }
+    }
+
+    // --- Window Click (for both modals) ---
+    window.onclick = function(event) {
+        if (event.target == modal) {
             modal.style.display = "none";
         }
-
-        // --- History Modal (NEW) ---
-        var historyModal = document.getElementById("historyModal");
-        var historyBtn = document.getElementById("history-btn");
-        var historyClose = document.getElementById("close-history");
-
-        // Check if the button exists (it won't if is_requesting is true)
-        if (historyBtn) {
-            historyBtn.onclick = function() {
-                historyModal.style.display = "block";
-            }
+        if (event.target == historyModal) {
+            historyModal.style.display = "none";
         }
+    }
 
-        // When the user clicks on <span> (x), close the history modal
-        if (historyClose) {
-            historyClose.onclick = function() {
-                historyModal.style.display = "none";
-            }
+    // --- Grant Button Confirmation ---
+    var grantBtn = document.getElementById("grant-btn");
+    if (grantBtn) {
+        grantBtn.onclick = function(event) {
+            event.preventDefault(); 
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Are you sure you want to GRANT these scholarships?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, grant them!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{% url 'admingrant' %}";
+                }
+            });
         }
+    }
 
-        // --- Window Click (UPDATED) ---
-        // When the user clicks anywhere outside of *either* modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-            // Add this check for the new modal
-            if (event.target == historyModal) {
-                historyModal.style.display = "none";
-            }
+    // --- Close Button Confirmation ---
+    var closeBtn = document.getElementById("close-btn");
+    if (closeBtn) {
+        closeBtn.onclick = function(event) {
+            event.preventDefault(); 
+            var formToSubmit = document.getElementById('yearsemester');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This will close the current scholarship request. Are you sure?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, close it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.name = 'action';
+                    actionInput.value = 'CLOSE';
+                    formToSubmit.appendChild(actionInput);
+                    formToSubmit.submit();
+                }
+            });
         }
-
-    </script>
-
-    <script>
-        // --- Grant Button Confirmation (NEW) ---
-        var grantBtn = document.getElementById("grant-btn");
-        if (grantBtn) {
-            grantBtn.onclick = function(event) {
-                // Prevent default button behavior
-                event.preventDefault(); 
-                
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "Are you sure you want to GRANT these scholarships?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, grant them!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If confirmed, redirect to the grant page
-                        window.location.href = "{% url 'admingrant' %}";
-                    }
-                });
-            }
-        }
-
-        // --- Close Button Confirmation (NEW) ---
-        var closeBtn = document.getElementById("close-btn");
-        if (closeBtn) {
-            closeBtn.onclick = function(event) {
-                // Prevent the form from submitting immediately
-                event.preventDefault(); 
-                
-                var formToSubmit = document.getElementById('yearsemester');
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "This will close the current scholarship request. Are you sure?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, close it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If confirmed, add a hidden input for the button's value
-                        // This ensures the backend receives 'action' = 'CLOSE'
-                        var actionInput = document.createElement('input');
-                        actionInput.type = 'hidden';
-                        actionInput.name = 'action';
-                        actionInput.value = 'CLOSE';
-                        formToSubmit.appendChild(actionInput);
-                        
-                        // Now submit the form
-                        formToSubmit.submit();
-                    }
-                });
-            }
-        }
-    </script>
-    <script src="{% static 'js/main.js' %}"></script>
+    }
+</script>
+<script src="{% static 'js/main.js' %}"></script>
 {% endblock bodycontent %}

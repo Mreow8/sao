@@ -57,7 +57,7 @@
       {% with current_url=request.resolver_match.url_name %}
       <nav class="side-nav flex flex-col h-screen">
 
-      <ul class="flex-grow overflow-y-auto">
+      <ul >
           {% if user.role == 'student_life_staff' or user.role == 'superadmin' %}
           {% with section_urls='assign_role,equipmentTrackerAdmin,adminRequestedGmc,monthlyCalendarAdmin,non_acad' %}
           <li>
@@ -89,6 +89,7 @@
        
               <li><a href="{% url 'liquidation'%}" class="{% if current_url == 'liquidation' %}active-link{% endif %}">Admin Cost Liquidation Tracker</a></li>
               <li><a href="{% url 'ched'%}" class="{% if current_url == 'ched' %}active-link{% endif %}">CHED Reports Submission</a></li>
+              <li><a href="{% url 'transaction' %}" class="{% if current_url == 'transaction' %}active-link{% endif %}">Transaction History Report</a></li>
             </ul>
           </li>
           {% endwith %}

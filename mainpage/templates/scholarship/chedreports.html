@@ -1,50 +1,65 @@
-{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+{% extends 'adminmain.html' %} {% load static %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'styles/scholarship/chedreports.css' %}">
-    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-    
-        <div class="content">
-            <div class="form_div">
-                    <div class="title">
-                        
-                        <img src="{% static 'scholar/ched.png' %}" alt="">
-                       <h2 style="color: black;">CHED REPORTS SUBMISSION</h2> 
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+  rel="stylesheet"
+/>
 
-                    </div>
-                    <div class="logo-nav">
-                        <div >
-                            <div class="logo-container">
-                                <img src="{% static 'scholar/merit.png' %}" alt="">
-                                <a href="{% url 'ched_merit' %}">
-                                    <button>CHED Merit Scholarship</button>
-                                </a>
-                            </div>
-                            <div class="logo-container">
-                                <img src="{% static 'scholar/tdp.png' %}" alt="">
-                                <a href="{% url 'ched_TDP' %}">
-                                    <button>CHED TDP Scholarship</button>
-                                </a>
-                            </div>
-                        </div>
-                        <div >
-                            <div class="logo-container">
-                                <img src="{% static 'scholar/tes.png' %}" alt="">
-                                <a href="{% url 'ched_TES' %}">
-                                    <button>CHED TES Scholarship</button>
-                                </a>
-                            </div>
-                            <div class="logo-container">
-                                <img src="{% static 'scholar/coscho.png' %}" alt="">
-                                <a href="{% url 'ched_Coscho' %}">
-                                    <button>CHED COSCHO Scholarship</button>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+<link
+  rel="stylesheet"
+  href="{% static 'styles/scholarship/chedreports.css' %}"
+/>
 
-            </div>
-        </div>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+{% endblock headcontent %} {% block bodycontent %}
+<div class="body-content">
+  <div class="sub-title">
+    <h4>SCHOLARSHIP</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+    <p class="certxt">CHED Reports Submission</p>
+  </div>
+  <hr />
+
+  <div class="form_div">
+    <div class="title">
+      <img src="{% static 'scholar/ched.png' %}" alt="" />
+      <h2>CHED REPORTS SUBMISSION</h2>
     </div>
-    <script src="{% static 'js/main.js' %}"></script>
-  {% endblock bodycontent %}
+
+    <div class="logo-nav">
+      <div class="logo-container">
+        <img src="{% static 'scholar/merit.png' %}" alt="" />
+        <a href="{% url 'ched_merit' %}">
+          <button>CHED Merit Scholarship</button>
+        </a>
+      </div>
+      <div class="logo-container">
+        <img src="{% static 'scholar/tdp.png' %}" alt="" />
+        <a href="{% url 'ched_TDP' %}">
+          <button>CHED TDP Scholarship</button>
+        </a>
+      </div>
+      <div class="logo-container">
+        <img src="{% static 'scholar/tes.png' %}" alt="" />
+        <a href="{% url 'ched_TES' %}">
+          <button>CHED TES Scholarship</button>
+        </a>
+      </div>
+      <div class="logo-container">
+        <img src="{% static 'scholar/coscho.png' %}" alt="" />
+        <a href="{% url 'ched_Coscho' %}">
+          <button>CHED COSCHO Scholarship</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock bodycontent %}

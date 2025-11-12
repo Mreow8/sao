@@ -1,155 +1,162 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 .container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
-.form_div{
-    background:none !important;
+.form_div {
+  background: none !important;
 }
-.container{
-    border: none !important;
-    margin-top: -30px;
+.container {
+  border: none !important;
+  margin-top: -30px;
 }
 .header {
-    text-align: center;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 .header img {
-    max-width: 100px; 
-    height: auto;
-    display: block;
-    margin: 0 auto 10px auto;
+  max-width: 100px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px auto;
 }
 .header h1 {
-    margin: 5px 0;
-    font-size: 1.5em; 
+  margin: 5px 0;
+  font-size: 1.5em;
 }
 .header h2 {
-    margin: 3px 0;
-    font-size: 1.2em;
+  margin: 3px 0;
+  font-size: 1.2em;
 }
 .header h3 {
-    margin: 2px 0;
-    font-size: 1em; 
+  margin: 2px 0;
+  font-size: 1em;
 }
 .table-container {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
 }
 th {
-    background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 .signature-section {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  text-align: center;
 }
 .signature-section div {
-    margin-right: 40px;
+  margin-right: 40px;
 }
 .signature-section div:last-child {
-    margin-right: 0;
+  margin-right: 0;
 }
 .signature-section p {
-    margin: 10px 0;
+  margin: 10px 0;
 }
 .balance-header {
-    text-align: left;
-    width: 74.4%;
+  text-align: left;
+  width: 74.4%;
 }
 .print-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white !important;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    visibility: hidden;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white !important;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  visibility: hidden;
 }
 @media print {
-    .print-button,
-    .submit-btn {
-        display: none;
+  .print-button,
+  .submit-btn {
+    display: none;
+  }
+  .header #ched-logo {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  @media print and (orientation: landscape) {
+    body table {
+      width: 120% !important;
+      margin-left: -15px !important;
     }
-    .header #ched-logo{
-        width:50px !important;
-        height:50px !important;
-    }
-    @media print and (orientation: landscape) {  
-        body table{
-                width:120% !important;
-                margin-left:-15px !important;
-            }
-    }
-    body * {
-        visibility: hidden;
-        font-size: 12px !important;
-    }
-    .form_div [type="date"]{
-        border:none !important;
-    }
-    .form_div,
-    .form_div * {
-        visibility: visible;
-    }
+  }
+  body * {
+    visibility: hidden;
+    font-size: 12px !important;
+  }
+  .form_div [type="date"] {
+    border: none !important;
+  }
+  .form_div,
+  .form_div * {
+    visibility: visible;
+  }
 
-    .form_div {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
+  .form_div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
 }
 
-.container td,th,tr,p,h1,h2,h3,[type="date"]{
-    color:black !important;
+.container td,
+th,
+tr,
+p,
+h1,
+h2,
+h3,
+[type="date"] {
+  color: black !important;
 }
-.container td,th{
-    border:1px solid black;
+.container td,
+th {
+  border: 1px solid black;
 }
-
 
 /* ------------------- inputs ------------------------- */
-.form_div [type="text"]{
-    background-color: rgba(174, 197, 240, 0.384) !important;
+.form_div [type="text"] {
+  background-color: rgba(174, 197, 240, 0.384) !important;
 }
 
-.submit-btn{
-    position: absolute !important;
-    top: 10px;
-    right: 30px;
-    padding: 10px 15px;
-    background-color: #007bff !important;
-    color: white !important;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 5px;
-    border:none;
+.submit-btn {
+  position: absolute !important;
+  top: 10px;
+  right: 30px;
+  padding: 10px 15px;
+  background-color: #007bff !important;
+  color: white !important;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
 }
-#back{
-    width:30px;
-    height:30px;
-    position:relative;
-    top:-20px ;
-}   
+#back {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  top: -20px;
+}

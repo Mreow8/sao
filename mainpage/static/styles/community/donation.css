@@ -1,254 +1,416 @@
 /* --- Global & Fonts --- */
-/* Assumes "Rubik" font is imported in your adminmain.html */
-.data,
-.table,
-.table button,
-.table select,
-.table a {
+body,
+button,
+input,
+select {
   font-family: "Rubik", sans-serif;
+  color: #333;
 }
 
-/* --- Main Content Card --- */
-/* This styles your main <div class="table"> */
-.table {
+/* --- Layout & Card --- */
+.body-content {
+  padding: 0 1.5rem;
+}
+
+.data {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-top: 1.5rem;
 }
 
-/* --- Filter Form --- */
-.table form {
+/* --- HR --- */
+hr {
+  margin: 2.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+/* --- Filter Bar --- */
+.filter-bar {
   display: flex;
-  flex-wrap: wrap; /* Allows wrapping on small screens */
+  flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
-  margin-bottom: 2rem; /* Adds space before the table */
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.table form select {
+.filter-bar select {
   font-family: "Rubik", sans-serif;
   font-size: 1rem;
   padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  flex-grow: 1; /* Takes available space */
   background-color: #f9f9f9;
   transition: border-color 0.2s, box-shadow 0.2s;
+  color: #333;
+  height: 44px; /* Standard height */
 }
-
-.table form select:focus {
+.filter-bar select:focus {
   outline: none;
-  border-color: #2c5282; /* Primary Blue */
+  border-color: #2c5282;
   box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
   background-color: #fff;
 }
 
-/* Style for both the Filter button and the 'Clear' link */
-.table form button,
-.table form a {
+.btn-filter-submit,
+.btn-filter-clear {
   font-family: "Rubik", sans-serif;
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
+  font-weight: 500;
   font-size: 1rem;
-
   padding: 10px 24px;
+  color: white;
+  cursor: pointer;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   transition: background-color 0.2s, transform 0.2s;
-  text-decoration: none; /* For the 'a' tag */
-  display: inline-flex; /* To align icon and text */
+  height: 44px;
+  text-decoration: none;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  height: 44px; /* Match the select box height */
-  box-sizing: border-box; /* Include padding in height */
 }
-
-.table form button:hover,
-.table form a:hover {
-  background-color: #2a4365; /* Darker Blue */
+.btn-filter-submit {
+  background-color: #2c5282; /* Primary Blue */
+}
+.btn-filter-submit:hover {
+  background-color: #2a4365;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.btn-filter-clear {
+  background-color: #a0aec0; /* Gray */
+  color: #fff;
+}
+.btn-filter-clear:hover {
+  background-color: #718096;
+  transform: translateY(-2px);
 }
 
-.table form button:active,
-.table form a:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-/* Specific style for the 'Clear' link to be secondary */
-.table form a {
-  background-color: #718096; /* Gray */
-}
-.table form a:hover {
-  background-color: #4a5568; /* Darker Gray */
-}
-
-/* --- Donation Table Wrapper --- */
-/* This mimics the .admin-table-wrapper from requestgmc.css */
+/* --- Table --- */
 .donation-table-wrapper {
   width: 100%;
-  overflow-x: auto; /* This adds the horizontal scrollbar */
+  overflow-x: auto;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  overflow: hidden; /* Clips the table corners */
 }
-
 .donation-table-wrapper table {
   width: 100%;
   border-collapse: collapse;
-  border: none;
-  min-width: 800px; /* Ensures all columns have space */
+  min-width: 1000px;
 }
-
 .donation-table-wrapper th,
 .donation-table-wrapper td {
-  border-bottom: 1px solid #ddd;
   padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
   text-align: left;
-  font-size: 14px;
+  font-size: 0.9rem;
   vertical-align: middle;
-  white-space: nowrap; /* Prevents text wrapping */
 }
-
 .donation-table-wrapper th {
   background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue */
-
+  font-weight: 500;
+  color: #2c5282;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
+.donation-table-wrapper tbody tr:hover {
+  background-color: #f5f5f5;
+}
 .donation-table-wrapper tbody tr:last-child td {
   border-bottom: none;
 }
+.donation-table-wrapper td[colspan="8"] {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1rem;
+  color: #777;
+  font-style: italic;
+}
 
-/* --- Table Status Badges --- */
-/* These classes replace your inline text colors */
+/* --- Table-specific Content --- */
+.view-details-link {
+  color: #2c5282;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+.view-details-link:hover {
+  text-decoration: underline;
+}
+
 .status-badge {
   padding: 5px 12px;
   border-radius: 15px;
   font-size: 12px;
-
-  color: white;
+  font-weight: 500;
   text-transform: uppercase;
-  display: inline-block; /* Ensures padding and border-radius apply */
 }
 .status-pending {
   color: #92400e;
   background-color: #fef3c7;
-} /* Orange */
+} /* Orange/Yellow */
 .status-accepted {
-  background-color: #8ccfa8;
   color: #0b552a;
+  background-color: #c6f6d5;
 } /* Green */
 .status-declined {
-  background-color: #e33e3e;
+  color: #9b2c2c;
+  background-color: #fed7d7;
 } /* Red */
 
-/* --- Table Action Links & Buttons --- */
 .view a {
-  color: #2c5282;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background-color: #e2e8f0;
+  color: #4a5568;
   text-decoration: none;
-  transition: color 0.2s;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 .view a:hover {
-  color: #2a4365;
-  text-decoration: underline;
+  background-color: #cbd5e0;
 }
 
 .options {
   display: flex;
   gap: 0.5rem;
 }
-
-/* Base style for Accept/Decline links */
 .options a {
-  font-family: "Rubik", sans-serif;
-  color: white !important; /* Override inline styles */
-  font-size: 0.875rem;
-  font-weight: 600 !important; /* Override inline styles */
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  padding: 5px 10px;
+  border-radius: 6px;
   text-decoration: none;
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  transition: background-color 0.2s;
+}
+.btn-accept {
+  color: #2f855a; /* Green */
+  border: 1px solid #2f855a;
+}
+.btn-accept:hover {
+  background-color: #c6f6d5;
+}
+.btn-decline {
+  color: #c53030; /* Red */
+  border: 1px solid #c53030;
+}
+.btn-decline:hover {
+  background-color: #fed7d7;
 }
 
-/* Accept Button (mimics .printBtn green) */
-.options a[href*="donation_accept"] {
-  background-color: #28a745; /* Green */
+/* --- Pagination --- */
+.pagination-controls {
+  margin: 2rem 0 1rem;
+  text-align: center;
 }
-.options a[href*="donation_accept"]:hover {
-  background-color: #218838; /* Darker Green */
+.step-links a,
+.step-links .current {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 4px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+}
+.step-links a {
+  background-color: #f0f0f0;
+  color: #333;
+}
+.step-links a:hover {
+  background-color: #e0e0e0;
+}
+.step-links .current {
+  background-color: #2c5282; /* Theme Blue */
+  color: white;
+  border-color: #2c5282;
 }
 
-/* Decline Button (Red) */
-.options a[href*="donation_decline"] {
-  background-color: #dc3545; /* Red */
+/* --- Modal --- */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding: 2rem;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
-.options a[href*="donation_decline"]:hover {
-  background-color: #c82333; /* Darker Red */
+.modal-backdrop.modal-open {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+.modal-open .modal-content {
+  transform: scale(1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-close-btn:hover {
+  color: #333;
+}
+
+#modalBody h4 {
+  font-size: 1.5rem;
+  color: #2c5282;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+#modalBody p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+  color: #333;
+}
+#modalBody p strong {
+  font-weight: 500;
+  color: #000;
+}
+
+.modal-hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 1rem 0;
+}
+
+.receipt-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 10px 16px;
+  background-color: #2c5282;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.receipt-link:hover {
+  background-color: #2a4365;
+}
+
+.modal-event-details {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+.modal-event-details h4 {
+  font-size: 1.25rem;
+  color: #333;
+}
+.modal-event-details img {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.modal-event-details p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
 }
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
-  /* Adjust padding on main card for mobile */
-  .table {
+  .body-content {
+    padding: 0 1rem;
+  }
+  .data {
     padding: 1.5rem;
   }
-
-  /* On mobile, the filter form elements stack */
-  .table form {
+  .filter-bar {
     flex-direction: column;
-    align-items: stretch; /* Make form elements full-width */
+    align-items: stretch;
+  }
+  .btn-filter-submit,
+  .btn-filter-clear {
+    justify-content: center;
+  }
+  .modal-content {
+    padding: 1.5rem;
+  }
+}
+
+/* --- Print Styles --- */
+@media print {
+  body,
+  .body-content,
+  .data {
+    padding: 0;
+    margin: 0;
+  }
+  .sub-title,
+  hr,
+  .filter-bar,
+  .options,
+  .pagination-controls,
+  #detailsModal,
+  .view,
+  th:nth-child(7),
+  th:nth-child(8),
+  td:nth-child(7),
+  td:nth-child(8) {
+    display: none !important;
   }
 
-  .table form button,
-  .table form a {
-    width: 100%;
-    justify-content: center; /* Center text/icon in button */
+  .donation-table-wrapper {
+    border: none;
+    box-shadow: none;
+    overflow: visible;
   }
-}
-.pagination-controls {
-  font-family: "Rubik", sans-serif;
-  padding: 1.5rem 0 0 0; /* Add padding to the top */
-  text-align: center;
-  font-size: 1rem;
-}
-
-.pagination-controls .step-links a,
-.pagination-controls .current {
-  padding: 8px 16px;
-  margin: 0 4px;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: background-color 0.2s, color 0.2s;
-  display: inline-block;
-  margin-bottom: 5px; /* For mobile wrapping */
-}
-
-.pagination-controls .step-links a {
-  background-color: #f0f0f0;
-  color: #2c5282; /* Primary Blue */
-}
-
-.pagination-controls .step-links a:hover {
-  background-color: #2c5282; /* Primary Blue */
-  color: #ffffff;
-}
-
-.pagination-controls .current {
-  background-color: #2a4365; /* Darker Blue */
-  color: #ffffff;
-  font-weight: 700;
-  border: 1px solid #2a4365;
+  .donation-table-wrapper table,
+  .donation-table-wrapper th,
+  .donation-table-wrapper td {
+    border: 1px solid #000 !important;
+    font-size: 10pt !important;
+    color: #000 !important;
+  }
+  .donation-table-wrapper th {
+    background-color: #eee !important;
+  }
+  .status-badge {
+    background-color: transparent;
+    color: #000 !important;
+    padding: 0;
+    font-weight: normal;
+    text-transform: none;
+  }
 }

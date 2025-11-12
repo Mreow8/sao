@@ -1,28 +1,36 @@
 from collections import defaultdict
 from datetime import datetime
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from decimal import Decimal, InvalidOperation
+import os
+import re
+
+from PIL import Image, ImageEnhance, ImageFilter
+import pytesseract
+
 from django.contrib import messages
-from ..models import LiquidationTDP, studentInfo, scholars, Requirement, applicants,SemesterDetails, AdminRequest, staffInfo, tesDisbursement,tdpDisbursement
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
-import pytesseract
-from PIL import Image, ImageEnhance, ImageFilter
-import os
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from ..forms import RequirementForm, applicantsForm, AdminRequestForm
-from django.http import HttpResponse
-from django.db.models import Q
-from django.db.models import Sum
-from django.shortcuts import render
-from django.db.models import Sum
 from django.db import transaction
-import re
-from django.contrib.auth import authenticate, login, get_user_model
-from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.db.models import Q, Sum
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+
+from ..models import (
+    LiquidationTDP,
+    studentInfo,
+    scholars,
+    Requirement,
+    applicants,
+    SemesterDetails,
+    AdminRequest,
+    staffInfo,
+    tesDisbursement,
+    tdpDisbursement,
+)
+from ..forms import RequirementForm, applicantsForm, AdminRequestForm
 
 User = get_user_model() 
 
@@ -1403,14 +1411,32 @@ def adminliquidation_TES(request):
     return render(request, 'scholarship/dayag/liquidation_TES.html')
 
 
-
 def adminliquidation_TDP(request):
     if request.method == 'POST':
+
+        # --- FIX: Add a helper function to safely convert strings to Decimals ---
+        def to_decimal(value_str, default=Decimal('0.00')):
+            """
+            Safely converts a string to a Decimal.
+            Handles empty strings, None, and commas.
+            """
+            if not value_str:
+                return default
+            try:
+                # Remove commas if user enters them (e.g., "1,000")
+                return Decimal(value_str.replace(',', ''))
+            except (InvalidOperation, TypeError):
+                return default
+        # --- END FIX ---
+            
         semester = request.POST.get('semester')
         academic_year = request.POST.get('academic_year')
-        total_amount = request.POST.get('total1_0_05')
-        total_disbursement = request.POST.get('totalDisbursement1_0_05')
-        balance = request.POST.get('balance')
+        
+        # --- FIX: Convert all numeric inputs using the helper function ---
+        total_amount = to_decimal(request.POST.get('total1_0_05'))
+        total_disbursement = to_decimal(request.POST.get('totalDisbursement1_0_05'))
+        balance = to_decimal(request.POST.get('balance'))
+        # --- END FIX ---
 
         # Check details
         index = 1
@@ -1421,22 +1447,34 @@ def adminliquidation_TDP(request):
                 break
             check_number = request.POST.get(f'checkNumber{index}')
             particulars = request.POST.get(f'particulars{index}')
-            amount = request.POST.get(f'amount{index}')
-            liquidation_cost = float(amount) * 0.005 
+            
+            # --- FIX: Convert amount and calculate cost using Decimal ---
+            amount = to_decimal(request.POST.get(f'amount{index}'))
+            liquidation_cost = amount * Decimal('0.005') # Use Decimal for calculation
+            # --- END FIX ---
+            
             if LiquidationTDP.objects.filter(check_number=check_number).exists():
-                context = {
-                    'error_message': f"Check number {check_number} already exists! Try Again..."
-                }
-                return render(request, 'scholarship/dayag/liquidation_TDP.html', context)
+                # --- FIX: Use messages framework ---
+                messages.error(request, f"Check number {check_number} already exists! Please try again.")
+                # --- END FIX ---
+                return render(request, 'scholarship/dayag/liquidation_TDP.html') # Pass back original context
 
             check_data.append({
                 'date': date,
                 'check_number': check_number,
                 'particulars': particulars,
-                'amount': amount,
-                'liquidation_cost': liquidation_cost 
+                'amount': amount,  # This is now a Decimal
+                'liquidation_cost': liquidation_cost # This is also a Decimal
             })
             index += 1
+        
+        # --- ADDED: Handle case where no check data is submitted ---
+        if not check_data:
+            # --- FIX: Use messages framework ---
+            messages.error(request, "You must add at least one check detail.")
+            # --- END FIX ---
+            return render(request, 'scholarship/dayag/liquidation_TDP.html')
+        # --- END ADDED ---
 
         # Create the first LiquidationTDP instance
         first_check = check_data[0]
@@ -1444,13 +1482,13 @@ def adminliquidation_TDP(request):
             date=first_check['date'],
             check_number=first_check['check_number'],
             particulars=first_check['particulars'],
-            amount=first_check['amount'],
-            liquidation_cost=first_check['liquidation_cost'],
+            amount=first_check['amount'],            # Now a Decimal
+            liquidation_cost=first_check['liquidation_cost'], # Now a Decimal
             semester=semester,
             academic_year=academic_year,
-            total_amount=total_amount,
-            total_disbursement=total_disbursement,
-            balance=balance,
+            total_amount=total_amount,              # Now a Decimal
+            total_disbursement=total_disbursement,      # Now a Decimal
+            balance=balance,                        # Now a Decimal
         )
 
         # Save remaining check details
@@ -1459,7 +1497,12 @@ def adminliquidation_TDP(request):
                 date=check['date'],
                 check_number=check['check_number'],
                 particulars=check['particulars'],
-                amount=check['amount'],
+                amount=check['amount'], # Now a Decimal
+                # --- FIX: Added liquidation_cost to remaining checks ---
+                # (Assuming you want to store this for each row)
+                # If not, you can remove this line.
+                liquidation_cost=check['liquidation_cost'],
+                # --- END FIX ---
                 semester=semester,
                 academic_year=academic_year,
                 total_amount=total_amount,
@@ -1475,21 +1518,28 @@ def adminliquidation_TDP(request):
                 break
             disbursement_number = request.POST.get(f'disbursementNumber{disbursement_index}')
             disbursement_particulars = request.POST.get(f'disbursementParticulars{disbursement_index}')
-            disbursement_amount = request.POST.get(f'disbursementAmount{disbursement_index}')
+            
+            # --- FIX: Convert disbursement_amount using the helper function ---
+            disbursement_amount = to_decimal(request.POST.get(f'disbursementAmount{disbursement_index}'))
+            # --- END FIX ---
 
-            tdpDisbursement.objects.create(
-                liquidation=liquidation,
-                disbursement_date=disbursement_date,
-                disbursement_number=disbursement_number,
-                disbursement_particulars=disbursement_particulars,
-                disbursement_amount=disbursement_amount,
-            )
+            # Only create if the amount is not zero
+            if disbursement_amount > 0:
+                tdpDisbursement.objects.create(
+                    liquidation=liquidation,
+                    disbursement_date=disbursement_date,
+                    disbursement_number=disbursement_number,
+                    disbursement_particulars=disbursement_particulars,
+                    disbursement_amount=disbursement_amount, # Now a Decimal
+                )
             disbursement_index += 1
 
+        # --- ADDED: Success Message ---
+        messages.success(request, "Liquidation report saved successfully!")
+        # --- END ADDED ---
         return redirect('liquidation_TDP')
 
     return render(request, 'scholarship/dayag/liquidation_TDP.html')
-
 from ..models import LiquidationCoScho
 
 def adminliquidation_CoScho(request):
@@ -1759,7 +1809,7 @@ def tdp_liquidation(request):
 
     return render(request, 'scholarship/dayag/tdp_transLiquidation.html', context)
 
-
+ 
 def tes_liquidation(request):
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')

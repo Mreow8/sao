@@ -1,109 +1,123 @@
-{% extends 'adminmain.html' %} {% load static %} {% block bodycontent %}
+{% extends 'adminmain.html' %} 
+{% load static %} 
 
+{% block headcontent %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'styles/scholarship/liquidation_tdp.css' %}">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="{% static 'styles/scholarship/liquidation_tes.css' %}">
+    
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
- 
-        <div class="content">
-         
-            <div class="form_div">
-                <a href="{% url 'AdminCostLiquidation' %}" style="height:fit-content;">
-                    <img src="/static/scholar/back.png" alt="" id="back" >
-                </a>
-                <main>
-                    <section id="trans_date">
-                        <form id="filter-form" method="GET">
-                            <div class="start_date">
-                                <label for="start-date">Start Date:</label>
-                                <input style="color:black;" type="date" id="start-date" name="start_date" value="{{ start_date }}">
-                            </div>
-                            <div class="end_date">
-                                <label for="end-date">End Date:</label>
-                                <input style="color:black;" type="date" id="end-date" name="end_date" value="{{ end_date }}">
-                            </div>
-                            <input type="hidden" id="semester-input" name="semester" value="{{ selected_semester }}">
-                            <button type="submit" id="filter">Filter</button>
-                            
-                            <button type="submit" id="filter" onclick="clearDateFilters()">All record</button>
-                        </form>
-                    </section>
+{% endblock headcontent %}
 
-                    <section id="summary">
-                        <h2>Transaction Summary</h2>
-                        <p id="summary-period">Period: <span id="summary-period-text" style="color:black;">{{ start_date }} - {{ end_date }}</span></p>
-                        <p>Total Transactions: <span id="total-transactions" style="color:black;">{{ total_transactions }}</span></p>
-                    </section>
-                    <div class="onod">
-                        <h2 class="general">Transaction for TES Admin Cost Liquidation(0.01%)</h2>
-                        <table border="1">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Check number</th>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                    <th>Total Amount</th>
-                                    <th>Liquidation Cost</th>
-                                    <th>Total Disburesment</th>
-                                    <th>Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody id="report-body">
-                                {% for transaction in transactions %}
-                                    <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td>{{ transaction.check_number }}</td>
-                                        <td>{{ transaction.date }}</td>
-                                        <td>₱ {{ transaction.amount }}</td>
-                                        <td>₱ {{ transaction.total_amount}}</td>
-                                        <td>₱ {{ transaction.liquidation_cost}}</td>
-                                        <td>₱ {{ transaction.total_disbursement }}</td>
-                                        <td>₱ {{ transaction.balance }}</td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="10">No transactions found for the selected period.</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </main>
-            </div>
-        </div>
+{% block bodycontent %}
+<div class="body-content">
+    
+    <div class="sub-title">
+        <h4>SCHOLARSHIP</h4>
+        <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+        <p class="certxt">Transaction Reports</p>
+        <p class="certxt">Admin Cost Liquidation (TES)</p>
     </div>
-    <script src="{% static 'js/main.js' %}"></script>
-    <script>
-        function filterByYear() {
-            var yearInput = document.getElementById('scholarship_year').value;
-            var rows = document.querySelectorAll('.year-row');
+    <hr>
 
-            rows.forEach(function(row) {
-                var rowYear = row.getAttribute('data-year');
-                if (yearInput === '' || rowYear.includes(yearInput)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
+    <div class="form_div"> 
+        <a href="{% url 'AdminCostLiquidation' %}" title="Back to Admin Cost Liquidation">
+            <img src="/static/scholar/back.png" alt="Back" id="back">
+        </a>
+        <main>
+            <form id="filter-form" method="GET">
+                <section id="trans_date">
+                    <div class="form-group">
+                        <label for="start-date">Start Date:</label>
+                        <input type="date" id="start-date" name="start_date" value="{{ start_date }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date">End Date:</label>
+                        <input type="date" id="end-date" name="end_date" value="{{ end_date }}">
+                    </div>
+                    
+                    <input type="hidden" id="semester-input" name="semester" value="{{ selected_semester }}">
+                    
+                    <div class="filter-buttons">
+                        <button type="submit" id="filter">Filter</button>
+                        <button type="button" class="btn-secondary" onclick="clearDateFilters()">All Record</button>
+                        <button type="button" id="print-button">Print</button>
+                    </div>
+                </section>
+            </form>
 
-        function resetYearFilter() {
-            document.getElementById('scholarship_year').value = '';
-            filterByYear();
-        }
-    </script>
-    <script>
-        document.getElementById("filter_summary").addEventListener("click", function() {
-            window.print();
-        });
-    </script>
-     <script>
-        function clearDateFilters() {
-            document.getElementById('start-date').value = '';
-            document.getElementById('end-date').value = '';
-            document.getElementById('filter-form').submit();
-        }
+            <section id="summary">
+                <h2>Transaction Summary</h2>
+                <p id="summary-period">Period: <span id="summary-period-text">{{ start_date }} - {{ end_date }}</span></p>
+                <p>Total Transactions: <span id="total-transactions">{{ total_transactions }}</span></p>
+            </section>
+            
+            <hr class="section-divider">
 
-    </script>
-  {% endblock bodycontent %}
+            <div class="onod">
+                <h2 class="general">Transaction for TES Admin Cost Liquidation (0.01%)</h2>
+                
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Check number</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Total Amount</th>
+                                <th>Liquidation Cost</th>
+                                <th>Total Disbursement</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-body">
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ transaction.check_number }}</td>
+                                    <td>{{ transaction.date }}</td>
+                                    <td>₱ {{ transaction.amount }}</td>
+                                    <td>₱ {{ transaction.total_amount}}</td>
+                                    <td>₱ {{ transaction.liquidation_cost}}</td>
+                                    <td>₱ {{ transaction.total_disbursement }}</td>
+                                    <td>₱ {{ transaction.balance }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 20px;">
+                                        No transactions found for the selected period.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+    function clearDateFilters() {
+        document.getElementById('start-date').value = '';
+        document.getElementById('end-date').value = '';
+        // This will submit the form with empty dates
+        document.getElementById('filter-form').submit();
+    }
+
+    // Your script was looking for "filter_summary", but that ID didn't exist.
+    // I hooked it to the new "print-button" I added in the form.
+    document.getElementById("print-button").addEventListener("click", function() {
+        window.print();
+    });
+
+    // The 'filterByYear' script was removed as there were no
+    // corresponding HTML elements (like 'scholarship_year') in this file.
+</script>
+{% endblock bodycontent %}

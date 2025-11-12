@@ -1,0 +1,327 @@
+/* === Global & Fonts === */
+body,
+button,
+input,
+select {
+  font-family: "Rubik", sans-serif;
+  color: #333;
+}
+
+/* --- Layout & Card --- */
+.body-content {
+  padding: 0 1.5rem;
+}
+
+.form_div {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form_div h1 {
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+/* --- Breadcrumbs --- */
+.sub-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: "Rubik", sans-serif;
+  margin-bottom: 1rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+.sub-title h4 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+.sub-title p {
+  margin: 0;
+  padding-left: 0.5rem;
+}
+.sub-title .hometext a {
+  color: #2c5282;
+  text-decoration: none;
+  font-weight: 500;
+}
+.sub-title .hometext a:hover {
+  text-decoration: underline;
+}
+.sub-title .certxt::before {
+  content: "/";
+  margin-right: 0.5rem;
+  color: #777;
+}
+
+/* --- HR --- */
+hr {
+  margin: 2.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+/* === Filter Bar === */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end; /* Aligns buttons to the bottom */
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allows fields to grow */
+  min-width: 180px; /* Prevents fields from becoming too small */
+}
+
+.filter-group label {
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 0.85em;
+  color: #2c5282;
+  margin-bottom: 5px;
+}
+
+.filter-group input,
+.filter-group select {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #333;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: #2c5282; /* Primary Blue */
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+  background-color: #fff;
+}
+
+.filter-group button {
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 10px 24px;
+  background-color: #2c5282; /* Primary Blue */
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s;
+  height: 44px; /* Match input height */
+}
+
+.filter-group button:hover {
+  background-color: #2a4365; /* Darker Blue */
+  transform: translateY(-2px);
+}
+
+/* === Table Container === */
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* Adds horizontal scroll on small screens */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#requirements-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px; /* Forces scroll if container is too small */
+}
+
+#requirements-table th,
+#requirements-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #333;
+  vertical-align: middle;
+}
+
+#requirements-table th {
+  background-color: #f9f9f9;
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  color: #2c5282; /* Primary Blue */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#requirements-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+#requirements-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Empty table message */
+#requirements-table td[colspan="10"] {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1rem;
+  color: #777;
+  font-style: italic;
+}
+
+/* === Status Badges === */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.status-pending {
+  color: #92400e;
+  background-color: #fef3c7;
+} /* Orange/Yellow */
+.status-accepted {
+  color: #0b552a;
+  background-color: #c6f6d5;
+} /* Green */
+
+/* === File Thumbnails === */
+.file-links {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.file-links img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: zoom-in;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.file-links img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* === Image Modal === */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 800px;
+  animation-name: zoom;
+  animation-duration: 0.3s;
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* --- Pagination --- */
+.pagination {
+  margin: 2rem 0 1rem;
+  text-align: center;
+}
+.step-links a,
+.step-links .current {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 0 4px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+}
+.step-links a {
+  background-color: #f0f0f0;
+  color: #333;
+}
+.step-links a:hover {
+  background-color: #e0e0e0;
+}
+.step-links .current {
+  background-color: #2c5282; /* Theme Blue */
+  color: white;
+  border-color: #2c5282;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .body-content {
+    padding: 0 1rem;
+  }
+  .form_div {
+    padding: 1.5rem;
+  }
+  .filter-bar {
+    padding: 1rem;
+  }
+  .filter-group {
+    min-width: 100%; /* Filters stack vertically */
+  }
+  .modal-content {
+    width: 95%;
+  }
+}

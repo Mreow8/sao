@@ -39,40 +39,6 @@ select {
   transform: scale(1.1);
 }
 
-/* --- Breadcrumbs --- */
-.sub-title {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  font-family: "Rubik", sans-serif;
-  margin-bottom: 1rem;
-  color: #555;
-  font-size: 0.9rem;
-}
-.sub-title h4 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #333;
-}
-.sub-title p {
-  margin: 0;
-  padding-left: 0.5rem;
-}
-.sub-title .hometext a {
-  color: #2c5282;
-  text-decoration: none;
-  font-weight: 500;
-}
-.sub-title .hometext a:hover {
-  text-decoration: underline;
-}
-.sub-title .certxt::before {
-  content: "/";
-  margin-right: 0.5rem;
-  color: #777;
-}
-
 /* --- HR --- */
 hr {
   margin: 2.5rem 0;
@@ -82,75 +48,130 @@ hr {
 }
 
 /* --- Form Header --- */
-.header {
+.upper {
   text-align: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #333;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #333;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1.5rem;
   padding-bottom: 1rem;
+  border-bottom: 2px solid #333;
 }
-#ched-logo {
-  width: 80px;
-  height: auto;
+.logo1,
+.logo2 {
+  height: 80px;
+  width: auto;
 }
-.header h1 {
+.text-center h2 {
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0.5rem 0;
   color: #000;
 }
-.header h2,
-.header h4 {
-  font-size: 1rem;
-  font-weight: normal;
+.text-center p {
   margin: 0.25rem 0;
+  font-size: 1rem;
   color: #333;
 }
-.header h4 {
-  font-weight: bold;
+.text-center p strong {
+  color: #000;
+}
+
+/* --- Top Filters --- */
+.taas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+.taas label {
+  font-weight: 500;
+  color: #2c5282;
+}
+.taas select,
+.taas input[type="text"] {
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  height: 44px;
+}
+.taas input[type="text"]:focus,
+.taas select:focus {
+  outline: none;
+  border-color: #2c5282;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+}
+
+/* --- Form Sub-Headings --- */
+#report-header {
+  text-align: center;
   font-size: 1.1rem;
-  margin-top: 0.5rem;
+  font-weight: bold;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  color: #333;
+}
+.container h4 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #333;
 }
 
 /* --- Table Styles --- */
-table {
+#table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1.5rem;
 }
-th,
-td {
+#table th,
+#table td {
   border: 1px solid #aaa;
   padding: 10px 12px;
   text-align: left;
   font-size: 0.9rem;
   vertical-align: middle;
 }
-th {
+#table th {
   background-color: #f0f0f0;
   color: #333;
   font-weight: bold;
 }
-/* Specific column widths */
-td:nth-child(2) {
-  width: 35%;
+#table td[colspan="5"] {
+  text-align: center;
+  padding: 0;
 }
-td:nth-child(3) {
-  width: 25%;
-}
-.total_admin_cost_result,
-.total_stipend,
-.total_disbursement_result {
+/* Make totals stand out */
+#amount1_0_05,
+#total1,
+#total1_0_05,
+#totalDisbursement1,
+#totalDisbursement1_0_05 {
   font-weight: bold;
   text-align: right;
   font-size: 1rem;
-}
-.balance-header {
-  width: 40%;
+  color: #000;
 }
 
-/* --- Form Inputs --- */
-input[type="text"],
-input[type="date"] {
+/* --- Form Inputs (in table) --- */
+#table input[type="text"],
+#table input[type="date"],
+#table input[type="number"] {
   font-family: "Rubik", sans-serif;
   font-size: 0.9rem;
   padding: 8px 10px;
@@ -162,8 +183,9 @@ input[type="date"] {
   box-sizing: border-box; /* Ensures padding doesn't break layout */
   color: #333;
 }
-input[type="text"]:focus,
-input[type="date"]:focus {
+#table input[type="text"]:focus,
+#table input[type="date"]:focus,
+#table input[type="number"]:focus {
   outline: none;
   border-color: #2c5282;
   box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
@@ -178,6 +200,37 @@ input[type="date"]:focus {
   font-size: 1.1rem;
   color: #000;
   text-align: right;
+  padding-right: 0;
+  width: 100%;
+}
+
+/* --- Table Buttons --- */
+.btn-add,
+.btn-remove {
+  font-family: "Rubik", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  color: white;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+.btn-add {
+  background-color: #2f855a; /* Green */
+  width: 100%;
+  padding: 10px;
+  border-radius: 0 0 6px 6px; /* Rounded bottom */
+}
+.btn-add:hover {
+  background-color: #276749;
+}
+.btn-remove {
+  background-color: #c53030; /* Red */
+  border-radius: 6px;
+}
+.btn-remove:hover {
+  background-color: #9b2c2c;
 }
 
 /* --- Signature Section --- */
@@ -185,24 +238,26 @@ input[type="date"]:focus {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1rem;
   margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
 }
-.signature-section > div {
-  width: 45%;
-  min-width: 250px;
-}
-.signature-section .text-center {
-  width: 100%;
+.signature {
+  width: 30%;
+  min-width: 200px;
   text-align: center;
 }
-.signature-section p {
+.signature p {
   margin: 0.25rem 0;
   font-size: 0.9rem;
   line-height: 1.4;
+  color: #333;
 }
-.signature-line {
+.signature .signature-line {
   font-weight: bold;
+  margin-top: 2rem;
+  color: #000;
 }
 
 /* --- Action Buttons --- */
@@ -253,21 +308,30 @@ input[type="date"]:focus {
   .container {
     padding: 1rem;
   }
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .taas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .taas select,
+  .taas input[type="text"] {
+    width: 100%;
+  }
   th,
   td {
     padding: 8px;
-  }
-  input[type="text"],
-  input[type="date"] {
-    width: 100%;
     font-size: 0.8rem;
   }
   .signature-section {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: 2rem;
   }
-  .signature-section > div {
+  .signature {
     width: 100%;
   }
 }

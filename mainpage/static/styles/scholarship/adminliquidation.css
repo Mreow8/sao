@@ -1,113 +1,149 @@
-/* Reset some base styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* --- Global & Fonts --- */
+body,
+button,
+input,
+select {
+  font-family: "Rubik", sans-serif;
+  color: #333;
 }
 
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f8ff;
+/* --- Layout & Card --- */
+.body-content {
+  padding: 0 1.5rem;
 }
 
-/* Content wrapper */
-.content {
-  padding: 40px 60px;
-  background: #f0f4fc;
-  min-height: 100vh;
-}
-
-/* Form container */
 .form_div {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Title area */
-.title {
+/* --- HR --- */
+hr {
+  margin: 2.5rem 0;
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+/* --- Page Title (inside card) --- */
+.form_div .title {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 1.5rem; /* 24px */
+  margin-bottom: 2.5rem; /* 40px */
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 1.5rem; /* 24px */
 }
-
-.title img {
-  width: 50px;
-  height: 50px;
+.form_div .title img {
+  height: 60px;
+  width: 60px;
   object-fit: contain;
 }
-
-.title h2 {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1f2937;
+.form_div .title h2 {
+  font-family: "Rubik", sans-serif;
+  font-size: 1.75rem; /* 28px */
+  font-weight: 500;
+  color: #333; /* Default text color */
+  margin: 0;
 }
 
-/* Logo button section */
+/* --- Navigation Buttons --- */
+
+/* This is the main container for all buttons */
 .logo-nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: space-between;
+  flex-direction: column; /* Stacks the "solo" and "dual" groups vertically */
+  align-items: center; /* Centers them horizontally */
+  gap: 2rem; /* 32px */
+  padding: 1rem 0;
 }
 
+/* This container holds the two buttons at the bottom */
 .dual {
   display: flex;
-  flex-direction: row;
-  gap: 30px;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+  justify-content: center;
+  gap: 2rem; /* 32px */
 }
 
+/* This is the standard style for ALL button containers */
 .logo-container {
-  background-color: #eef3ff;
-  padding: 25px;
-  border-radius: 16px;
-  width: 240px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 5px 15px rgba(31, 41, 55, 0.05);
+  gap: 1rem; /* 16px */
+  width: 200px; /* Gives them a consistent width */
+  text-align: center;
 }
-
-.logo-container:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.1);
-}
-
 .logo-container img {
-  width: 100px;
-  height: 100px;
+  height: 80px;
+  width: 80px;
   object-fit: contain;
-  margin-bottom: 20px;
+}
+.logo-container a {
+  text-decoration: none;
+  width: 100%; /* Ensures anchor tag takes full width for the button */
 }
 
+/* This is the standard style for ALL buttons */
 .logo-container button {
-  background-color: #3b82f6;
-  color: white;
-  padding: 12px 20px;
-  font-size: 14px;
-  border: none;
-  border-radius: 8px;
+  font-family: "Rubik", sans-serif;
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  color: #2c5282; /* Primary Blue */
+  background-color: #f9f9f9; /* Light gray background */
+  border: 1px solid #e0e0e0; /* Light border */
+  border-radius: 8px; /* Match other buttons */
+  padding: 12px 18px;
+  width: 100%; /* Make button fill its container */
   cursor: pointer;
-  transition: background-color 0.2s;
-  width: 100%;
+  line-height: 1.4;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
-
 .logo-container button:hover {
-  background-color: #2563eb;
+  background-color: #2c5282; /* Primary Blue on hover */
+  color: #ffffff; /* White text on hover */
+  border-color: #2c5282;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(44, 82, 130, 0.2);
+}
+.logo-container button:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
-/* Responsive adjustments */
+/* --- Responsive --- */
 @media (max-width: 768px) {
-  .logo-nav,
-  .dual {
-    flex-direction: column;
-    align-items: center;
+  .body-content {
+    padding: 0 1rem;
+  }
+  .form_div {
+    padding: 1.5rem;
+  }
+  .form_div .title {
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+  }
+  .form_div .title img {
+    height: 40px;
+    width: 40px;
+  }
+  .form_div .title h2 {
+    font-size: 1.25rem;
   }
 
+  /* On mobile, stack the "dual" buttons */
+  .dual {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
   .logo-container {
-    width: 90%;
+    width: 100%;
+    max-width: 300px; /* Limit width on mobile */
   }
 }
