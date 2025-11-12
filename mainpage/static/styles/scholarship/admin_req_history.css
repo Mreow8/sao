@@ -28,40 +28,6 @@ select {
   margin-bottom: 1.5rem;
 }
 
-/* --- Breadcrumbs --- */
-.sub-title {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  font-family: "Rubik", sans-serif;
-  margin-bottom: 1rem;
-  color: #555;
-  font-size: 0.9rem;
-}
-.sub-title h4 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #333;
-}
-.sub-title p {
-  margin: 0;
-  padding-left: 0.5rem;
-}
-.sub-title .hometext a {
-  color: #2c5282;
-  text-decoration: none;
-  font-weight: 500;
-}
-.sub-title .hometext a:hover {
-  text-decoration: underline;
-}
-.sub-title .certxt::before {
-  content: "/";
-  margin-right: 0.5rem;
-  color: #777;
-}
-
 /* --- HR --- */
 hr {
   margin: 2.5rem 0;

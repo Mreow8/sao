@@ -100,17 +100,6 @@
   color: #333;
 }
 
-/* --- Form Headers --- */
-.sub-title h1 {
-  font-size: 1.75rem;
-
-  color: #2c5282; /* Primary blue */
-  margin: 0;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 1rem;
-}
-
 .section-title {
   font-family: "Rubik", sans-serif;
   font-size: 1.25rem;
