@@ -105,7 +105,9 @@ Connect | Prescription Records
         {% for prescription in prescription_records %}
         <tr>
           <td>{{ prescription.user_id_display }}</td>
-          <td>{{ prescription.name }}</td>
+          <!-- prettier-ignore -->
+          <td>{{ prescription.patient.student.lastname }}, 
+            {{ prescription.patient.student.firstname }}</td>
           <td>{{ prescription.problem }}</td>
           <td>{{ prescription.treatment }}</td>
           <td>{{ prescription.date_prescribed|date:"F d, Y" }}</td>

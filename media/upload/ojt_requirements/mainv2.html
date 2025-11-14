@@ -8,9 +8,7 @@
       type="x-icon"
       href="{% static 'images/CTU_logo.png' %}"
     />
-    <title>
-      {% block title %}HealthHub Connect{% endblock %}
-    </title>
+    <title>{% block title %}HealthHub Connect{% endblock %}</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -24,17 +22,11 @@
   <body>
     <main
       class="relative overflow-hidden min-h-screen {% if user.is_superuser or user.is_staff %}xs:flex xs:flex-col lg:flex-row {% else %} flex flex-col{% endif %}"
-      style="background-color:#e5f2ff"
+      style="background-color: #e5f2ff"
     >
       <nav
         id="navbar"
-        class="bg-[#fff] sticky top-0 z-10
-          {% if user.is_superuser or user.is_staff %}
-            flex xs:flex-row xs:justify-between lg:justify-normal lg:flex-col xs:w-full lg:w-[25%]
-          {% else %}
-            flex justify-between h-[5rem]
-          {% endif %}
-        "
+        class="bg-[#fff] sticky top-0 z-10 {% if user.is_superuser or user.is_staff %} flex xs:flex-row xs:justify-between lg:justify-normal lg:flex-col xs:w-full lg:w-[25%] {% else %} flex justify-between h-[5rem] {% endif %}"
       >
         <div
           class="flex gap-2 p-4 items-stretch bg-[#3b82f6] {% if user.is_superuser or user.is_staff %} justify-center {% else %} justify-normal {% endif %}"
@@ -55,99 +47,131 @@
           {% if user.is_superuser or user.is_staff %}
           <div class="h-full w-full flex flex-col overflow-auto scrollbar-hide">
             <li>
-            <a
-              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'admin_dashboard' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
-              href="{% url 'main:admin_dashboard' %}"
-              >Dashboard</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'patient_profile' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
-              href="{% url 'medical:patient_profile' %}"
-              >Patient Profile</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'viewrequest' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
-              href="{% url 'medical:viewrequest' %}"
-              >View Requests</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center text-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'medtracker' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
-              href="{% url 'medical:medtracker' %}"
-              >Medical Requirements Tracker</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center text-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'emergency_asst' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
-              href="{% url 'medical:emergency_asst' %}"
-              >Emergency Health Assistance</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all"
-              href="{% url 'medical:pwdlist' %}"
-              >PWD Profile</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'dentalrequest' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
-              href="{% url 'medical:dentalrequest' %}"
-              >Dental Services</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'prescription' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
-              href="{% url 'medical:prescription' %}"
-              >Prescription Issuance</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'transactions' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
-              href="{% url 'medical:transactions' %}"
-              >Transaction Reports</a
-            >
-          </li>
-          <li>
-            <a
-              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all"
-              href="{% url 'medical:mental_health' %}"
-              >Mental Health Services</a
-            >
-          </li>
-          <li class="mt-auto">
-            <a href="{% url 'main:logout' %}"
-               class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all">
+              <a
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'admin_dashboard' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
+                href="{% url 'main:admin_dashboard' %}"
+                >Dashboard</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'patient_profile' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
+                href="{% patient_profile' %}"
+                >Patient Profile</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'viewrequest' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
+                href="{% viewrequest' %}"
+                >View Requests</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center text-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'medtracker' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
+                href="{% medtracker' %}"
+                >Medical Requirements Tracker</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center text-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'emergency_asst' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
+                href="{% emergency_asst' %}"
+                >Emergency Health Assistance</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all"
+                href="{% pwdlist' %}"
+                >PWD Profile</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'dentalrequest' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
+                href="{% dentalrequest' %}"
+                >Dental Services</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'prescription' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
+                href="{% prescription' %}"
+                >Prescription Issuance</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all {% if request.resolver_match.url_name == 'transactions' %}bg-[#f0f0f0] lg:border-[#3b82f6] lg:border-r-[4px] {% endif %}"
+                href="{% transactions' %}"
+                >Transaction Reports</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all"
+                href="{% mental_health' %}"
+                >Mental Health Services</a
+              >
+            </li>
+            <li class="mt-auto">
+              <a
+                href="{% url 'main:logout' %}"
+                class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] py-4 font-medium hover:border-r-[4px] hover:border-[#3b82f6] transition-all"
+              >
                 Logout
-            </a>
-          </li>
+              </a>
+            </li>
           </div>
 
           {% else %}
-          <li class="h-full transition-all hover:bg-[#f0f0f0] text-center hover:border-b-[4px] hover:border-[#3b82f6] {% if request.resolver_match.url_name == 'student_dashboard' %}border-[#3b82f6] border-b-[4px] bg-[#f0f0f0]{% endif %}">
-              <a class="flex justify-center items-center h-full tracking-tight px-4 font-medium  " href="{% url 'main:main' %}">Dashboard</a>
+          <li
+            class="h-full transition-all hover:bg-[#f0f0f0] text-center hover:border-b-[4px] hover:border-[#3b82f6] {% if request.resolver_match.url_name == 'student_dashboard' %}border-[#3b82f6] border-b-[4px] bg-[#f0f0f0]{% endif %}"
+          >
+            <a
+              class="flex justify-center items-center h-full tracking-tight px-4 font-medium"
+              href="{% url 'main:main' %}"
+              >Dashboard</a
+            >
           </li>
-          <li class="h-full transition-all hover:bg-[#f0f0f0] text-center leading-tight  hover:border-b-[4px] hover:border-[#3b82f6] {% if request.resolver_match.url_name == 'request' %}border-[#3b82f6] border-b-[4px] bg-[#f0f0f0]{% endif %}">
-              <a class="flex justify-center items-center h-full tracking-tight px-4 font-medium " href="{% url 'medical:request' %}">Documentary Request</a>
+          <li
+            class="h-full transition-all hover:bg-[#f0f0f0] text-center leading-tight hover:border-b-[4px] hover:border-[#3b82f6] {% if request.resolver_match.url_name == 'request' %}border-[#3b82f6] border-b-[4px] bg-[#f0f0f0]{% endif %}"
+          >
+            <a
+              class="flex justify-center items-center h-full tracking-tight px-4 font-medium"
+              href="{% request' %}"
+              >Documentary Request</a
+            >
           </li>
-          <li class="h-full transition-all hover:bg-[#f0f0f0] text-center leading-tight  hover:border-b-[4px] hover:border-[#3b82f6] {% if request.resolver_match.url_name == 'upload_requirements' %}border-[#3b82f6] border-b-[4px] bg-[#f0f0f0]{% endif %}">
-              <a class="flex justify-center items-center h-full tracking-tight px-4 font-medium " href="{% url 'medical:upload_requirements' %}">Medical Requirements Upload</a>
+          <li
+            class="h-full transition-all hover:bg-[#f0f0f0] text-center leading-tight hover:border-b-[4px] hover:border-[#3b82f6] {% if request.resolver_match.url_name == 'upload_requirements' %}border-[#3b82f6] border-b-[4px] bg-[#f0f0f0]{% endif %}"
+          >
+            <a
+              class="flex justify-center items-center h-full tracking-tight px-4 font-medium"
+              href="{% upload_requirements' %}"
+              >Medical Requirements Upload</a
+            >
           </li>
-          <li class="h-full transition-all hover:bg-[#f0f0f0] text-center leading-tight hover:border-b-[4px] hover:border-[#3b82f6] {% if request.resolver_match.url_name == 'dentalservice' %}border-[#3b82f6] border-b-[4px] bg-[#f0f0f0]{% endif %}">
-              <a class="flex justify-center items-center h-full tracking-tight px-4 font-medium " href="{% url 'medical:dentalservice' %}">Dental Services Availment</a>
+          <li
+            class="h-full transition-all hover:bg-[#f0f0f0] text-center leading-tight hover:border-b-[4px] hover:border-[#3b82f6] {% if request.resolver_match.url_name == 'dentalservice' %}border-[#3b82f6] border-b-[4px] bg-[#f0f0f0]{% endif %}"
+          >
+            <a
+              class="flex justify-center items-center h-full tracking-tight px-4 font-medium"
+              href="{% dentalservice' %}"
+              >Dental Services Availment</a
+            >
           </li>
-            <li class="flex items-center gap-2 ml-auto">
-              <span class="font-semibold text-black text-center">{{ user.get_full_name|default:user.username }}</span>
-              <a class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] px-4 font-medium hover:border-b-[4px] hover:border-[#3b82f6] transition-all text-blue-600 border border-blue-200 rounded" href="{% url 'main:logout' %}">Logout</a>
+          <li class="flex items-center gap-2 ml-auto">
+            <span class="font-semibold text-black text-center"
+              >{{ user.get_full_name|default:user.username }}</span
+            >
+            <a
+              class="flex justify-center items-center h-full tracking-tight hover:bg-[#f0f0f0] px-4 font-medium hover:border-b-[4px] hover:border-[#3b82f6] transition-all text-blue-600 border border-blue-200 rounded"
+              href="{% url 'main:logout' %}"
+              >Logout</a
+            >
           </li>
           {% endif %}
         </ul>
@@ -203,56 +227,54 @@
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:patient_profile' %}"
+                href="{% patient_profile' %}"
                 >Patient Profile</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:viewrequest' %}"
+                href="{% viewrequest' %}"
                 >View Requests</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:medtracker' %}"
+                href="{% medtracker' %}"
                 >Medical Requirements Tracker</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:emergency_asst' %}"
+                href="{% emergency_asst' %}"
                 >Emergency Health Assistance</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
-              <a
-                class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:pwdlist' %}"
+              <a class="p-3 font-bold text-black w-full" href="{% pwdlist' %}"
                 >PWD Profile</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:dentalrequest' %}"
+                href="{% dentalrequest' %}"
                 >Dental Services</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:prescription' %}"
+                href="{% prescription' %}"
                 >Prescription Issuance</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:transactions' %}"
+                href="{% transactions' %}"
                 >Transaction Reports</a
               >
             </li>
@@ -272,23 +294,21 @@
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
-              <a
-                class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:request' %}"
+              <a class="p-3 font-bold text-black w-full" href="{% request' %}"
                 >Documentary Request</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:upload_requirements' %}"
+                href="{% upload_requirements' %}"
                 >Medical Requirements Upload</a
               >
             </li>
             <li class="menu-item border-b border-[#e6e6e6] flex">
               <a
                 class="p-3 font-bold text-black w-full"
-                href="{% url 'medical:dentalservice' %}"
+                href="{% dentalservice' %}"
                 >Dental Services Availment</a
               >
             </li>

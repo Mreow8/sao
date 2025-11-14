@@ -1,178 +1,301 @@
-{% extends 'mainv2.html' %}
-{% load static tailwind_tags %}
-
-{% block title %}Medical Certificate{% endblock %}
-
-{% block extra_css %}
-    <link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="w-full h-fit rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-2">
-    {% comment %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="{{ message.tags }} p-2 rounded-md">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-    {% endcomment %}
-    <form action="" method="POST" class="flex flex-col gap-4 w-full">
-        {% csrf_token %}
-        <div class="flex items-center self-center gap-4">
-            <img class="size-[8rem]" src="{% static 'images/CTU_logo.png' %}" alt="CTU_logo">
-            <div class="flex flex-col items-center">
-                <div class="content1">REPUBLIC OF THE PHILIPPINES</div>
-                <div class="content2">CEBU TECHNOLOGICAL UNIVERSITY</div>
-                <div class="content3">ARGAO CAMPUS</div>
-                <div class="content4">Ed Kintanar Street, Lamacan, Argao, Cebu</div>
-                <div class="content4">Website: https://www.argao.ctu.edu.ph E-mail: cdargao@ctu.edu.ph</div>
-                <div class="content4">Phone No.:(032) 401-0737 local 1700</div>
-            </div>
-            <img class="size-[8rem]" src="{% static 'images/BP_logo.png' %}" alt="BP_logo">
+{% extends 'adminmain.html' %} {% load static %} {% block title%}Medical
+Certificate{% endblock %} {% block headcontent %}
+<link
+  rel="stylesheet"
+  href="{% static 'styles/medical/admin/med_cert.css' %}"
+/>
+<link
+  rel="stylesheet"
+  media="print"
+  href="{% static 'styles/medical/print.css' %}"
+/>
+{% endblock %} {% block bodycontent %}
+<div class="form-container">
+  <form action="" method="POST" class="certificate-form">
+    {% csrf_token %}
+    <div class="certificate-header">
+      <img
+        class="logo"
+        src="{% static 'images/CTU_logo.png' %}"
+        alt="CTU_logo"
+      />
+      <div class="header-text">
+        <div class="content1">REPUBLIC OF THE PHILIPPINES</div>
+        <div class="content2">CEBU TECHNOLOGICAL UNIVERSITY</div>
+        <div class="content3">ARGAO CAMPUS</div>
+        <div class="content4">Ed Kintanar Street, Lamacan, Argao, Cebu</div>
+        <div class="content4">
+          Website: https://www.argao.ctu.edu.ph E-mail: cdargao@ctu.edu.ph
         </div>
-        <div class="flex flex-col">
-            <h1 class="text-center font-bold text-[1.3rem] py-4">PARENT'S CONSENT</h1>
-            <fieldset class="flex flex-col gap-2 py-4">
-                <p>
-                    TO WHOM IT MAY CONCERN
-                </p>
-                <p>
-                    This is to certify that I allow my son/daughter 
-                    <input type="text" value="{{ patient.user.get_full_name|default_if_none:'' }}" style="outline: none;" readonly> to participate as athlete in the CTU INTRAMURALS GAME. I understand that the
-                    benefits that our child may derive from this activity and I am giving my consent with the understanding that all precautionary measures be undertaken to
-                    ensure the safety of my child. However, I will not hold the Cebu Technological University Argao - Campus or any of its representatives responsible for any
-                    incident that may occur.
-                </p>
-                <div class="flex justify-between mt-14">
-                    <p class="border-t border-black pt-2">Signature of Parent over Printed Name With Contact Number</p>
-                </div>
-            </fieldset>
-            <h1 class="text-center font-bold text-[1.3rem] py-4">MEDICAL CERTIFICATE</h1>
-            <fieldset class="flex flex-col gap-2 py-4">
-                <div class="flex gap-2">
-                    <div class="flex flex-col w-full">
-                        <span class="details">Name</span>
-                        <input type="text" value="{{ student.firstname|default_if_none:'' }} {{ student.lastname|default_if_none:'' }}" name="name" required>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <span class="details">College</span>
-                        <input type="text" name="college" value="{{ cedicalcertificate.college|default_if_none:'' }}" required>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <span class="details">Year</span>
-                        <input type="text" name="year" value="{{ cedicalcertificate.year|default_if_none:'' }}" required>
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                    <div class="flex flex-col w-full">
-                        <span class="details">Sex</span>
-                        <input type="text" name="sex" value="{{ student.sex|default_if_none:'' }}" required>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <span class="details">Age</span>
-                        <input type="number" name="age" value="{{ patient.age|default_if_none:'' }}" placeholder="Enter age" required>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <span class="details">Height</span>
-                        <input type="text" name="height" value="{{ patient.height|default_if_none:'' }}" placeholder="Enter height" required>
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                     <div class="flex flex-col w-full">
-                        <span class="details">Weight</span>
-                        <input type="text" name="weight" value="{{ patient.weight|default_if_none:'' }}" placeholder="Enter weight" required>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <span class="details">BP</span>
-                        <input type="text" name="bp" value="{{ cedicalcertificate.bp|default_if_none:'' }}" placeholder="Enter BP" required>
-                    </div>
-                     <div class="flex flex-col w-full">
-                        <span class="details">P</span>
-                        <input type="text" name="p" value="{{ cedicalcertificate.p|default_if_none:'' }}" placeholder="Enter P" required>
-                    </div>
-                </div>
-                 <div class="flex gap-2">
-                     <div class="flex flex-col w-full">
-                        <span class="details">T</span>
-                        <input type="text" name="t" value="{{ cedicalcertificate.t|default_if_none:'' }}" placeholder="Enter T" required>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <span class="details">RR</span>
-                        <input type="text" name="rr" value="{{ cedicalcertificate.rr|default_if_none:'' }}" placeholder="Enter RR" required>
-                    </div>
-                      <div class="flex flex-col w-full">
-                        <span class="details">.</span>{# Placeholder for alignment #}
-                        <input type="text" value="" style="visibility: hidden;">
-                    </div>
-                </div>
-                <div class="flex flex-col w-full">
-                    <span class="details">Sports played: (Please write all)</span>
-                    <input type="text" name="sports_played" value="{{ cedicalcertificate.sports_played|default_if_none:'' }}" required>
-                </div>
-                <div class="flex items-center gap-4">
-                    <span>This individual is physically</span>
-                    <label><input type="radio" name="able" value="on" {% if cedicalcertificate.physically_able %}checked{% endif %}> Able</label>
-                    <label><input type="radio" name="not-able" value="on" {% if cedicalcertificate.physically_not_able %}checked{% endif %}> Not Able</label>
-                    <span>to participate as athlete in the INTRAMURAL GAMES</span>
-                </div>
-                <div class="flex justify-between mt-14">
-                     <div class="flex flex-col">
-                        <p>Examining Physician:</p>
-                        <p class="border-t border-black pt-2">Name and Signature</p>
-                    </div>
-                    <div class="flex flex-col">
-                        <p>College Nurse:</p>
-                        <p class="border-t border-black pt-2">Name and Signature</p>
-                    </div>
-                </div>
-                <div class="flex flex-col mt-4">
-                     <p>Date: <input type="text" name="date" value="{% if cedicalcertificate.date_created %}{{ cedicalcertificate.date_created|date:'m/d/Y' }}{% endif %}" style="outline: none;" readonly></p>
-                </div>
-            </fieldset>
-            <div class="py-8"><img src="{% static 'images/footer.png' %}" alt=""></div>
+        <div class="content4">Phone No.:(032) 401-0737 local 1700</div>
+      </div>
+      <img
+        class="logo"
+        src="{% static 'styles/studentlife/images/BagongPilipinaslogo.png' %}"
+        alt="BP_logo"
+      />
+    </div>
+
+    <div class="form-content-wrapper">
+      <h1 class="form-title">PARENT'S CONSENT</h1>
+      <fieldset class="form-section">
+        <p>TO WHOM IT MAY CONCERN</p>
+        <p>
+          This is to certify that I allow my son/daughter
+          <input
+            type="text"
+            class="inline-input"
+            value="{{ patient.user.get_full_name|default_if_none:'' }}"
+            style="outline: none"
+            readonly
+          />
+          to participate as athlete in the CTU INTRAMURALS GAME. I understand
+          that the benefits that our child may derive from this activity and I
+          am giving my consent with the understanding that all precautionary
+          measures be undertaken to ensure the safety of my child. However, I
+          will not hold the Cebu Technological University Argao - Campus or any
+          of its representatives responsible for any incident that may occur.
+        </p>
+        <div class="signature-box-row single">
+          <p class="signature-line">
+            Signature of Parent over Printed Name With Contact Number
+          </p>
         </div>
-        <div class="flex justify-between w-full">
-            <div class="flex">
-                <a class="border border-yellow-400 rounded-md p-2" href="{% url 'medical:viewrequest' %}">Back</a>
-            </div>
-            <div class="flex gap-1">
-                <input class="bg-blue-500 text-white rounded-md p-2" type="submit" value="Save">
-                <input class="bg-yellow-400 text-white rounded-md p-2" type="button" value="Print" onclick="printSpecificContent()">
-            </div>
-            
+      </fieldset>
+
+      <h1 class="form-title">MEDICAL CERTIFICATE</h1>
+      <fieldset class="form-section">
+        <div class="form-row">
+          <div class="input-group">
+            <span class="details">Name</span>
+            <input
+              type="text"
+              value="{{ student.firstname|default_if_none:'' }} {{ student.lastname|default_if_none:'' }}"
+              name="name"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <span class="details">College</span>
+            <input
+              type="text"
+              name="college"
+              value="{{ cedicalcertificate.college|default_if_none:'' }}"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <span class="details">Year</span>
+            <input
+              type="text"
+              name="year"
+              value="{{ cedicalcertificate.year|default_if_none:'' }}"
+              required
+            />
+          </div>
         </div>
-    </form>
+        <div class="form-row">
+          <div class="input-group">
+            <span class="details">Sex</span>
+            <input
+              type="text"
+              name="sex"
+              value="{{ student.sex|default_if_none:'' }}"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <span class="details">Age</span>
+            <input
+              type="number"
+              name="age"
+              value="{{ patient.age|default_if_none:'' }}"
+              placeholder="Enter age"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <span class="details">Height</span>
+            <input
+              type="text"
+              name="height"
+              value="{{ patient.height|default_if_none:'' }}"
+              placeholder="Enter height"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <span class="details">Weight</span>
+            <input
+              type="text"
+              name="weight"
+              value="{{ patient.weight|default_if_none:'' }}"
+              placeholder="Enter weight"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <span class="details">BP</span>
+            <input
+              type="text"
+              name="bp"
+              value="{{ cedicalcertificate.bp|default_if_none:'' }}"
+              placeholder="Enter BP"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <span class="details">P</span>
+            <input
+              type="text"
+              name="p"
+              value="{{ cedicalcertificate.p|default_if_none:'' }}"
+              placeholder="Enter P"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <span class="details">T</span>
+            <input
+              type="text"
+              name="t"
+              value="{{ cedicalcertificate.t|default_if_none:'' }}"
+              placeholder="Enter T"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <span class="details">RR</span>
+            <input
+              type="text"
+              name="rr"
+              value="{{ cedicalcertificate.rr|default_if_none:'' }}"
+              placeholder="Enter RR"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <span class="details" style="color: transparent">.</span>
+            <input type="text" value="" style="visibility: hidden" />
+          </div>
+        </div>
+        <div class="input-group">
+          <span class="details">Sports played: (Please write all)</span>
+          <input
+            type="text"
+            name="sports_played"
+            value="{{ cedicalcertificate.sports_played|default_if_none:'' }}"
+            required
+          />
+        </div>
+        <div class="radio-group">
+          <span>This individual is physically</span>
+          <label
+            ><input
+              type="radio"
+              name="able"
+              value="on"
+              {%
+              if
+              cedicalcertificate.physically_able
+              %}checked{%
+              endif
+              %}
+            />
+            Able</label
+          >
+          <label
+            ><input
+              type="radio"
+              name="not-able"
+              value="on"
+              {%
+              if
+              cedicalcertificate.physically_not_able
+              %}checked{%
+              endif
+              %}
+            />
+            Not Able</label
+          >
+          <span>to participate as athlete in the INTRAMURAL GAMES</span>
+        </div>
+        <div class="signature-box-row double">
+          <div class="signature-box">
+            <p>Examining Physician:</p>
+            <p class="signature-line">Name and Signature</p>
+          </div>
+          <div class="signature-box">
+            <p>College Nurse:</p>
+            <p class="signature-line">Name and Signature</p>
+          </div>
+        </div>
+        <div class="date-box">
+          <p>
+            Date:
+            <input
+              type="text"
+              class="inline-input"
+              name="date"
+              value="{% if cedicalcertificate.date_created %}{{ cedicalcertificate.date_created|date:'m/d/Y' }}{% endif %}"
+              style="outline: none"
+              readonly
+            />
+          </p>
+        </div>
+      </fieldset>
+      <div class="certificate-footer">
+        <img src="{% static 'images/footer.png' %}" alt="" />
+      </div>
+    </div>
+
+    <div class="button-container">
+      <div class="button-left">
+        <a class="btn btn-back" href="{% url 'viewrequest' %}">Back</a>
+      </div>
+      <div class="button-right">
+        <input class="btn btn-save" type="submit" value="Save" />
+        <input
+          class="btn btn-print"
+          type="button"
+          value="Print"
+          onclick="printSpecificContent()"
+        />
+      </div>
+    </div>
+  </form>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script id="messages-data" type="application/json">
-    {{ messages_json|safe }}
+  {{ messages_json|safe }}
 </script>
 <script>
-    function printSpecificContent() {
-        const printContent = document.querySelector('.flex.flex-col').innerHTML; // Target the main content div
-        const originalContent = document.body.innerHTML;
+  /*
+    This is the NEW, simpler print function. 
+    It just calls window.print() and lets your
+    <link media="print"> CSS file do all the work.
+  */
+  function printSpecificContent() {
+    window.print();
+  }
 
-        document.body.innerHTML = printContent;
-        window.print();
-        document.body.innerHTML = originalContent;
-        location.reload(true); // Reload to restore original page content
-    }
+  document.addEventListener("DOMContentLoaded", function () {
+    const messagesJson = document.getElementById("messages-data").textContent;
+    const messages = JSON.parse(messagesJson);
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const messagesJson = document.getElementById('messages-data').textContent;
-        const messages = JSON.parse(messagesJson);
-
-        messages.forEach(function(message) {
-            Swal.fire({
-                icon: message.tags,
-                title: 'Notification',
-                text: message.text,
-                confirmButtonText: 'OK'
-            });
-        });
+    messages.forEach(function (message) {
+      Swal.fire({
+        icon: message.tags,
+        title: "Notification",
+        text: message.text,
+        confirmButtonText: "OK",
+      });
     });
+  });
 </script>
 {% endblock %}

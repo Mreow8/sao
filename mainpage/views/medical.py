@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from datetime import datetime
 from datetime import date
 import smtplib
+from datetime import datetime
+import datetime as dt
 from ..decorators import profile_complete_required
 from django.utils import timezone
 from datetime import timedelta  
@@ -521,7 +523,7 @@ def patient_profile(request):
                 except (studentInfo.DoesNotExist, User.DoesNotExist):
                     # If not found as a student, try finding as faculty
                     try:
-                        faculty = Faculty.objects.get(faculty_id=search_id)
+                        faculty = Faculty.objects.get(staffID=search_id)
                         user = faculty.user
                         patient = Patient.objects.filter(user=user).first()
                         filtered_faculty.append({
@@ -560,7 +562,7 @@ def view_request(request):
     pending_faculty_requests = FacultyRequest.objects.select_related('faculty', 'faculty__user').filter(status='pending')
     print('DEBUG: FacultyRequest objects in pending_faculty_requests:')
     for request_obj in pending_faculty_requests:
-        print(f"Request ID: {request_obj.request_id}, Faculty: {request_obj.faculty}, Faculty ID: {getattr(request_obj.faculty, 'faculty_id', None)}, Faculty User: {getattr(request_obj.faculty, 'user', None)}")
+        print(f"Request ID: {request_obj.request_id}, Faculty: {request_obj.faculty}, Faculty ID: {getattr(request_obj.faculty, 'staffID', None)}, Faculty User: {getattr(request_obj.faculty, 'user', None)}")
     accepted_faculty_requests = FacultyRequest.objects.select_related('faculty', 'faculty__user').filter(status='accepted')
     completed_faculty_requests = FacultyRequest.objects.select_related('faculty', 'faculty__user').filter(status='completed')
 
@@ -625,47 +627,47 @@ def view_request(request):
     for request_obj in pending_faculty_requests:
         try:
             if request_obj.faculty and request_obj.faculty.user:
-                request_obj.faculty_id_display = request_obj.faculty.faculty_id or "N/A"
+                request_obj.staffID_display = request_obj.faculty.staffID or "N/A"
                 request_obj.faculty_first_name = request_obj.faculty.user.first_name or "N/A"
                 request_obj.faculty_last_name = request_obj.faculty.user.last_name or "N/A"
             else:
-                request_obj.faculty_id_display = "N/A"
+                request_obj.staffID_display = "N/A"
                 request_obj.faculty_first_name = "N/A"
                 request_obj.faculty_last_name = "N/A"
         except Faculty.DoesNotExist:
-            request_obj.faculty_id_display = "N/A"
+            request_obj.staffID_display = "N/A"
             request_obj.faculty_first_name = "N/A"
             request_obj.faculty_last_name = "N/A"
-        print(f"DEBUG: request_obj.faculty_id_display = {request_obj.faculty_id_display}")  # Debug print statement
+        print(f"DEBUG: request_obj.staffID_display = {request_obj.staffID_display}")  # Debug print statement
 
     for request_obj in accepted_faculty_requests:
         try:
             if request_obj.faculty and request_obj.faculty.user:
-                request_obj.faculty_id_display = request_obj.faculty.faculty_id or "N/A"
+                request_obj.staffID_display = request_obj.faculty.staffID or "N/A"
                 request_obj.faculty_first_name = request_obj.faculty.user.first_name or "N/A"
                 request_obj.faculty_last_name = request_obj.faculty.user.last_name or "N/A"
             else:
-                request_obj.faculty_id_display = "N/A"
+                request_obj.staffID_display = "N/A"
                 request_obj.faculty_first_name = "N/A"
                 request_obj.faculty_last_name = "N/A"
         except Faculty.DoesNotExist:
-            request_obj.faculty_id_display = "N/A"
+            request_obj.staffID_display = "N/A"
             request_obj.faculty_first_name = "N/A"
             request_obj.faculty_last_name = "N/A"
-        print(f"DEBUG: [ACCEPTED] faculty={request_obj.faculty}, faculty_id={getattr(request_obj.faculty, 'faculty_id', None)}, user={getattr(request_obj.faculty, 'user', None)}, first_name={getattr(getattr(request_obj.faculty, 'user', None), 'first_name', None)}, last_name={getattr(getattr(request_obj.faculty, 'user', None), 'last_name', None)}")
+        print(f"DEBUG: [ACCEPTED] faculty={request_obj.faculty}, staffID={getattr(request_obj.faculty, 'staffID', None)}, user={getattr(request_obj.faculty, 'user', None)}, first_name={getattr(getattr(request_obj.faculty, 'user', None), 'first_name', None)}, last_name={getattr(getattr(request_obj.faculty, 'user', None), 'last_name', None)}")
 
     for request_obj in completed_faculty_requests:
         try:
             if request_obj.faculty and request_obj.faculty.user:
-                request_obj.faculty_id = request_obj.faculty.faculty_id or "N/A"
+                request_obj.staffID = request_obj.faculty.staffID or "N/A"
                 request_obj.faculty_first_name = request_obj.faculty.user.first_name or "N/A"
                 request_obj.faculty_last_name = request_obj.faculty.user.last_name or "N/A"
             else:
-                request_obj.faculty_id = "N/A"
+                request_obj.staffID = "N/A"
                 request_obj.faculty_first_name = "N/A"
                 request_obj.faculty_last_name = "N/A"
         except Faculty.DoesNotExist:
-            request_obj.faculty_id = "N/A"
+            request_obj.staffID = "N/A"
             request_obj.faculty_first_name = "N/A"
             request_obj.faculty_last_name = "N/A"
 
@@ -912,7 +914,7 @@ def physical_examination(request, id):
                 patient = Patient.objects.get(user=user)
             else:
                 # If not a student, try to get a Faculty
-                faculty = Faculty.objects.filter(faculty_id=id).first()
+                faculty = Faculty.objects.filter(staffID=id).first()
                 if faculty:
                     user = faculty.user
                     patient = Patient.objects.filter(user=user).first() # Faculty may or may not have a patient record
@@ -1170,203 +1172,234 @@ def physical_examination(request, id):
 
 # Record prescriptions
 
-
-
 def prescription(request):
+    
+    # Helper function to get context data (for GET request or POST error)
+    def get_form_context():
+        all_users = []
+        
+        # 1. Get all students
+        students = studentInfo.objects.all()
+        for student in students:
+            all_users.append({
+                'id': student.studID,
+                'name': f"{student.firstname} {student.lastname}"
+            })
+        
+        # 2. Get all staff
+        staff_list = staffInfo.objects.all()
+        for staff in staff_list:
+            all_users.append({
+                'id': staff.staffID,
+                'name': f"{staff.firstname} {staff.lastname}"
+            })
+
+        return {
+            'all_users': all_users,
+            'today_date': dt.date.today().isoformat()
+        }
+
+    # --- GET REQUEST ---
+    # Show the empty form with the user list
+    if request.method == "GET":
+        context = get_form_context()
+        return render(request, "medical/admin/prescription.html", context)
+
+    # --- POST REQUEST ---
+    # Save the new record
     if request.method == "POST":
+        # Get data from the form
         id_number = request.POST.get("student_id")
-        name = request.POST.get("name")
         problem = request.POST.get("problem")
         treatment = request.POST.get("treatment")
         str_date_prescribed = request.POST.get("date_prescribed")
+        
+        # Get context again in case we need to re-render the form on error
+        base_context = get_form_context()
+        
+        # Add POST data to context for re-populating the form
+        base_context['id_number'] = id_number
+        base_context['problem'] = problem
+        base_context['treatment'] = treatment
+        base_context['date_prescribed'] = str_date_prescribed
 
-        form_data = {
-            'student_id': id_number,
-            'name': name,
-            'problem': problem,
-            'treatment': treatment,
-            'date_prescribed': str_date_prescribed
-        }
-
+        # Validate date
         try:
-            date_prescribed = datetime.strptime(str_date_prescribed, "%Y-%m-%d")
+            # Convert to a date object for the DateField
+            date_prescribed = datetime.strptime(str_date_prescribed, "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid date format.")
+            return render(request, "medical/admin/prescription.html", base_context)
 
-            # Default values
-            user = None
-            patient = None
-            user_type = None
-            user_name = ""
-
-            # Check if ID belongs to a student
-            student = studentInfo.objects.filter(studID=id_number).first()
-            staff = None
-
-            if student:
-                user_type = "student"
-                user_name = f"{student.firstname} {student.lastname}".title()
-                try:
-                    user = User.objects.get(username=student.studID)
-                except User.DoesNotExist:
-                    user = None
+        patient = None
+        
+        try:
+            # === STEP 1: Find the Student or Staff object ===
+            student_obj = studentInfo.objects.filter(studID=id_number).first()
+            staff_obj = None
+            
+            if student_obj:
+                # === STEP 2 (Student): Get or Create Patient ===
+                patient, created = Patient.objects.get_or_create(student=student_obj)
             else:
-                # Check if ID belongs to a staff member
-                staff = Faculty.objects.filter(staffID=id_number).first()
-                if staff:
-                    user_type = "staff"
-                    user_name = f"{staff.firstname} {staff.lastname}".title()
-                    user = getattr(staff, "user", None)
-                else:
-                    # Neither student nor staff found
-                    messages.error(request, f"No record found for ID: {id_number}.")
-                    return render(request, "medical/admin/prescription.html", form_data)
+                staff_obj = staffInfo.objects.filter(staffID=id_number).first()
+                if staff_obj:
+                    # === STEP 2 (Staff): Get or Create Patient ===
+                    # (Based on your model: Patient.faculty -> staffInfo)
+                    patient, created = Patient.objects.get_or_create(faculty=staff_obj)
+            
+            if not patient:
+                messages.error(request, f"No student or staff profile found for ID: {id_number}.")
+                return render(request, "medical/admin/prescription.html", base_context)
 
-            # Validate name (optional but recommended)
-            if name and user_name and name.lower() != user_name.lower():
-                messages.error(request, "The entered name does not match the name associated with the ID Number.")
-                return render(request, "medical/admin/prescription.html", form_data)
+            if created:
+                messages.info(request, f"New patient profile created for ID {id_number}.")
 
-            # Create Patient profile if user exists
-            if user:
-                patient, created = Patient.objects.get_or_create(user=user)
-                if created:
-                    messages.info(request, f"A new patient profile was created for {user_name} (ID: {id_number}).")
-
-            # Create PrescriptionRecord
+            # === STEP 3: Create the Prescription Record ===
+            # We are no longer saving name, id_number, or user_type
             PrescriptionRecord.objects.create(
-                patient=patient if user else None,
-                id_number=id_number,
-                user_type=user_type,
-                name=user_name,
+                patient=patient,
                 problem=problem,
                 treatment=treatment,
                 date_prescribed=date_prescribed
             )
+            
+            messages.success(request, "Prescription Record Saved Successfully")
+            # record_transaction(patient, "Prescription Issued") # If you have this
+            
+            # Use the app_name in your redirect
+            return redirect('prescription') # Redirect to clear the form
 
-            if not user:
-                messages.info(request, f"Prescription issued for {user_name} (ID: {id_number}) even without a user account.")
-
-            messages.success(request, "Prescription record saved successfully.")
-            return redirect('prescription')
-
-        except ValueError:
-            messages.error(request, "Invalid date format provided.")
-            return render(request, "medical/admin/prescription.html", form_data)
         except Exception as e:
-            messages.error(request, f"An unexpected error occurred: {str(e)}")
-            return render(request, "medical/admin/prescription.html", form_data)
-
-    # GET request
-    return render(request, "medical/admin/prescription.html", {})
-
-
+            messages.error(request, f"An error occurred: {str(e)}")
+            return render(request, "medical/admin/prescription.html", base_context)
 def get_user_name_by_id(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        id_number = data.get("student_id")
-
         try:
+            data = json.loads(request.body)
+            id_number = data.get("student_id")
+
+            if not id_number:
+                return JsonResponse({"error": "No ID provided"}, status=400)
+
             # Try to find a Student first
             student = studentInfo.objects.filter(studID=id_number).first()
             if student:
                 user_name = f"{student.firstname} {student.lastname}".title()
                 return JsonResponse({"user_name": user_name})
-            else:
-                # If not a student, try to find a Staff member using the correct field name
-                staff = staffInfo.objects.filter(staffID=id_number).first()
-                if staff:
-                    # Use the name from the staffInfo record itself
-                    user_name = f"{staff.firstname} {staff.lastname}".title()
-                    return JsonResponse({"user_name": user_name})     
-                else:
-                    return JsonResponse({"error": "User not found"}, status=404)
+            
+            # If not a student, try to find a Staff member
+            staff = staffInfo.objects.filter(staffID=id_number).first()
+            if staff:
+                user_name = f"{staff.firstname} {staff.lastname}".title()
+                return JsonResponse({"user_name": user_name})
+            
+            # If neither was found
+            return JsonResponse({"error": "User not found"}, status=404)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
         except Exception as e:
             return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
-            
+    
     return JsonResponse({"error": "Invalid request method"}, status=405)
-# Record Emergency Health Assistance
-
 def emergency_asst(request):
-        if request.method == "POST":
-            # Get the ID number from the form
-            id_number = request.POST.get("student_id") # The input name is 'student_id' but it can be faculty ID
-            name = request.POST.get("name")
-            reason = request.POST.get("problem")
-            str_date_assisted = request.POST.get("date_assisted")
-
-            # Validate date format and convert to datetime object
-            try:
-                date_assisted = datetime.strptime(str_date_assisted, "%Y-%m-%d").date() # Store as date
-            except ValueError:
-                messages.error(request, "Invalid date format.")
-                return render(request, "medical/admin/emergency_asst.html", {})
-
-            user = None
-            patient = None
-            user_name = ""
-
-            try:
-                # Try to find a Student first
-                student = studentInfo.objects.filter(studID=id_number).first()
-                if student:
-                    user = User.objects.get(username=student.studID)
-                    user_name = f"{student.firstname} {student.lastname}"
-                    # Get or create patient for student
-                    patient, created = Patient.objects.get_or_create(user=user)
-                    if created:
-                        messages.info(request, f"Patient profile created for student {id_number}.")
-                else:
-                    # If not a student, try to find a Faculty
-                    faculty = Faculty.objects.filter(faculty_id=id_number).first()
-                    if faculty:
-                        user = faculty.user
-                        user_name = faculty.user.get_full_name() or faculty.user.username
-                        # Get or create patient for faculty
-                        patient, created = Patient.objects.get_or_create(user=user)
-                        if created:
-                             messages.info(request, f"Patient profile created for faculty {id_number}.")
-
-                # If neither student nor faculty was found
-                if not user or not patient:
-                    messages.error(request, f"No student or faculty found with ID: {id_number} or could not create patient profile.")
-                    return render(request, "medical/admin/emergency_asst.html", {})
-
-                # Validate inputted name against the retrieved user's name (case-insensitive)
-                if name.lower() != user_name.lower():
-                    messages.error(request, "The entered name does not match the name associated with the inputted ID Number.")
-                    # Return existing values to the form for correction
-                    return render(request, "medical/admin/emergency_asst.html", {
-                        'id_number': id_number,
-                        'name': name,
-                        'reason': reason,
-                        'date_assisted': str_date_assisted # Pass back as string
-                    })
-
-                # Create EmergencyHealthAssistanceRecord
-                EmergencyHealthAssistanceRecord.objects.create(
-                    name=user_name, # Use the verified name from the database
-                    patient=patient,
-                    reason=reason,
-                    date_assisted=date_assisted
-                )
-                messages.success(request, "Record Saved")
-
-                # Record transaction
-                record_transaction(patient, "Emergency Health Assistance")
-
-                # Redirect after successful save and transaction recording
-                return redirect('emergency_asst')
-
-            except User.DoesNotExist:
-                 messages.error(request, f"User account not found for ID: {id_number}.")
-                 return render(request, "medical/admin/emergency_asst.html", {})
-            except Exception as e:
-                messages.error(request, f"An error occurred: {str(e)}")
-                return render(request, "medical/admin/emergency_asst.html", {})
+    
+    # Helper function to get context data (for GET request or POST error)
+    def get_form_context():
+        all_users = []
         
-        # For GET requests, render the empty form
-        return render(request, "medical/admin/emergency_asst.html", {})
+        # 1. Get all students
+        students = studentInfo.objects.all()
+        for student in students:
+            all_users.append({
+                'id': student.studID,
+                'name': f"{student.firstname} {student.lastname}"
+            })
+        
+        # 2. Get all staff
+        staff_list = staffInfo.objects.all()
+        for staff in staff_list:
+            all_users.append({
+                'id': staff.staffID,
+                'name': f"{staff.firstname} {staff.lastname}"
+            })
 
-# Helper function to record transactions
+        return {
+            'all_users': all_users,
+            'today_date': dt.date.today().isoformat()
+        }
+
+    # --- GET REQUEST ---
+    if request.method == "GET":
+        context = get_form_context()
+        return render(request, "medical/admin/emergency_asst.html", context)
+
+    # --- POST REQUEST ---
+    if request.method == "POST":
+        id_number = request.POST.get("student_id")
+        reason = request.POST.get("problem")
+        str_date_assisted = request.POST.get("date_assisted")
+        
+        base_context = get_form_context()
+
+        # Validate date
+        try:
+            date_assisted = datetime.strptime(str_date_assisted, "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid date format.")
+            return render(request, "medical/admin/emergency_asst.html", base_context)
+
+        patient = None
+        
+        try:
+            # === STEP 1: Find the Student or Staff object ===
+            # We are NOT looking for a 'User'
+            student_obj = studentInfo.objects.filter(studID=id_number).first()
+            staff_obj = None
+            
+            if student_obj:
+                # === STEP 2 (Student): Get or Create Patient ===
+                # We find the patient by linking to the studentInfo object
+                patient, created = Patient.objects.get_or_create(student=student_obj)
+                
+            else:
+                staff_obj = staffInfo.objects.filter(staffID=id_number).first()
+                if staff_obj:
+                    # === STEP 2 (Staff): Get or Create Patient ===
+                    # Find the patient by linking to the staffInfo object
+                    # (Based on your model: Patient.faculty -> staffInfo)
+                    patient, created = Patient.objects.get_or_create(faculty=staff_obj)
+                
+            # If no student OR staff was found, 'patient' will be None
+            if not patient:
+                # === THIS IS THE CORRECTED ERROR MESSAGE ===
+                messages.error(request, f"No student or staff profile found for ID: {id_number}.")
+                base_context['id_number'] = id_number
+                base_context['reason'] = reason
+                return render(request, "medical/admin/emergency_asst.html", base_context)
+
+            if created:
+                messages.info(request, f"New patient profile created for ID {id_number}.")
+
+            # === STEP 3: Create the Assistance Record ===
+            EmergencyHealthAssistanceRecord.objects.create(
+                patient=patient,  # Link to the patient
+                reason=reason,
+                date_assisted=date_assisted
+            )
+            
+            messages.success(request, "Record Saved Successfully")
+            # record_transaction(patient, "Emergency Health Assistance") # If you have this
+            
+            # Use the app_name in your redirect
+            return redirect('emergency_asst') # Redirect to clear the form
+
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+            base_context['id_number'] = id_number
+            base_context['reason'] = reason
+            return render(request, "medical/admin/emergency_asst.html", base_context)
 def record_transaction(patient, transac_type):
     TransactionRecord.objects.create(
         patient = patient, 
@@ -1386,7 +1419,7 @@ def submit_request(request):
         if student:
             id_number = student.studID
         elif faculty:
-            id_number = faculty.faculty_id
+            id_number = faculty.staffID
         return render(request, "medical/students/requestform.html", {"student": student, "faculty": faculty, "id_number": id_number})
 
     # --- POST REQUEST LOGIC ---
@@ -1428,7 +1461,7 @@ def submit_request(request):
     elif faculty_user:
         # Logged-in user is a faculty
         faculty = faculty_user
-        id_number = faculty.faculty_id
+        id_number = faculty.staffID
 
         if FacultyRequest.objects.filter(faculty=faculty, request_type=request_type).exists():
             messages.error(request, "You have already submitted this type of request")
@@ -1496,7 +1529,7 @@ def student_medical_requirements_tracker(request):
     user = None # Explicitly initialize user
     med_requirements = None
 
-    # Check for student_id or faculty_id in both POST and GET requests
+    # Check for student_id or staffID in both POST and GET requests
     id_to_process = request.POST.get("id_number") or request.GET.get("id_number")
 
     # --- Handle POST requests for saving remarks or updating status ---
@@ -1516,7 +1549,7 @@ def student_medical_requirements_tracker(request):
 
             else:
                 # If not a student, try to find a Faculty
-                faculty = Faculty.objects.filter(faculty_id=id_to_process).first()
+                faculty = Faculty.objects.filter(staffID=id_to_process).first()
                 if faculty:
                     user = faculty.user
                     med_requirements = MedicalRequirement.objects.filter(faculty=faculty).first()
@@ -1644,7 +1677,7 @@ def student_medical_requirements_tracker(request):
 
             else:
                 # If not a student, try to find a Faculty
-                faculty = Faculty.objects.filter(faculty_id=id_to_process).first()
+                faculty = Faculty.objects.filter(staffID=id_to_process).first()
                 if faculty:
                     user = faculty.user
                     med_requirements = MedicalRequirement.objects.filter(faculty=faculty).first()
@@ -1697,7 +1730,7 @@ def upload_requirements(request):
 
     if faculty:
         is_faculty = True
-        id_number = faculty.faculty_id
+        id_number = faculty.staffID
         try:
             # Faculty upload logic: get or create medical records linked to faculty
             md, created_md = MedicalRequirement.objects.get_or_create(faculty=faculty)
@@ -1932,7 +1965,7 @@ def dental_services(request):
     student = get_student_by_user(request.user)
     faculty = get_faculty_by_user(request.user)
     if faculty:
-        id_number = faculty.faculty_id
+        id_number = faculty.staffID
     elif student:
         id_number = student.studID
     else:
@@ -2059,7 +2092,7 @@ def dental_request(request):
                 # If not a student, try to get Faculty info
                 try:
                     faculty = Faculty.objects.get(user=user)
-                    request_item.user_id = faculty.faculty_id
+                    request_item.user_id = faculty.staffID
                     request_item.user_name = f"{faculty.user.last_name}, {faculty.user.first_name}"
                 except Faculty.DoesNotExist:
                     # User is neither student nor faculty (or not linked properly)
@@ -2094,7 +2127,7 @@ def dental_schedule(request):
                     # If not a student, try to get Faculty info
                     try:
                         faculty = Faculty.objects.get(user=user)
-                        schedule.id_number = faculty.faculty_id
+                        schedule.id_number = faculty.staffID
                         schedule.lastname = faculty.user.last_name
                         schedule.firstname = faculty.user.first_name
                     except Faculty.DoesNotExist:
@@ -2270,7 +2303,7 @@ def pwd_detail(request, id):
 
         # If not a student, try to find a Faculty
         if not user:
-            faculty = Faculty.objects.filter(faculty_id=id).first()
+            faculty = Faculty.objects.filter(staffID=id).first()
             if faculty:
                 user = faculty.user
 
@@ -2325,7 +2358,7 @@ def verify_pwd(request, id):
                 user = User.objects.get(username=student.studID)
             else:
                 # If not a student, try to find a Faculty
-                faculty = Faculty.objects.filter(faculty_id=id).first()
+                faculty = Faculty.objects.filter(staffID=id).first()
                 if faculty:
                     user = faculty.user
 
@@ -2385,7 +2418,7 @@ def unverify_pwd(request, id):
                 user = User.objects.get(username=student.studID)
             else:
                 # If not a student, try to find a Faculty
-                faculty = Faculty.objects.filter(faculty_id=id).first()
+                faculty = Faculty.objects.filter(staffID=id).first()
                 if faculty:
                     user = faculty.user
 
@@ -2437,41 +2470,36 @@ def unverify_pwd(request, id):
             messages.error(request, f"An unexpected error occurred: {str(e)}")
 
         return redirect('pwdlist')
-# List all record of prescriptions
+
 def view_prescription_records(request):
     if not request.user.is_superuser and not request.user.is_staff:
         return HttpResponseForbidden("You don't have permission to access this page.")
-    # Fetch all prescription records and select related patient and user
-    presc_record = PrescriptionRecord.objects.all().select_related('patient__user').order_by('-date_prescribed') # Order by date as well
+
+    # MODIFIED QUERY: Pre-fetch the related patient, student, and staff info
+    presc_record = PrescriptionRecord.objects.all().select_related(
+        'patient__student', 
+        'patient__faculty' # 'faculty' is the field name for staffInfo in your Patient model
+    ).order_by('-date_prescribed')
 
     # Attach the correct ID (Student ID or Faculty ID) and name to each record
     for prescription in presc_record:
         prescription.user_id_display = "N/A"
-        prescription.user_name_display = prescription.name # Use the name saved in the record by default
+        prescription.user_name_display = "N/A" # Default if patient is missing
 
-        if prescription.patient and prescription.patient.user:
-            user = prescription.patient.user
-            try:
-                # Try to get student first by user's email
-                student = studentInfo.objects.filter(emailadd=user.email).first()
-                if student:
-                    prescription.user_id_display = student.studID
-                    # Update name display if needed, though the saved name should be correct now
-                    # prescription.user_name_display = f"{student.firstname} {student.lastname}".title()
-                else:
-                    # If not a student, try to get faculty by user
-                    faculty = Faculty.objects.filter(user=user).first()
-                    if faculty:
-                        prescription.user_id_display = faculty.faculty_id
-                        # prescription.user_name_display = faculty.user.get_full_name() or faculty.user.username
-                    # If neither student nor faculty found, ID remains "N/A"
-            except Exception as e:
-                # Handle potential errors during lookup
-                prescription.user_id_display = f"Error: {e}"
-                # Keep the saved name in case of lookup error
+        if prescription.patient:
+            # Check if the patient is a student
+            if prescription.patient.student:
+                student = prescription.patient.student
+                prescription.user_id_display = student.studID
+                prescription.user_name_display = f"{student.firstname} {student.lastname}".title()
+            
+            # Check if the patient is staff (linked via 'faculty' field)
+            elif prescription.patient.faculty:
+                staff = prescription.patient.faculty
+                prescription.user_id_display = staff.staffID
+                prescription.user_name_display = f"{staff.firstname} {staff.lastname}".title()
 
     return render(request, "medical/admin/prescriptionrecords.html", {"prescription_records": presc_record})
-
 # List all record of emergency health assistance
 def view_emergency_health_records(request):
     if not request.user.is_superuser and not request.user.is_staff:
@@ -2491,7 +2519,7 @@ def view_emergency_health_records(request):
                     # If not a student, try to get faculty by user
                     faculty = Faculty.objects.filter(user=record.patient.user).first()
                     if faculty:
-                        record.user_id_display = faculty.faculty_id
+                        record.user_id_display = faculty.staffID
                     # If neither student nor faculty found, ID remains "N/A"
             except Exception as e:
                 # Handle potential errors during lookup
@@ -2543,7 +2571,7 @@ def transactions_view(request):
                     # If not a student, try to get faculty
                     faculty = Faculty.objects.filter(user=record.patient.user).first()
                     if faculty:
-                        record.student_id = faculty.faculty_id
+                        record.student_id = faculty.staffID
                     else:
                         record.student_id = "N/A"
             except Exception:
@@ -2593,7 +2621,7 @@ def monthly_transactions_view(request):
                         # If not a student, try to get faculty
                         faculty = Faculty.objects.filter(user=record.patient.user).first()
                         if faculty:
-                            record.student_id = faculty.faculty_id
+                            record.student_id = faculty.staffID
                         else:
                             record.student_id = "N/A"
                 except Exception:
@@ -2643,7 +2671,7 @@ def monthly_transactions_view(request):
                         # If not a student, try to get faculty
                         faculty = Faculty.objects.filter(user=record.patient.user).first()
                         if faculty:
-                            record.student_id = faculty.faculty_id
+                            record.student_id = faculty.staffID
                         else:
                             record.student_id = "N/A"
                 except Exception:
@@ -2689,7 +2717,7 @@ def daily_transactions_view(request):
                     # If not a student, try to get faculty
                     faculty = Faculty.objects.filter(user=record.patient.user).first()
                     if faculty:
-                        record.student_id = faculty.faculty_id
+                        record.student_id = faculty.staffID
                     else:
                         record.student_id = "N/A"
             except Exception:
@@ -2855,7 +2883,6 @@ def med_cert(request, student_id):
 #         form = UploadFileForm()
 #     return render(request, 'upload.html', {'form': form})
 
-
 def mental_health_view(request):
     student = None
     faculty = None
@@ -2867,15 +2894,13 @@ def mental_health_view(request):
     # Get search ID from either GET or POST request
     search_id = request.GET.get('search_id') or request.POST.get('search_id')
     
-    # Fetch all student and faculty mental health records for the lists
+    # Get all records
     student_mhr_list = MentalHealthRecord.objects.filter(
-        patient__isnull=False, 
-        is_availing_mental_health=True
+        patient__isnull=False
     ).select_related('patient__user')
     
     faculty_mhr_list = MentalHealthRecord.objects.filter(
-        faculty__isnull=False, 
-        is_availing_mental_health=True
+        faculty__isnull=False
     ).select_related('faculty__user')
 
     # If there's a search ID, fetch the single record for the Submitted Records section
@@ -2885,15 +2910,20 @@ def mental_health_view(request):
         try:
             student_obj = studentInfo.objects.filter(studID=search_id).first()
             if student_obj:
-                patient_obj = Patient.objects.filter(user__email=student_obj.email).first()
-                if patient_obj:
-                    fetched_student = student_obj
-                    fetched_patient = patient_obj
-                    fetched_mental_health_record = MentalHealthRecord.objects.filter(patient=patient_obj).first()
+                # --- THIS LOGIC IS ALSO WRONG, FIXING IT ---
+                # Was: patient_obj = Patient.objects.filter(user__email=student_obj.email).first()
+                user_obj = User.objects.filter(username=student_obj.studID).first()
+                if user_obj:
+                    patient_obj = Patient.objects.filter(user=user_obj).first()
+                    # --- END FIX ---
+                    if patient_obj:
+                        fetched_student = student_obj
+                        fetched_patient = patient_obj
+                        fetched_mental_health_record = MentalHealthRecord.objects.filter(patient=patient_obj).first()
 
             # If no mental health record found for a student, try to find a faculty and their associated mental health record
             if not fetched_mental_health_record:
-                faculty_obj = Faculty.objects.filter(faculty_id=search_id).first()
+                faculty_obj = Faculty.objects.filter(staffID=search_id).first()
                 if faculty_obj:
                     fetched_faculty = faculty_obj
                     fetched_mental_health_record = MentalHealthRecord.objects.filter(faculty=faculty_obj).first()
@@ -2906,30 +2936,49 @@ def mental_health_view(request):
             messages.error(request, f"Error fetching record for ID {search_id}: {e}")
 
     # Attach display details to mental health records lists
+    print("--- Processing Student MHR List ---")
     for record in student_mhr_list:
+        print(f"Processing Student MHR ID: {record.pk}, Availing: {record.is_availing_mental_health}, Status: {record.status}")
         try:
             if record.patient and record.patient.user:
-                student_obj = studentInfo.objects.get(email=record.patient.user.email)
-                record.id_number_display = student_obj.student_id
+                # --- THIS IS THE MAIN FIX ---
+                # Old line: student_obj = studentInfo.objects.get(email=record.patient.user.email)
+                student_obj = studentInfo.objects.get(studID=record.patient.user.username)
+                # --- END OF FIX ---
+
+                record.id_number_display = student_obj.studID # Changed from student_id
                 record.name_display = f'{student_obj.firstname} {student_obj.lastname}'
+                print(f"  SUCCESS: Linked to Student ID: {record.id_number_display}, Name: {record.name_display}")
             else:
                 record.id_number_display = "N/A"
                 record.name_display = "User/Patient Not Linked"
+                print("  ERROR: Record is missing Patient or Patient.user link")
         except studentInfo.DoesNotExist:
             record.id_number_display = "N/A"
             record.name_display = "Student Not Found"
-
-    for record in faculty_mhr_list:
-        try:
-            if record.faculty and record.faculty.user:
-                record.id_number_display = record.faculty.faculty_id
-                record.name_display = record.faculty.user.get_full_name() or record.faculty.user.username
-            else:
-                record.id_number_display = "N/A"
-                record.name_display = "User/Faculty Not Linked"
+            print(f"  ERROR: studentInfo.DoesNotExist for studID {record.patient.user.username}")
         except Exception as e:
             record.id_number_display = "Error"
             record.name_display = f"Error: {e}"
+            print(f"  ERROR: An unexpected error occurred: {e}")
+
+    print("--- Processing Faculty MHR List ---")
+    for record in faculty_mhr_list:
+        print(f"Processing Faculty MHR ID: {record.pk}, Availing: {record.is_availing_mental_health}, Status: {record.status}")
+        try:
+            if record.faculty and record.faculty.user:
+                record.id_number_display = record.faculty.staffID
+                record.name_display = record.faculty.user.get_full_name() or record.faculty.user.username
+                print(f"  SUCCESS: Linked to Faculty ID: {record.id_number_display}, Name: {record.name_display}")
+            else:
+                record.id_number_display = "N/A"
+                record.name_display = "User/Faculty Not Linked"
+                print("  ERROR: Record is missing Faculty or Faculty.user link")
+        except Exception as e:
+            record.id_number_display = "Error"
+            record.name_display = f"Error: {e}"
+            print(f"  ERROR: An unexpected error occurred: {e}")
+    # --- END OF DEBUGGING PRINTS ---
 
     # Handle POST requests for saving remarks or updating status
     if request.method == 'POST':
@@ -3120,16 +3169,20 @@ def mental_health_view(request):
             # Try to find a student first and get their associated patient
             student_obj = studentInfo.objects.filter(studID=search_id).first()
             if student_obj:
-                patient_obj = Patient.objects.filter(user__email=student_obj.email).first()
-                if patient_obj:
-                    fetched_student = student_obj
-                    fetched_patient = patient_obj
-                    # Fetch the mental health record using the patient object
-                    fetched_mental_health_record = MentalHealthRecord.objects.filter(patient=patient_obj).first()
+                # --- CORRECTED LOGIC FOR SEARCH ---
+                user_obj = User.objects.filter(username=student_obj.studID).first()
+                if user_obj:
+                    patient_obj = Patient.objects.filter(user=user_obj).first()
+                    # --- END FIX ---
+                    if patient_obj:
+                        fetched_student = student_obj
+                        fetched_patient = patient_obj
+                        # Fetch the mental health record using the patient object
+                        fetched_mental_health_record = MentalHealthRecord.objects.filter(patient=patient_obj).first()
 
             # If not found as a student, try to find a faculty and their associated mental health record
             if not fetched_mental_health_record:
-                faculty_obj = Faculty.objects.filter(faculty_id=search_id).first()
+                faculty_obj = Faculty.objects.filter(staffID=search_id).first()
                 if faculty_obj:
                     fetched_faculty = faculty_obj
                     # Fetch the mental health record using the faculty object
@@ -3154,8 +3207,6 @@ def mental_health_view(request):
     }
 
     return render(request, 'medical/admin/mental_health.html', context)
-
-
 def update_mental_health_status(request, pk):
     """
     View to update the status of a mental health record.

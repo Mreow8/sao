@@ -30,7 +30,7 @@
        
         <h3 class="xs:text-[14px] sm:text-base">{{ transaction_type|title }} As Of  {{ month_name}} {{ date_today }}, {{ year }}</h4>
     {% endif %}
-    <form class="flex w-full gap-2" method="get" action="{% url 'medical:transactions' %}">
+    <form class="flex w-full gap-2" method="get" action="{% transactions' %}">
             {% csrf_token %}
             <!-- Inside the form -->
     <select class="w-full" id="filter-dropdown" name="filter_option">
@@ -136,14 +136,14 @@
         var selectedYear = document.getElementById('year-dropdown').value;
         var transactionType = document.getElementById('transaction-type-dropdown').value;
         
-        var url = "{% url 'medical:transactions' %}";
+        var url = "{% transactions' %}";
         
         if (selectedOption === 'monthly') {
-            url = "{% url 'medical:monthly_transactions' %}?month=" + selectedMonth + "&year=" + selectedYear + "&type=" + transactionType;
+            url = "{% monthly_transactions' %}?month=" + selectedMonth + "&year=" + selectedYear + "&type=" + transactionType;
         } else if (selectedOption === 'daily') {
-            url = "{% url 'medical:daily_transactions' %}?type=" + transactionType;
+            url = "{% daily_transactions' %}?type=" + transactionType;
         } else {
-            url = "{% url 'medical:transactions' %}?type=" + transactionType;
+            url = "{% transactions' %}?type=" + transactionType;
         }
         
         window.location.href = url;

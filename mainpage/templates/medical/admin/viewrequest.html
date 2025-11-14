@@ -3,46 +3,72 @@
 {% block title %}HealthHub Connect | View Request{% endblock %} 
 {% block extra_css %}
 {% tailwind_css %}
-{%block headcontent%}
-<style>
-    .tab-button.active {
-        background-color: #3b82f6;
-        color: white;
-        border-color: #3b82f6;
-    }
-    .tab-button {
-        transition: all 0.2s ease-in-out;
-    }
-    .tab-content {
-        display: none;
-    }
-    .tab-content.active {
-        display: block;
-    }
-    .top-tab-button.active {
-        background-color: #1f2937;
-        color: white;
-    }
-    .top-tab-button {
-        padding: 0.5rem 1rem;
-        border-radius: 0.375rem;
-        transition: all 0.2s ease-in-out;
-    }
-</style>
-{% endblock %}
 {% endblock %}
 
 {% block bodycontent %}
 
-<div class="w-full h-screen rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-4">
+<style>
+.tab-button {
+  font-family: "Rubik", sans-serif;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  border: 2px solid #d1d5db;
+  background-color: #f9fafb;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.tab-button:hover:not(.active) {
+  background-color: #ffffff;
+  border-color: #9ca3af;
+}
+
+.tab-button.active {
+  background-color: #2c5282;
+  color: white;
+  border-color: #2c5282;
+  box-shadow: 0 2px 4px rgba(44, 82, 130, 0.2);
+}
+
+.tab-content {
+  display: none;
+  padding-top: 1.5rem;
+}
+
+.tab-content.active {
+  display: block;
+}
+/* --- Top Tab Styles (NEW) --- */
+.top-tab-button {
+  font-family: "Rubik", sans-serif;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: #f0f0f0; /* Light gray for inactive */
+  color: #333;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.top-tab-button.active {
+  background-color: #2c5282; /* Main theme color from requestgmc.css */
+  color: white;
+}
+</style>
+<div class="w-full min-h-screen bg-white xs:p-4 md:p-10 border border-gray-200 rounded-xl shadow-lg flex flex-col gap-4">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b pb-4">
-        <div>
-            <h2 class="font-bold text-2xl text-gray-800" id="main-heading">Requests</h2>
-            <p class="text-gray-500 text-sm">View and manage requests</p>
-        </div>
+    <div>
+    <h2 class="font-bold text-3xl text-slate-800" id="main-heading">Requests</h2>
+    <p class="text-slate-500 text-base mt-1">View and manage requests</p>
+</div>
         <div class="flex gap-2">
-            <button type="button" class="top-tab-button bg-gray-200 active text-sm md:text-base" onclick="showMainTab('students-content', 'Students Requests', 'student-request-tab')">Students</button>
-            <button type="button" class="top-tab-button bg-gray-200 text-sm md:text-base" onclick="showMainTab('faculty-content', 'Faculty Requests', 'faculty-request-tab')">Faculty</button>
+        <!-- We remove the Tailwind classes. The new CSS in your <style> block will handle this. -->
+<button type="button" class="top-tab-button" onclick="showMainTab('students-content', 'Students Requests', 'student-request-tab')">Students</button>
+<button type="button" class="top-tab-button" onclick="showMainTab('faculty-content', 'Faculty Requests', 'faculty-request-tab')">Faculty</button>
         </div>
     </div>
     <div class="h-full w-full overflow-auto">
@@ -52,21 +78,21 @@
                 <button type="button" class="tab-button border border-[#cccccc] p-2 xs:w-full md:w-[10rem] rounded-md text-sm md:text-base" onclick="showSubTab('students-content', 'student-accepted-tab')">Accepted</button>
             </div>
             <div class="h-fit max-h-full w-full sub-tab-content" id="student-request-tab">
-                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Pending Student Requests</h4>
+                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Pending Student Requests</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Student ID</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Requested</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
-                            </tr>
-                        </thead>
+                       <thead class="bg-gray-50"> <!-- Use a very light gray, like bg-[#f9f9f9] -->
+    <tr>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Student ID</th>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Name</th>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Request Type</th>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Date Requested</th>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Action</th>
+    </tr>
+</thead>
                         <tbody>
                             {% for request in pending_patient_requests %}
-                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-50{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
                                     <td class="text-center p-4"><span class="text-black">{{ request.student_id }}</span></td>
                                     <td class="text-center p-4"><span class="text-black">{{ request.student_first_name|title }} {{ request.student_last_name|title }}</span></td>
                                     <td class="text-center p-4"><span class="text-black">{{ request.request_type }}</span></td>
@@ -91,29 +117,29 @@
                 </div>
             </div>
             <div class="h-full w-full sub-tab-content" id="student-accepted-tab" style="display:none;">
-                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Accepted Student Requests</h4>
+                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Accepted Student Requests</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Student ID</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Accepted</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
-                            </tr>
-                        </thead>
+                      <thead class="bg-gray-50"> <!-- Use a very light gray, like bg-[#f9f9f9] -->
+    <tr>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Student ID</th>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Name</th>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Request Type</th>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Date Requested</th>
+        <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Action</th>
+    </tr>
+</thead>
                         <tbody>
                             {% for request in accepted_patient_requests %}
-                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-50{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
                                     <td class="text-center p-4">{{ request.student_id }}</td>
                                     <td class="text-center p-4">{{ request.student_first_name|title }} {{ request.student_last_name|title }}</td>
                                     <td class="text-center p-4">
                                          {% comment %} Link only if relevant and student exists {% endcomment %}
-                                         {% if request.student_id and request.student_id|length > 0 %}
-                                             {% if request.request_type == 'Eligibility Form' %}<a href="{% url 'medical:eligibility_form' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
-                                             {% elif request.request_type == 'Medical Clearance for OJT/Practicum' %}<a href="{% url 'medical:medicalclearance' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
-                                             {% elif request.request_type == 'Medical Certificate for Intramurals' %}<a href="{% url 'medical:med_cert_for_intrams' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                       {% if request.student_id and request.student_id != "N/A" %}
+                                             {% if request.request_type == 'Eligibility Form' %}<a href="{% url 'eligibility_form' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                             {% elif request.request_type == 'Medical Clearance for OJT/Practicum' %}<a href="{% url 'medicalclearance' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                             {% elif request.request_type == 'Medical Certificate for Intramurals' %}<a href="{% url 'med_cert_for_intrams' request.student_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
                                              {% else %}{{ request.request_type }}{% endif %}
                                          {% else %}
                                              {{ request.request_type }}
@@ -139,21 +165,21 @@
                 </div>
             </div>
              <div class="h-full w-full sub-tab-content" id="student-completed-tab" style="display:none;">
-                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Completed Student Requests</h4>
+                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Completed Student Requests</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
-                        <thead class="bg-gray-100">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Student ID</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Completed</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Student ID</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Name</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Request Type</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Date Completed</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for request in completed_patient_requests %}
-                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-50{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
                                     <td class="text-center p-4">{{ request.student_id }}</td>
                                     <td class="text-center p-4">{{ request.student_first_name|title }} {{ request.student_last_name|title }}</td>
                                     <td class="text-center p-4">{{ request.request_type }}</td>
@@ -179,21 +205,21 @@
              </div>
 
              <div class="h-fit max-h-full w-full sub-tab-content" id="faculty-request-tab">
-                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Pending Faculty Requests</h4>
+                <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Pending Faculty Requests</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
-                        <thead class="bg-gray-100">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Faculty ID</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Requested</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Faculty ID</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Name</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Request Type</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Date Requested</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for request in pending_faculty_requests %}
-                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-50{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
                                     <td class="text-center p-4">
                                         {% if request.faculty and request.faculty.user %}
                                             <span class="text-black">{{ request.faculty.faculty_id }}</span>
@@ -231,31 +257,40 @@
              </div>
 
              <div class="h-full w-full sub-tab-content" id="faculty-accepted-tab" style="display:none;">
-                 <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Accepted Faculty Requests</h4>
+                 <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Accepted Faculty Requests</h3>
                  <div class="overflow-x-auto">
                     <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
-                        <thead class="bg-gray-100">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Faculty ID</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Accepted</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Faculty ID</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Name</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Request Type</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Date Accepted</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for request in accepted_faculty_requests %}
-                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-50{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
                                     <td class="text-center p-4">
                                         <span class="text-black">{{ request.faculty_id_display }}</span>
                                     </td>
                                     <td class="text-center p-4">
                                         {{ request.faculty_first_name|title }} {{ request.faculty_last_name|title }}
                                     </td>
-                                    <td class="text-center p-4">
-                                        {% if request.request_type == 'Eligibility Form' %}
-                                            <a href="{% url 'medical:physical_exam' request.faculty_id %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                  <td class="text-center p-4">
+                                        {% comment %} Add a check for a valid ID {% endcomment %}
+                                        {% if request.faculty_id_display and request.faculty_id_display != "N/A" %}
+                                            
+                                            {% if request.request_type == 'Eligibility Form' %}
+                                                {% comment %} Use the correct variable 'request.faculty_id_display' in the URL {% endcomment %}
+                                                <a href="{% url 'physical_exam' request.faculty_id_display %}" class="text-blue-600 hover:underline">{{ request.request_type }}</a>
+                                            {% else %}
+                                                {{ request.request_type }}
+                                            {% endif %}
+
                                         {% else %}
+                                            {% comment %} If no valid ID, just show text {% endcomment %}
                                             {{ request.request_type }}
                                         {% endif %}
                                     </td>
@@ -279,21 +314,21 @@
                  </div>
              </div>
              <div class="h-full w-full sub-tab-content" id="faculty-completed-tab" style="display:none;">
-                 <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Completed Faculty Requests</h4>
+                 <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Completed Faculty Requests</h3>
                  <div class="overflow-x-auto">
                     <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
-                        <thead class="bg-gray-100">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Faculty ID</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Name</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Request Type</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Date Completed</th>
-                                <th class="text-center p-4 text-lg font-semibold text-gray-700">Action</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Faculty ID</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Name</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Request Type</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Date Completed</th>
+                                <th class="text-left p-4 text-sm font-semibold text-[#2c5282] uppercase tracking-wide">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for request in completed_faculty_requests %}
-                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
+                                <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-50{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
                                     <td class="text-center p-4">
                                         {% if request.faculty and request.faculty.user %}
                                             <span class="text-black">{{ request.faculty.faculty_id }}</span>
@@ -326,8 +361,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
-{% block extra_js %}
+
 <script>
     function showSubTab(mainTabId, subTabId) {
         var subTabs = document.querySelectorAll(`#${mainTabId} .tab-button`);

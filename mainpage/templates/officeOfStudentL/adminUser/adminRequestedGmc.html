@@ -49,9 +49,58 @@
     color: white;
   }
   th a { text-decoration: none; color: inherit; }
-  .pagination { margin-top: 20px; text-align: center; }
-  .pagination a { margin: 0 5px; text-decoration: none; }
-  .pagination .current { margin: 0 5px; font-weight: bold; }
+
+  /* --- Styles for Pill Pagination (Inside Form) --- */
+  
+  .body-content {
+    padding-bottom: 20px; 
+  }
+  
+  .pagination {
+    margin-top: 25px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px; 
+  }
+
+  .pagination .step-links {
+    display: flex;
+    align-items: center;
+  }
+
+  .pagination a {
+    display: inline-block;
+    padding: 10px 18px;
+    margin: 0 4px; 
+    text-decoration: none;
+    color: #2c5282; 
+    background-color: #f0f4f8; 
+    border-radius: 25px; 
+    font-weight: 500;
+    font-family: 'Rubik', sans-serif; 
+    transition: all 0.2s ease;
+  }
+
+  .pagination a:hover {
+    background-color: #e0e8f0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+
+  .pagination .current {
+    display: inline-block;
+    padding: 10px 18px;
+    margin: 0 4px;
+    font-weight: 500;
+    font-family: 'Rubik', sans-serif; 
+    
+    background-color: #2c5282; 
+    color: white;
+    border-radius: 25px; 
+  }
+  /* --- End Pagination Styles --- */
+
 </style>
 {% endblock headcontent %}
 
@@ -175,8 +224,8 @@
           {% endfor %}
         </tbody>
       </table>
-    </div>
-
+    </div> 
+    
     <div class="pagination">
       <span class="step-links">
         {% if page_obj.has_previous %}
@@ -195,10 +244,7 @@
       </span>
     </div>
 
-  </div>
-</div>
-
-<script>
+  </div> </div> <script>
   document.addEventListener("DOMContentLoaded", function () {
     
     // Function to open print window and reload on close

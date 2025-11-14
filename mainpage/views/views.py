@@ -22,7 +22,8 @@ logger = logging.getLogger(__name__)
 
 def is_admin(user):
     return user.is_authenticated and user.is_superuser
-
+def is_org_admin_or_super(user):
+    return user.is_authenticated and (user.role == 'org_admin' or user.role == 'superadmin')
 def signupuser(request):
     context = {}
 
@@ -174,6 +175,10 @@ def homepage(request):
     return render(request, 'homepage.html', {
         'base_template': base_template
     })
+@login_required  # 1. Checks if the user is logged in
+@user_passes_test(is_org_admin_or_super)
+def orgmain(request):
+    return render(request, 'orgadmin.html')
 
 def alumni_main(request):
     return render(request, 'alumni/id_requests.html')
@@ -328,7 +333,7 @@ def signinuser(request):
             elif hasattr(user, 'role') and user.role == 'guard':
                 return redirect('guard_homepage')
             elif hasattr(user, 'role') and user.role == 'org_admin':
-                return redirect('org_admin_homepage')
+                return redirect('orgmain')
             else:
                  return redirect('homepage')
         else:

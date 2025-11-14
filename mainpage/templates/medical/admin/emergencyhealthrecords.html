@@ -86,9 +86,17 @@
     background-color: #5a6268;
   }
 </style>
+<div class="sub-title">
+  <h4>MEDICAL</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+ <p>
+  > <a href="{% url 'emergency_asst' %}">Emergency Health Assistance</a>
+</p>
 
-<div class="main-container">
-  <h2 class="page-title">Emergency Health Assistance Records</h2>
+  <p class="certxt">&gt;Emergency Health Assistance Records</p>
+</div>
+<hr />
+ 
 
   <div class="table-responsive">
     <table class="records-table">
@@ -103,8 +111,8 @@
       <tbody>
         {% for record in emrgncy_record %}
         <tr>
-          <td>{{ record.user_id_display }}</td>
-          <td>{{ record.name }}</td>
+          <td>{{ record.patient.student }}</td>
+          <td>{{  record.patient.student.lastname }}, {{  record.patient.student.firstname }}</td>
           <td>{{ record.reason }}</td>
           <td>{{ record.date_assisted }}</td>
         </tr>

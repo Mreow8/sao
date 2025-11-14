@@ -1,9 +1,10 @@
-{% extends 'adminmain.html' %} {% load static %}
-<!-- prettier-ignore -->
-
-{% block title %}HealthHub Connect | Prescription Issuance{% endblock %} 
-
-{% block extra_css %}
+{% extends 'adminmain.html' %} {% load static %} {% block title %}HealthHub
+Connect | Prescription Issuance{% endblock %} {% block extra_css %}
+<style>
+  .hidden {
+    display: none;
+  }
+</style>
 {% endblock %} {% block bodycontent %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -24,42 +25,78 @@
 
     <div class="form-group">
       <label for="student_id">ID Number</label>
-      <div class="input-group autocomplete">
+      <div class="input-group">
         <input
           type="text"
           id="student_id"
           name="student_id"
           required
           autocomplete="off"
+          list="student-options"
+          value="{{ id_number|default:'' }}"
         />
-        <button type="button" id="btn-get" class="btn btn-get">Get</button>
-        <div id="suggestions-box" class="suggestions-list"></div>
+        <datalist id="student-options">
+          {% for user in all_users %}
+          <option value="{{ user.id }}">{{ user.name }}</option>
+          {% endfor %}
+        </datalist>
       </div>
-      <span
-        id="id-error-message"
-        style="color: red"
-        class="error-message"
-      ></span>
+      <div
+        id="student_details"
+        class="hidden"
+        style="
+          margin-top: 10px;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          background-color: #f9f9f9;
+        "
+      >
+        <p style="margin: 0">
+          <strong>Name:</strong>
+          <span id="student_name_display"></span>
+        </p>
+      </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" style="display: none">
       <label for="name">Name</label>
-      <input type="text" id="name" name="name" required />
+      <input
+        type="text"
+        id="name"
+        name="name"
+        required
+        value="{{ name|default:'' }}"
+      />
     </div>
 
     <div class="form-group">
       <label for="problem">Problem</label>
-      <input type="text" id="problem" name="problem" required />
+      <input
+        type="text"
+        id="problem"
+        name="problem"
+        required
+        value="{{ problem|default:'' }}"
+      />
     </div>
 
     <div class="form-group">
       <label for="treatment">Treatment</label>
-      <textarea id="treatment" name="treatment" rows="4" required></textarea>
+      <textarea id="treatment" name="treatment" rows="4" required>
+{{ treatment|default:'' }}</textarea
+      >
     </div>
 
     <div class="form-group">
       <label for="date">Date</label>
-      <input type="date" id="date" name="date_prescribed" required />
+      <input
+        type="date"
+        id="date"
+        name="date_prescribed"
+        value="{{ date_prescribed|default:today_date }}"
+        required
+      />
     </div>
 
     <div class="button-group">
@@ -72,51 +109,12 @@
     </div>
   </form>
 </div>
-<script>
-  const csrf_token = "{{ csrf_token }}";
-  var btn = document.getElementById("btn-get");
-  const idError = document.getElementById("id-error-message"); // Get the error label
-
-  btn.addEventListener("click", function () {
-    var id = document.getElementById("student_id").value;
-    const data = { student_id: id };
-
-    // Clear previous errors before making a new request
-    idError.textContent = "";
-    idError.style.display = "none";
-
-    fetch("/med/getusernamebyid/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.user_name) {
-          document.getElementById("name").value = data.user_name;
-        } else if (data.error) {
-          // Instead of an alert, show the error in the label
-          idError.textContent = data.error;
-          idError.style.display = "block";
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user name:", error);
-        idError.textContent = "A network error occurred.";
-        idError.style.display = "block";
-      });
-  });
-</script>
 
 {% if messages %}
 <script>
-  // 1. Configure the toast's appearance
   const Toast = Swal.mixin({
     toast: true,
-    position: 'top-end', // Position it in the top-right corner
+    position: 'top-end',
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
@@ -126,7 +124,6 @@
     }
   });
 
-  // 2. Loop through messages and show a toast for each one
   {% for message in messages %}
   Toast.fire({
     icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% else %}info{% endif %}',
@@ -137,59 +134,65 @@
 {% endif %}
 
 <script>
+  const csrf_token = "{{ csrf_token }}";
+
   document.addEventListener("DOMContentLoaded", function () {
     const studentIdInput = document.getElementById("student_id");
     const nameInput = document.getElementById("name");
-    const suggestionsBox = document.getElementById("suggestions-box");
+    const studentDetailsDiv = document.getElementById("student_details");
+    const studentNameDisplay = document.getElementById("student_name_display");
 
-    studentIdInput.addEventListener("input", async function () {
-      const query = this.value.trim();
+    function fetchStudentDetails() {
+      const studentID = studentIdInput.value.trim();
 
-      if (query.length < 2) {
-        // Start searching after 2 characters
-        suggestionsBox.innerHTML = "";
-        suggestionsBox.style.display = "none";
+      if (!studentID) {
+        nameInput.value = "";
+        studentDetailsDiv.classList.add("hidden");
         return;
       }
 
-      const response = await fetch(
-        `/med/user-suggestions/?q=${encodeURIComponent(query)}`
-      );
-      const suggestions = await response.json();
+      const data = { student_id: studentID };
 
-      suggestionsBox.innerHTML = "";
-      if (suggestions.length > 0) {
-        suggestions.forEach((item) => {
-          const div = document.createElement("div");
-          div.textContent = `${item.name} (${item.id})`;
-          div.dataset.id = item.id;
-          div.dataset.name = item.name;
-          div.classList.add("suggestion-item");
-          suggestionsBox.appendChild(div);
+      fetch("/med/getusernamebyid/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrf_token,
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.user_name) {
+            // Populate the hidden input
+            nameInput.value = data.user_name;
+
+            // Show the name in the confirmation box
+            studentNameDisplay.textContent = data.user_name;
+            studentDetailsDiv.classList.remove("hidden");
+          } else {
+            nameInput.value = "";
+            studentDetailsDiv.classList.add("hidden");
+            if (data.error) {
+              console.error(data.error);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
+          nameInput.value = "";
+          studentDetailsDiv.classList.add("hidden");
         });
-        suggestionsBox.style.display = "block";
-      } else {
-        suggestionsBox.style.display = "none";
-      }
-    });
+    }
 
-    // Handle clicking on a suggestion
-    suggestionsBox.addEventListener("click", function (e) {
-      if (e.target.classList.contains("suggestion-item")) {
-        studentIdInput.value = e.target.dataset.id;
-        nameInput.value = e.target.dataset.name;
-        suggestionsBox.innerHTML = "";
-        suggestionsBox.style.display = "none";
-      }
-    });
+    // Add event listeners
+    studentIdInput.addEventListener("input", fetchStudentDetails);
+    studentIdInput.addEventListener("change", fetchStudentDetails);
 
-    // Hide suggestions when clicking outside
-    document.addEventListener("click", function (e) {
-      if (!e.target.closest(".autocomplete")) {
-        suggestionsBox.innerHTML = "";
-        suggestionsBox.style.display = "none";
-      }
-    });
+    // Run on page load in case form is repopulated from an error
+    if (studentIdInput.value) {
+      fetchStudentDetails();
+    }
   });
 </script>
 {% endblock %}

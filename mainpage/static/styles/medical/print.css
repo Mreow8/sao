@@ -1,117 +1,229 @@
-/* Hide navigation bar and other elements that shouldn't be printed */
-#submit, #print-btn, #navbar {
-    display: none;
-}
-
-.schedule-button {
-    display: none;
-}
-
-/* Ensure the form content is styled appropriately for print */
-.container {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
-
-.table-container table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table-container th, .table-container td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left;
-}
+/* --- styles/medical/print.css --- */
+/* (With Font Size fixes) */
 
 @page {
-    margin: 1cm; /* Set default margins for all pages */
-}
-
-/* Ensure the main content and table containers do not restrict height or flex behavior in print */
-.w-full.h-screen.rounded-\[14px\].bg-white.xs\:p-4.md\:p-8.flex.flex-col.gap-2 {
-    height: auto !important;
-    max-height: none !important;
-    min-height: 0 !important;
-    display: block !important; /* Override flex display for print */
-    page-break-after: auto; /* Allow natural page breaks after this container */
-}
-
-.h-fit.max-h-full.w-full.flex.overflow-auto {
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-    min-height: 0 !important;
-    display: block !important; /* Override flex display for print */
-    page-break-after: auto; /* Allow natural page breaks after this container */
-}
-
-/* Ensure table headers repeat on each page */
-.table-auto thead {
-    display: table-header-group;
-}
-
-/* Ensure table rows do not break across pages */
-.table-auto tbody tr {
-    page-break-inside: avoid; /* Apply to table body rows */
-}
-
-/* Ensure table itself can break across pages naturally */
-.table-auto {
-    page-break-after: auto;
-}
-
-/* Ensure that the body and html have auto height for printing */
-html, body {
-    height: auto !important;
-    min-height: 0 !important;
+  size: A4;
+  margin: 1.5cm;
 }
 
 body {
-    font-size: 10pt; /* Smaller base font size for print */
+  margin: 0;
+  padding: 0;
+  /* Spacing: Set a base font size for the whole print document */
+  font-family: "Times New Roman", Times, serif; /* A classic certificate font */
+  font-size: 11pt; /* Base size, good for paragraphs */
+  color: #000;
 }
 
-/* Adjust font sizes for table headers and data */
-.table-auto th {
-    font-size: 10pt;
-    padding: 6px; /* Slightly reduce padding for more compact tables */
-    text-align: center; /* Ensure headers remain centered */
+/* 1. Hide everything by default */
+body * {
+  visibility: hidden;
 }
 
-.table-auto td {
-    font-size: 10pt;
-    padding: 6px; /* Slightly reduce padding for more compact tables */
-    text-align: left !important; /* Ensure records are left-aligned */
+/* 2. Show ONLY the certificate forms and all their contents */
+.certificate-form,
+.certificate-form * {
+  visibility: visible;
 }
 
-/* Ensure images scale correctly for print */
-img {
-    max-width: 100%;
-    height: auto;
+/* 3. Position the form at the top-left of the page */
+.certificate-form {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
 }
 
-/* Prevent page breaks inside the header and footer */
-.flex.self-center.items-center.gap-8,
-.font-bold.xs\:text-\[1\.3rem\].sm\:text-\[1\.5rem\].my-4.text-center,
-.self-center.flex.justify-center {
-    page-break-inside: avoid;
+/* 4. Hide the non-printable buttons */
+.button-container,
+.swal2-container {
+  display: none !important;
 }
 
-/* Ensure no page break immediately after the header */
-.flex.self-center.items-center.gap-8 {
-    page-break-after: avoid;
+/* --- Font Sizes --- */
+.header-text .content1 {
+  font-size: 10pt;
+}
+.header-text .content2 {
+  font-size: 12pt;
+  font-weight: bold;
+}
+.header-text .content3 {
+  font-size: 11pt;
+  font-weight: bold;
+}
+.header-text .content4 {
+  font-size: 9pt;
 }
 
-/* Position footer correctly at the end of the content */
-footer {
-    page-break-before: auto; /* Allow normal flow, not forced new page */
-    text-align: center;
-    width: 100%;
-    margin-top: auto; /* Push to bottom of content if space allows */
-    display: block !important; /* Override flex display for print */
+.form-content h1,
+h1.form-title {
+  font-size: 16pt; /* Make titles stand out */
+  font-weight: bold;
+  text-align: center;
+  margin-top: 25px;
+  margin-bottom: 20px;
 }
 
-footer img {
-    page-break-inside: avoid; /* Ensure image does not break across pages */
+legend {
+  font-size: 12pt; /* Make legends slightly larger than body text */
+  font-weight: bold;
+  margin-bottom: 10px;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+  visibility: visible;
+}
+
+/* All paragraphs and general text */
+p,
+.radio-group span {
+  font-size: 11pt;
+  line-height: 1.5;
+}
+
+/* Input labels */
+.details {
+  font-size: 10pt;
+  font-weight: bold;
+  display: block; /* Ensures it sits nicely above the "input" */
+  margin-bottom: 2px;
+}
+
+/* Signature line text */
+.signature-line {
+  font-size: 10pt;
+}
+
+/* --- Header and Footer Styling --- */
+.certificate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  text-align: center; /* Center the header text block */
+}
+
+.header-text {
+  flex-grow: 1;
+}
+
+.header-text > div {
+  line-height: 1.4;
+  margin: 0;
+  padding: 0;
+}
+
+.logo {
+  max-width: 80px;
+  height: auto;
+}
+
+.certificate-footer {
+  width: 100%;
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* --- Form Content Spacing --- */
+fieldset {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 25px 0;
+}
+
+.form-row {
+  margin-bottom: 10px;
+  display: flex;
+  width: 100%;
+}
+
+.input-group {
+  padding: 0 5px 0 0;
+  margin: 0;
+  flex: 1; /* Make input groups share space */
+}
+
+p.inline-text,
+p.waiver-text,
+.form-section > p {
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+/* --- Input Styling (The "Magic") --- */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input.inline-input {
+  border: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+
+  /* Make input text match the body text */
+  font-family: inherit;
+  font-size: 11pt;
+  color: #000;
+
+  padding: 0;
+  margin: 0;
+  width: auto;
+
+  /* Make the text sit on a "line" */
+  border-bottom: 1px solid #666;
+  padding-bottom: 2px;
+
+  /* Try to hide the date picker icon */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* For inputs inside a paragraph, make them blend in */
+p input.inline-input,
+input.place-event,
+input.date-event {
+  font-size: 11pt;
+  margin: 0 5px;
+  min-width: 120px;
+  width: auto;
+}
+
+input[type="date"] {
+  line-height: inherit;
+}
+
+/* --- Handle Radio Buttons --- */
+.radio-group input[type="radio"] {
+  display: none;
+}
+input[name="not-able"]:not(:checked) + label {
+  display: none;
+}
+input[name="able"]:not(:checked) + label {
+  display: none;
+}
+
+/* --- Signature Box Spacing --- */
+.signature-box-center,
+.signature-box-spaced,
+.signature-box-row {
+  margin-top: 50px;
+}
+
+.signature-box-spaced {
+  display: flex;
+  justify-content: space-between;
+}
+
+.signature-line {
+  margin-top: 30px;
+  border-top: 1px solid #333;
+  padding-top: 5px;
+  min-width: 250px;
+}
+
+.date-box {
+  margin-top: 30px;
 }

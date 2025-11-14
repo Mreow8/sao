@@ -15,6 +15,7 @@ urlpatterns = [
 # urls.py
 
 path('organization/<slug:org_slug>/advisers/', views.view_adviser, name='view_adviser_list'),
+path('orgmain/', views.orgmain, name='orgmain'),
 
 
 

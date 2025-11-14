@@ -1,73 +1,27 @@
-{% extends 'main.html' %}{%block bodycontent %} {% load static tailwind_tags %}
-<!-- prettier-ignore -->
-<style>/* Base input style */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],input[type="tel"],
-textarea {
-  width: 100%;
-  padding: 10px 14px;
-  font-size: 14px;
-  color: #333;
-  background-color: #f9fafb;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Focus state */
-input:focus,
-textarea:focus {
-  border-color: #3b82f6; /* Tailwind blue-500 */
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* Blue glow */
-}
-
-/* Disabled state */
-input:disabled,
-textarea:disabled {
-  background-color: #e5e7eb; /* Gray-200 */
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-/* Optional: Add a hover effect */
-input:hover,
-textarea:hover {
-  border-color: #9ca3af; /* Slightly darker gray */
-}
-</style>
+{% extends 'main.html' %}{%block bodycontent %} {% load static %}
 <title>HealthHub Connect | Patient Form</title>
 <link
   rel="shortcut icon"
   href="{% static 'imgs/CTU_logo.png' %}"
   type="image/x-icon"
 />
-<link rel="stylesheet" href="{% static 'medical/base.css' %}" />
-{% tailwind_css %}
+<link rel="stylesheet" href="{% static 'styles/medical/base.css' %}" />
 
-<div class="flex w-full h-fit bg-[#E5F2FF] p-8 justify-center">
-  <div class="bg-white w-full xs:p-4 lg:p-8 flex flex-col gap-2 rounded-[18px]">
-    <div class="flex flex-col items-center self-center">
+<div class="form-page-wrapper">
+  <div class="form-card">
+    <div class="form-header">
       <img
         src="{% static 'images/CTU_logo.png' %}"
         alt="CTU Logo"
-        class="w-12 h-12"
+        class="logo-img"
       />
-      <h1
-        class="text-[1.5rem] font-bold tracking-tight text-center xs:leading-[100%] lg:leading-normal xs:mt-4 lg:mt-0"
-      >
-        Patient Information Form
-      </h1>
-      <p
-        class="text-base tracking-tight text-center xs:mt-2 lg:mt-0 xs:leading-[100%] lg:leading-normal"
-      >
+      <h1 class="main-title">Patient Information Form</h1>
+      <p class="sub-title-text">
         Please complete your medical information to proceed
       </p>
     </div>
-    <form method="POST" class="flex flex-col gap-4 h-full">
+
+    <form method="POST" class="main-form-content">
       {% csrf_token %} {% if patient.id %}<input
         type="hidden"
         name="patient_id"
@@ -77,10 +31,11 @@ textarea:hover {
         name="from_admin_register"
         value="true"
       />{% endif %}
-      <div class="flex flex-col gap-2">
-        <h3 class="font-bold">Personal Information</h4>
-        <div class="flex flex-col md:flex-row gap-2">
-          <div class="flex flex-col w-full">
+
+      <div class="form-section">
+        <h3 class="section-title">Personal Information</h3>
+        <div class="form-row">
+          <div class="form-group">
             <label for="birth_date">Birth Date</label>
             <input
               type="date"
@@ -90,7 +45,7 @@ textarea:hover {
               max="{{ current_date|date:'Y-m-d' }}"
             />
           </div>
-          <div class="flex flex-col w-full">
+          <div class="form-group">
             <label for="bloodtype">Blood Type</label>
             <select id="bloodtype" name="bloodtype" required>
               <option value="">Select Blood Type</option>
@@ -106,8 +61,8 @@ textarea:hover {
             </select>
           </div>
         </div>
-        <div class="flex flex-col md:flex-row gap-2">
-          <div class="flex flex-col w-full">
+        <div class="form-row">
+          <div class="form-group">
             <label for="height">Height (cm)</label>
             <input
               type="number"
@@ -118,7 +73,7 @@ textarea:hover {
               required
             />
           </div>
-          <div class="flex flex-col w-full">
+          <div class="form-group">
             <label for="weight">Weight (kg)</label>
             <input
               type="number"
@@ -131,11 +86,11 @@ textarea:hover {
           </div>
         </div>
       </div>
-      <div class="flex flex-col gap-2">
-        <h3 class="font-bold">Medical Information</h4>
-        <!-- Checkbox Section -->
-        <div class="grid grid-cols-2 gap-2">
-          <div class="flex flex-col gap-2">
+
+      <div class="form-section">
+        <h3 class="section-title">Medical Information</h3>
+        <div class="checkbox-section-grid">
+          <div class="checkbox-category">
             <label>Allergies (select all that apply)</label>
             <div class="checkbox-group">
               <div class="checkbox-item">
@@ -176,7 +131,8 @@ textarea:hover {
               />
             </div>
           </div>
-          <div class="flex flex-col gap-2">
+
+          <div class="checkbox-category">
             <label>Medical History (select all that apply)</label>
             <div class="checkbox-group">
               <div class="checkbox-item">
@@ -315,8 +271,6 @@ textarea:hover {
                 <label for="other_conditions">Other Medical Conditions</label>
               </div>
             </div>
-
-            <!-- Specification field for Other Medical Conditions -->
             <div
               class="form-group"
               id="other_conditions_input"
@@ -329,12 +283,12 @@ textarea:hover {
                 type="text"
                 id="other_medical"
                 name="other_medical"
-                class="form-control"
                 placeholder="Specify other medical conditions"
               />
             </div>
           </div>
-          <div class="flex flex-col gap-2">
+
+          <div class="checkbox-category">
             <label>Family Medical History (select all that apply)</label>
             <div class="checkbox-group">
               <div class="checkbox-item">
@@ -430,8 +384,6 @@ textarea:hover {
                 >
               </div>
             </div>
-
-            <!-- Specification field for Other Family Medical Conditions -->
             <div
               class="form-group"
               id="other_family_conditions_input"
@@ -444,12 +396,12 @@ textarea:hover {
                 type="text"
                 id="other_family_medical"
                 name="other_family_medical"
-                class="form-control"
                 placeholder="Specify other family medical conditions"
               />
             </div>
           </div>
-          <div class="flex flex-col gap-2">
+
+          <div class="checkbox-category">
             <label>Risk Assessment (select all that apply)</label>
             <div class="checkbox-group">
               <div class="checkbox-item">
@@ -534,8 +486,6 @@ textarea:hover {
                 <label for="pwd">Person with Disability (PWD)</label>
               </div>
             </div>
-
-            <!-- Specification field for PWD -->
             <div
               class="form-group"
               id="pwd_specification_input"
@@ -546,7 +496,6 @@ textarea:hover {
                 type="text"
                 id="pwd_specification"
                 name="disability"
-                class="form-control"
                 placeholder="Specify type of disability"
               />
             </div>
@@ -554,18 +503,20 @@ textarea:hover {
         </div>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <h3 class="font-bold">Contact Details</h4>
-        <div class="flex flex-col md:flex-row gap-2 max-w-full">
-          <div class="flex flex-col w-full">
+      <div class="form-section">
+        <h3 class="section-title">Contact Details</h3>
+        <div class="form-row">
+          <div class="form-group">
             <label for="home_address">Complete Home Address</label>
             <input type="text" id="home_address" name="home_address" required />
           </div>
-          <div class="flex flex-col w-full">
+          <div class="form-group">
             <label for="city">City</label>
             <input type="text" id="city" name="city" required />
           </div>
-          <div class="flex flex-col w-full">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label for="civil_status">Civil Status</label>
             <select id="civil_status" name="civil_status" required>
               <option value="Single">Single</option>
@@ -574,11 +525,10 @@ textarea:hover {
               <option value="Separated">Separated</option>
             </select>
           </div>
-          <div class="flex flex-col w-full">
+          <div class="form-group">
             <label for="country">Country</label>
             <input
               type="text"
-              class="w-full"
               id="country"
               name="country"
               value="Philippines"
@@ -586,8 +536,8 @@ textarea:hover {
             />
           </div>
         </div>
-        <div class="flex flex-col md:flex-row gap-2">
-          <div class="flex flex-col w-full">
+        <div class="form-row">
+          <div class="form-group">
             <label for="state_province">Province</label>
             <input
               type="text"
@@ -596,7 +546,7 @@ textarea:hover {
               required
             />
           </div>
-          <div class="flex flex-col w-full">
+          <div class="form-group">
             <label for="postal_zipcode">Postal Code</label>
             <input
               type="text"
@@ -605,7 +555,7 @@ textarea:hover {
               required
             />
           </div>
-          <div class="flex flex-col w-full">
+          <div class="form-group">
             <label for="nationality">Nationality</label>
             <input
               type="text"
@@ -618,10 +568,10 @@ textarea:hover {
         </div>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <h3 class="font-bold">Emergency Contact</h4>
-        <div class="flex flex-col md:flex-row gap-2">
-          <div class="flex flex-col w-full">
+      <div class="form-section">
+        <h3 class="section-title">Emergency Contact</h3>
+        <div class="form-row">
+          <div class="form-group">
             <label for="parent_guardian">Parent/Guardian Name</label>
             <input
               type="text"
@@ -630,7 +580,7 @@ textarea:hover {
               required
             />
           </div>
-          <div class="flex flex-col w-full">
+          <div class="form-group">
             <label for="parent_guardian_contact"
               >Parent/Guardian Contact Number</label
             >
@@ -650,15 +600,8 @@ textarea:hover {
           </div>
         </div>
       </div>
-    <button
-  type="submit"
-  class="p-4 text-[14px] text-white rounded-[8px] mt-4 "
-  style="background-color: #2c5282; color:white;"
->
-  Submit
-</button>
 
-      
+      <button type="submit" class="submit-button">Submit</button>
     </form>
   </div>
 </div>

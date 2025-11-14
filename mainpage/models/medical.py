@@ -230,7 +230,7 @@ class MedicalRequirement(models.Model):
 
     # Link to Patient, make nullable initially
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, null=True, blank=True)
-    faculty = models.OneToOneField(studentInfo, on_delete=models.CASCADE, null=True, blank=True)
+    faculty = models.OneToOneField(staffInfo, on_delete=models.CASCADE, null=True, blank=True)
     vaccination_type = models.CharField(max_length=50, null=True, blank=True)
     vaccinated_1st = models.BooleanField(default=False, null=True, blank=True)
     vaccinated_2nd = models.BooleanField(default=False, null=True, blank=True)
@@ -416,10 +416,9 @@ class PrescriptionRecord(models.Model):
     )
 
     # ✅ Basic info
-    name = models.CharField(max_length=100)
     problem = models.CharField(max_length=50)
     treatment = models.CharField(max_length=50)
-    date_prescribed = models.CharField(max_length=100)
+    date_prescribed = models.DateField()
 
     def __str__(self):
         display_name = self.name or "Unknown"
@@ -441,9 +440,9 @@ class DentalRecords(models.Model):
 class EmergencyHealthAssistanceRecord(models.Model):
     # Link to Patient, make nullable initially
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=100)
+    
     reason = models.CharField(max_length=100)
-    date_assisted = models.CharField(max_length=100)
+    date_assisted = models.DateField()
 
     def __str__(self):
         if self.patient and self.patient.user:
@@ -467,7 +466,7 @@ class TransactionRecord(models.Model):
 class MentalHealthRecord(models.Model):
     # Link to Patient, make nullable initially
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
-    faculty = models.OneToOneField(studentInfo, on_delete=models.CASCADE, null=True, blank=True)
+    faculty = models.OneToOneField(staffInfo, on_delete=models.CASCADE, null=True, blank=True)
     is_availing_mental_health = models.BooleanField(default=False)
     
     def mental_health_path(instance, filename, field_name):

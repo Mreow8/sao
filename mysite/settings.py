@@ -43,10 +43,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # For production or collectstatic command:
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-wqcuti7mokhf)l@v3r0@@xo@(#ss02u8r8_xa6cw0xs96tpxd!'
 
 DEBUG = True
@@ -57,12 +55,13 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Application definition
-
+TAILWIND_APP_NAME = 'theme'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'mainpage',
     'widget_tweaks',
+    'theme',
    "tailwind",
       'captcha',
     'django.contrib.contenttypes',

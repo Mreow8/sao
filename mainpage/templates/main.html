@@ -330,14 +330,7 @@
                     >Dashboard</a
                   >
                 </li>
-                <li>
-                  <a
-                    href="{% url 'request' %}"
-                    class="{% if current_url == 'request' %}active-link{% endif %}"
-                    >Documentary Request</a
-                  >
-                </li>
-                <li>
+                 <li>
                   <a
                     href="{% url 'upload_requirements' %}"
                     class="{% if current_url == 'upload_requirements' %}active-link{% endif %}"
@@ -345,6 +338,14 @@
                   >
                 </li>
                 <li>
+                <li>
+                  <a
+                    href="{% url 'request' %}"
+                    class="{% if current_url == 'request' %}active-link{% endif %}"
+                    >Documentary Request</a
+                  >
+                </li>
+               
                   <a
                     href="{% url 'dentalservice' %}"
                     class="{% if current_url == 'dentalservice' %}active-link{% endif %}"

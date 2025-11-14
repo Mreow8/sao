@@ -1,12 +1,233 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", serif;
+/* --- GLOBAL STYLES --- */
+body {
+  font-family: "Rubik", sans-serif;
+  background-color: #f8f9fa; /* Light grey background from Manage.css */
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align card to the top */
+  padding: 2rem; /* From Tailwind p-8 */
+  min-height: 100vh;
+  box-sizing: border-box;
+  margin: 0;
+}
+.form-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+.form-card {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 1000px; /* Added for better layout on large screens */
+  padding: 2.5rem; /* Matches requestgmc.css */
+  border-radius: 18px; /* From Tailwind rounded-[18px] */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* From requestgmc.css */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Spacing for header, form, etc. */
+}
+
+/* --- 3. Form Header --- */
+.form-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.logo-img {
+  width: 48px; /* From Tailwind w-12 */
+  height: 48px; /* From Tailwind h-12 */
+}
+
+.main-title {
+  font-size: 1.5rem; /* From Tailwind text-[1.5rem] */
+  font-weight: 700; /* From Tailwind font-bold */
+  margin: 0;
+}
+
+.sub-title-text {
+  font-size: 1rem; /* From Tailwind text-base */
+  color: #333;
+  margin: 0;
+}
+
+/* --- 4. Form & Sections --- */
+.main-form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* From Tailwind gap-4, increased for sections */
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* From Tailwind gap-2, increased for rows */
+}
+
+.section-title {
+  font-weight: 700; /* From Tailwind font-bold */
+  font-size: 1.25rem;
+  color: #2c5282; /* Theme color */
+  margin: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* --- 5. Form Layout (Rows & Groups) --- */
+.form-row {
+  display: flex;
+  flex-direction: column; /* Mobile-first (from flex-col) */
+  gap: 1rem; /* From Tailwind gap-2 */
+}
+
+/* Apply row layout on medium screens (from md:flex-row) */
+@media (min-width: 768px) {
+  .form-row {
+    flex-direction: row;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* From Tailwind w-full */
+  gap: 0.35rem; /* Space between label and input */
+}
+
+/* --- 6. Form Elements (Moved from inline <style>) --- */
+label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="tel"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: "Rubik", sans-serif; /* Added theme font */
+  color: #333;
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box; /* IMPORTANT */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #2c5282; /* Use theme color for focus */
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Theme glow */
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.input-hint {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* --- 7. Checkbox Section --- */
+.checkbox-section-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile-first: stacked */
+  gap: 1rem; /* From Tailwind gap-2 */
+}
+
+/* (from grid-cols-2) */
+@media (min-width: 768px) {
+  .checkbox-section-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.checkbox-category {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* From Tailwind gap-2 */
+}
+
+.checkbox-category > label {
+  /* The label FOR the group, e.g., "Allergies" */
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Space between checkbox items */
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between checkbox and label */
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 1.15em;
+  height: 1.15em;
+  accent-color: #2c5282; /* Theme color */
+  cursor: pointer;
+}
+
+.checkbox-item label {
+  font-weight: 400; /* Lighter weight for options */
+  cursor: pointer;
+}
+
+/* --- 8. Submit Button --- */
+.submit-button {
+  font-family: "Rubik", sans-serif;
+  background-color: #2c5282; /* From inline style */
+  color: white;
+  font-size: 14px; /* From Tailwind text-[14px] */
+  font-weight: 500;
+  padding: 1rem; /* From Tailwind p-4 */
+  border: none;
+  border-radius: 8px; /* From Tailwind rounded-[8px] */
+  margin-top: 1rem; /* From Tailwind mt-4 */
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #2a4365; /* Darker Blue from requestgmc.css */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: none;
 }

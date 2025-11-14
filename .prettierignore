@@ -9,7 +9,10 @@ mainpage/templates/discipline/case_list.html
 mainpage/templates/alumni/users/graduateTracer.html
 mainpage/templates/alumni/users/id_alumni.html
 mainpage/templates/main.html
+mainpage/templates/orgadmin.html
 mainpage/templates/medical/admin/mental_health.html
+mainpage/templates/medical/admin/medicalrequirements.htmls
+mainpage/templates/medical/mental_health.html
 mainpage/templates/adminmain.html
 mainpage/templates/jobplacement/ojt_requirements.html
 mainpage/templates/jobplacement/ojthiring.html

@@ -1,4 +1,4 @@
-{% extends "mainv2.html" %} {% load static %}
+{% extends "main.html" %} {% load static %}
 <!-- prettier-ignore -->
 {% block title %} HealthHub Connect | Dental Request {% endblock %}
 
@@ -13,41 +13,7 @@
   body {
     font-family: "Rubik", sans-serif;
     background-color: #f8f9fa; /* Light grey background from Manage.css */
-    margin: 0;
-    padding: 0;
-    color: #333;
   }
-
-  /* --- HEADER AND NAVIGATION (.sub-title) --- */
-  .sub-title {
-    /* Styled to match the clean, card-based UI */
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
-    padding: 1.25rem 2rem;
-    display: flex;
-    align-items: baseline; /* Aligns "Medical" with the breadcrumbs */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-  }
-
-  .sub-title h3 {
-    margin: 0;
-    font-size: 1.75rem;
-
-    color: #2c5282; /* Primary Blue from Manage.css */
-  }
-
-  .hometext,
-  .certxt {
-    margin-left: 10px;
-    font-size: 0.9rem;
-    color: #555;
-  }
-
-  .certxt {
-    font-weight: 500;
-    color: #333; /* Highlights the current page */
-  }
-
   /* --- MAIN FORM CONTAINER (Styled like .gmc-form) --- */
   .main-container {
     max-width: 700px; /* Good width for a two-column form */
@@ -148,13 +114,6 @@
     .main-container {
       margin: 1rem;
       padding: 1.5rem;
-    }
-
-    .sub-title {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
-      padding: 1rem 1.5rem;
     }
 
     .hometext,

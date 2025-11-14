@@ -94,9 +94,9 @@
                             </td>
                             <td class="text-center p-4">
                                 {% if item.patient %}
-                                    <a href="{% url 'medical:physical_exam' item.student.student_id %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">View Profile</a>
+                                    <a href="{% url 'physical_exam' item.student.student_id %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">View Profile</a>
                                 {% else %}
-                                    <a href="{% url 'medical:patient_basic_info' item.student.student_id %}" class="inline-block bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">Create Profile</a>
+                                    <a href="{% url 'patient_basic_info' item.student.student_id %}" class="inline-block bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">Create Profile</a>
                                 {% endif %}
                             </td>
                         </tr>
@@ -145,7 +145,7 @@
                             </td>
                             <td class="text-center p-4">
                                 {% if item.patient %}
-                                    <a href="{% url 'medical:physical_exam' item.faculty.faculty_id %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">View Profile</a>
+                                    <a href="{% url 'physical_exam' item.faculty.faculty_id %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">View Profile</a>
                                 {% else %}
                                     <span class="text-gray-500 text-sm">N/A</span>
                                 {% endif %}

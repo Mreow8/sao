@@ -25,7 +25,7 @@ table,
 button,
 input,
 select {
-  font-family: "Rubik", sans-serif;
+  font-family: "Rubik", sans-serif !important;
 }
 body {
   margin: 0;

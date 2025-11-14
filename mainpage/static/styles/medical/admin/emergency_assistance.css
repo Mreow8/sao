@@ -55,6 +55,7 @@ label {
   color: #333;
 }
 input[type="text"],
+input[type="number"],
 input[type="date"] {
   width: 100%;
   padding: 10px 12px;

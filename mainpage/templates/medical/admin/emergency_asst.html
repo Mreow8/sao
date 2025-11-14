@@ -1,44 +1,91 @@
 {% extends 'adminmain.html' %} {% load static %} {% block title %}HealthHub
 Connect | Emergency Health Assistance{% endblock %} {% block extra_css %}
-<!-- prettier-ignore -->
+<style>
+  .hidden {
+    display: none;
+  }
+</style>
 {% endblock %} {% block bodycontent %}<link
   rel="stylesheet"
   href="{% static 'styles/medical/admin/emergency_assistance.css' %}"
 />
+<div class="sub-title">
+  <h4>MEDICAL</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+  <p class="certxt">&gt;Emergency Health Assistance</p>
+</div>
+<hr />
 <div class="main-container">
-  <h2 class="page-title">Emergency Health Assistance</h2>
-
   <form method="POST" class="assistance-form">
     {% csrf_token %}
 
     <div class="form-group">
       <label for="student_id">ID Number</label>
-      <div class="input-group autocomplete">
+      <div class="input-group">
         <input
-          type="text"
+          type="number"
           id="student_id"
           name="student_id"
           required
           autocomplete="off"
+          list="student-options"
+          value="{{ id_number|default:'' }}"
         />
-        <button type="button" id="btn-get" class="btn btn-get">Get</button>
-        <div id="suggestions-box" class="suggestions-list"></div>
+        <datalist id="student-options">
+          {% for user in all_users %}
+          <option value="{{ user.id }}">{{ user.name }}</option>
+          {% endfor %}
+        </datalist>
+      </div>
+      <div
+        id="student_details"
+        class="hidden"
+        style="
+          margin-top: 10px;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          background-color: #f9f9f9;
+        "
+      >
+        <p style="margin: 0">
+          <strong>Name:</strong>
+          <span id="student_name_display"></span>
+        </p>
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" style="display: none">
       <label for="name">Name</label>
-      <input type="text" id="name" name="name" required />
+      <input
+        type="text"
+        id="name"
+        name="name"
+        required
+        value="{{ name|default:'' }}"
+      />
     </div>
 
     <div class="form-group">
       <label for="problem">Reason</label>
-      <input type="text" id="problem" name="problem" required />
+      <input
+        type="text"
+        id="problem"
+        name="problem"
+        required
+        value="{{ reason|default:'' }}"
+      />
     </div>
 
     <div class="form-group">
       <label for="date">Date</label>
-      <input type="date" id="date" name="date_assisted" required />
+      <input
+        type="date"
+        id="date"
+        name="date_assisted"
+        value="{{ date_assisted|default:today_date }}"
+        required
+      />
     </div>
 
     <div class="button-group">
@@ -49,82 +96,65 @@ Connect | Emergency Health Assistance{% endblock %} {% block extra_css %}
     </div>
   </form>
 </div>
-{% endblock %} {% block extra_js %}
+
 <script>
   const csrf_token = "{{ csrf_token }}";
-  var btn = document.getElementById("btn-get");
 
-  btn.addEventListener("click", function () {
-    var id = document.getElementById("student_id").value;
-    const data = { student_id: id };
-
-    fetch("/medical/getusernamebyid/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.user_name) {
-          document.getElementById("name").value = data.user_name;
-        } else if (data.error) {
-          alert(data.error);
-        }
-      });
-  });
-</script>
-
-<script>
   document.addEventListener("DOMContentLoaded", function () {
     const studentIdInput = document.getElementById("student_id");
     const nameInput = document.getElementById("name");
-    const suggestionsBox = document.getElementById("suggestions-box");
+    const studentDetailsDiv = document.getElementById("student_details");
+    const studentNameDisplay = document.getElementById("student_name_display");
 
-    studentIdInput.addEventListener("input", async function () {
-      const query = this.value.trim();
+    function fetchStudentDetails() {
+      const studentID = studentIdInput.value.trim();
 
-      if (query.length < 2) {
-        suggestionsBox.style.display = "none";
+      if (!studentID) {
+        nameInput.value = "";
+        studentDetailsDiv.classList.add("hidden");
         return;
       }
 
-      const response = await fetch(
-        `/medical/user-suggestions/?q=${encodeURIComponent(query)}`
-      );
-      const suggestions = await response.json();
+      const data = { student_id: studentID };
 
-      suggestionsBox.innerHTML = "";
-      if (suggestions.length > 0) {
-        suggestions.forEach((item) => {
-          const div = document.createElement("div");
-          div.textContent = `${item.name} (${item.id})`;
-          div.dataset.id = item.id;
-          div.dataset.name = item.name;
-          div.classList.add("suggestion-item");
-          suggestionsBox.appendChild(div);
+      fetch("/med/getusernamebyid/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrf_token,
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.user_name) {
+            // This still runs, but the input is hidden
+            nameInput.value = data.user_name;
+
+            // This is the only part the user sees
+            studentNameDisplay.textContent = data.user_name;
+            studentDetailsDiv.classList.remove("hidden");
+          } else {
+            nameInput.value = "";
+            studentDetailsDiv.classList.add("hidden");
+            if (data.error) {
+              console.error(data.error);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
+          nameInput.value = "";
+          studentDetailsDiv.classList.add("hidden");
         });
-        suggestionsBox.style.display = "block";
-      } else {
-        suggestionsBox.style.display = "none";
-      }
-    });
+    }
 
-    suggestionsBox.addEventListener("click", function (e) {
-      if (e.target.classList.contains("suggestion-item")) {
-        studentIdInput.value = e.target.dataset.id;
-        nameInput.value = e.target.dataset.name;
-        suggestionsBox.style.display = "none";
-      }
-    });
+    studentIdInput.addEventListener("input", fetchStudentDetails);
+    studentIdInput.addEventListener("change", fetchStudentDetails);
 
-    document.addEventListener("click", function (e) {
-      if (!e.target.closest(".autocomplete")) {
-        suggestionsBox.style.display = "none";
-      }
-    });
+    if (studentIdInput.value) {
+      fetchStudentDetails();
+    }
   });
 </script>
 {% endblock %}
