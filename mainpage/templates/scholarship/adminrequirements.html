@@ -18,7 +18,7 @@
 <div class="body-content"> <div class="sub-title">
         <h4>SCHOLARSHIP</h4>
         <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-        <p class="certxt">Scholarship Submission Tracker</p>
+        <p class="certxt">> Scholarship Submission Tracker</p>
     </div>
     <hr>
 
@@ -111,7 +111,7 @@
 
         {% if is_requesting %}
             {% if active_request %}
-                <h3 class="request-status">Year: {{ active_request.year }} || Semester: {{ active_request.semester }}</h3>
+                <h4 class="request-status">Year: {{ active_request.year }} || Semester: {{ active_request.semester }}</h4>
             {% endif %}
             
             <div class="table-wrapper"> <form method="POST">

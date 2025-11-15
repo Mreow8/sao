@@ -7,7 +7,7 @@
 }
 
 .container {
-  max-width: 900px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 1.5rem 2rem 1.5rem;
 }
@@ -174,15 +174,12 @@
   z-index: 100;
   font-weight: 500;
 }
-/* --- Program/Seminar List --- */
 .program-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem; /* More space between cards */
-  margin: 2rem auto; /* Center the list */
-  align-items: center;
-  width: 100%;
-  max-width: 30rem; /* Match the post box width */
+  display: grid; /* Switched from flex to grid */
+
+  gap: 20px; /* Provides consistent spacing between grid items */
+  margin-top: 20px;
+  /* Removed: align-items: center; */
 }
 
 /* --- Program/Seminar Card --- */
@@ -401,4 +398,156 @@
   color: white;
 
   border: 1px solid #2c5282;
+}
+/* --- New Control Bar --- */
+.page-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.post-box {
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+  background-color: transparent;
+  flex-grow: 1;
+}
+#collapsedBox {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+.sort-controls {
+  flex-shrink: 0;
+}
+
+/* --- Facebook Post Card Styling --- */
+.fb-post-card {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  /* NOTE: We do NOT set a max-width here, so it fills its container */
+}
+
+/* 1. Card Header */
+.fb-post-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  position: relative;
+}
+.fb-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+.fb-header-info {
+  display: flex;
+  flex-direction: column;
+}
+.fb-user-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #050505;
+}
+.fb-post-time {
+  font-size: 13px;
+  color: #65676b;
+}
+.fb-options-menu {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+}
+
+/* 2. Card Body */
+.fb-post-body {
+  padding: 4px 16px 12px 16px;
+  font-size: 15px;
+  line-height: 1.34;
+  color: #050505;
+  flex-grow: 1; /* Makes card fill height */
+}
+.fb-post-body p {
+  margin: 0;
+}
+
+/* 3. Image Gallery */
+.fb-gallery {
+  display: grid;
+  gap: 2px;
+  background-color: #f0f2f5; /* Light gray background */
+}
+.gallery-item {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* Creates square aspect ratio */
+  overflow: hidden;
+  background-color: #f0f2f5; /* Placeholder bg */
+}
+.gallery-item img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+/* --- Gallery Grid Logic (like Facebook) --- */
+.fb-gallery.count-0 {
+  display: none;
+} /* Hide gallery if no images */
+.fb-gallery.count-1 {
+  grid-template-columns: 1fr;
+}
+.fb-gallery.count-1 .gallery-item {
+}
+.fb-gallery.count-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.fb-gallery.count-3 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.fb-gallery.count-3 .gallery-item:first-child {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  padding-top: 202%;
+}
+.fb-gallery.count-4 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.fb-gallery.count-5,
+.fb-gallery[class*="count-"]:not(.count-1):not(.count-2):not(.count-3):not(
+    .count-4
+  ) {
+  grid-template-columns: repeat(2, 1fr);
+}
+/* Your existing overlay styles */
+.more-overlay,
+.plus-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 2.5em;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }

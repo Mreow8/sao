@@ -4,12 +4,6 @@ button,
 input,
 select {
   font-family: "Rubik", sans-serif;
-  color: #333;
-}
-
-/* --- Layout & Card --- */
-.body-content {
-  padding: 0 1.5rem;
 }
 
 .form_div {
@@ -19,6 +13,17 @@ select {
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+.search_id_container {
+  display: flex;
+  flex-wrap: wrap; /* Stack on mobile */
+  align-items: center;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
 
 .form_div h1 {
   font-size: 1.75rem;
@@ -26,14 +31,6 @@ select {
   color: #333;
   margin-top: 0;
   margin-bottom: 1.5rem;
-}
-
-/* --- HR --- */
-hr {
-  margin: 2.5rem 0;
-  border: 0;
-  height: 1px;
-  background-color: #e0e0e0;
 }
 
 /* === Filter Bar === */
@@ -109,9 +106,6 @@ hr {
 .table-container {
   width: 100%;
   overflow-x: auto; /* Adds horizontal scroll on small screens */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 #requirements-table {

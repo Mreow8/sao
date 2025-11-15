@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 from django.contrib.auth.models import User
-
+from datetime import date
 class studentInfo(models.Model):
 
     from django.conf import settings
@@ -86,7 +86,6 @@ class exit_interview_db(models.Model):
         ('4-5','4:00 PM - 5:00 PM'),
     ]
     scheduled_time = models.CharField(max_length=15, choices=time)
-    emailadd = models.EmailField()
     date = models.DateField()
     dateEnrolled = models.DateField()
     reasonForLeaving = models.CharField(max_length=255)
@@ -123,46 +122,51 @@ class exit_interview_db(models.Model):
         ('Expired' , 'Expired')
     ]
     status = models.CharField(max_length=10, choices=approval_status, default='Pending')
-    
-
+def get_current_school_year():
+    """
+    Calculates the current school year.
+    We'll assume the new school year starts in August (month 8).
+    """
+    today = date.today()
+    if today.month >= 8:  # If it's August or later
+        return f"{today.year}-{today.year + 1}"
+    else:  # If it's July or earlier
+        return f"{today.year - 1}-{today.year}"
 class OjtAssessment(models.Model):
+    # --- Status Constants ---
+    STATUS_ACCEPTED = 'Accepted'
+    STATUS_DECLINED = 'Declined'
+    STATUS_PENDING = 'Pending'
+    STATUS_EXPIRED = 'Expired'
+
+    approval_status = [
+        (STATUS_ACCEPTED, 'Accepted'),
+        (STATUS_DECLINED, 'Declined'),
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_EXPIRED, 'Expired'),
+    ]
+
     OjtRequestID = models.AutoField(primary_key=True)
     studentID = models.ForeignKey(studentInfo, on_delete=models.CASCADE)
-    dateRecieved = models.DateField()
-    schoolYearChoices = [
-        ('2020-2021','2020-2021'),
-        ('2021-2022','2021-2022'),
-        ('2022-2023','2022-2023'),
-        ('2023-2024','2023-2024'),
-        ('2024-2025','2024-2025'),
-        ('2025-2026','2025-2026'),
-        ('2026-2027','2026-2027'),
-        ('2027-2028','2027-2028'),
-        ('2028-2029','2028-2029'),
-        ('2029-2030','2029-2030'),
-        ('2030-2031','2030-2031'),
-        ('2031-2032','2031-2032'),
-        ('2032-2033','2032-2033'),
-        ('2033-2034','2033-2034'),
-        ('2034-2035','2034-2035'),
-        ('2035-2036','2035-2036'),
-        ('2036-2037','2036-2037'),
-        ('2037-2038','2037-2038'),
-        ('2038-2039','2038-2039'),
-        ('2039-2040','2039-2040'),
-        ('2040-2041','2040-2041'),
-    ]
-    schoolYear = models.CharField(max_length=10, choices=schoolYearChoices)
-    approval_status = [
-        ('Accepted' , 'Accepted'),
-        ('Declined' , 'Declined'),
-        ('Pending' , 'Pending'),
-        ('Expired' , 'Expired')
-    ]
-    status = models.CharField(max_length=10, choices=approval_status, default='Pending')
-    dateAccepted = models.DateField(null=True, blank=True)
+    
+    # --- Changed to DateTimeField with auto_now_add ---
+    dateRecieved = models.DateTimeField(auto_now_add=True) 
+    
+    scheduled_date = models.DateField(null=True)
+    schoolYear = models.CharField(
+        max_length=9, 
+        default=get_current_school_year
+    )
     emailadd = models.EmailField()
+    status = models.CharField(
+        max_length=10, 
+        choices=approval_status, 
+        default=STATUS_PENDING
+    )
+    dateAccepted = models.DateField(null=True, blank=True)
 
+    def __str__(self):
+        return f"Request for {self.studentID} ({self.status})"
 class counseling_schedule(models.Model):
     counselingID = models.AutoField(primary_key=True)
     case = models.ForeignKey(

@@ -23,9 +23,9 @@ class ProgramImageInline(admin.TabularInline):
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
     inlines = [ProgramImageInline]  # Add the ProgramImage manager here
-    list_display = ('title', 'date_time', 'archive')
+    list_display = ('title', 'created_at', 'archive')
     search_fields = ('title', 'description', 'caption')
-    list_filter = ('archive', 'date_time')
+    list_filter = ('archive', 'created_at')
     list_editable = ('archive',)  # Allow editing 'archive' from the list
 
 # --- Crowdfunding, Channels, and Donations ---

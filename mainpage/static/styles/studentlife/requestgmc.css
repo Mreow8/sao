@@ -1,23 +1,28 @@
-/* --- Global & Fonts --- */
-/* Apply the fonts imported in the HTML */
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
 .gmc-form,
 .sub-title,
 .requestBtn,
 #comboBox {
-  font-family: "Rubik", sans-serif;
+  font-family: "Rubik", sans-serif !important;
 }
-
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
 /* --- Container --- */
-.container,
-.body-content {
-  padding: 0 1.5rem; /* Add some horizontal padding */
-}
+
 .admin-table-wrapper {
   width: 100%;
   overflow-x: auto; /* This adds the horizontal scrollbar */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
   overflow: hidden; /* Clips the table corners */
 }
 .admin-table-wrapper {

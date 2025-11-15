@@ -1,0 +1,11 @@
+.search_id_container {
+  display: flex;
+  flex-wrap: wrap; /* Stack on mobile */
+  align-items: center;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}

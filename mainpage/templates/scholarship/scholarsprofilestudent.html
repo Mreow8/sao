@@ -7,15 +7,16 @@
 {% endblock headcontent %}
 
 {% block bodycontent %}
-  <div class="content">
-        <form class="form_div" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-              <div class="sub-title">
+      <div class="sub-title">
     <h4>SCHOLARSHIP</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Student Profile</p>
   </div>
 <hr>
+  <div class="content">
+        <form class="form_div" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+        
 
 <div class="content_box">
     

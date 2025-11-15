@@ -8,7 +8,9 @@ urlpatterns = [
     # The main 'jobplacement/' is in your main urls.py
     path('', views.mainpage, name="home"), 
     path('admin/student-tracker/', views.admin_student_tracker, name='admin_student_tracker'),
-  
+    path('get-ojt-pdf-url/<int:req_id>/<str:attr_name>/', 
+         views.get_ojt_pdf_url, 
+         name='get_ojt_pdf_url'),
     # path('admin/unassign-student/<int:assignment_id>/', views.unassign_student_view, name='unassign_student_view'),
     path('ojt/download-requirements/', views.ojt_requiremets_download, name='ojt_requiremets_download'),
     # OJT HIRING THINGS (removed 'jobplacement/' prefix)
@@ -45,10 +47,15 @@ urlpatterns = [
 
     # Non Academic Issuance (removed 'jobplacement/' prefix)
     path('non_acad', views.non_acad_page, name="non_acad"),
-    
-    # STUDENTS PATHS (removed 'jobplacement/' prefix)
-    path('ojt/requirements/tracker/view/iframe/<int:id>', views.view_pdf, name='view_pdf'),
+
+   
     path('upload/', views.file_scrapper, name='scrapper'),
+    path('ojt/requirements/tracker/view/iframe/<int:id>', views.view_pdf, name='view_pdf'),
+    
+    # [ADD THIS NEW LINE]
+    path('ojt/requirements/stream_file/<int:req_id>/<str:attr_name>/', 
+         views.stream_ojt_file, 
+         name='stream_ojt_file'),
 ]
 
 if settings.DEBUG:

@@ -8,29 +8,20 @@ body {
   background-color: #f8f9fa; /* Very light gray background */
   color: #212529; /* Dark gray text */
   margin: 0;
+  font-size: 14px;
 }
 
 /* --- Container & Page Layout --- */
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-hr {
-  border: 0;
-  height: 1px;
-  background-color: #dee2e6; /* Light border color */
-  margin: 1.5rem 0;
-}
 
 /* --- Main Content Card --- */
 .equipmentContents {
   background-color: #ffffff;
-  border: 1px solid #dee2e6;
-  border-radius: 16px; /* Larger radius */
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
   padding: 2.5rem;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07); /* Softer shadow */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 1400px;
+  margin: 2rem auto;
 }
 
 /* --- Search Bar --- */
@@ -39,7 +30,6 @@ hr {
 }
 
 .title-txt p {
-  font-size: 1.1rem;
   font-weight: 500;
   color: #343a40;
   margin: 0;
@@ -53,7 +43,6 @@ hr {
 .search input[type="text"] {
   flex-grow: 1;
   padding: 12px 16px; /* Slightly more padding */
-  font-size: 1rem;
   font-family: "Rubik", sans-serif;
   border: 1px solid #ced4da;
   border-radius: 8px 0 0 8px; /* Rounded left corner */
@@ -107,7 +96,6 @@ hr {
 .form-grid select {
   width: 100%;
   padding: 12px 16px;
-  font-size: 1rem;
   font-family: "Rubik", sans-serif;
   border: 1px solid #ced4da;
   border-radius: 8px;
@@ -155,7 +143,6 @@ form + .button-container {
 #addbtn,
 .saveBtn {
   font-family: "Rubik", sans-serif;
-  font-size: 0.9rem;
 
   padding: 10px 20px;
   border: 2px solid transparent; /* For layout consistency */

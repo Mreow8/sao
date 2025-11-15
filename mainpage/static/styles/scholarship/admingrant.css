@@ -6,7 +6,7 @@ body {
 }
 
 /* === Main Card === */
-.form_div {
+.cont {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
@@ -99,10 +99,6 @@ body {
 .table-container {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.5rem; /* Space before the BACK button */
 }
 
 #requirements-table {

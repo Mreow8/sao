@@ -54,7 +54,6 @@ class exitInterviewAdmine(admin.ModelAdmin):
         'status',
         'scheduled_date',
         'scheduled_time',
-        'emailadd'
     )
     list_editable = (
         'date',
@@ -79,7 +78,6 @@ class exitInterviewAdmine(admin.ModelAdmin):
         'status',
         'scheduled_date',
         'scheduled_time',
-        'emailadd'
     )
 
 

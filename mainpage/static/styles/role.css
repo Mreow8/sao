@@ -17,11 +17,6 @@ table {
   box-sizing: border-box;
 }
 
-body {
-  background-color: #f8f9fa;
-  color: #333;
-}
-
 .container {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
@@ -34,21 +29,17 @@ body {
   margin-right: auto;
 }
 
-hr {
-  margin: 1.5rem 0;
-  border: 0;
-  height: 1px;
-  background-color: #e0e0e0;
-}
-
 /* --- Filter & Search Controls --- */
 .filter-controls {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap; /* Stack on mobile */
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
 }
 
 .search-bar {
@@ -104,10 +95,6 @@ hr {
 .table-responsive {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  background: #fff;
 }
 
 /* --- Main User Table --- */

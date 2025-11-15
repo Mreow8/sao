@@ -30,6 +30,10 @@ def edit_program(request, pk):
                         "title": program.title,
                         "caption": program.caption,
                         "description": program.description,
+                        
+                        # --- ADDED THESE ---
+                        "event_date": program.event_date.strftime("%b. %d, %Y, %I:%M %p") if program.event_date else None,
+                        "venue": program.venue
                     }
                 })
             return redirect("programs")
@@ -158,38 +162,45 @@ def add_event(request):
 @login_required
 def add_programs(request):
     if request.method == "POST":
-        title = request.POST.get("title", "Untitled Event")
-        caption = request.POST.get("caption", "")
-        description = request.POST.get("description", "")
+        form = ProgramForm(request.POST)
+
+        if form.is_valid():
+            program = form.save()
+
+            for file in request.FILES.getlist("images"):
+                ProgramImage.objects.create(program=program, image=file)
+
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                images = [img.image.url for img in program.images.all()]
+                return JsonResponse({
+                    "success": True,
+                    "message": "Program added!",
+                    "program": {
+                        "id": program.id,
+                        "title": program.title,
+                        "caption": program.caption,
+                        "description": program.description,
+                        "images": images,
+                        "event_date": program.event_date.strftime("%b. %d, %Y, %I:%M %p") if program.event_date else None,
+                        "venue": program.venue
+                    }
+                })
+            else:
+                # --- ADDED SUCCESS MESSAGE ---
+                messages.success(request, "Program added successfully!")
+                return redirect("programs")
         
-        program = Program.objects.create(
-            title=title,
-            caption=caption,
-            description=description,
-        )
+        else: # Form is INVALID
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({"success": False, "errors": form.errors}, status=400)
+            else:
+                # --- ADDED ERROR MESSAGE ---
+                # Create a simple error message string from the form errors
+                error_list = ". ".join([f"{field}: {error[0]}" for field, error in form.errors.items()])
+                messages.error(request, f"Please correct the errors: {error_list}")
+                return redirect("programs")
 
-        for file in request.FILES.getlist("images"):
-            ProgramImage.objects.create(program=program, image=file)
-
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            images = [img.image.url for img in program.images.all()]
-            return JsonResponse({
-                "success": True,
-                "message": "Program added!",
-                "program": {
-                    "title": program.title,
-                    "caption": program.caption,
-                    "description": program.description,
-                    "images": images
-                }
-            })
-        else:
-            return redirect("programs")
-
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
-        return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
     return redirect("programs")
-
 @login_required
 def programs(request):
     # --- MODIFICATION START ---
@@ -201,14 +212,14 @@ def programs(request):
 
     # 3. Apply sorting
     if sort_by == 'oldest':
-        program_list = program_list_query.order_by("date_time")
+        program_list = program_list_query.order_by("created_at")
     else:
         # Default to newest (also catches 'newest' and invalid values)
-        program_list = program_list_query.order_by("-date_time")
+        program_list = program_list_query.order_by("-created_at")
         sort_by = 'newest' # Explicitly set for the context
     # --- MODIFICATION END ---
     
-    items_per_page = 5 
+    items_per_page = 16
     paginator = Paginator(program_list, items_per_page) # Use the sorted list
     page_number = request.GET.get('page')
 
@@ -232,30 +243,23 @@ def programs(request):
             "qrCodeID": qrCodeID, 
             "base_template": base_template,
             "user": request.user,
-            "current_sort": sort_by, # --- ADDED: Pass sort status to template
+            "current_sort": sort_by,
         },
     )
-
 @login_required
 def crowdfunding_list(request):
-    # --- MODIFICATION START ---
-    # 1. Get sort parameter, default to 'newest'
     sort_by = request.GET.get('sort', 'newest')
 
-    # 2. Base queryset
     project_list_query = CrowdfundingProject.objects.filter(active=True)
 
-    # 3. Apply sorting
     if sort_by == 'oldest':
         project_list = project_list_query.order_by("created_at")
     else:
-        # Default to newest (also catches 'newest' and invalid values)
         project_list = project_list_query.order_by("-created_at")
-        sort_by = 'newest' # Explicitly set for the context
-    # --- MODIFICATION END ---
+        sort_by = 'newest'
 
-    items_per_page = 5
-    paginator = Paginator(project_list, items_per_page) # Use the sorted list
+    items_per_page = 16
+    paginator = Paginator(project_list, items_per_page)
     page_number = request.GET.get('page')
 
     try:
@@ -271,7 +275,7 @@ def crowdfunding_list(request):
         "page_obj": page_obj,
         "base_template": base_template,
         "user": request.user,
-        "current_sort": sort_by, # --- ADDED: Pass sort status to template
+        "current_sort": sort_by,
     }
 
     return render(
@@ -279,7 +283,6 @@ def crowdfunding_list(request):
         "community_involvement/crowdfunding_list.html",
         context
     )
-
 
 @login_required
 def crowdfunding_detail(request, pk):

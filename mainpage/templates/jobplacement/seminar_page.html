@@ -5,15 +5,17 @@
 <link rel="stylesheet" href="{% static 'styles/community/program.css' %}" />
 {% endblock headcontent %} {% block bodycontent %}
 <style>
-  .program-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
-
-    /* Add this line to center the cards */
-    align-items: center;
-  }
+.program-list {
+  display: grid; /* Switched from flex to grid */
+  /* This creates responsive columns: 
+     - 'auto-fit' makes it create as many columns as will fit.
+     - 'minmax(300px, 1fr)' ensures each column is at least 300px wide, 
+       but will stretch to fill available space ('1fr'). */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px; /* Provides consistent spacing between grid items */
+  margin-top: 20px;
+  /* Removed: align-items: center; */
+}
   /* program.css */
   .delete-button-subtle {
     display: flex;
@@ -41,23 +43,25 @@
     color: #4a5568;
     margin-bottom: 2rem;
     line-height: 1.6;
+    text-align: center;
   }
 </style>
-<div class="container">
   <div class="sub-title">
     <h4>JOB PLACEMENT</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Career Guidance Tracker</p>
   </div>
   <hr />
-  <div class="desc">
-    <p>
+  
+    <p class="desc">
       Stay ahead in your career with our expertly curated seminars. Designed to
       equip you with the latest industry insights, practical skills, and
       networking opportunities, our seminars are your gateway to professional
       growth and success.
     </p>
-  </div>
+
+<div class="container">
+
   {% if user.is_staff %}
   <div class="post-box">
     <div class="collapsed" id="collapsedBox">Add Event...</div>
@@ -187,10 +191,15 @@
     {% endfor %}
   </div>
 </div>
-
+<div id="imageModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center;">
+  <span id="closeImageModal" style="position: absolute; top: 20px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</span>
+  <img id="modalImageContent" style="margin: auto; display: block; max-width: 80%; max-height: 80%;" />
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    
     // --- Logic for the "Add Event" form ---
     const collapsedBox = document.getElementById("collapsedBox");
     const expandedBox = document.getElementById("expandedBox");
@@ -219,10 +228,17 @@
       });
     }
 
-    // --- Logic for Edit/Delete Menu ---
+    // --- [NEW] Get modal elements ---
+    const imageModal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImageContent");
+    const closeModalBtn = document.getElementById("closeImageModal");
+
+    // --- Logic for Menus & [NEW] Image Clicks ---
     const programList = document.querySelector(".program-list");
     if (programList) {
       programList.addEventListener("click", function (e) {
+        
+        // Logic for Edit/Delete Menu
         if (e.target.classList.contains("menu-btn")) {
           document.querySelectorAll(".menu").forEach((menu) => {
             if (menu !== e.target.nextElementSibling) {
@@ -232,9 +248,39 @@
           e.target.nextElementSibling.classList.toggle("hidden");
           e.stopPropagation();
         }
+
+        // --- [NEW] Image Modal Click Logic ---
+        const galleryItem = e.target.closest(".gallery-item");
+        if (galleryItem && imageModal && modalImg) {
+          const img = galleryItem.querySelector("img");
+          if (img) {
+            modalImg.src = img.src; // Set modal image source
+            imageModal.style.display = "flex"; // Show modal
+          }
+        }
+        // --- End [NEW] ---
+
       });
     }
 
+    // --- [NEW] Modal Close Logic ---
+    if (imageModal && closeModalBtn) {
+      // Add listener to close button (x)
+      closeModalBtn.addEventListener("click", function () {
+        imageModal.style.display = "none"; // Hide modal
+      });
+
+      // Add listener to close modal on background click
+      imageModal.addEventListener("click", function (e) {
+        // If the clicked element is the modal background itself
+        if (e.target.id === "imageModal") {
+          imageModal.style.display = "none"; // Hide modal
+        }
+      });
+    }
+    // --- End [NEW] ---
+
+    // --- Logic to hide menus on body click ---
     document.body.addEventListener("click", function () {
       document
         .querySelectorAll(".menu")
@@ -262,4 +308,5 @@
     });
   });
 </script>
+
 {% endblock bodycontent %}

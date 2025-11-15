@@ -1,25 +1,30 @@
-// ...existing code...
-$(document).ready(function () {
-  // helper to read csrftoken from cookie (Django)
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-      document.cookie.split(";").forEach(function (cookie) {
-        const c = cookie.trim();
-        if (c.startsWith(name + "="))
-          cookieValue = decodeURIComponent(c.substring(name.length + 1));
-      });
-    }
-    return cookieValue;
-  }
-  const csrftoken = getCookie("csrftoken");
+/* ojt_requirements.js */
 
-  // testing purposes
-  const open = document.querySelector(".view-pdf");
-  const close = document.querySelector(".close-button");
+// Helper function to get the CSRF token from cookies
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+const csrftoken = getCookie("csrftoken");
+
+$(document).ready(function () {
+  // Get references to modal elements
   const form = document.querySelector(".showcontainer");
+  const close = document.querySelector(".close-button");
   const xbtn = document.querySelector(".closeform");
 
+  // This is the main handler for opening the modal
   $(".view-pdf").click(function () {
     let ojtRequirementId = $(this).val();
     let attrName = $(this).attr("name");
@@ -29,20 +34,21 @@ $(document).ready(function () {
 
     $.ajax({
       type: "POST",
-      // use absolute path (adjust if your route differs)
+      // [FIX] Use the absolute URL path from your urls.py
       url: `/jobplacement/ojt/requirements/tracker/view/iframe/${ojtRequirementId}`,
+      // [FIX] Send the token in the headers
       headers: { "X-CSRFToken": csrftoken },
       data: {
+        // [FIX] Removed the broken csrfmiddlewaretoken line
         id: ojtRequirementId,
         attr_name: attrName,
       },
       success: function (response) {
         if (response.url) {
-          // Assuming you have an iframe with id="pdfViewer"
           $("#pdf-iframe").attr("src", response.url);
           req_holder.val(ojtRequirementId);
           attr_holder.val(attrName);
-          if (form) form.classList.add("active");
+          form.classList.add("active");
         } else {
           alert("PDF not found!");
         }
@@ -53,19 +59,20 @@ $(document).ready(function () {
     });
   });
 
+  // Search bar logic
   $("#search_bar").on("input", function () {
     let query = $(this).val();
     if (query.length > 0) {
+      // [FIX] Changed to absolute URL
       $.ajax({
-        // absolute suggestions endpoint
-        url: "/jobplacement/suggestions/",
+        url: "/jobplacement/suggestions/", // Use absolute path
         data: { query: query },
         success: function (data) {
           console.log(data);
           $("#search_suggestions").html("");
           for (let i = 0; i < data.length; i++) {
-            text = `${data[i][0]} - ${data[i][1]}, ${data[i][2]}`;
-            // store id in data attribute for reliable retrieval
+            let text = `${data[i][0]} - ${data[i][1]}, ${data[i][2]}`;
+            // [FIX] Stored ID in data-stud for reliable retrieval
             $("#search_suggestions").append(
               '<li data-stud="' +
                 data[i][0] +
@@ -81,37 +88,33 @@ $(document).ready(function () {
     }
   });
 
-  // attach handlers only if elements exist
-  if (open && form) {
-    open.addEventListener("click", () => {
-      form.classList.add("active");
-    });
-  }
+  // --- Modal Close Handlers ---
   if (close && form) {
     close.addEventListener("click", () => {
       form.classList.remove("active");
+      $("#pdf-iframe").attr("src", ""); // Clear iframe src
     });
   }
+
   if (xbtn && form) {
     xbtn.addEventListener("click", () => {
       form.classList.remove("active");
+      $("#pdf-iframe").attr("src", ""); // Clear iframe src
     });
   }
+
   window.onclick = function (event) {
     if (form && event.target == form) {
       form.classList.remove("active");
+      $("#pdf-iframe").attr("src", ""); // Clear iframe src
     }
   };
 });
 
+// [FIX] Updated function to read from data-stud
 function assign_stud_id(e) {
   let element = $(e);
-  // read stored data-stud attribute
-  const stud =
-    element.data("stud") ||
-    element.attr("value") ||
-    element.text().split("-")[0].trim();
+  const stud = element.data("stud") || element.text().split("-")[0].trim();
   $("#search_bar").val(stud);
   $("#search_suggestions").html("");
 }
-// ...existing code...

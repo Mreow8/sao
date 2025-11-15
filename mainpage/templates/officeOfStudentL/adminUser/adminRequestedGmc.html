@@ -247,15 +247,12 @@
   </div> </div> <script>
   document.addEventListener("DOMContentLoaded", function () {
     
-    // Function to open print window and reload on close
     function openPrintWindow(url) {
       const printWindow = window.open(url, "_blank");
 
-      // Poll for the print window close event
       const interval = setInterval(() => {
         if (printWindow.closed) {
           clearInterval(interval);
-          // Reload the page to show the updated status
           setTimeout(() => {
             location.reload();
           }, 500);
@@ -263,7 +260,6 @@
       }, 500);
     }
 
-    // Handler for NEW "Print" buttons
     document.querySelectorAll(".printBtn").forEach((button) => {
       button.addEventListener("click", function () {
         const requestId = this.getAttribute("data-request-id");
@@ -275,7 +271,7 @@
         if (!orNum) {
           alert("OR Number is required");
           orNumInput.focus();
-          return; // Stop execution
+          return; 
         }
 
         const printUrl = `/main/generate-gmc/${requestId}/?ornum=${encodeURIComponent(orNum)}`;
@@ -283,13 +279,11 @@
       });
     });
 
-    // Handler for "Re-print" buttons
     document.querySelectorAll(".reprintBtn").forEach((button) => {
       button.addEventListener("click", function () {
         const requestId = this.getAttribute("data-request-id");
         const orNum = this.getAttribute("data-or-num");
         
-        // We don't need to check for empty OR number, it's already saved
         const printUrl = `/main/generate-gmc/${requestId}/?ornum=${encodeURIComponent(orNum)}`;
         openPrintWindow(printUrl);
       });

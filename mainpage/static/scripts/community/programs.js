@@ -45,9 +45,20 @@ document.addEventListener("DOMContentLoaded", function () {
       postText.focus();
     });
 
-    postText.addEventListener("input", () => {
-      submitBtn.disabled = postText.value.trim() === "";
-    });
+    // Get the new caption input field
+    const captionInput = postForm.querySelector('input[name="caption"]');
+
+    // Function to check validation
+    function validateForm() {
+      const captionValid = captionInput.value.trim() !== "";
+      const textValid = postText.value.trim() !== "";
+      // Enable button only if both caption AND description are filled
+      submitBtn.disabled = !(captionValid && textValid);
+    }
+
+    // Add listeners to both fields
+    postText.addEventListener("input", validateForm);
+    captionInput.addEventListener("input", validateForm);
 
     let currentFiles = [];
     imageUpload.addEventListener("change", () => {
@@ -197,12 +208,36 @@ document.addEventListener("DOMContentLoaded", function () {
             const programCard = document.getElementById(
               `program-${data.program.id}`
             );
-            programCard.querySelector(".program-title").textContent =
+
+            programCard.querySelector(".fb-user-name").textContent =
               data.program.title;
-            programCard.querySelector(".program-caption").textContent =
+            programCard.querySelector(".fb-post-time").textContent =
               data.program.caption;
-            programCard.querySelector(".program-description").textContent =
-              data.program.description;
+
+            const descEl = programCard.querySelector(".fb-post-body p");
+            if (descEl) {
+              descEl.textContent = data.program.description;
+            }
+
+            let venueEl = programCard.querySelector(".fb-post-venue");
+            if (!venueEl) {
+              venueEl = document.createElement("div");
+              venueEl.className = "fb-post-venue";
+              programCard.querySelector(".fb-post-body").before(venueEl);
+            }
+            venueEl.textContent = data.program.venue
+              ? `📍 ${data.program.venue}`
+              : "";
+
+            let dateEl = programCard.querySelector(".fb-post-event-date");
+            if (!dateEl) {
+              dateEl = document.createElement("div");
+              dateEl.className = "fb-post-event-date";
+              programCard.querySelector(".fb-post-header").after(dateEl);
+            }
+            dateEl.textContent = data.program.event_date
+              ? `🗓️ ${data.program.event_date}`
+              : "";
 
             closeModal();
 

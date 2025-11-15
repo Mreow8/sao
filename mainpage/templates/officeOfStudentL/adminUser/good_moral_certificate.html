@@ -40,7 +40,7 @@
                 <div class="sub-contents">
                 <h4>To Whom It May Concern:</h4>
                 
-                <p>This is to certify that <span class="underline">{{ student_name }}</span> is a student of Cebu Technological University-Argao Campus during the school year <input type="text" class="school-year"> taking <span class="underline">{{ student_degree }}</span>.</p>
+                <p>This is to certify that <span class="underline">{{ student_name }}</span> is a student of Cebu Technological University-Argao Campus during the school year <input type="text" class="school-year" readonly> taking <span class="underline">{{ student_degree }}</span>.</p>
 
                 <p>During his/her stay in this institution, we have not found any record to show that she committed any act contrary to the rules and regulations of the school.</p>
     
@@ -86,7 +86,25 @@
         // window.print(); // uncomment to auto-print
     };
 </script>
-       
+       <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const today = new Date();
+    const currentMonth = today.getMonth(); 
+    const currentYear = today.getFullYear();
+
+    let startYear;
+    if (currentMonth >= 7) {
+      startYear = currentYear;
+    } else {
+      startYear = currentYear - 1;
+    }
+
+    const endYear = startYear + 1;
+    const schoolYearString = `${startYear}-${endYear}`;
+
+    document.querySelector(".school-year").value = schoolYearString;
+  });
+</script>
     </body>
     
 </html>

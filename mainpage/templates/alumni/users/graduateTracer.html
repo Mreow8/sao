@@ -2,299 +2,299 @@
 
 {% block bodycontent %}
 
-<style>
-    /* --- Success Alert (Approved) --- */
-.alert-success {
-  background-color: #f0fff4; /* Light green */
-  border: 1px solid #c6f6d5; /* Lighter green border */
-  border-left: 5px solid #38a169; /* Green accent border */
+<style>/* --- CSS Variables and Base Setup --- */
+:root {
+  --color-primary: #005a9e; /* A professional blue */
+  --color-primary-dark: #004a80;
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-danger: #dc3545;
+  --color-info: #17a2b8;
+  --color-text-primary: #212529;
+  --color-text-secondary: #555;
+  --color-label: #333;
+  --color-border: #d1d5db; /* Light grey */
+  --color-bg: #f8f9fa; /* Page background */
+  --color-bg-card: #ffffff;
+  --spacing-unit: 8px;
+  --border-radius: 6px;
+  --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.alert-success .alert-heading {
-  font-size: 1.25rem;
-  
-  color: #2f855a; /* Dark green text */
-  margin-top: 0;
-  margin-bottom: 1rem;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.6;
 }
 
-.alert-success p {
-  margin: 0.5rem 0;
-  color: #555;
-  font-size: 0.95rem;
+* {
+  box-sizing: border-box;
 }
 
-.alert-success hr {
-  margin: 1.5rem 0;
-  border: 0;
-  height: 1px;
-  background-color: #c6f6d5;
+/* --- Main Page Layout --- */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: calc(var(--spacing-unit) * 3); /* 24px */
 }
 
-/* --- Danger Alert (Declined) --- */
-.alert-danger {
-  background-color: #fff5f5; /* Light red */
-  border: 1px solid #fed7d7; /* Lighter red border */
-  border-left: 5px solid #e53e3e; /* Red accent border */
-}
-
-.alert-danger .alert-heading {
-  font-size: 1.25rem;
-  
-  color: #c53030; /* Dark red text */
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.alert-danger p {
-  margin: 0.5rem 0;
-  color: #555;
-  font-size: 0.95rem;
-}
-
-.alert-danger hr {
-  margin: 1.5rem 0;
-  border: 0;
-  height: 1px;
-  background-color: #fed7d7;
-}
-    .alert-container {
+.alumni-form-wrapper {
   display: flex;
-  justify-content: center; /* This centers the alert horizontally */
-  align-items: center; /* This centers it vertically (optional) */
+  flex-direction: column;
+  gap: calc(var(--spacing-unit) * 4); /* 32px */
   width: 100%;
-  padding: 2rem 0; /* Adds some space above and below */
+  padding: calc(var(--spacing-unit) * 5); /* 40px */
+  background-color: var(--color-bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
 }
 
-.alert-warning {
-  /* You can set a max-width so it doesn't stretch too wide */
-  max-width: 800px; 
-  width: 90%; /* Ensures it's responsive */
-  
-  /* --- Your existing alert styles --- */
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 0; /* The container now handles the margin */
-  border: 1px solid #ffecb5;
-  background-color: #fff3cd;
-  color: #664d03;
-  /* etc. */
+.form-section-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-unit) * 3); /* 24px */
+  width: 100%;
+}
+
+/* --- Alert Boxes --- */
+.alert-container {
+  margin-bottom: calc(var(--spacing-unit) * 3);
 }
 .alert {
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
   border: 1px solid transparent;
+  border-radius: var(--border-radius);
+}
+.alert h4 {
+  margin-top: 0;
+  font-weight: 600;
+}
+.alert-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+.alert-info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
 }
 
-/* For Django messages */
-.alert-info {
-  background-color: #ebf8ff; /* Light blue */
-  border-color: #bee3f8; /* Lighter blue border */
-  color: #2b6cb0; /* Darker blue text */
+
+
+.alumni-details-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing-unit) * 6); /* 48px */
+  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3); /* 16px 24px */
+  color: var(--color-label);
+  letter-spacing: 0.025em;
+  background-color: var(--color-bg);
+  border-radius: var(--border-radius);
+  border: 1px solid #e9ecef;
+}
+.detail-item {
+  min-width: 200px;
+}
+.detail-item-label {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 calc(var(--spacing-unit) / 2) 0;
+}
+.detail-item-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* --- "Already Submitted" Box --- */
+.already-submitted-box {
+  background-color: #fdfdfd;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: calc(var(--spacing-unit) * 4);
+  text-align: center;
+}
+.already-submitted-box-title {
+  color: var(--color-success);
+  font-size: 1.5rem;
+  margin: 0 0 var(--spacing-unit) 0;
+}
+.already-submitted-box-footer {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-unit);
+}
+
+/* --- Form Structure --- */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-unit) * 3); /* 24px */
+  width: 100%;
+  border-top: 1px solid var(--color-border);
+  padding-top: calc(var(--spacing-unit) * 3); /* 24px */
+}
+.form-section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+.form-subsection-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-label);
+  margin: 0 0 calc(var(--spacing-unit) * -1) 0;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap; /* Allows columns to stack on small screens */
+  gap: calc(var(--spacing-unit) * 3); /* 24px */
+}
+
+/* This is the magic for multi-column layouts */
+.form-row > .form-input-wrapper,
+.form-row > .wrapper-w204,
+.form-row > .wrapper-w203,
+.form-row > .wrapper-w230 {
+  flex: 1; /* Each item will grow to fill space */
+  min-width: 200px; /* Ensures they wrap nicely */
+}
+
+/* --- Labels --- */
+.form-label,
+.form-label-simple,
+.form-label-italic,
+.form-label-bold-italic,
+.form-label-bold,
+.form-label-block {
+  display: block;
+  margin-bottom: var(--spacing-unit);
+  color: var(--color-label);
+  font-size: 0.9rem;
   font-weight: 500;
 }
-
-/* For the "Pending Request" box */
-.alert-warning {
-  /* This is styled like .pending-request-box from the guide */
-  background-color: #ebf8ff;
-  border: 1px solid #bee3f8;
-  border-left: 5px solid #2c5282; /* Accent border */
+.form-label-italic {
+  font-style: italic;
+}
+.form-label-bold {
+  font-weight: 700;
+}
+.form-label-bold-italic {
+  font-weight: 700;
+  font-style: italic;
 }
 
-.alert-warning .alert-heading {
-  /* h4 */
-  font-size: 1.25rem;
-  
-  color: #2b6cb0;
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.alert-warning p {
-  margin: 0.5rem 0;
-  color: #555;
-  font-size: 0.95rem;
-}
-
-.alert-warning hr {
-  margin: 1.5rem 0; /* Override default hr margin */
-  border: 0;
-  height: 1px;
-  background-color: #bee3f8;
-}
-
-/* --- REFACTORED STYLES --- */
-.tracer-form-main { 
-    width: 100%; 
-    height: auto; 
-    background-color: white; 
-}
-.detail-item-label { 
-    font-size: 10px; 
-    text-transform: uppercase; 
-    color: #6b7280; 
-    margin-bottom: 4px; 
-}
-.detail-item-value { 
-    font-size: 17px; 
-    color: #0f172a; 
-    font-weight: 500; 
-}
-
-.already-submitted-box { 
-    background-color: #e9fbf0; 
-    color: #065f46; 
-    padding: 24px; 
-    border-radius: 12px; 
-    border: 1px solid #a7f3d0; 
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); 
-}
-.already-submitted-box-title { 
-    font-size: 20px; 
-    margin-bottom: 8px; 
-}
-.already-submitted-box-footer { 
-    margin-top: 8px; 
-    font-size: 14px; 
-    color: #4b5563; 
-}
-
-.form-section-title { 
-    font-size: 26px; 
-    font-weight: bold; 
-    margin-bottom: 20px; 
-}
-.form-subsection-title { 
-    font-size: 19px; 
-    font-weight: bold; 
-    margin-bottom: 15px; 
-}
-
-.form-input-wrapper { 
-    width: 100%; 
-}
-.form-label { 
-    font-size: 14px; 
-    color: #4b5563; 
-    margin-bottom: 8px; 
-}
-.form-label-simple { 
-    font-size: 14px; 
-    margin-bottom: 8px; 
-}
-.form-label-italic { 
-    font-size: 13px; 
-    font-weight: bold; 
-    font-style: italic; 
-    margin-bottom: 8px; 
-}
-.form-label-bold-italic { 
-    font-size: 14px; 
-    font-weight: bold; 
-    font-style: italic; 
-    margin-bottom: 8px; 
-}
-.form-label-bold { 
-    font-size: 14px; 
-    font-weight: bold; 
-    margin-bottom: 8px; 
-}
-.form-label-block { 
-    display: block; 
-    font-size: 14px; 
-    font-weight: 500; 
-    color: #374151; 
-}
-
-.option-placeholder { 
-    color: #9ca3af; 
-}
-
-/* --- Base Input/Textarea Styles --- */
-.tracer-form-input {
-    background-color: #f3f4f6; 
-    border: 1px solid #d1d5db; 
-    height: 49px; 
-    padding: 8px; 
-    border-radius: 4px; 
-    outline: none;
-}
-.tracer-form-textarea {
-    background-color: #f3f4f6; 
-    border: 1px solid #d1d5db; 
-    width: 800px; 
-    height: 300px; 
-    padding: 20px; 
-    border-radius: 4px; 
-    outline: none;
-}
-
-/* --- Width Utilities --- */
-.w-full { width: 100%; }
-.w-456 { width: 456px; }
-.w-204 { width: 204px; }
-.w-203 { width: 203px; }
-
-/* Text Area Wrappers */
-.textarea-wrapper { 
-    width: 100%; 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
-}
-.textarea-inner-wrap { 
-    display: flex; 
-}
-
-/* Toggle Select */
+/* --- Inputs, Selects, TextAreas --- */
+.tracer-form-input,
+.tracer-form-textarea,
 .tracer-select-toggle {
-    margin-top: 4px; 
-    display: block; 
-    width: 100%; 
-    padding: 8px 16px; 
-    border: 1px solid #d1d5db; 
-    border-radius: 12px; 
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
-    outline: none;
+  width: 100%;
+  padding: calc(var(--spacing-unit) * 1.25) calc(var(--spacing-unit) * 1.5); /* 10px 12px */
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* JS Target */
-#studyDetailsContainer { 
-    margin-top: 16px; 
-    display: none; 
+.tracer-form-input:focus,
+.tracer-form-textarea:focus,
+.tracer-select-toggle:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 90, 158, 0.1);
 }
 
-/* Button */
-.submit-button { 
-    background-color: #2563eb; 
-    padding: 12px; 
-    color: white; 
-    width: 150px; 
-    border: none; 
-    border-radius: 4px; 
-    cursor: pointer; 
+.tracer-form-textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
-/* Fallback */
-.fallback-text { 
-    text-align: center; 
-    padding: 20px; 
+.option-placeholder {
+  color: #999;
 }
 
-/* Layout Utilities */
-.mt-20 { margin-top: 20px; }
-.mb-15 { margin-bottom: 15px; }
-.mb-20 { margin-bottom: 20px; }
-.align-start { align-items: flex-start; }
+/* --- Fixed Width Utility Replacements --- */
+/* These now just apply max-width within their flex container */
+.tracer-form-input.w-456 {
+  max-width: 456px;
+}
+.tracer-form-input.w-204 {
+  max-width: 204px;
+}
+.tracer-form-input.w-203 {
+  max-width: 203px;
+}
+.tracer-form-input.w-230 {
+  max-width: 230px;
+}
 
-/* Width wrappers (for parent divs) */
-.wrapper-w204 { width: 204px; }
-.wrapper-w203 { width: 203px; }
-.wrapper-w230 { width: 230px; }
-/* --- END REFACTORED STYLES --- */
-</style>
+/* --- Spacing Utilities --- */
+.mb-15 {
+  margin-bottom: 15px;
+}
+.mt-20 {
+  margin-top: 20px;
+}
+.align-start {
+  align-items: flex-start;
+}
+
+/* --- Further Studies (JavaScript Toggle) --- */
+#studyDetailsContainer {
+  display: none; /* Hidden by default */
+}
+
+/* --- Submit Button --- */
+.submit-button {
+  background-color: var(--color-primary);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3); /* 12px 24px */
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  align-self: flex-start; /* Aligns button to the left */
+}
+.submit-button:hover {
+  background-color: var(--color-primary-dark);
+}
+.submit-button:active {
+  transform: translateY(1px);
+}
+
+.fallback-text {
+  font-size: 1.2rem;
+  color: var(--color-danger);
+  text-align: center;
+  padding: calc(var(--spacing-unit) * 4);
+}</style>
+ <div class="sub-title">
+                            <h4>Alumni</h4>
+                            <p class="hometext" >Home</p>
+                            <p class="certxt">&gt; Graduates Form</p>
+                        </div>
+<hr>
 <div class="container">
     {% if already_submitted %}
     {% if submitted_form.approval_status == 'Pending' %}
@@ -346,36 +346,10 @@
                   
 
                     <div class="form-section-wrapper">
-                        <div class="sub-title">
-                            <h4>Alumni</h4>
-                            <p class="hometext" >Home</p>
-                            <p class="certxt">&gt; Graduates Form</p>
-                        </div>
-<hr>
+                       
 
                         {% if student %}
-                        <div class="alumni-details-header">
-                            
-                            <div class="detail-item">
-                                <p class="detail-item-label">Student ID</p>
-                                <p class="detail-item-value">{{ student.studID }}</p>
-                            </div>
-
-                            <div class="detail-item">
-                                <p class="detail-item-label">First Name</p>
-                            <p class="detail-item-value">{{ student.firstname }}</p>
-                            </div>
-
-                            <div class="detail-item">
-                                <p class="detail-item-label">Last Name</p>
-                                <p class="detail-item-value">{{ student.lastname }}</p>
-                            </div>
-
-                            <div class="detail-item">
-                                <p class="detail-item-label">Degree</p>
-                                <p class="detail-item-value">{{ student.degree }}</p>
-                            </div>
-                        </div>
+                 
                         
                         {% if already_submitted %}
                             <div class="already-submitted-box">
@@ -743,7 +717,7 @@
                             </div>
                             </div>
                         <div class="form-section">
-                            <h1 class="form-section-title">6. HOW WOULD YOU RATE THE DEGREE PROGRAM YOU FINISHED AT THE UST GRADUATE SCHOOL IN TERMS OF:</h1>
+                            <h1 class="form-section-title">6. HOW WOULD YOU RATE THE DEGREE PROGRAM YOU FINISHED AT THE CTU ARGAO GRADUATE SCHOOL IN TERMS OF:</h1>
                             <h6 class="mb-15">(1-poorly 2-fairly 3-highly 4-very highly)</h6>
                             <div class="form-row">
                                 <div class="form-input-wrapper">
@@ -955,10 +929,6 @@
 </script>
 
 <style>
-/* The original layout used Tailwind's flexbox model for spacing and structure.
-    To maintain the layout, you should add these basic CSS rules to your main stylesheet (e.g., style.css).
-*/
-
 .alumni-form-wrapper {
     display: flex;
     flex-direction: column;

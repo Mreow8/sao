@@ -3,18 +3,14 @@
   font-family: "Rubik", sans-serif;
 }
 
-/* --- Container --- */
-.body-content {
-  padding: 0 1.5rem; /* Add some horizontal padding */
-}
-
-/* --- Main Content Card --- */
 .equipmentContents {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 1400px;
+  margin: 2rem auto;
 }
 
 /* --- Breadcrumb Link Underline --- */
@@ -110,9 +106,7 @@
 .table-responsive {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
   overflow: hidden; /* Clips the table corners */
 }
 

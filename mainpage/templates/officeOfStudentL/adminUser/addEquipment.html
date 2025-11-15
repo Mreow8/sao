@@ -9,18 +9,16 @@
   href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap"
   rel="stylesheet"
 />
-
+<div class="sub-title">
+  <h4>OFFICE OF STUDENT LIFE (Admin)</h4>
+  <p class="hometext">Home</p>
+  <a href="{% url 'equipmentTrackerAdmin' %}" class="txt-underline"
+    ><p class="hometext">> Equipment Tracker</p></a
+  >
+  <p class="certxt">> Add Equipment</p>
+</div>
+<hr />
 <div class="body-content">
-  <div class="sub-title">
-    <h4>OFFICE OF STUDENT LIFE (Admin)</h4>
-    <p class="hometext">Home</p>
-    <a href="{% url 'equipmentTrackerAdmin' %}" class="txt-underline"
-      ><p class="hometext">> Equipment Tracker</p></a
-    >
-    <p class="certxt">> Add Equipment</p>
-  </div>
-  <hr />
-
   <div class="equipmentContents">
     <form id="trackerForm" action="{% url 'addEquipment' %}" method="POST">
       {% csrf_token %}

@@ -6,8 +6,7 @@
 
 /* --- Page Wrapper --- */
 .content {
-  padding: 0 1.5rem;
-  max-width: 900px; /* Constrain width */
+  max-width: 1200px; /* Constrain width */
   margin: 0 auto; /* Center the content */
 }
 

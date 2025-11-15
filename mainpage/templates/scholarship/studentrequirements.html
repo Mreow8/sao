@@ -60,6 +60,12 @@
   }
 </style>
 {% endblock headcontent %} {% block bodycontent %}
+ <div class="sub-title">
+      <h4>SCHOLARSHIP</h4>
+      <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+      <p class="certxt">&gt; Submit Scholarship Requirements</p>
+    </div>
+<hr>
 <div class="content_box">
   <div class="content">
     {% if msg %}
@@ -93,12 +99,7 @@
       >
     </div>
     {% else %}
-    <div class="sub-title">
-      <h4>SCHOLARSHIP</h4>
-      <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-      <p class="certxt">&gt; Submit Scholarship Requirements</p>
-    </div>
-<hr>
+   
 
     <div class="form_div">
       <form id="requirementsForm" method="POST" enctype="multipart/form-data">

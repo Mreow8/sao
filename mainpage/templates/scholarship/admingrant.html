@@ -2,10 +2,19 @@
 {% load static %} 
 {% block bodycontent %}
 <link rel="stylesheet" href="{% static 'styles/scholarship/admingrant.css' %}">
+  <div class="sub-title">
+    <h4>SCHOLARSHIP</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home ></a></p>
+    <p class="certxt" ><a href="{% url 'admin_req' %}">Scholarship Submission Tracker</a></p>
+
+    <p class="certxt">&gt; Scholars' Allowance</p>
+  </div>
+<hr>
+    <div class="desc"><p>Page where you can distribute allowance.</p></div>
 
     <div class="content">
+        <div class="cont">
         <form class="form_div" method="GET">
-            <h1>Scholars Allowance</h1>
             <div class="search_id_container">
                 <input type="text" id="search-box" name="search" placeholder="Search by ApplicationID">
                 <button id="search-btn" type="submit">Search</button>
@@ -31,7 +40,7 @@
                 });
             });
         </script>
-
+<div class="table-container">
         <form method="POST">
             {% csrf_token %}
             {% if error %}
@@ -73,18 +82,17 @@
                 </tbody>
             </table>
         </form>
-
-        <div class="back-link-container">
-            <a href="{% url "admin_req" %}" class="back-btn">BACK</a>
-        </div>
+</div>
+      
     </div>
     
     
     </div>
-    {% comment %} <div id="imageModal" class="modal">
+    </div>
+ <div id="imageModal" class="modal">
         <span class="close">&times;</span>
         <img class="modal-content" id="modalImage">
-    </div> {% endcomment %}
+    </div> 
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -114,9 +122,8 @@
                 }
             });
         });
-    </js>
+    </script>
     
-    {% comment %}
     <script>
         // Get the modal
         var modal = document.getElementById("imageModal");
@@ -146,7 +153,5 @@
             }
         }
     </script>
-    {% endcomment %}
 
-    <script src="{% static 'js/main.js' %}"></script>
 {% endblock %}

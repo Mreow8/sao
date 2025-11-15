@@ -12,17 +12,18 @@
 {% endblock headcontent %} 
 
 {% block bodycontent %}
-<div class="body-content">
-    
     <div class="sub-title">
         <h4>SCHOLARSHIP</h4>
         <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
         <p class="certxt">Requirement Submission History</p>
     </div>
     <hr>
+<div class="body-content">
+    
+
 
     <div class="form_div">
-
+<div class="search_id_container"
         <form method="GET" class="filter-bar">
             <div class="filter-group">
                 <label for="search_year">Academic Year:</label>
@@ -71,7 +72,7 @@
                 <button type="submit">Filter</button>
             </div>
         </form>
-
+</div>
         <div class="table-container">
             <table id="requirements-table">
                 <thead>
@@ -92,7 +93,7 @@
                     {% for req in page_obj.object_list %}
                     <tr>
                         <td>{{ req.scholar_ID }}</td>
-                        <td>{{ req.studID.firstname }} {{ req.studID.lastname }}</td>
+                        <td>{{ req.studID.lastname }}, {{ req.studID.firstname }} </td>
                         <td class="file-links">
                             {% if req.cor_file %}
                                 <img id="cor_pic" src="{{ req.cor_file.url }}" alt="COR">
@@ -108,7 +109,7 @@
                         <td>{{ req.units }}</td>
                         <td>{{ req.scholar_type }}</td>
                         <td>{{ req.year }}</td>
-                        <td>{{ req.sem }}</td>
+                        <td>{{ req.semester }}</td>
                         
                         <td>
                             {% if req.status == 'PENDING' %}

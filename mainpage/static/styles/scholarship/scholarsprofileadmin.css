@@ -14,15 +14,20 @@ select {
 body {
   background-color: #f8f9fa; /* Light grey background */
 }
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem 2rem;
+.search_id_container {
+  display: flex;
+  flex-wrap: wrap; /* Stack on mobile */
+  align-items: center;
+  width: 100%;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
 }
-
 /* --- Search Form Card --- */
-.form_div {
+.profile {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -36,7 +41,10 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem; /* Space between this card and the table */
 }
-
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
 /* --- Search Inputs (like .search-input, .filter-select) --- */
 #search-box,
 #scholar_type {
@@ -129,12 +137,7 @@ body {
 /* --- Table Card --- */
 /* We apply the card style to the form wrapping the table */
 form[method="POST"] {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow-x: auto; /* Makes the table scrollable */
+  width: 100%;
 }
 
 /* --- Table Styling --- */

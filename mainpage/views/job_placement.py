@@ -1,4 +1,9 @@
 import csv
+from django.urls import reverse 
+from django.http import HttpResponse, Http404
+from weasyprint import HTML
+import mimetypes 
+from django.urls import reverse
 import zipfile
 from django.conf import settings
 from django.shortcuts import render, redirect
@@ -49,7 +54,147 @@ ojtrequirements_medical = './media/templates/ojt_requirements/medical_clearance.
 ojtrequirements_moa = './media/templates/ojt_requirements/moa.docx'
 ojtrequirements_template_output_path = './media/templates/ojt_requirements/generated'
 from mainpage.decorators.decorators import sao_admin_required
+@csrf_exempt
+def view_pdf(request, id):
+    try:
+        req = OJTRequirements.objects.get(ojt_requirement_id = id)
+    except OJTRequirements.DoesNotExist:
+        error = {'error': "OJT Requirement NOT Found"}
+        return JsonResponse(error, status=404)
+        
+    pdf = None # Initialize pdf as None
+    
+    if request.method == 'POST':
+        attr_name = request.POST.get('attr_name') 
+        
+        if attr_name == 'nondis':
+            pdf = req.non_disclosure
+        elif attr_name == 'biodata':
+            pdf = req.biodata
+        elif attr_name == 'consent':
+            pdf = req.parents_consent
+        elif attr_name == 'medical':
+            pdf = req.medical
+        elif attr_name == 'apl_letter':
+            pdf = req.application_letter
+        elif attr_name == 'moa':
+            pdf = req.moa
+        elif attr_name == 'endorsement':
+            pdf = req.endorsement
+        elif attr_name == 'cert':
+            pdf = req.certification
+        else:
+            error = {'error': "Invalid file type specified"}
+            return JsonResponse(error, status=400)
 
+        # --- [THIS IS THE FIX] ---
+        if pdf and pdf.url:
+            pdf_data = {
+                # We now send the URL to our new 'stream_ojt_file' view
+                'url': reverse('stream_ojt_file', args=[req.ojt_requirement_id, attr_name]),
+                'name': pdf.name,
+            }
+            return JsonResponse(pdf_data)
+        else:
+            error = {'error': "File not found or not uploaded"}
+            return JsonResponse(error, status=404)
+    
+    error = {'error': "Invalid request method. Must be POST."}
+    return JsonResponse(error, status=405)
+
+@login_required 
+def stream_ojt_file(request, req_id, attr_name):
+    """
+    Reads a file from storage and streams it to the browser
+    with 'Content-Disposition: inline' to force preview.
+    """
+    try:
+        req = OJTRequirements.objects.get(pk=req_id)
+
+        FIELD_MAP = {
+            'nondis': 'non_disclosure',
+            'biodata': 'biodata',
+            'consent': 'parents_consent',
+            'apl_letter': 'application_letter',
+            'medical': 'medical',
+            'moa': 'moa',
+            'endorsement': 'endorsement',
+            'cert': 'certification',
+        }
+
+        model_field_name = FIELD_MAP.get(attr_name)
+        if not model_field_name:
+            raise Http404("Invalid file type")
+
+        file_field = getattr(req, model_field_name, None)
+
+        if file_field and file_field.storage.exists(file_field.name):
+            # Read the file's content
+            file_content = file_field.read()
+            
+            # Guess the file's content type
+            content_type, _ = mimetypes.guess_type(file_field.name)
+            if not content_type:
+                content_type = 'application/octet-stream' 
+
+            # Create the response
+            response = HttpResponse(file_content, content_type=content_type)
+            
+            # This header forces the browser to display the file
+            response['Content-Disposition'] = f'inline; filename="{file_field.name}"'
+            
+            return response
+        else:
+            raise Http404("File not found")
+
+    except OJTRequirements.DoesNotExist:
+        raise Http404("Requirement record not found")
+    except Exception as e:
+        print(f"Error streaming file: {e}")
+        raise Http404("Error processing file")
+@login_required
+def get_ojt_pdf_url(request, req_id, attr_name):
+    """
+    Safely gets the URL for a specific file field on an OJTRequirement object.
+    """
+    if not request.method == "GET":
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+    try:
+        # Get the main requirement record
+        req = get_object_or_404(OJTRequirements, pk=req_id)
+
+        # A mapping of the 'name' from the HTML button to the actual model field name
+        # This is a security measure to prevent arbitrary attribute access.
+        FIELD_MAP = {
+            'nondis': 'non_disclosure',
+            'biodata': 'biodata',
+            'consent': 'parents_consent',
+            'apl_letter': 'application_letter',
+            'medical': 'medical',
+            'moa': 'moa',
+            'endorsement': 'endorsement',
+            'cert': 'certification',
+        }
+
+        # Get the correct model field name from our map
+        model_field_name = FIELD_MAP.get(attr_name)
+
+        if not model_field_name:
+            return JsonResponse({"error": "Invalid file type specified"}, status=400)
+
+        # Get the file field from the requirement object (e.g., req.non_disclosure)
+        file_field = getattr(req, model_field_name, None)
+
+        if file_field and file_field.url:
+            # If the file exists, return its URL
+            return JsonResponse({"url": file_field.url})
+        else:
+            # If the field is empty or has no file
+            return JsonResponse({"error": "File not found or not uploaded"}, status=404)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 def get_user_backend(user):
     if isinstance(user, JobPlacementAdminUser):
         return 'jobplacement.auth_backends.AdminUserBackend'
@@ -1733,40 +1878,6 @@ def del_ojt(request):
         messages.error(request, "Clear failed")
     
     return redirect('home')
-
-# view ojt requirement pdf/image 
-@csrf_exempt
-def view_pdf(request, id):
-    req = OJTRequirements.objects.get(ojt_requirement_id = id)
-    pdf = req
-    if request.method == 'POST':
-        attr_name = request.POST.get('attr_name') 
-        
-        if attr_name == 'nondis':
-            pdf = req.non_disclosure
-        elif attr_name == 'biodata':
-            pdf = req.biodata
-        elif attr_name == 'consent':
-            pdf = req.parents_consent
-        elif attr_name == 'medical':
-            pdf = req.medical
-        elif attr_name == 'apl_letter':
-            pdf = req.application_letter
-        elif attr_name == 'moa':
-            pdf = req.moa
-        elif attr_name == 'endorsement':
-            pdf = req.endorsement
-        elif attr_name == 'cert':
-            pdf = req.certification
-
-        pdf_data = {
-            'url': pdf.url if pdf else None,
-            'name': pdf.name if pdf else None,
-        }
-
-        return JsonResponse(pdf_data)
-    error = {'error': "OJT Requirement NOT Found"}
-    return JsonResponse(error)
 
 
 # generate application letter document

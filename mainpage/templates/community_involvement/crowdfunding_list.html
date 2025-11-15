@@ -1,49 +1,81 @@
 {% extends base_template|default:"main.html" %}{% block bodycontent %}
 {% load static %}
 {% include "community_involvement/donate.html" %}
-<style>
-    
-    
-.desc{font-size: 1rem;
-    color: #4a5568;
-    margin-bottom: 2rem;
-    line-height: 1.6;}
-  </style>
-<link rel="stylesheet" href="{% static 'styles/community/crowdfunding.css' %}" />
+
+<link rel="stylesheet" href="{% static 'styles/community/program.css' %}" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<div class="sub-title">
-    <h4>CROWDFUNDING PROJECTS</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}"></a>Home</p>
-    <p class="certxt">&gt; Crowdfunding</p>
-  </div>
-<hr>
-
-<div class="container">
-  <div class="desc"><p>Get involved! This is your hub for all upcoming workshops, volunteer opportunities, local meetups, and community gatherings. Find an event that interests you and join us!</p></div>
-
-<div class="sort-controls" style="margin-bottom: 1.5rem; text-align: right; font-size: 0.9rem;">
-  <span style="margin-right: 0.5rem; color: #4a5568;">Sort by:</span>
-  <a href="?sort=newest" class="sort-link {% if current_sort == 'newest' %}active{% endif %}" style="margin-right: 0.5rem;">Newest</a>
-  <a href="?sort=oldest" class="sort-link {% if current_sort == 'oldest' %}active{% endif %}">Oldest</a>
-</div>
-
 <style>
+  .program-list {
+    display: grid; /* Switched from flex to grid */
+    /* This creates responsive columns: 
+       - 'auto-fit' makes it create as many columns as will fit.
+       - 'minmax(300px, 1fr)' ensures each column is at least 300px wide, 
+         but will stretch to fill available space ('1fr'). */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px; /* Provides consistent spacing between grid items */
+    margin-top: 20px;
+  }
+  
+  .delete-button-subtle {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #dc2626; /* Red-600 */
+    border-radius: 6px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .delete-button-subtle:hover {
+    background-color: #fef2f2; /* Red-50 */
+  }
+
+  .delete-button-subtle .delete-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .desc {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    text-align: center; /* Added from seminar page style */
+  }
+
+  /* Your existing sort styles, merged here */
   .sort-link {
-    color: #3182ce; /* blue-600 */
+    color: #3182ce;
     text-decoration: none;
   }
   .sort-link.active {
     font-weight: bold;
-    color: #2c5282; /* blue-800 */
+    color: #2c5282;
     text-decoration: underline;
   }
 </style>
-{% if user.is_staff %}
 
+<div class="sub-title">
+  <h4>CROWDFUNDING PROJECTS</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}"></a>Home</p>
+  <p class="certxt">&gt; Crowdfunding</p>
+</div>
+<hr>
+
+<div class="container">
+  
+  <p class="desc">
+    Get involved! This is your hub for all upcoming workshops, volunteer opportunities, 
+    local meetups, and community gatherings. Find an event that interests you and join us!
+  </p>
+
+  {% if user.is_staff %}
   <div class="post-box">
     <div class="collapsed" id="collapsedBox">Add Events...</div>
-
     <form
       method="post"
       id="expandedBox"
@@ -52,7 +84,6 @@
       action="{% url 'add_event' %}"
     >
       {% csrf_token %}
-
       <input type="text" name="title" placeholder="Title" required />
       <textarea
         id="postText"
@@ -60,7 +91,6 @@
         rows="3"
         placeholder="Description..."
       ></textarea>
-
       <div class="actions">
         <label class="action-btn" for="imageUpload">📷 Photo/Video</label>
         <input
@@ -72,221 +102,306 @@
           style="display: none"
         />
       </div>
-
       <div id="preview"></div>
-
       <button type="submit" class="submit" id="submitBtn" disabled>Post</button>
     </form>
-    
-    {% if messages %}
-    <div class="message-container" style="position: fixed; top: 20px; right: 20px; z-index: 2000; width: 300px;">
-        {% for message in messages %}
-        <div class="message-popup {{ message.tags }}" 
-            style="padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 10px; color: #fff; font-family: 'Rubik', sans-serif; font-size: 0.95rem;">
-            
-            {% if message.tags == 'success' %}
-                <strong style="">✅ Success!</strong>
-            {% elif message.tags == 'error' %}
-                <strong style="">❌ Error!</strong>
-            {% elif message.tags == 'warning' %}
-                <strong style="">⚠️ Warning!</strong>
-            {% else %}
-                <strong style="">ℹ️ Notice:</strong>
-            {% endif %}
-            
-            <p style="margin: 4px 0 0 0; line-height: 1.4;">{{ message }}</p>
-        </div>
-        {% endfor %}
-    </div>
-
-    <style>
-        .message-popup.success { background-color: #28a745; }
-        .message-popup.error { background-color: #dc3545; }
-        .message-popup.warning { background-color: #ffc107; color: #212529; }
-        .message-popup.info { background-color: #17a2b8; }
-    </style>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            setTimeout(function() {
-                let messages = document.querySelectorAll('.message-popup');
-                messages.forEach(function(message) {
-                    message.style.transition = 'opacity 0.5s ease';
-                    message.style.opacity = '0';
-                    setTimeout(() => { 
-                        if (message.parentNode) {
-                            message.parentNode.removeChild(message); 
-                        }
-                    }, 500);
-                });
-            }, 5000); 
-        });
-    </script>
-    {% endif %}
   </div>
   {% endif %}
 
-  <div class="programs-section flex justify-center">
+  <div class="page-controls">
+    
+    {% if not user.is_staff %}
+      <div></div>
+    {% endif %}
+
+    <div class="sort-controls">
+      <span style="margin-right: 0.5rem; color: #4a5568;">Sort by:</span>
+      <a href="?sort=newest" class="sort-link {% if current_sort == 'newest' %}active{% endif %}" style="margin-right: 0.5rem;">Newest</a>
+      <a href="?sort=oldest" class="sort-link {% if current_sort == 'oldest' %}active{% endif %}">Oldest</a>
+    </div>
+  </div>
+
+  <div class="program-list">
     {% if page_obj %}
-    <div class="project-list max-w-3xl mb-10">
-     {% for project in page_obj %}
-     <div class="program-card relative" id="program-{{ project.id }}">
-        <div class="flex justify-between items-start">
-          <h3 class="text-lg font-semibold">{{ project.title }}</h3> <div class="relative">
-            {% if user.is_staff %}
-              <button
-                type="button"
-                class="menu-btn text-gray-600 hover:text-gray-900 focus:outline-none"
-              >
-                ⋮
-              </button>
+    {% for project in page_obj %}
+    <div class="program-card">
+      
+      <div class="flex justify-between items-start">
+        <h3 class="text-lg font-semibold">
+          {{ project.title }}
+        </h3>
 
-              <div
-                class="menu hidden absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-10"
-              >
-                  <button
-                  type="button"
-                  class="edit-project-btn block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  data-url="{% url 'edit_project' project.id %}">
-                  <i class="fa fa-pen"></i> Edit
-                </button>
-
-                <form
-                  method="post"
-                  action="{% url 'delete_project' project.id %}"
-                  class="delete-project-form"
-                >
-                  {% csrf_token %}
-                  <button
-                    type="submit"
-                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                  >
-                  <i class="fa fa-trash"></i>Delete
-                  </button>
-                </form>
-              </div>
-            {% endif %}
-          </div>
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-400">{{ project.description }}</p>
-            <p class="mt-2 text-gray-600">{{ project.date_time }}</p>
-          </div>
-
-          <div>
+        {% if user.is_staff %}
+        <div class="relative">
+          <button
+            type="button"
+            class="menu-btn text-gray-600 hover:text-gray-900 focus:outline-none"
+          >
+            ⋮
+          </button>
+          <div
+            class="menu hidden absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-10"
+          >
             <button
               type="button"
-              class="show-donate inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-              data-project-id="{{ project.id }}"
-              data-project-title="{{ project.title }}"
-              data-project-channels='[{% for channel in project.channels.all %}"{{ channel.imageCrowdfunding.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
+              class="edit-project-btn menu-item" 
+              data-url="{% url 'edit_project' project.id %}"
             >
-              Donate
+              <i class="fa fa-pen" style="width: 16px; margin-right: 8px;"></i> Edit
             </button>
+            
+            <form 
+              method="post" 
+              action="{% url 'delete_project' project.id %}" 
+              class="delete-project-form"
+            >
+              {% csrf_token %}
+              <button type="submit" class="delete-button-subtle">
+                <svg
+                  class="delete-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 10.23-1.482A41.13 41.13 0 0014 4.193v-.443A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75a1.25 1.25 0 00-1.25-1.25h-2.5A1.25 1.25 0 007.5 3.75v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="delete-text">Delete</span>
+              </button>
+            </form>
           </div>
         </div>
-        <div class="fb-gallery count-{{ project.channels.count }} mt-2">
-          {% for channel in project.channels.all %}
+        {% endif %}
+      </div>
+
+      <p style="color: #050505; font-weight: 600; margin-top: 0.5rem;">
+        {{ project.description }}
+      </p>
+      <p style="color: #65676b; font-size: 14px">
+        Date: {{ project.created_at }}
+      </p>
+
+      <div class="fb-gallery count-{{ project.channels.all.count }}">
+        {% for channel in project.channels.all %}
+          {% if forloop.counter <= 4 %}
           <div class="gallery-item">
             <img
               src="{{ channel.imageCrowdfunding.url }}"
               alt="{{ channel.name }}"
             />
-            <span class="qr-label">{{ channel.name }}</span>
+            {% if forloop.counter == 4 and project.channels.all.count > 4 %}
+              <div class="plus-overlay">+{{ project.channels.all.count|add:"-4" }}</div>
+            {% endif %}
           </div>
-          {% endfor %}
-        </div>
+          {% endif %}
+        {% endfor %}
       </div>
       
-      {% endfor %}
-
-      <div class="pagination">
-          <span class="step-links">
-              {% if page_obj.has_previous %}
-                  <a href="?page=1&sort={{ current_sort }}">&laquo; First</a>
-                  <a href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}">Previous</a>
-              {% endif %}
-
-              <span class="current">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-              </span>
-
-              {% if page_obj.has_next %}
-                  <a href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}">Next</a>
-                  <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}">Last &raquo;</a>
-              {% endif %}
-          </span>
+      <div class="fb-post-footer">
+        <button
+          type="button"
+          class="show-donate fb-donate-button"
+          data-project-id="{{ project.id }}"
+          data-project-title="{{ project.title }}"
+          data-project-channels='[{% for channel in project.channels.all %}"{{ channel.imageCrowdfunding.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
+        >
+          Donate
+        </button>
       </div>
+      
     </div>
+    {% endfor %}
+    
     {% else %}
     <p>No crowdfunding projects available.</p>
     {% endif %}
+  </div> <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&sort={{ current_sort }}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}">Last &raquo;</a>
+            {% endif %}
+        </span>
   </div>
-</div>
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  
+</div> <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div id="modalContent" class="bg-white rounded-lg shadow-xl max-w-md w-full"></div>
 </div>
+
+<div id="imageModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center;">
+  <span id="closeImageModal" style="position: absolute; top: 20px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</span>
+  <img id="modalImageContent" style="margin: auto; display: block; max-width: 80%; max-height: 80%;" />
+</div>
+
+
 <script src="{% static 'scripts/community/crowdfunding.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+// Use jQuery's $(document).ready as the main wrapper
 $(document).ready(function() {
+
+  // --- Logic from seminar_page.html ---
+
+  // 1. "Add Event" form logic
+  const collapsedBox = document.getElementById("collapsedBox");
+  const expandedBox = document.getElementById("expandedBox");
+  if (collapsedBox && expandedBox) {
+    const postText = expandedBox.querySelector('input[name="title"]'); // Changed to input
+    const imageUpload = document.getElementById("imageUpload");
+    const preview = document.getElementById("preview");
+
+    collapsedBox.addEventListener("click", () => {
+      collapsedBox.style.display = "none";
+      expandedBox.style.display = "flex";
+      postText.focus();
+    });
+
+    // This logic might be duplicated by your crowdfunding.js,
+    // but it's included here for completeness.
+    if (imageUpload) { 
+      imageUpload.addEventListener("change", () => {
+        preview.innerHTML = "";
+        // Handle multiple files
+        if (imageUpload.files.length > 0) {
+          Array.from(imageUpload.files).forEach(file => {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("preview-item");
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            wrapper.appendChild(img);
+            preview.appendChild(wrapper);
+          });
+        }
+      });
+    }
+  }
+
+  // 2. Edit/Delete Menu logic
+  const programList = document.querySelector(".program-list");
+  if (programList) {
+    // Use jQuery for event delegation on the '.program-list'
+    $(programList).on("click", function (e) {
+      const menuBtn = e.target.closest(".menu-btn");
+      if (menuBtn) {
+        const menu = menuBtn.nextElementSibling;
+        // Hide all *other* menus
+        document.querySelectorAll(".menu").forEach((m) => {
+          if (m !== menu) {
+            m.classList.add("hidden");
+          }
+        });
+        // Toggle the clicked menu
+        menu.classList.toggle("hidden");
+        e.stopPropagation();
+      }
+    });
+  }
+
+  // Global click to hide menus
+  $(document.body).on("click", function () {
+    document
+      .querySelectorAll(".menu")
+      .forEach((menu) => menu.classList.add("hidden"));
+  });
+
+  // 3. SweetAlert2 for Delete Confirmation
+  // Use jQuery to select forms
+  $(".delete-project-form").on("submit", function (e) {
+    e.preventDefault();
+    const form = this; // Get the raw DOM form element
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit();
+      }
+    });
+  });
+
+  // --- Your existing crowdfunding.js logic ---
   
-  // This code runs when any "Donate" button is clicked
-  $('.show-donate').on('click', function() {
-    
-    // 1. Get the specific project data from the button we clicked
+  // 1. Donate Button Logic
+  $('body').on('click', '.show-donate', function() {
     var projectTitle = $(this).data('project-title');
     var projectChannels = $(this).data('project-channels');
     
-    // 2. Find the hidden <input class="title"> in the popup
-    //    and set its value to this project's title.
-    //    This is how the admin knows which project got the donation.
     $('.donate-popup .title').val(projectTitle);
-
-    // 3. Find the empty containers we just made in donate.html
     var gcashContainer = $('#project-qr-container-gcash');
     var bankContainer = $('#project-qr-container-bank');
 
-    // 4. Clear out any QR codes from a previous click
     gcashContainer.empty();
     bankContainer.empty();
 
-    // 5. Check if this project has any images in its gallery
     if (projectChannels && projectChannels.length > 0) {
-      
-      // Loop through the image URLs passed from the button
       $.each(projectChannels, function(index, imageUrl) {
-        // Create an <img> tag for each QR code
         var imgTag = '<img src="' + imageUrl + '" alt="Project QR Code" ' +
                      'style="width: 100%; max-width: 300px; height: auto; margin-bottom: 10px; border-radius: 8px;" />';
         
-        // Add the project's QR code to both tabs
         gcashContainer.append(imgTag);
         bankContainer.append(imgTag);
       });
-
+      
+      $('.donate-popup .nextGcash, .donate-popup .nextBank').show();
     } else {
-      // If the admin forgot to upload a QR, show a warning
       var warning = '<div class="qr-warning">' +
                     '<h4>No QR Codes</h4>' +
                     '<p>No specific QR codes have been uploaded for this project.</p>' +
                     '</div>';
       gcashContainer.append(warning);
       bankContainer.append(warning);
-      
-      // Hide the 'Next' buttons if no QR is present
       $('.donate-popup .nextGcash').hide();
-      $('.donate-popup .nextBank').hide();
     }
   });
   
-  // Also, make sure the 'Next' buttons are visible when the form is valid
-  // (This might be in your donate.js, but good to ensure)
-  $('.donate-popup .nextGcash, .donate-popup .nextBank').show();
+  // 2. Image Modal Logic
+  var imageModal = $('#imageModal');
+  var modalImg = $('#modalImageContent');
+  var closeModal = $('#closeImageModal');
+
+  $('body').on('click', '.gallery-item img, .plus-overlay', function() {
+    var imgSrc;
+    if ($(this).is('img')) {
+      imgSrc = $(this).attr('src');
+    } else {
+      // Find the sibling image of the clicked overlay
+      imgSrc = $(this).closest('.gallery-item').find('img').attr('src');
+    }
+    
+    if (imgSrc) {
+      modalImg.attr('src', imgSrc);
+      imageModal.css('display', 'flex');
+    }
+  });
+
+  closeModal.on('click', function() {
+    imageModal.hide();
+  });
+
+  imageModal.on('click', function(e) {
+    if (e.target.id == 'imageModal') { 
+      imageModal.hide();
+    }
+  });
+  
 });
 </script>
-
 {% endblock %}

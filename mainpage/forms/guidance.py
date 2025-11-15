@@ -39,12 +39,8 @@ class CounselingSchedulerForm(forms.ModelForm):
 class OjtAssessmentForm(forms.ModelForm):
     class Meta:
         model = OjtAssessment
-        fields = ['schoolYear', 'emailadd']
-        widgets ={
-            'emailadd': forms.EmailInput(attrs={
-                'placeholder': 'Enter your email address.'
-            }),
-        }
+        fields = ['schoolYear']
+        
 
 class ExitInterviewForm(forms.ModelForm):
     yes_no =[
@@ -77,9 +73,7 @@ class ExitInterviewForm(forms.ModelForm):
                 'placeholder': 'Select a date'
             }),
             'scheduled_time': forms.Select(attrs={'disabled': 'disabled'}),
-            'emailadd': forms.EmailInput(attrs={
-                'placeholder': 'Enter your email address.'
-            }),
+          
             'intendedMajor': forms.TextInput(attrs={
                 'placeholder': 'Enter your intended major.',
                 'class': 'table_input hidden'
@@ -100,7 +94,7 @@ class ExitInterviewForm(forms.ModelForm):
         self.fields['intendedMajor'].required = False
         self.fields['majorEvent'].required = False
 
-
+        self.fields['explainationEmployed'].required = False                                                    
 from datetime import date
 from django import forms
 from ..models import counseling_schedule, IndividualProfileBasicInfo, FileUploadTest, exit_interview_db, OjtAssessment

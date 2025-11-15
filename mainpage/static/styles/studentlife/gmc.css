@@ -2,7 +2,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: Georgia;
+
   list-style-type: none;
 }
 
@@ -30,7 +31,6 @@ body::-webkit-scrollbar {
   height: 1120px;
   box-sizing: border-box;
   text-align: center;
-  font-family: Arial, sans-serif;
   margin-bottom: 50px;
 }
 
@@ -43,7 +43,7 @@ body::-webkit-scrollbar {
 .content2 {
   color: black;
   font-weight: bold;
-  font-family: Arial;
+
   font-size: 23px;
   margin-left: -50px;
 }
@@ -112,13 +112,11 @@ body::-webkit-scrollbar {
 
 .maincontents h4 {
   font-size: 18px;
-  font-family: Algerian;
   color: black;
 }
 
 .maincontents h3 {
   font-size: 25px;
-  font-family: Algerian;
   color: black;
 }
 
@@ -128,7 +126,6 @@ body::-webkit-scrollbar {
   font-weight: bold;
   font-size: 25px;
   text-align: center;
-  font-family: Georgia;
 }
 
 .sub-contents {
@@ -157,7 +154,6 @@ body::-webkit-scrollbar {
 }
 
 .Dean p {
-  font-family: Georgia, "Times New Roman", Times, serif;
   color: black;
   text-align: right;
   text-decoration: underline;

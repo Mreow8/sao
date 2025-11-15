@@ -1,26 +1,14 @@
 /* --- Global & Fonts --- */
 body {
   font-family: "Rubik", sans-serif;
-  background-color: #f4f7fa; /* Light page background */
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
-
-/* --- Container --- */
-.container {
-  padding: 1.5rem; /* Use padding on all sides for mobile */
-  max-width: 960px;
-  margin: 2rem auto;
 }
 
 /* --- Main Form Card --- */
 .form-container {
-  /* Styled like .gmc-form from guide */
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  padding: 2.5rem;
+  padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
@@ -68,11 +56,25 @@ body {
   height: 1px;
   background-color: #bee3f8;
 }
+.container {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
 /* --- New Request Form --- */
 .form-container h4 {
-  font-size: 1.5rem;
-
   color: #333;
   margin-top: 0;
   margin-bottom: 0.5rem;
@@ -149,15 +151,6 @@ body {
   background-color: #2a4365; /* Darker Blue */
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* --- Divider --- */
-hr {
-  /* Style from guide */
-  margin: 2.5rem 0;
-  border: 0;
-  height: 1px;
-  background-color: #e0e0e0;
 }
 
 /* --- Student History Table --- */

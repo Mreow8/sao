@@ -901,14 +901,35 @@ def admingrant(request):
         if action and action.startswith("GRANT"):
             print("4")
             index = action.split('_')[1]
-            amount = request.POST.get(f'amount_{index}')
+            amount_str = request.POST.get(f'amount_{index}') # Renamed to check string
             applicant_id = request.POST.get(f'applicant_id_{index}')
             print("5")
+
+            # --- VALIDATION ADDED ---
+            if not amount_str:
+                messages.error(request, "Amount was not provided. Cannot grant.")
+                # Redirect back to the same page, preserving any query parameters
+                return redirect(request.META.get('HTTP_REFERER', 'admingrant'))
+
+            try:
+                # Convert the amount. Use float or Decimal depending on your model
+                amount = float(amount_str)
+            except ValueError:
+                messages.error(request, f"Invalid amount format for applicant ID {applicant_id}.")
+                return redirect(request.META.get('HTTP_REFERER', 'admingrant'))
+            # --- END VALIDATION ---
+
             try:
                 print("6")
                 with transaction.atomic():
                     print("7")
                     grant = Requirement.objects.select_for_update().get(id=applicant_id)
+                    
+                    # Check if already processed
+                    if grant.record == 'OLD':
+                        messages.warning(request, f"Scholarship for {grant.studID.firstname} {grant.studID.lastname} has already been processed.")
+                        return redirect(request.META.get('HTTP_REFERER', 'admingrant'))
+
                     scholar_id = grant.scholar_ID
                     year = grant.year
                     semester = grant.semester
@@ -923,7 +944,7 @@ def admingrant(request):
                         scholar_ID=scholar_id,
                         year=year,
                         semester=semester,
-                        amount=amount,
+                        amount=amount, # Use the validated amount
                         gpa=gpa,
                         scholar_status=scholar_status,
                         remarks=remarks,
@@ -937,13 +958,23 @@ def admingrant(request):
                     grant.save()
                     print("11")
 
+                    # --- SUCCESS MESSAGE ---
+                    messages.success(request, f"Successfully granted scholarship to {grant.studID.firstname} {grant.studID.lastname}.")
+
             except Requirement.DoesNotExist:
                 print("12")
-                pass
+                # --- ERROR MESSAGE ---
+                messages.error(request, f"Could not find requirement with ID {applicant_id}.")
             except Exception as e:
                 print("13")
                 print(f"Exception occurred: {e}")
-                pass
+                # --- ERROR MESSAGE ---
+                messages.error(request, f"An unexpected error occurred while processing ID {applicant_id}: {e}")
+            
+            # --- REDIRECT ---
+            # Redirect after a successful or failed POST to prevent resubmission
+            return redirect(request.META.get('HTTP_REFERER', 'admingrant'))
+
     print("14")
     if scholar_type:
         if scholar_type == 'all':

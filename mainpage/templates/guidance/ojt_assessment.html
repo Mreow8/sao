@@ -16,7 +16,7 @@ Assessments/Psychological Issuance{% endblock %} {% block headcontent %}
 <div class="container">
   <div class="form-container">
     {% if ongoing_request %}
-    <div class="alert alert-warning" role="alert" style="margin-top: 20px">
+    <div class="alert alert-warning" role="alert">
       <h4 class="alert-heading">Pending Request Found!</h4>
       <p>
         You already have a pending OJT Assessment request submitted on
@@ -27,101 +27,95 @@ Assessments/Psychological Issuance{% endblock %} {% block headcontent %}
         You cannot submit a new request until your current one has been
         processed (Accepted or Declined).
       </p>
-
-      {% else %}
-      <h4>New Request Form</h4>
-      <p>Please fill out the form below to request your OJT Assessment.</p>
-      <!-- prettier-ignore -->
-      <form method="post" action="" id="requestForm">
-        {% csrf_token %} <label>School Year:</label>
-        {{form.schoolYear }} {{ form.schoolYear.errors }}
-        <label>Email Address:</label> {{ form.emailadd }} {{form.emailadd.errors }}
-        
-        <button type="submit" class="OrangeButton">Request</button>
-      </form>
-      {% endif %}
     </div>
-    <hr style="margin: 40px 0" />
-    <div class="history-container">
-      <h4>Your Request History</h4>
+    {% else %}
+    <h4>New Request Form</h4>
+    <p>Please fill out the form below to request your OJT Assessment.</p>
+    <form method="post" action="" id="requestForm">
+      {% csrf_token %} <label>School Year:</label>
+      {{form.schoolYear }} {{ form.schoolYear.errors }}
 
-      {% if request_history %}
-      <table
-        id="history_table"
-        style="width: 100%; border-collapse: collapse; margin-top: 20px"
-      >
-        <thead style="background-color: #f4f4f4">
-          <tr style="border-bottom: 2px solid #ddd">
-            <th style="padding: 12px; text-align: left">Date Submitted</th>
-            <th style="padding: 12px; text-align: left">School Year</th>
-            <th style="padding: 12px; text-align: left">Status</th>
-            <th style="padding: 12px; text-align: left">Date Processed</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for req in request_history %}
-          <tr style="border-bottom: 1px solid #eee">
-            <td style="padding: 12px">{{ req.dateRecieved|date:"F d, Y" }}</td>
-            <td style="padding: 12px">{{ req.schoolYear }}</td>
-            <td style="padding: 12px">
-              {% if req.status == 'Pending' %}
-              <span
-                style="
-                  background-color: #ffc107;
-                  padding: 5px 10px;
-                  border-radius: 5px;
-                  color: #333;
-                "
-                >{{ req.status }}</span
-              >
-              {% elif req.status == 'Accepted' %}
-              <span
-                style="
-                  background-color: #28a745;
-                  padding: 5px 10px;
-                  border-radius: 5px;
-                  color: white;
-                "
-                >{{ req.status }}</span
-              >
-              {% elif req.status == 'Declined' %}
-              <span
-                style="
-                  background-color: #dc3545;
-                  padding: 5px 10px;
-                  border-radius: 5px;
-                  color: white;
-                "
-                >{{ req.status }}</span
-              >
-              {% else %}
-              <span
-                style="
-                  background-color: #6c757d;
-                  padding: 5px 10px;
-                  border-radius: 5px;
-                  color: white;
-                "
-                >{{ req.status }}</span
-              >
-              {% endif %}
-            </td>
-            <!-- prettier-ignore -->
-            <td style="padding: 12px">
-              {% if req.dateAccepted %} {{ req.dateAccepted|date:"F d, Y" }} 
-
-              {%   else %} N/A {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>You have not submitted any requests yet.</p>
-      {% endif %}
-    </div>
+      <button type="submit" class="OrangeButton">Request</button>
+    </form>
+    {% endif %}
   </div>
-</div>
+  <div class="history-container">
+    <h4>Your Request History</h4>
+
+    {% if request_history %}
+    <table
+      id="history_table"
+      style="width: 100%; border-collapse: collapse; margin-top: 20px"
+    >
+      <thead style="background-color: #f4f4f4">
+        <tr style="border-bottom: 2px solid #ddd">
+          <th style="padding: 12px; text-align: left">Date Submitted</th>
+          <th style="padding: 12px; text-align: left">School Year</th>
+          <th style="padding: 12px; text-align: left">Status</th>
+          <th style="padding: 12px; text-align: left">Date Processed</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in request_history %}
+        <tr style="border-bottom: 1px solid #eee">
+          <td style="padding: 12px">{{ req.dateRecieved|date:"F d, Y" }}</td>
+          <td style="padding: 12px">{{ req.schoolYear }}</td>
+          <td style="padding: 12px">
+            {% if req.status == 'Pending' %}
+            <span
+              style="
+                background-color: #ffc107;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: #333;
+              "
+              >{{ req.status }}</span
+            >
+            {% elif req.status == 'Accepted' %}
+            <span
+              style="
+                background-color: #28a745;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white;
+              "
+              >{{ req.status }}</span
+            >
+            {% elif req.status == 'Declined' %}
+            <span
+              style="
+                background-color: #dc3545;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white;
+              "
+              >{{ req.status }}</span
+            >
+            {% else %}
+            <span
+              style="
+                background-color: #6c757d;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white;
+              "
+              >{{ req.status }}</span
+            >
+            {% endif %}
+          </td>
+          <td style="padding: 12px">
+            {% if req.dateAccepted %} {{ req.dateAccepted|date:"F d, Y" }}
+            {% else %} N/A {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>You have not submitted any requests yet.</p>
+    {% endif %}
+  </div>
+  </div>
 <script src="{% static 'scripts/guidance/ojt_assessment.js'%}"></script>
 <script src="{% static 'scripts/guidance/intake.js'%}"></script>
 

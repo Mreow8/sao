@@ -7,11 +7,6 @@ select {
   color: #333;
 }
 
-/* --- Layout & Card --- */
-.body-content {
-  padding: 0 1.5rem;
-}
-
 .form_div {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
