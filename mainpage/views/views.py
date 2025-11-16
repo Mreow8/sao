@@ -12,6 +12,7 @@ from django.conf import settings
 import random
 import requests
 import logging
+from threading import Thread
 
 from ..models import studentInfo, staffInfo, TemporaryUser, CustomUser, Organization
 from ..forms import RoleAssignForm
@@ -24,6 +25,15 @@ def is_admin(user):
     return user.is_authenticated and user.is_superuser
 def is_org_admin_or_super(user):
     return user.is_authenticated and (user.role == 'org_admin' or user.role == 'superadmin')
+def send_otp_email(email, otp):
+    subject = 'Your Account Verification Code'
+    message = f'Your One-Time Password for registration is: {otp}\nIt is valid for 10 minutes.'
+    Thread(
+        target=send_mail,
+        args=(subject, message, settings.EMAIL_HOST_USER, [email]),
+        kwargs={'fail_silently': False}
+    ).start()
+
 def signupuser(request):
     context = {}
 
@@ -88,13 +98,7 @@ def signupuser(request):
 
             # Send OTP to email
             # Send OTP to email
-            send_mail(
-                'Your Account Verification Code',
-                f'Your One-Time Password for registration is: {otp}\nIt is valid for 10 minutes.',
-                settings.EMAIL_HOST_USER,  # <-- Use this instead
-                [email],
-                fail_silently=False,
-            )
+            send_otp_email(email, otp)
 
             messages.info(request, f"A 6-digit verification code has been sent to {email}.")
             return redirect('verify_otp_page', user_id=user_id)

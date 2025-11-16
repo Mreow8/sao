@@ -1,29 +1,154 @@
-/* --- Import Font (from requestgmc.css) --- */
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
-
-/* --- Global, Container, & Font --- */
-body,
-.container,
-.tabs,
-.gmc-form,
-table,
-button,
-input,
-select {
-  font-family: "Rubik", sans-serif;
+/* === MAIN CONTENT BOX === */
+.maincontain {
+  background-color: #ffffff;
+  border-radius: 0 0 8px 8px; /* Attached to tabs */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 25px;
 }
 
-body {
-  background-color: #f8f9fa; /* Light grey background */
+/* === SEARCH FORM === */
+.search-form {
+  display: flex;
+  flex-wrap: wrap; /* Allows form to stack on small screens */
+  gap: 15px;
+  margin-bottom: 25px;
+}
+.search-input {
+  flex: 3; /* Makes search input wider */
+  min-width: 250px;
+}
+.filter-select {
+  flex: 1;
+  min-width: 180px;
+}
+.search-input,
+.filter-select {
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.search-btn {
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2c5282;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.search-btn:hover {
+  background-color: #2980b9;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem 2rem;
+/* === DATA TABLE === */
+.subcontain {
+  overflow-x: auto; /* Makes table scroll horizontally on small screens */
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th,
+td {
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 14px;
+}
+thead {
+  background-color: #f9fafb;
+}
+th {
+  font-weight: 600;
+  color: #2c5282;
+  white-space: nowrap;
+}
+tbody tr:nth-child(even) {
+  background-color: #fdfdfd;
+}
+tbody tr:hover {
+  background-color: #f5f5f5;
 }
 
-/* --- Tabs (Adapted for <button>) --- */
+/* Sortable Table Headers */
+th.sortable a {
+  text-decoration: none;
+  color: #2c5282;
+  font-weight: 700;
+}
+th.sortable a:hover {
+  color: #3498db;
+}
+
+/* Table Content */
+td img {
+  display: block;
+  /* Styles are in HTML, but this is a good fallback */
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.no-applicants {
+  text-align: center;
+  color: gray;
+  font-style: italic;
+  padding: 30px;
+}
+
+/* Action Buttons */
+td button {
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 2px;
+  transition: opacity 0.3s ease;
+  width: 80px;
+}
+td button[value="approve"] {
+  background-color: #2ecc71; /* Green */
+}
+td button[value="decline"] {
+  background-color: #e74c3c; /* Red */
+}
+td button:hover {
+  opacity: 0.8;
+}
+
+/* === PAGINATION === */
+.pagination {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 14px;
+}
+.pagination .step-links a {
+  margin: 0 4px;
+  padding: 6px 12px;
+  text-decoration: none;
+  color: #3498db;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+.pagination .step-links a:hover {
+  background-color: #f0f0f0;
+  text-decoration: none;
+}
+.pagination .current {
+  margin: 0 10px;
+  font-weight: 600;
+  color: #333;
+}
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -53,200 +178,4 @@ body {
 
   background-color: #2c5282; /* Active tab has blue background */
   border-bottom-color: #2c5282;
-}
-
-/* --- Main Card (from requestgmc.css .gmc-form) --- */
-.gmc-form {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  /* Uses max-width from .container, not inline style */
-}
-
-/* --- Search Bar --- */
-.search-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  align-items: center;
-}
-
-/* Styled like #comboBox */
-.search-input,
-.filter-select {
-  font-family: "Rubik", sans-serif;
-  font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  color: #333;
-  flex-grow: 1;
-}
-
-.search-input:focus,
-.filter-select:focus {
-  outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
-}
-
-/* Styled like .requestBtn */
-.search-btn {
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  font-size: 1rem;
-
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
-}
-.search-btn:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
-}
-
-/* --- Table Wrapper (from requestgmc.css .admin-table-wrapper) --- */
-.subcontain {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* --- Table (from requestgmc.css #trackerTable) --- */
-table {
-  width: 100%;
-  min-width: 1000px; /* Force scroll */
-  border-collapse: collapse;
-}
-table th,
-table td {
-  border-bottom: 1px solid #ddd;
-  padding: 12px 15px;
-  text-align: left;
-  font-size: 14px;
-  vertical-align: middle;
-}
-table th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Theme Blue */
-
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-table tr:last-child td {
-  border-bottom: none;
-}
-
-/* --- Table Content --- */
-td a {
-  /* For "View Profile" */
-  color: #2c5282;
-  font-weight: 500;
-  text-decoration: none;
-}
-td a:hover {
-  text-decoration: underline;
-}
-
-/* Action Buttons (from requestgmc.css .printBtn / .decline) */
-td form {
-  display: flex; /* Changed from inline */
-  gap: 8px;
-}
-td button {
-  font-family: "Rubik", sans-serif;
-  font-size: 0.875rem;
-
-  padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-  transition: background-color 0.2s;
-}
-td button[value="approve"] {
-  background-color: #28a745; /* Green */
-}
-td button[value="approve"]:hover {
-  background-color: #218838;
-}
-td button[value="decline"] {
-  background-color: #dc3545; /* Red */
-}
-td button[value="decline"]:hover {
-  background-color: #c82333;
-}
-
-/* --- Sortable Headers --- */
-table th.sortable a {
-  color: inherit;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-table th.sortable a:hover {
-  text-decoration: underline;
-}
-table th.sortable a::after {
-  font-family: "Font Awesome 5 Free"; /* Requires Font Awesome */
-  content: "\f0dc"; /* fa-sort */
-  font-weight: 900;
-  opacity: 0.5;
-}
-table th.sortable a.sorted::after {
-  opacity: 1;
-  content: "\f0d8"; /* fa-sort-up */
-}
-table th.sortable a.sorted.desc::after {
-  opacity: 1;
-  content: "\f0d7"; /* fa-sort-down */
-}
-
-/* "No applicants" message */
-.no-applicants {
-  text-align: center;
-  color: #777;
-  font-style: italic;
-  padding: 2rem;
-}
-
-/* --- Pagination --- */
-.pagination {
-  margin: 2rem 0 1rem;
-  text-align: center;
-}
-.step-links a,
-.step-links .current {
-  display: inline-block;
-  padding: 8px 14px;
-  margin: 0 4px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-}
-.step-links a {
-  background-color: #f0f0f0;
-  color: #333;
-}
-.step-links a:hover {
-  background-color: #e0e0e0;
-}
-.step-links .current {
-  background-color: #2c5282;
-  color: white;
-  border-color: #2c5282;
 }
