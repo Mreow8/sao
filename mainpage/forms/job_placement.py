@@ -3,7 +3,8 @@ from ..models import ( JobPlacementAdminUser,  Seminar,
                      SeminarAttendance, TransactionReport, OJTCompany, OJTStudent, OJTRequirements
                     )
 from django.forms import ModelForm
-
+import mimetypes
+from django.forms import ModelForm, ValidationError
 from django import forms
 from django.contrib.auth import authenticate
 from django.utils.safestring import mark_safe
@@ -145,15 +146,77 @@ class OJTStudentForm(ModelForm):
     class Meta:
         model = OJTStudent
         exclude = ('ojt_id', 'date_started')
-
 class OJTRequirementsForm(ModelForm):
+    # --- Define Allowed File Types ---
+    ALLOWED_TYPES = [
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+    ]
+
     class Meta:
         model = OJTRequirements
         fields = ('ojt_requirement_id','non_disclosure', 'biodata',
                   'parents_consent', 'application_letter', 'medical', 'moa',
                   'endorsement', 'certification',
-                  )
+                 )
+    
+    # --- Validation Helper Function ---
+    # --- Validation Helper Function ---
+    def _clean_file_field(self, field_name):
+        """Helper to validate a single file field against ALLOWED_TYPES."""
         
+        # 1. Get the uploaded file from cleaned data
+        uploaded_file = self.cleaned_data.get(field_name)
+
+        # 2. --- THIS IS THE FIX ---
+        #    Only validate the file if it was part of the *current* upload
+        #    (i.e., it's in request.FILES, which Django puts in self.files)
+        if uploaded_file and field_name in self.files:
+            
+            # 3. Determine the MIME type
+            content_type, _ = mimetypes.guess_type(uploaded_file.name)
+            
+            if not content_type:
+                content_type = uploaded_file.content_type
+            
+            # 4. Check against the allowed list
+            if content_type not in self.ALLOWED_TYPES:
+                # Raise an error if the new file type is invalid
+                raise ValidationError(
+                    f"Invalid file type for {field_name.replace('_', ' ').title()}. Only PDF and image files (JPG, PNG, GIF) are allowed. Detected type: {content_type}"
+                )
+        
+        # 5. Always return the file data.
+        #    (If it's an old file from the instance, we skip validation and just return it)
+        return uploaded_file
+
+    # --- Apply Validation to Each File Field ---
+    
+    def clean_non_disclosure(self):
+        return self._clean_file_field('non_disclosure')
+
+    def clean_biodata(self):
+        return self._clean_file_field('biodata')
+
+    def clean_parents_consent(self):
+        return self._clean_file_field('parents_consent')
+    
+    def clean_application_letter(self):
+        return self._clean_file_field('application_letter')
+
+    def clean_medical(self):
+        return self._clean_file_field('medical')
+
+    def clean_moa(self):
+        return self._clean_file_field('moa')
+    
+    def clean_endorsement(self):
+        return self._clean_file_field('endorsement')
+    
+    def clean_certification(self):
+        return self._clean_file_field('certification')
 class ScrapperFile(forms.Form):
     file = forms.FileField()
    

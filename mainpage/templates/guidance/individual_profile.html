@@ -4,6 +4,13 @@
     <link rel="stylesheet" href="{% static 'styles/guidance/individual_profile.css'%}">
 {% endblock %}
 {% block bodycontent %}
+
+ <div class="sub-title">
+    <h4>GUIDANCE</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+    <p class="certxt">Individual Profile</p>
+  </div>
+<hr>
     <div class="showform_container" id="consent_container">
         <div class="form_container">
             <h2>Informed Consent Form</h2>
@@ -22,10 +29,7 @@
     
 
     <div class="container">
-        <div class="sub-title">
-        <h4>GUIDANCE</h4>
-        <span><label id="dir-gray">Home</label><label id="dir-orange"> > Individual Profile </label></span>
-        </div>
+        
         <div class="form-container">
             <form>
                 {% csrf_token %}

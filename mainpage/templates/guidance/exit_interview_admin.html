@@ -13,153 +13,6 @@
 />
 <script src="{% static 'scripts/guidance/html2pdf.js'%}"></script>
 
-<style>
-  /* --- Toolbar Wrapper --- */
-  .search-and-filter-toolbar {
-    display: flex;
-    flex-wrap: wrap; /* Allows stacking on small screens */
-    align-items: center; /* Vertically center items */
-    gap: 12px; /* Space between search and filter groups */
-    margin-bottom: 1.5rem;
-  }
-  
-  /* --- 1. The Search Form --- */
-  .search-form {
-    display: flex;
-    flex-grow: 1; /* Allows search bar to take available space */
-    min-width: 300px; /* Prevents it from getting too small */
-  }
-  
-  /* The search input */
-  .search-form input[type="text"] {
-    flex-grow: 1;
-    padding: 10px 15px;
-    font-size: 0.95rem;
-    border: 1px solid #ccc;
-    border-radius: 6px 0 0 6px; /* Rounded left */
-    border-right: none;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  
-  .search-form input[type="text"]:focus {
-    border-color: #2c5282; /* Blue highlight on focus */
-  }
-  
-  /* The search button (styled blue like image) */
-  .search-form button {
-    /* This can override .OrangeButton if needed */
-    background-color: #2c5282; /* Blue */
-    border: 1px solid #2c5282;
-    color: white;
-    padding: 10px 20px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 0 6px 6px 0; /* Rounded right */
-    transition: background-color 0.2s;
-  }
-  
-  .search-form button:hover {
-    background-color: #2c5282; /* Darker blue */
-  }
-  
-  
-  /* --- 2. The Filter Buttons --- */
-  .filter-buttons {
-    display: flex;
-    gap: 8px; /* Space between individual buttons */
-  }
-  
-  /* Base style for filter buttons (like "Processed" and "All") */
-  .btn-status-filter {
-    /* Sizing and Layout */
-    padding: 10px 16px; 
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid #2c5282; 
-    border-radius: 6px; 
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    white-space: nowrap; /* Prevents text wrap */
-    
-    /* Color (Inactive state) */
-    background-color: #ffffff; /* White background */
-    color: #2c5282; /* Blue text */
-  }
-  
-  /* The "active" state (like "Pending" button) */
-  .btn-status-filter.active {
-    background-color: #2c5282; /* Blue background */
-    color: #ffffff; /* White text */
-  }
-  
-  /* Hover on inactive button */
-  .btn-status-filter:not(.active):hover {
-    background-color: #f0f6ff; /* Light blue tint */
-  }
-  
-  /* Hover on active button */
-  .btn-status-filter.active:hover {
-    background-color: #2c5282; /* Darker blue */
-    border-color: #2c5282;
-  }
- /* --- Action Buttons in Table --- */
-
-/* This styles the <div> holding the buttons */
-.horizontal {
-  display: flex;
-  flex-wrap: wrap; /* Allows wrapping if cell is narrow */
-  gap: 6px; /* Space between buttons */
-}
-
-/* This is a BASE style for all buttons in that div */
-.horizontal button {
-  padding: 8px 12px;
-  font-size: 0.8rem; /* Small but readable */
-  font-weight: 700;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-/* Add a little "press" effect on click */
-.horizontal button:active {
-  transform: scale(0.96);
-}
-
-/* --- ACCEPT Button (Green) --- */
-.horizontal button.accept {
-  background-color: #28a745; /* Success Green */
-}
-
-.horizontal button.accept:hover {
-  background-color: #218838; /* Darker Green */
-}
-
-/* --- DECLINE Button (Red) --- */
-.horizontal button.decline {
-  background-color: #dc3545; /* Danger Red */
-}
-
-.horizontal button.decline:hover {
-  background-color: #c82333; /* Darker Red */
-}
-
-/* --- DELETE Button (Dark Gray) --- */
-.horizontal button.delete {
-  background-color: #6c757d; /* Neutral Dark Gray */
-}
-
-.horizontal button.delete:hover {
-  background-color: #5a6268; /* Darker Gray */
-}
-</style>
 {% endblock %} 
 
 {% block bodycontent %}
@@ -286,17 +139,17 @@
               <span class="expired">{{ interview_request.status }}</span>
               {% endif %}
             </td>
-            <td data-label="Action">
-              <div class="horizontal">
-                {% if interview_request.status != 'Expired' %} 
-                {% if interview_request.status != 'Accepted' %} 
-                {% if interview_request.status != 'Declined' %}
-                <button class="accept" id="acceptButton">ACCEPT</button>
-                <button class="decline" id="declineButton">DECLINE</button>
-                {% endif %} {% endif %} {% endif %}
-                <button class="delete" id="delete">DELETE</button>
-              </div>
-            </td>
+           <td data-label="Action">
+  <div class="horizontal">
+    {% if interview_request.status != 'Expired' %} 
+    {% if interview_request.status != 'Accepted' %} 
+    {% if interview_request.status != 'Declined' %}
+    <button class="accept" >ACCEPT</button>
+    <button class="decline" >DECLINE</button>
+    {% endif %} {% endif %} {% endif %}
+    <button class="delete" >DELETE</button>
+  </div>
+</td>
             <td data-label="Form">
               {% if interview_request.status == 'Accepted' %}
                 <a 

@@ -127,99 +127,6 @@ body {
   background-color: #bee3f8; /* Darker Light Blue */
 }
 
-/* === Admin View: PDF Modal === */
-.showcontainer {
-  display: none; /* Hidden by default (JS toggles this) */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-}
-
-.showform {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  max-width: 900px;
-  height: 90vh;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.showform .closeform {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 2.5rem;
-  color: #aaa;
-  background: none;
-  border: none;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0;
-}
-
-#pdf-iframe {
-  flex-grow: 1;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.button-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 1.5rem;
-}
-
-.accept-button,
-.decline-button,
-.close-button {
-  font-family: "Rubik", sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  padding: 10px 24px;
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.accept-button {
-  background-color: #28a745; /* Green */
-  color: white;
-}
-.accept-button:hover {
-  background-color: #218838;
-}
-
-.decline-button {
-  background-color: #dc3545; /* Red */
-  color: white;
-}
-.decline-button:hover {
-  background-color: #c82333;
-}
-
-.close-button {
-  background-color: #6c757d; /* Gray */
-  color: white;
-}
-.close-button:hover {
-  background-color: #5a6268;
-}
-
 /* === Student View: Info Box === */
 #balo {
   padding: 1.5rem 2.5rem;
@@ -358,10 +265,6 @@ body {
 
 /* === Responsive (from admingrant.css) === */
 @media (max-width: 768px) {
-  section {
-    margin: 1rem auto;
-  }
-
   .sub-title,
   hr,
   #balo,
@@ -419,4 +322,106 @@ body {
   .submit-button {
     width: 100%;
   }
+}
+.showform {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  width: 90%;
+  max-width: 900px; /* Adjust as needed */
+  position: relative; /* For the close button */
+
+  /* Handles overflow for smaller screens */
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.showcontainer {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  margin: 0 auto;
+  /* Centering properties are REMOVED from here */
+}
+
+/* This is how the modal is shown by the JavaScript */
+.showcontainer.active {
+  /* ...and ADDED here */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* "×" button at the top-right */
+.showform .closeform {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+.showform .closeform:hover {
+  color: #000;
+}
+
+/* Container for Accept/Decline */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* Adds space between buttons */
+  margin-top: 20px;
+}
+
+/* Styling for Accept/Decline buttons */
+.accept-button,
+.decline-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.accept-button {
+  background-color: #28a745; /* Green */
+}
+.accept-button:hover {
+  background-color: #218838;
+}
+
+.decline-button {
+  background-color: #dc3545; /* Red */
+}
+.decline-button:hover {
+  background-color: #c82333;
+}
+
+/* Main "Close" button at the bottom */
+.close-button {
+  display: block;
+  width: 100px;
+  margin: 20px auto 0;
+  padding: 10px;
+  background-color: #6c757d; /* Gray */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.close-button:hover {
+  background-color: #5a6268;
 }

@@ -12,6 +12,104 @@ from ..models import (
 )
 from ..forms import CrowdfundingProjectForm,  ProgramForm
 
+# --- All other view functions (edit_program, delete_program, etc.) stay the same ---
+# ...
+# ... (all other views)
+# ...
+
+@login_required
+def donation_validate(request):
+  
+    # Get the filter status from the URL.
+    filter_status = request.GET.get('filterStatus') 
+
+    # --- MODIFICATION: Added .select_related('processed_by') ---
+    if filter_status == 'Accepted':
+        donation_list = MOD.objects.filter(status='Accepted').select_related('processed_by').order_by('-date')
+    elif filter_status == 'Declined':
+        donation_list = MOD.objects.filter(status='Declined').select_related('processed_by').order_by('-date')
+    elif filter_status == 'Pending':
+        donation_list = MOD.objects.filter(status=None).order_by('-date')
+    else:
+        # DEFAULT: Show ALL, and fetch processed_by admin
+        donation_list = MOD.objects.all().select_related('processed_by').order_by('-date')
+        filter_status = None 
+    
+    paginator = Paginator(donation_list, 10) 
+    page_number = request.GET.get('page')
+
+    try:
+        loadDonations = paginator.page(page_number) 
+    except PageNotAnInteger:
+        loadDonations = paginator.page(1)
+    except EmptyPage:
+        loadDonations = paginator.page(paginator.num_pages)
+
+    # --- ENRICHMENT LOOP (This is correct, no change needed) ---
+    for donation in loadDonations.object_list:
+        project = CrowdfundingProject.objects.filter(title=donation.donated).first()
+        
+        if project:
+            donation.project_description = project.description
+            first_image = project.channels.first()
+            donation.project_image_url = first_image.imageCrowdfunding.url if first_image else ""
+        else:
+            program = Program.objects.filter(title=donation.donated).first()
+            if program:
+                donation.project_description = program.description
+                first_image = program.images.first()
+                donation.project_image_url = first_image.image.url if first_image else ""
+            else:
+                donation.project_description = ""
+                donation.project_image_url = ""
+    # --- END ENRICHMENT LOOP ---
+
+    context = {
+        "url": "report", 
+        "loadDonations": loadDonations, 
+        "selected_status": filter_status 
+    }
+    
+    return render(
+        request,
+        "community_involvement/admin/donation-validate.html",
+        context,
+    )
+
+@login_required
+def donation_accept(request, id):
+    # --- MODIFICATION: Save the admin user who accepted ---
+    donation = get_object_or_404(MOD, id=id)
+    donation.status = "Accepted"
+    donation.processed_by = request.user  # Saves the logged-in admin
+    donation.save()
+    # --- END MODIFICATION ---
+    return redirect("donation-validate")
+
+@login_required
+def donation_decline(request, id):
+    # --- MODIFICATION: Save the admin user who declined ---
+    donation = get_object_or_404(MOD, id=id)
+    donation.status = "Declined"
+    donation.processed_by = request.user  # Saves the logged-in admin
+    donation.save()
+    # --- END MODIFICATION ---
+    return redirect("donation-validate")
+
+@login_required
+def donation_filter(request):
+    if request.method == "POST":
+        statusFilter = request.POST.get("filterStatus")
+        if statusFilter == "Accepted" or statusFilter == "Declined":
+            status = "Yes"
+        else:
+            status = None
+        filterStatus = MOD.objects.filter(status=statusFilter)
+    return render(
+        request,
+        "community_involvement/admin/donation-validate.html",
+        {"loadDonations": filterStatus, "status": status},
+    )
 # --- All View Functions Below ---
 
 @login_required
@@ -572,91 +670,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # Make 
 from ..models import MOD, CrowdfundingProject, Program # Make sure models are imported
 
 # ... (other functions)
-
-@login_required
-def donation_validate(request):
-  
-    # Get the filter status from the URL.
-    # 'filterStatus' can be 'Accepted', 'Declined', 'Pending', or None
-    filter_status = request.GET.get('filterStatus') 
-
-    if filter_status == 'Accepted':
-        donation_list = MOD.objects.filter(status='Accepted').order_by('-date')
-    elif filter_status == 'Declined':
-        donation_list = MOD.objects.filter(status='Declined').order_by('-date')
-    elif filter_status == 'Pending':
-        donation_list = MOD.objects.filter(status=None).order_by('-date')
-    else:
-        # DEFAULT: If filter_status is None (e.g., "Clear" or first page load),
-        # show ALL donations.
-        donation_list = MOD.objects.all().order_by('-date')
-        filter_status = None # Explicitly set to the template
-    
-    paginator = Paginator(donation_list, 10) 
-    page_number = request.GET.get('page')
-
-    try:
-        loadDonations = paginator.page(page_number) # loadDonations is the Page object
-    except PageNotAnInteger:
-        loadDonations = paginator.page(1)
-    except EmptyPage:
-        loadDonations = paginator.page(paginator.num_pages)
-
-    # --- ENRICHMENT LOOP (from last time) ---
-    # This loop adds the event info for the modal
-    for donation in loadDonations.object_list:
-        project = CrowdfundingProject.objects.filter(title=donation.donated).first()
-        
-        if project:
-            donation.project_description = project.description
-            first_image = project.channels.first()
-            donation.project_image_url = first_image.imageCrowdfunding.url if first_image else ""
-        else:
-            program = Program.objects.filter(title=donation.donated).first()
-            if program:
-                donation.project_description = program.description
-                first_image = program.images.first()
-                donation.project_image_url = first_image.image.url if first_image else ""
-            else:
-                donation.project_description = ""
-                donation.project_image_url = ""
-    # --- END ENRICHMENT LOOP ---
-
-    context = {
-        "url": "report", 
-        "loadDonations": loadDonations, # Pass the enriched Page object
-        "selected_status": filter_status # Pass the filter back to the template
-    }
-    
-    return render(
-        request,
-        "community_involvement/admin/donation-validate.html",
-        context,
-    )
-@login_required
-def donation_accept(request, id):
-    MOD.objects.filter(id=id).update(status="Accepted")
-    return redirect("donation-validate")
-
-@login_required
-def donation_decline(request, id):
-    MOD.objects.filter(id=id).update(status="Declined")
-    return redirect("donation-validate")
-
-@login_required
-def donation_filter(request):
-    if request.method == "POST":
-        statusFilter = request.POST.get("filterStatus")
-        if statusFilter == "Accepted" or statusFilter == "Declined":
-            status = "Yes"
-        else:
-            status = None
-        filterStatus = MOD.objects.filter(status=statusFilter)
-    return render(
-        request,
-        "community_involvement/admin/donation-validate.html",
-        {"loadDonations": filterStatus, "status": status},
-    )
 
 # --- FIX --- Removed the duplicate archive_program function
 

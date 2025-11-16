@@ -16,12 +16,6 @@ body {
   background-color: #f8f9fa; /* Light grey background */
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem 2rem;
-}
-
 /* --- Main Card (from requestgmc.css) --- */
 .form-container {
   background-color: #ffffff;

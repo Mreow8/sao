@@ -237,11 +237,6 @@ body {
     margin-left: 0;
     width: 100%;
   }
-
-  /* Add padding to header to make room for toggle button */
-  .custom-search-wrapper {
-    padding-left: 60px;
-  }
 }
 /* --- --- */
 /* Add these new rules to main.css */

@@ -583,8 +583,34 @@ def process_checkboxes(checkbox_list, other_value):
     if other_value:
         result = f"{result}, {other_value}" if result else other_value
     return result or 'None'
+
 @user_passes_test(can_access_medical_admin)
 def admin_dashboard_view(request):
+    
+    # --- START OF FIX ---
+    def get_sort_date(req_data):
+        """
+        Gets the first available date and ensures it's a 'date' object.
+        """
+        date_val = (
+            getattr(req_data['request'], 'date_requested', None) or
+            getattr(req_data['request'], 'date_assisted', None) or
+            getattr(req_data['request'], 'date_submitted', None)
+        )
+        
+        # If it's a full datetime object, get just the .date() part
+        if isinstance(date_val, datetime):
+            return date_val.date()
+        
+        # If it's already a date object, just return it
+        if isinstance(date_val, date):
+            return date_val
+        
+        # If it's None, return the minimum possible date
+        # (this will sort it to the end since reverse=True)
+        return date.min
+    # --- END OF FIX ---
+
     # Get total patients count (both students and faculty)
     total_patients = Patient.objects.count()
     
@@ -719,12 +745,10 @@ def admin_dashboard_view(request):
                 print(f"Error processing emergency request {req.id}: {str(e)}")
         all_requests.append(request_data)
 
-    # Sort all requests by date
-    all_requests.sort(key=lambda x: (
-        getattr(x['request'], 'date_requested', None) or 
-        getattr(x['request'], 'date_assisted', None) or 
-        getattr(x['request'], 'date_submitted', None)
-    ), reverse=True)
+    # --- START OF FIX 2 ---
+    # Sort all requests by date using the helper function
+    all_requests.sort(key=get_sort_date, reverse=True)
+    # --- END OF FIX 2 ---
 
     # Get counts for dashboard cards
     pending_requests_total = len([r for r in all_requests 
@@ -835,49 +859,59 @@ def dashboard_view(request):
             for req in patient_requests:
                 all_patient_requests.append({
                     'request_type': req.request_type,
-                    'date_requested': req.date_requested,
+                    'date_requested': req.date_requested.date(),  # Use .date()
                     'status': req.status
                 })
             
             for req in medical_requirements:
                 all_patient_requests.append({
                     'request_type': 'Medical Requirement',
-                    'date_requested': req.reviewed_date if req.reviewed_date else timezone.now(), # Use reviewed_date if available, else current time
+                    'date_requested': (req.reviewed_date if req.reviewed_date else timezone.now()).date(),
                     'status': req.status
                 })
             
+            # ✅ --- FIX IS HERE ---
             for req in eligibility_forms:
+                date_obj = None
+                try:
+                    # Convert the string 'YYYY-MM-DD' into a date object
+                    date_obj = datetime.strptime(req.date_of_examination, '%Y-%m-%d').date()
+                except (ValueError, TypeError):
+                    # Fallback if data is bad or empty
+                    date_obj = timezone.now().date() 
+
                 all_patient_requests.append({
                     'request_type': 'Eligibility Form',
-                    'date_requested': req.date_of_examination, # Assuming this is the closest to date_requested
-                    'status': 'completed' # Assuming eligibility forms are "completed" once filled
+                    'date_requested': date_obj, # This is now a date object
+                    'status': 'completed' 
                 })
+            # ✅ --- END FIX ---
             
             for req in medical_certificates:
                 all_patient_requests.append({
                     'request_type': 'Medical Certificate',
-                    'date_requested': req.date_created, # Assuming this is the closest to date_requested
-                    'status': 'completed' # Assuming medical certificates are "completed" once issued
+                    'date_requested': req.date_created.date(), # Use .date()
+                    'status': 'completed' 
                 })
             
             for req in dental_records:
                 all_patient_requests.append({
                     'request_type': f'Dental - {req.service_type}',
-                    'date_requested': req.date_requested,
-                    'status': 'accepted' if req.appointed else 'pending' # Assuming "accepted" if appointed, else "pending"
+                    'date_requested': req.date_requested.date(), # Use .date()
+                    'status': 'accepted' if req.appointed else 'pending'
                 })
 
             for req in emergency_records:
                 all_patient_requests.append({
                     'request_type': f'Emergency Assistance - {req.reason}',
-                    'date_requested': req.date_assisted, # Using date_assisted as date_requested
-                    'status': 'completed' # Assuming emergency records are "completed" once assisted
+                    'date_requested': req.date_assisted, # This is already a .date
+                    'status': 'completed'
                 })
 
             for req in mental_health_records:
                 all_patient_requests.append({
                     'request_type': 'Mental Health Record',
-                    'date_requested': req.date_submitted,
+                    'date_requested': req.date_submitted.date(), # Use .date()
                     'status': req.status
                 })
 
@@ -938,7 +972,6 @@ def dashboard_view(request):
             'medical/medicalv2/student_dashboard.html',
             {'medical_profile_incomplete': True}
         )
-
 
 
 @user_passes_test(can_access_medical_admin)

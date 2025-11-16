@@ -7,22 +7,18 @@
 {% block headcontent %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
     
-    <!-- Fonts to match theme -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
     
-    <!-- Page-specific CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'styles/guidance/counseling_app_admin.css'%}"/>
-
-    <!-- 
-      The <style> block that was here has been
-      moved into counseling_app_admin.css
-    -->
 {% endblock %} 
 
 {% block bodycontent %}
-<div class="body-content"> <!-- Added wrapper for consistent padding -->
+
+{% with current_sort_field=request.GET.sort|default:"dateRecieved" base_params_for_sort="&search="|add:current_search|default:""|add:"&status_filter="|add:current_status_filter|default:"" all_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|default:"dateRecieved"|add:"&status_filter="|add:current_status_filter|default:""%}
+
+<div class="body-content">
     <div class="sub-title">
         <h4>GUIDANCE(Admin)</h4>
         <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
@@ -31,9 +27,14 @@
     <hr>
 
     <div class="gmc-form">
+        <div class="search_id_container">
         {% csrf_token %}
         
         <form id="search_id" method="GET" action="">
+            {# Include hidden fields for active filters so search button preserves them #}
+            <input type="hidden" name="status_filter" value="{{ current_status_filter|default:'' }}">
+            <input type="hidden" name="sort" value="{{ current_sort|default:'dateRecieved' }}">
+            
             <input
                 type="text"
                 name="search"
@@ -45,45 +46,61 @@
             
         </form>
         
-        <div class="filter-buttons">
-            {% with search_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort %}
-                <a href="?{{ search_params }}" 
-                   class="btn-filter {% if not current_status_filter %}active{% endif %}">
-                   All Statuses
-                </a>
-                <a href="?status_filter=Pending{{ search_params }}" 
-                   class="btn-filter {% if current_status_filter == 'Pending' %}active{% endif %}">
-                   Pending
-                </a>
-                <a href="?status_filter=Accepted{{ search_params }}"
-                   class="btn-filter {% if current_status_filter == 'Accepted' %}active{% endif %}">
-                   Accepted
-                </a>
-                <a href="?status_filter=Declined{{ search_params }}"
-                   class="btn-filter {% if current_status_filter == 'Declined' %}active{% endif %}">
-                   Declined
-                </a>
-                <a href="?status_filter=Expired{{ search_params }}"
-                   class="btn-filter {% if current_status_filter == 'Expired' %}active{% endif %}">
-                   Expired
-                </a>
-            {% endwith %}
-        </div>
+      <div class="filter-dropdown">
+    <label for="status_filter_select" class="sr-only">Filter by Status</label>
+    <select id="status_filter_select" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
         
+        {# Use the combined parameters that include search and sort #}
+        {% with combined_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|default:"dateRecieved" %}
+        
+        <option value="?{{ combined_params }}" 
+                {% if not current_status_filter %}selected{% endif %}>
+            All Statuses
+        </option>
+        
+        <option value="?status_filter=Pending{{ combined_params }}" 
+                {% if current_status_filter == 'Pending' %}selected{% endif %}>
+            Pending
+        </option>
+        
+        <option value="?status_filter=Accepted{{ combined_params }}" 
+                {% if current_status_filter == 'Accepted' %}selected{% endif %}>
+            Accepted
+        </option>
+        
+        <option value="?status_filter=Declined{{ combined_params }}" 
+                {% if current_status_filter == 'Declined' %}selected{% endif %}>
+            Declined
+        </option>
+        
+        <option value="?status_filter=Expired{{ combined_params }}" 
+                {% if current_status_filter == 'Expired' %}selected{% endif %}>
+            Expired
+        </option>
+        
+        {% endwith %}
+    </select>
+</div>
+        </div>
         <div class="table-responsive-wrapper">
             <table id="info_table">
                 <thead>
                     <tr id="info_table_head">
-                        {% with base_params="&search="|add:current_search|default:""|add:"&status_filter="|add:current_status_filter|default:"" %}
-                        <th><a href="?sort=dateRecieved{{ base_params }}">Date Received</a></th>
-                        <th><a href="?sort=studentID__lastname{{ base_params }}">Name</a></th>
+                        {# Use the pre-calculated base_params_for_sort which omits 'sort' #}
+                        <th class="{% if current_sort_field == 'dateRecieved' %}active-sort{% endif %}">
+                            <a href="?sort=dateRecieved{{ base_params_for_sort }}">Date Received</a>
+                        </th>
+                        <th class="{% if current_sort_field == 'studentID__lastname' %}active-sort{% endif %}">
+                            <a href="?sort=studentID__lastname{{ base_params_for_sort }}">Name</a>
+                        </th>
                         <th>Program/Year</th>
                         <th>Contact No</th>
-                        <th><a href="?sort=scheduled_date{{ base_params }}">Meeting Date</a></th>
+                        <th class="{% if current_sort_field == 'scheduled_date' %}active-sort{% endif %}">
+                            <a href="?sort=scheduled_date{{ base_params_for_sort }}">Meeting Date</a>
+                        </th>
                         <th>Reason</th>
                         <th>Status</th>
                         <th>Action</th>
-                        {% endwith %}
                     </tr>
                 </thead>
                 <tbody>
@@ -150,21 +167,20 @@
 
         <div class="pagination">
             <span class="step-links">
-                {% with all_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|add:"&status_filter="|add:current_status_filter|default:"" %}
-                    {% if page_obj.has_previous %}
-                        <a href="?page=1{{ all_params }}">&laquo; First</a>
-                        <a href="?page={{ page_obj.previous_page_number }}{{ all_params }}">Previous</a>
-                    {% endif %}
-                    <span class="current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                    </span>
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}{{ all_params }}">Next</a>
-                        <a href="?page={{ page_obj.paginator.num_pages }}{{ all_params }}">Last &raquo;</a>
-                    {% endif %}
-                {% endwith %}
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{{ all_params }}">&laquo; First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{{ all_params }}">Previous</a>
+                {% endif %}
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{{ all_params }}">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{{ all_params }}">Last &raquo;</a>
+                {% endif %}
             </span>
         </div>
     </div>
 </div>
+{% endwith %}
 {% endblock %}

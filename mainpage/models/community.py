@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.conf import settings
 class Program(models.Model):
     title = models.CharField(max_length=255)
     caption = models.CharField(max_length=1000, blank=True, null=True)
@@ -77,7 +77,13 @@ class MOD(models.Model):  # Money/Other Donations
     # FIX: Changed from IntegerField to DecimalField to handle cents
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date = models.DateField(auto_now_add=True)
-
+    processed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL,  # Keeps record even if admin is deleted
+        null=True, 
+        blank=True,
+        related_name="processed_donations"
+    )
     what_kind = models.CharField(max_length=20, blank=True, null=True)
     recepient = models.CharField(max_length=20, default="", blank=True, null=True)
     recepient_things = models.CharField(

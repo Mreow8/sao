@@ -1,35 +1,18 @@
 from pathlib import Path
 import os
-# Use only pathlib
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 AUTH_USER_MODEL = 'mainpage.CustomUser'
-# Redirects to this URL if @login_required is used without a specific `login_url`
-# In settings.py
-LOGIN_URL = '/main/login/' # or the correct path or name
+LOGIN_URL = '/main/login/'
 X_FRAME_OPTIONS = "SAMEORIGIN"
 STATIC_URL = '/static/'
-# --- EMAIL SETTINGS (PRODUCTION / LIVE - Using Gmail SMTP) ---
-
-# The email backend to use
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-# Gmail's SMTP server address
 EMAIL_HOST = 'smtp.gmail.com'
-
-# Standard port for TLS encryption
 EMAIL_PORT = 587
-
-# Use Transport Layer Security (TLS)
 EMAIL_USE_TLS = True
-
-# Your sender email address (Gmail account)
 EMAIL_HOST_USER = 'saoctuargao@gmail.com'
-
-EMAIL_HOST_PASSWORD = 'udyl ybgi zusn hejg'
-
-# The default address for emails (often the same as EMAIL_HOST_USER)
+EMAIL_HOST_PASSWORD = 'udylybgizusnhejg'
 DEFAULT_FROM_EMAIL = 'saoctuargao@gmail.com'
-# This will now work because BASE_DIR is a Path object
 STATICFILES_DIRS = [
     BASE_DIR / 'mainpage' / 'static',
 ]
@@ -40,21 +23,15 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8001",
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# For production or collectstatic command:
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
-
 SECRET_KEY = 'django-insecure-wqcuti7mokhf)l@v3r0@@xo@(#ss02u8r8_xa6cw0xs96tpxd!'
-
 DEBUG = True
-
 ALLOWED_HOSTS = ["sao-b1fm.onrender.com", "localhost", "127.0.0.1"]
 
-import os
-BASE_DIR = Path(__file__).resolve().parent.parent
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# Application definition
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 TAILWIND_APP_NAME = 'theme'
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,19 +39,18 @@ INSTALLED_APPS = [
     'mainpage',
     'widget_tweaks',
     'theme',
-   "tailwind",
-      'captcha',
+    "tailwind",
+    'captcha',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
-# Google reCAPTCHA Keys
 RECAPTCHA_PUBLIC_KEY = '6LfhQOcrAAAAANIW45UKBoxv_N6yLJfCCNpyx-j3'
 RECAPTCHA_SECRET_KEY = '6LfhQOcrAAAAAE9VIfgc4IoDIlW4y695n3T9INer'
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -97,7 +73,8 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages','mainpage.context_processors.alumni_status_context',
+                'django.contrib.messages.context_processors.messages',
+                'mainpage.context_processors.alumni_status_context',
                 'mainpage.context_processors.scholarship_status',
             ],
         },
@@ -106,20 +83,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -136,26 +105,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 USE_TZ = True
-TIME_ZONE = 'Asia/Manila'  # Or your appropriate timezone
-
-
-USE_I18N = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
+TIME_ZONE = 'Asia/Manila'
+USE_I1N = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

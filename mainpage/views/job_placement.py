@@ -53,60 +53,212 @@ ojtrequirements_endorsement_letter = './media/templates/ojt_requirements/endorse
 ojtrequirements_medical = './media/templates/ojt_requirements/medical_clearance.docx'
 ojtrequirements_moa = './media/templates/ojt_requirements/moa.docx'
 ojtrequirements_template_output_path = './media/templates/ojt_requirements/generated'
-from mainpage.decorators.decorators import sao_admin_required
+# from mainpage.decorators.decorators import sao_admin_required@login_required 
+def stream_ojt_file(request, req_id, attr_name):
+    """
+    Reads a file from storage and streams it to the browser.
+    If it's a PDF/Image, it shows inline.
+    If it's a .docx or other, it returns an error page.
+    """
+    
+    # Define file types that browsers can show in a tab
+    ALLOWED_INLINE_TYPES = [
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/bmp',
+        'image/webp'
+    ]
+    
+    try:
+        req = OJTRequirements.objects.get(pk=req_id)
+
+        FIELD_MAP = {
+            'nondis': 'non_disclosure',
+            'biodata': 'biodata',
+            'consent': 'parents_consent',
+            'apl_letter': 'application_letter',
+            'medical': 'medical',
+            'moa': 'moa',
+            'endorsement': 'endorsement',
+            'cert': 'certification',
+        }
+
+        model_field_name = FIELD_MAP.get(attr_name)
+        if not model_field_name:
+            raise Http404("Invalid file type key")
+
+        file_field = getattr(req, model_field_name, None)
+
+        if file_field and file_field.storage.exists(file_field.name):
+            
+            # 1. Guess the file's content type
+            content_type, _ = mimetypes.guess_type(file_field.name)
+            
+            if not content_type:
+                content_type = 'application/octet-stream' # Default for unknown
+            
+            # 2. Check if the type is viewable
+            if content_type in ALLOWED_INLINE_TYPES:
+                # It's a PDF or Image: Stream it to be viewed in the tab
+                file_content = file_field.read()
+                response = HttpResponse(file_content, content_type=content_type)
+                response['Content-Disposition'] = f'inline; filename="{file_field.name}"'
+                return response
+                
+            else:
+                # It's NOT a viewable file (like .docx)
+                # Return an HTML error message to display in the new tab
+                error_html = f"""
+                <body style="font-family: sans-serif; padding: 40px;">
+                    <h2 style="color: #c0392b;">Cannot Preview File</h2>
+                    <p>The uploaded file (<b>{file_field.name}</b>) cannot be previewed in the browser because it is not a PDF or image.</p>
+                    <p><b>Detected file type:</b> {content_type}</p>
+                    <p>This file will need to be downloaded to be viewed. You can close this tab and 'Decline' the file if it is not in the correct format.</p>
+                </body>
+                """
+                return HttpResponse(error_html, content_type="text/html", status=200)
+
+        else:
+            raise Http404("File not found")
+
+    except OJTRequirements.DoesNotExist:
+        raise Http404("Requirement record not found")
+    except Exception as e:
+        print(f"Error streaming file: {e}")
+        return HttpResponse(f"<h1>Error processing file</h1><p>{e}</p>", status=500)
+
+# === ADD THIS FUNCTION BACK ===
 @csrf_exempt
 def view_pdf(request, id):
+    """
+    This is called by AJAX. It returns a JSON response with the 
+    URL to the 'stream_ojt_file' view.
+    """
     try:
         req = OJTRequirements.objects.get(ojt_requirement_id = id)
     except OJTRequirements.DoesNotExist:
         error = {'error': "OJT Requirement NOT Found"}
         return JsonResponse(error, status=404)
         
-    pdf = None # Initialize pdf as None
+    pdf = None 
     
     if request.method == 'POST':
         attr_name = request.POST.get('attr_name') 
         
-        if attr_name == 'nondis':
-            pdf = req.non_disclosure
-        elif attr_name == 'biodata':
-            pdf = req.biodata
-        elif attr_name == 'consent':
-            pdf = req.parents_consent
-        elif attr_name == 'medical':
-            pdf = req.medical
-        elif attr_name == 'apl_letter':
-            pdf = req.application_letter
-        elif attr_name == 'moa':
-            pdf = req.moa
-        elif attr_name == 'endorsement':
-            pdf = req.endorsement
-        elif attr_name == 'cert':
-            pdf = req.certification
-        else:
+        # This mapping is critical. It maps the 'name' from the
+        # button to the actual file field on the model.
+        FIELD_MAP = {
+            'nondis': req.non_disclosure,
+            'biodata': req.biodata,
+            'consent': req.parents_consent,
+            'apl_letter': req.application_letter,
+            'medical': req.medical,
+            'moa': req.moa,
+            'endorsement': req.endorsement,
+            'cert': req.certification,
+        }
+
+        pdf_field = FIELD_MAP.get(attr_name)
+
+        if not pdf_field:
             error = {'error': "Invalid file type specified"}
             return JsonResponse(error, status=400)
 
-        # --- [THIS IS THE FIX] ---
-        if pdf and pdf.url:
+        if pdf_field and pdf_field.url:
             pdf_data = {
-                # We now send the URL to our new 'stream_ojt_file' view
+                # We send the URL to our 'stream_ojt_file' view
                 'url': reverse('stream_ojt_file', args=[req.ojt_requirement_id, attr_name]),
-                'name': pdf.name,
+                'name': pdf_field.name,
             }
             return JsonResponse(pdf_data)
         else:
             error = {'error': "File not found or not uploaded"}
-            return JsonResponse(error, status=404)
+            return JsonResponse(error, status=44)
     
     error = {'error': "Invalid request method. Must be POST."}
     return JsonResponse(error, status=405)
 
+
+# === KEEP THIS FUNCTION ===
+@login_required 
+def stream_ojt_file(request, req_id, attr_name):
+    """
+    Reads a file from storage and streams it to the browser.
+    If it's a PDF/Image, it shows inline.
+    If it's a .docx or other, it returns an error page.
+    """
+    
+    ALLOWED_INLINE_TYPES = [
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/bmp',
+        'image/webp'
+    ]
+    
+    try:
+        req = OJTRequirements.objects.get(pk=req_id)
+
+        FIELD_MAP = {
+            'nondis': 'non_disclosure',
+            'biodata': 'biodata',
+            'consent': 'parents_consent',
+            'apl_letter': 'application_letter',
+            'medical': 'medical',
+            'moa': 'moa',
+            'endorsement': 'endorsement',
+            'cert': 'certification',
+        }
+
+        model_field_name = FIELD_MAP.get(attr_name)
+        if not model_field_name:
+            raise Http404("Invalid file type key")
+
+        file_field = getattr(req, model_field_name, None)
+
+        if file_field and file_field.storage.exists(file_field.name):
+            
+            content_type, _ = mimetypes.guess_type(file_field.name)
+            if not content_type:
+                content_type = 'application/octet-stream' 
+            
+            if content_type in ALLOWED_INLINE_TYPES:
+                # PDF/Image: Show in iframe
+                file_content = file_field.read()
+                response = HttpResponse(file_content, content_type=content_type)
+                response['Content-Disposition'] = f'inline; filename="{file_field.name}"'
+                return response
+                
+            else:
+                # .DOCX or other: Show error in iframe
+                error_html = f"""
+                <div style="font-family: sans-serif; padding: 20px;">
+                    <h2>Cannot Display File</h2>
+                    <p>The uploaded file (<b>{file_field.name}</b>) cannot be previewed because it is not a PDF or image.</p>
+                    <p><b>Detected file type:</b> {content_type}</p>
+                    <hr>
+                    <p style="color: #c0392b; font-weight: bold;">
+                        Please close this preview and 'Decline' this file.
+                    </p>
+                </div>
+                """
+                return HttpResponse(error_html, content_type="text/html", status=200)
+        else:
+            raise Http404("File not found")
+
+    except OJTRequirements.DoesNotExist:
+        raise Http404("Requirement record not found")
+    except Exception as e:
+        print(f"Error streaming file: {e}")
+        return HttpResponse(f"<h1>Error processing file</h1><p>{e}</p>", status=500)
 @login_required 
 def stream_ojt_file(request, req_id, attr_name):
     """
     Reads a file from storage and streams it to the browser
-    with 'Content-Disposition: inline' to force preview.
+    with the correct Content-Type to be displayed in an iframe.
     """
     try:
         req = OJTRequirements.objects.get(pk=req_id)
@@ -124,23 +276,22 @@ def stream_ojt_file(request, req_id, attr_name):
 
         model_field_name = FIELD_MAP.get(attr_name)
         if not model_field_name:
-            raise Http404("Invalid file type")
+            raise Http44("Invalid file type")
 
         file_field = getattr(req, model_field_name, None)
 
         if file_field and file_field.storage.exists(file_field.name):
             # Read the file's content
             file_content = file_field.read()
-            
-            # Guess the file's content type
             content_type, _ = mimetypes.guess_type(file_field.name)
+            
+        
             if not content_type:
-                content_type = 'application/octet-stream' 
+                content_type = 'application/pdf' # A safer default for this app
 
-            # Create the response
+
             response = HttpResponse(file_content, content_type=content_type)
             
-            # This header forces the browser to display the file
             response['Content-Disposition'] = f'inline; filename="{file_field.name}"'
             
             return response
@@ -800,21 +951,22 @@ def ojtRequirements_tracker(request):
 
 def ojt_requirements_submit(request):
     if request.method == 'POST':
+        # --- Authentication Checks ---
         if not request.user.is_authenticated:
             messages.error(request, "You must be logged in as a student to submit requirements.")
             print("❌ User is not authenticated.")
             return redirect('ojt_requirements_tracker')
 
         try:
-            # ✅ Link logged-in user to student profile
             student_info = studentInfo.objects.get(user=request.user)
         except studentInfo.DoesNotExist:
             messages.error(request, "No student profile found for your account.")
             print(f"❌ No studentInfo found for user: {request.user}")
             return redirect('ojt_requirements_tracker')
 
-        # ✅ Get latest submitted requirements (if already exists)
+        # --- Form Handling ---
         existing_requirement = OJTRequirements.objects.filter(student_id=student_info).last()
+        
         if existing_requirement:
             print(f"ℹ️ Updating existing requirement for {student_info}")
             form = OJTRequirementsForm(request.POST, request.FILES, instance=existing_requirement)
@@ -822,28 +974,88 @@ def ojt_requirements_submit(request):
             print(f"ℹ️ Creating new requirement for {student_info}")
             form = OJTRequirementsForm(request.POST, request.FILES)
 
+        # --- Validation and Saving ---
         if form.is_valid():
+            print("✅ Form is valid. Proceeding to save.")
             requirement = form.save(commit=False)
-            requirement.student_id = student_info  # ✅ ensure linked to student
+            requirement.student_id = student_info
+            
+            # TRACKING MESSAGE FLAGS
+            is_new_submission = not existing_requirement
+            re_submitted_files = []
+
+            # --- STATUS UPDATE LOGIC (from your original file) ---
+            if existing_requirement:
+                # Iterate over newly uploaded files
+                for file_field_name in request.FILES.keys():
+                    # Convert 'non_disclosure' -> 'nondis'
+                    if file_field_name.endswith('_disclosure'): # Handles non_disclosure
+                        attr_name = 'nondis'
+                    elif file_field_name == 'parents_consent':
+                        attr_name = 'consent'
+                    elif file_field_name == 'application_letter':
+                        attr_name = 'apl_letter'
+                    else:
+                        # For 'biodata', 'medical', 'moa', 'endorsement', 'certification'
+                        attr_name = file_field_name.split('_')[0]
+                    
+                    # Map the short name to the status field name (e.g., 'nondis' -> 'nondis_stat')
+                    status_field_name = f"{attr_name}_stat"
+
+                    # Check current status in the database
+                    current_db_status = getattr(existing_requirement, status_field_name, None)
+                    
+                    # If the file was previously DECLINED, set it back to PENDING
+                    if current_db_status == OJTRequirements.DECLINED:
+                        setattr(requirement, status_field_name, OJTRequirements.PENDING)
+                        re_submitted_files.append(file_field_name.replace('_', ' ').title())
+
             requirement.save()
-            log_activity(request.user, "Submitted OJT requirements")
-            messages.success(request, "Form submitted successfully.")
+            log_activity(request.user, "Submitted OJT requirements") # Assumes log_activity is defined
+
+            # --- MESSAGING (from your original file) ---
+            if is_new_submission:
+                messages.success(request, "All requirements submitted successfully! Awaiting review.")
+            elif re_submitted_files:
+                # Use warning for re-submission notification
+                file_list = ", ".join(re_submitted_files)
+                messages.warning(request, f"Files re-submitted: {file_list}. Awaiting administrator review.")
+            elif request.FILES:
+                messages.success(request, "New files successfully uploaded and sent for review.")
+            else:
+                messages.success(request, "Form data saved successfully.")
+
             print(f"✅ Requirement saved successfully for student {student_info}")
+            return redirect('ojt_requirements_tracker')
+        
         else:
-            messages.error(request, "Form submission unsuccessful. Please check your input.")
-            print("❌ Form submission failed.")
+            # --- THIS IS THE FIX ---
+            # Re-render the page with the invalid form to show errors
+            messages.warning(request, f"Only submit Image and pdf files.")
+            
+            print("❌ Form submission failed. Re-rendering page with errors.")
             print("📝 POST Data:", request.POST)
             print("📂 FILES Data:", request.FILES)
-            print("⚠️ Form Errors:", form.errors)
+            # This will print the validation errors (e.g., "Invalid file type") to your console
+            print("⚠️ Form Errors:", form.errors) 
 
-        return redirect('ojt_requirements_tracker')
+            # This data is needed to render the template correctly
+            existing_form = existing_requirement
+            status_widgets = StatusWidget(instance=existing_form)
+            base_template = "main.html" # Set base template for student view
+
+            context = {
+                'form': form,  # Pass the INVALID form back to the template
+                'existing_form': existing_form,
+                'status': status_widgets,
+                'base_template': base_template,
+            }
+            # Re-render the page so the student sees the form errors
+            return render(request, 'jobplacement/ojt_requirements.html', context)
 
     # If GET request, just redirect
     print("⚠️ GET request received, only POST is allowed here.")
     return redirect('ojt_requirements_tracker')
-
-
-
 def ojt_requirements_accept(request):
     if not (request.user.role != 'student' or request.user.is_superuser): # allow access to admin and superuser only
         messages.info(request, 'Must be staff/admin to access page')

@@ -36,8 +36,8 @@
 .gmc-form {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  min-height: 75vh;
-  border-radius: 12px;
+  min-height: 85vh;
+  border-radius: 0 0 12px 12px; /* <-- This is the change */
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle lift */
 }

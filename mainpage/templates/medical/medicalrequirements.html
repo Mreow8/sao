@@ -5,7 +5,11 @@
 {% tailwind_css %}
 {%block headcontent%}
 <style>
- 
+  /* Styles for active tab */
+  .tab-button.active {
+    border-color: #3b82f6; /* blue-600 */
+    color: #3b82f6;
+  }
 </style>
 {% endblock %}
 {% endblock %}
@@ -22,13 +26,14 @@
     
     {% if user.is_superuser or user.is_staff %}
         <form method="GET" class="flex gap-4 mb-4">
-            <input type="text" name="id_number" placeholder="Search by ID Number" class="w-full p-2 border rounded-md">
+            <input type="text" name="id_number" placeholder="Search by ID Number" class="w-full p-2 border rounded-md" value="{{ id_number|default:'' }}">
             <button type="submit" name="search" class="bg-[#3b82f6] text-white py-2 px-8 rounded-md hover:bg-[#2563eb] transition-colors">
                 Search
             </button>
         </form>
     {% endif %}
-    
+
+  
     {% if student %}
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4 flex flex-col gap-3 text-lg">
         <div class="flex flex-wrap gap-6">
@@ -57,24 +62,25 @@
         <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
             <p class="text-sm text-blue-800">Please review and update all required medical documents for students and faculty. These are essential for ensuring the health and safety of all.</p>
         </div>
+    {% if med_requirements %}
         
         <form method="POST">
             {% csrf_token %}
-            <input type="hidden" name="user_id" value="{% if student %}{{ student.studID }}{% elif faculty %}{{ faculty.staffID }}{% endif %}">
+            <input type="hidden" name="id_number" value="{% if student %}{{ student.studID }}{% elif faculty %}{{ faculty.staffID }}{% endif %}">
             
             <div class="table-container">
                 <div class="overflow-x-auto">
                     <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow">
-                        <thead class="bg-[#e6e6e6]">
+                        <thead class="border-b">
                             <tr>
-                                <th class="p-2 text-left">Remarks</th>
-                                <th class="p-2 text-left">Requirement</th>
-                                <th class="p-2 text-center">Status</th>
-                                <th class="p-2 text-center">File</th>
+                                <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Remarks</th>
+                                <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Requirement</th>
+                                <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Status</th>
+                                <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">File</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% if med_requirements %}
+                            
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="p-2">
                                     {% if user.is_superuser or user.is_staff %}
@@ -84,8 +90,8 @@
                                     {% endif %}
                                 </td>
                                 <td class="p-2 font-medium">Chest X-ray</td>
-                                <td class="p-2 text-center">{% if med_requirements.chest_xray %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
-                                <td class="p-2 text-center">
+                                <td class="p-2">{% if med_requirements.chest_xray %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
+                                <td class="p-2">
                                     {% if med_requirements.chest_xray %}
                                     <button type="button" onclick="previewFile('{{ med_requirements.chest_xray.url }}', '{% if student %}{{ student.firstname|escapejs }} {{ student.lastname|escapejs }}{% elif faculty %}{{ faculty.firstname|escapejs }} {{ faculty.lastname|escapejs }}{% endif %}', 'Chest X-ray')" class="text-blue-600 hover:underline">Preview</button>
                                     {% else %}<span class="text-gray-400">None</span>{% endif %}
@@ -100,8 +106,8 @@
                                     {% endif %}
                                 </td>
                                 <td class="p-2 font-medium">Complete Blood Count (CBC)</td>
-                                <td class="p-2 text-center">{% if med_requirements.cbc %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
-                                <td class="p-2 text-center">
+                                <td class="p-2">{% if med_requirements.cbc %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
+                                <td class="p-2">
                                     {% if med_requirements.cbc %}
                                     <button type="button" onclick="previewFile('{{ med_requirements.cbc.url }}', '{% if student %}{{ student.firstname|escapejs }} {{ student.lastname|escapejs }}{% elif faculty %}{{ faculty.firstname|escapejs }} {{ faculty.lastname|escapejs }}{% endif %}', 'Complete Blood Count (CBC)')" class="text-blue-600 hover:underline">Preview</button>
                                     {% else %}<span class="text-gray-400">None</span>{% endif %}
@@ -116,8 +122,8 @@
                                     {% endif %}
                                 </td>
                                 <td class="p-2 font-medium">Drug Test</td>
-                                <td class="p-2 text-center">{% if med_requirements.drug_test %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
-                                <td class="p-2 text-center">
+                                <td class="p-2">{% if med_requirements.drug_test %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
+                                <td class="p-2">
                                     {% if med_requirements.drug_test %}
                                     <button type="button" onclick="previewFile('{{ med_requirements.drug_test.url }}', '{% if student %}{{ student.firstname|escapejs }} {{ student.lastname|escapejs }}{% elif faculty %}{{ faculty.firstname|escapejs }} {{ faculty.lastname|escapejs }}{% endif %}', 'Drug Test')" class="text-blue-600 hover:underline">Preview</button>
                                     {% else %}<span class="text-gray-400">None</span>{% endif %}
@@ -132,8 +138,8 @@
                                     {% endif %}
                                 </td>
                                 <td class="p-2 font-medium">Stool Examination</td>
-                                <td class="p-2 text-center">{% if med_requirements.stool_examination %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
-                                <td class="p-2 text-center">
+                                <td class="p-2">{% if med_requirements.stool_examination %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
+                                <td class="p-2">
                                     {% if med_requirements.stool_examination %}
                                     <button type="button" onclick="previewFile('{{ med_requirements.stool_examination.url }}', '{% if student %}{{ student.firstname|escapejs }} {{ student.lastname|escapejs }}{% elif faculty %}{{ faculty.firstname|escapejs }} {{ faculty.lastname|escapejs }}{% endif %}', 'Stool Examination')" class="text-blue-600 hover:underline">Preview</button>
                                     {% else %}<span class="text-gray-400">None</span>{% endif %}
@@ -148,8 +154,8 @@
                                     {% endif %}
                                 </td>
                                 <td class="p-2 font-medium">PWD Card</td>
-                                <td class="p-2 text-center">{% if med_requirements.pwd_card %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
-                                <td class="p-2 text-center">
+                                <td class="p-2">{% if med_requirements.pwd_card %}<span class="text-green-600 text-xl">&#10003;</span>{% else %}<span class="text-red-600 text-xl">&#10007;</span>{% endif %}</td>
+                                <td class="p-2">
                                     {% if med_requirements.pwd_card %}
                                         <button type="button" onclick="previewFile('{{ med_requirements.pwd_card.url }}', '{% if student %}{{ student.firstname|escapejs }} {{ student.lastname|escapejs }}{% elif faculty %}{{ faculty.firstname|escapejs }} {{ faculty.lastname|escapejs }}{% endif %}', 'PWD Card')" class="text-blue-600 hover:underline">Preview</button>
                                     {% else %}
@@ -157,25 +163,122 @@
                                     {% endif %}
                                 </td>
                             </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="4" class="text-center p-4">Please search for a student or faculty member using the search bar above.</td>
-                            </tr>
-                            {% endif %}
+                        
                         </tbody>
                     </table>
                 </div>
             </div>
-            {% if med_requirements %}
+           
             <div class="flex gap-4 mt-4 justify-center">
                 <button type="submit" name="action" value="save_all_remarks" class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors">Save</button>
-                <button type="submit" name="action" value="approve_requirements" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors">Approve</button>
+                
+                {% if all_files_uploaded %}
+                    <button type="submit" name="action" value="approve_requirements" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors">Approve</button>
+                {% else %}
+                    <button type="button" class="bg-gray-400 text-white px-6 py-2 rounded-md cursor-not-allowed" title="Cannot approve: Not all files are uploaded.">Approve</button>
+                {% endif %}
+                
                 <button type="submit" name="action" value="reject_requirements" class="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition-colors" style="background-color: #dc2626;">Reject</button>
             </div>
-            {% endif %}
+            
         </form>
     </div>
+    {% elif id_number %}
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-4">
+        <p class="text-center text-yellow-800">No medical requirements record found for ID: <strong>{{ id_number }}</strong>.</p>
+    </div>
+    {% endif %}
+
 </div>
+  <div class="mb-4 border-b border-gray-200">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" role="tablist">
+            <li class="mr-2" role="presentation">
+                <button class="tab-button inline-block p-4 border-b-2 rounded-t-lg active" id="pending-tab" type="button" role="tab" aria-controls="pending" aria-selected="true">
+                    Pending ({{ pending_requirements|length }})
+                </button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="tab-button inline-block p-4 border-b-2 rounded-t-lg" id="approved-tab" type="button" role="tab" aria-controls="approved" aria-selected="false">
+                    Approved ({{ approved_requirements|length }})
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div id="myTabContent" class="mb-4">
+        <div class="p-4 rounded-lg bg-gray-50" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead class="border-b">
+                        <tr>
+                            <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">ID Number</th>
+                            <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Name</th>
+                            <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Status</th>
+                            <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in pending_requirements %}
+                        <tr class="border-b hover:bg-gray-100">
+                            <td class="p-2">{{ req.id_number_display }}</td>
+                            <td class="p-2">{{ req.name_display }}</td>
+                            <td class="p-2"><span class="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">Pending</span></td>
+                            <td class="p-2">
+                                <a href="?id_number={{ req.id_number_display }}" class="text-blue-600 hover:underline">View Details</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="p-4 text-center text-gray-500">No pending requirements found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50" id="approved" role="tabpanel" aria-labelledby="approved-tab">
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead class="border-b">
+                        <tr>
+                            <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">ID Number</th>
+                            <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Name</th>
+                            <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Status</th>
+                            <th class="p-3 text-left text-sm font-bold text-blue-900 uppercase">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in approved_requirements %}
+                        <tr class="border-b hover:bg-gray-100">
+                            <td class="p-2">{{ req.id_number_display }}</td>
+                            <td class="p-2">{{ req.name_display }}</td>
+                            <td class="p-2"><span class="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">Approved</span></td>
+                            <td class="p-2">
+                                <a href="?id_number={{ req.id_number_display }}" class="text-blue-600 hover:underline">View Details</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="p-4 text-center text-gray-500">No approved requirements found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<div id="previewModal" class="fixed z-50 inset-0 hidden overflow-auto bg-black bg-opacity-70" style="display: none;">
+    <div class="relative bg-white w-full max-w-4xl mx-auto my-8 rounded-lg shadow-lg flex flex-col h-[85vh]">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h3 id="modalTitle" class="text-lg font-semibold">File Preview</h3>
+            <button onclick="closeModal()" class="text-black text-2xl font-bold">&times;</button>
+        </div>
+        <div class="overflow-auto text-center flex-1" id="previewContainer">
+            </div>
+        <div class="zoom-controls absolute bottom-4 right-4 flex gap-2 bg-black bg-opacity-50 p-2 rounded-lg" style="display: none;">
+            <button onclick="zoomOut()" class="text-white text-lg px-2">-</button>
+            <button onclick="zoomIn()" class="text-white text-lg px-2">+</button>
+        </div>
+    </div>
+    
+</div>
+
+
 <script>
     // Modal JavaScript
     var modal = document.getElementById("previewModal");
@@ -191,40 +294,57 @@
         previewContainer.innerHTML = ''; // Clear previous content
         currentZoom = 1; // Reset zoom level
 
-        // Determine file type
-        var fileExtension = fileUrl.split('.').pop().toLowerCase();
+        var url;
+        try {
+            url = new URL(fileUrl, window.location.origin);
+        } catch (e) {
+            console.error("Invalid file URL:", fileUrl);
+            previewContainer.innerHTML = '<p>Error: Invalid file URL provided.</p>';
+            modal.style.display = "block";
+            return;
+        }
+
+        var pathParts = url.pathname.split('.');
+        var fileExtension = pathParts.length > 1 ? pathParts.pop().toLowerCase() : '';
+
         var zoomControls = document.querySelector('.zoom-controls');
 
+        previewContainer.style.position = 'static';
+        // This is the line you requested to change
+        previewContainer.style.padding = '35%'; 
+
         if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+            previewContainer.style.padding = '1rem'; 
+
             var img = document.createElement('img');
             img.src = fileUrl;
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100%';
+            img.style.objectFit = 'contain'; 
+            img.style.margin = 'auto'; 
             img.style.transform = `scale(${currentZoom})`;
-            // FIX: Changed transformOrigin to 'center' for better zooming
             img.style.transformOrigin = 'center center'; 
             previewContainer.appendChild(img);
-            // Show zoom controls for images
             zoomControls.style.display = 'flex'; 
 
         } else if (fileExtension === 'pdf') {
-            // FIX: Removed unused <object> and improved iframe styling
+            previewContainer.style.position = 'relative'; 
+
             var iframe = document.createElement('iframe');
             iframe.src = fileUrl;
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            // Added border-none and set position to fill container
-            iframe.style.border = 'none';
             iframe.style.position = 'absolute';
             iframe.style.top = '0';
             iframe.style.left = '0';
-            // Make container relative for absolute positioning of iframe
-            previewContainer.style.position = 'relative'; 
+            iframe.style.width = '100%';
+            iframe.style.height = '100%'; 
+            iframe.style.border = 'none';
+            
             previewContainer.appendChild(iframe);
-            // Hide zoom controls for PDF
             zoomControls.style.display = 'none';
             
         } else {
-            previewContainer.innerHTML = '<p>Preview not available for this file type.</p>';
-            // Hide zoom controls for unsupported types
+            previewContainer.style.padding = '1rem';
+            previewContainer.innerHTML = `<p>Preview not available for this file type (.${fileExtension}).</p>`;
             zoomControls.style.display = 'none';
         }
 
@@ -233,10 +353,10 @@
 
     function closeModal() {
         modal.style.display = "none";
-        previewContainer.innerHTML = ''; // Clear content when closing
-        // Reset container style
-        previewContainer.style.position = 'static'; 
-        document.querySelector('.zoom-controls').style.display = 'none'; // Hide controls on close
+        previewContainer.innerHTML = ''; 
+        previewContainer.style.position = 'static';
+        previewContainer.style.padding = '1rem'; 
+        document.querySelector('.zoom-controls').style.display = 'none';
     }
 
     function zoomIn() {
@@ -256,11 +376,30 @@
         }
     }
 
-    // Close the modal if the user clicks outside of it
     window.onclick = function(event) {
         if (event.target == modal) {
             closeModal();
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = [
+            { id: 'pending', button: document.getElementById('pending-tab'), content: document.getElementById('pending') },
+            { id: 'approved', button: document.getElementById('approved-tab'), content: document.getElementById('approved') }
+        ];
+
+        tabs.forEach(tab => {
+            tab.button.addEventListener('click', () => {
+                tabs.forEach(t => {
+                    t.content.classList.add('hidden');
+                    t.button.classList.remove('active');
+                    t.button.setAttribute('aria-selected', 'false');
+                });
+                tab.content.classList.remove('hidden');
+                tab.button.classList.add('active');
+                tab.button.setAttribute('aria-selected', 'true');
+            });
+        });
+    });
 </script>
 {% endblock %}

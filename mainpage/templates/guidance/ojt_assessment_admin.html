@@ -36,7 +36,7 @@
   <div class="gmc-form">
 
     <div class="form-container"> {% csrf_token %}
-        
+        <div class="search_id_container">
         <form id="search_id" method="GET" action="">
             <input
                 type="text"
@@ -47,15 +47,9 @@
             />
             <button class="OrangeButton" id="searchButton" type="submit">Search</button>
 
-            <ul class="messages">
-                {% for message in messages %}
-                {% if 'ojt_admin' in message.tags %}
-                    <li class="{{ message.tags }}">{{ message }}</li>
-                {% endif %}
-                {% endfor %}
-            </ul>
+            
         </form>
-
+</div>
         <div class="admin-table-wrapper">
             <table id="info_table">
                 <thead>

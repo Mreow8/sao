@@ -1515,40 +1515,59 @@ def submit_request(request):
             messages.warning(request, "Your request was saved, but we had trouble sending the confirmation email.")
 
     return redirect('student_dashboard')
-
-# Views for medical requirements tracker
 def student_medical_requirements_tracker(request):
     if not (request.user.is_superuser or request.user.is_staff):
         return redirect('upload_requirements')
     
-    # Initialize variables to None at the start
     student = None
     faculty = None
     patient = None
     user_obj = None      
-    user = None # Explicitly initialize user
+    user = None 
     med_requirements = None
+    all_files_uploaded = False # <-- ADD THIS
 
-    # Check for student_id or staffID in both POST and GET requests
+    def attach_user_info(req_list):
+        for req in req_list:
+            req.id_number_display = "N/A"
+            req.name_display = "N/A"
+            try:
+                if req.patient and req.patient.user:
+                    student_info = studentInfo.objects.get(studID=req.patient.user.username)
+                    req.id_number_display = student_info.studID
+                    req.name_display = f"{student_info.firstname} {student_info.lastname}"
+                elif req.faculty and req.faculty.user:
+                    req.id_number_display = req.faculty.staffID
+                    req.name_display = f"{req.faculty.firstname} {req.faculty.lastname}"
+            except (studentInfo.DoesNotExist, Faculty.DoesNotExist, Exception):
+                req.name_display = "User not found"
+        return req_list
+
+    pending_list = MedicalRequirement.objects.filter(status='pending').select_related(
+        'patient__user', 'faculty__user'
+    )
+    pending_list = attach_user_info(pending_list)
+
+    approved_list = MedicalRequirement.objects.filter(status='approved').select_related(
+        'patient__user', 'faculty__user'
+    )
+    approved_list = attach_user_info(approved_list)
+    
     id_to_process = request.POST.get("id_number") or request.GET.get("id_number")
 
-    # --- Handle POST requests for saving remarks or updating status ---
     if request.method == "POST" and id_to_process:
         action = request.POST.get('action')
 
-        # --- Identify user and fetch record for POST ---
         try:
-            # Try to find a Student first
             student = studentInfo.objects.filter(studID=id_to_process).first()
             if student:
-                user = request.user
+                user = User.objects.get(username=student.studID)
                 patient = Patient.objects.get(user=user)
                 med_requirements = MedicalRequirement.objects.filter(patient=patient).first()
                 if not med_requirements:
                      messages.info(request, f"No medical requirements found for student ID {id_to_process}.")
 
             else:
-                # If not a student, try to find a Faculty
                 faculty = Faculty.objects.filter(staffID=id_to_process).first()
                 if faculty:
                     user = faculty.user
@@ -1556,50 +1575,49 @@ def student_medical_requirements_tracker(request):
                     if not med_requirements:
                          messages.info(request, f"No medical requirements found for faculty ID {id_to_process}.")
                 else:
-                    # If neither student nor faculty is found
                     messages.error(request, f"No student or faculty found with ID: {id_to_process}.")
 
         except (User.DoesNotExist, Patient.DoesNotExist, AttributeError) as e:
             messages.error(request, f"Error fetching user or patient for ID {id_to_process}: {e}")
-            user = None # Ensure user is None on error
-            patient = None # Ensure patient is None on error
-            med_requirements = None # Ensure med_requirements is None on error
+            user = None 
+            patient = None 
+            med_requirements = None 
 
-        # --- Process actions if record and user are found ---
         if med_requirements and user:
             try:
                 if action == 'save_all_remarks':
-                    x_ray_remarks = request.POST.get("x-ray-remark", "")
-                    cbc_remarks = request.POST.get("cbc-remark", "")
-                    drug_test_remarks = request.POST.get("drug-test-remark", "")
-                    stool_examination_remarks = request.POST.get("stool-examination-remark", "")
-                    pwd_card_remarks = request.POST.get("pwd-card-remark", "")
-
-                    med_requirements.x_ray_remarks = x_ray_remarks
-                    med_requirements.cbc_remarks = cbc_remarks
-                    med_requirements.drug_test_remarks = drug_test_remarks
-                    med_requirements.stool_examination_remarks = stool_examination_remarks
-                    med_requirements.pwd_card_remarks = pwd_card_remarks
-
+                    med_requirements.x_ray_remarks = request.POST.get("x-ray-remark", "")
+                    med_requirements.cbc_remarks = request.POST.get("cbc-remark", "")
+                    med_requirements.drug_test_remarks = request.POST.get("drug-test-remark", "")
+                    med_requirements.stool_examination_remarks = request.POST.get("stool-examination-remark", "")
+                    med_requirements.pwd_card_remarks = request.POST.get("pwd-card-remark", "")
                     med_requirements.save()
                     messages.success(request, "Remarks saved successfully.")
 
                 elif action in ['approve_requirements', 'reject_requirements']:
-                    med_requirements.status = action.replace('_requirements', '') # 'approved' or 'rejected'
+                    
+                    med_requirements.x_ray_remarks = request.POST.get("x-ray-remark", "")
+                    med_requirements.cbc_remarks = request.POST.get("cbc-remark", "")
+                    med_requirements.drug_test_remarks = request.POST.get("drug-test-remark", "")
+                    med_requirements.stool_examination_remarks = request.POST.get("stool-examination-remark", "")
+                    med_requirements.pwd_card_remarks = request.POST.get("pwd-card-remark", "")
+
+                    med_requirements.status = action.replace('_requirements', 'd')
                     med_requirements.reviewed_by = request.user
                     med_requirements.reviewed_date = timezone.now()
+                    
                     med_requirements.save()
+                    
                     messages.success(request, f"Medical requirements marked as {med_requirements.status}.")
 
-                    # Send email notification
-                    recipient_email = user.email # Get email directly from the fetched user
+                    recipient_email = user.email 
                     recipient_name = user.get_full_name() or user.username
 
                     if recipient_email:
                         subject = f'Medical Requirements {med_requirements.status.capitalize()}'
                         status_text = "APPROVED" if action == 'approve_requirements' else "REJECTED"
 
-                        email_body = render_to_string('email/medical_requirements_status.html', {
+                        email_body = render_to_string('medical/email/medical_requirements_status.html', {
                             'med_requirements': med_requirements,
                             'recipient_name': recipient_name,
                             'status_text': status_text,
@@ -1611,7 +1629,7 @@ def student_medical_requirements_tracker(request):
                         try:
                             send_mail(
                                 subject,
-                                '', # Empty plain text message
+                                '', 
                                 settings.DEFAULT_FROM_EMAIL,
                                 [recipient_email],
                                 html_message=email_body,
@@ -1622,24 +1640,18 @@ def student_medical_requirements_tracker(request):
                             messages.error(request, f"Failed to send email notification to {recipient_email}: {e}")
 
                     else:
-                         # More specific message when email is not found for the identified user
                          messages.warning(request, f"Could not send email notification: Recipient email not found for user {user.username}.")
 
-                    # Record transaction if requirements are approved
                     if action == 'approve_requirements':
-                        # Determine the patient associated with the medical requirements
                         patient_for_transaction = None
                         if med_requirements.patient:
                             patient_for_transaction = med_requirements.patient
                         elif med_requirements.faculty:
-                            # If linked to a faculty, try to find their patient record
                             try:
                                 patient_for_transaction = Patient.objects.get(user=med_requirements.faculty.user)
                             except Patient.DoesNotExist:
-                                # Create a patient record for the faculty if it doesn't exist
                                 patient_for_transaction = Patient.objects.create(
                                     user=med_requirements.faculty.user,
-                                    # Provide default values for required fields
                                     birth_date=None, age=0, weight=0, height=0, bloodtype='Unknown',
                                     allergies='None', medications='None', home_address='', city='',
                                     state_province='', postal_zipcode='', country='', nationality='',
@@ -1654,35 +1666,53 @@ def student_medical_requirements_tracker(request):
                             messages.warning(request, "Could not create transaction record: Patient not found or created.")
 
             except Exception as e:
-                 messages.error(request, f"An error occurred while processing the update: {e}")
+                 messages.error(request, f"An error occurred while processing the update: {str(e)}")
 
-        # Redirect to the same page with the ID to show updated data or error messages
         return redirect(f'{request.path}?id_number={id_to_process}')
 
-    # --- Handle GET requests for searching or initial load ---
     if id_to_process and request.method == 'GET':
         try:
-            # Explicitly try to find student or faculty first
             student = studentInfo.objects.filter(studID=id_to_process).first()
-            print("Searching for ID:", id_to_process) # Debug print
             if student:
                 user = User.objects.get(username=student.studID)
                 user_obj = User.objects.filter(username=student.studID).first()
-
-                print("user found for student:", user) # Debug print
                 patient = Patient.objects.get(user=user)
                 med_requirements = MedicalRequirement.objects.filter(patient=patient).first()
                 if not med_requirements:
                     messages.info(request, f"No medical requirements found for student ID {id_to_process}. Please upload the required documents.")
+                
+                # --- START OF FIX ---
+                # Check if all standard files are uploaded
+                if med_requirements:
+                    if (med_requirements.chest_xray and
+                        med_requirements.cbc and
+                        med_requirements.drug_test and
+                        med_requirements.stool_examination):
+                        all_files_uploaded = True
+                    else:
+                        all_files_uploaded = False
+                # --- END OF FIX ---
+
 
             else:
-                # If not a student, try to find a Faculty
                 faculty = Faculty.objects.filter(staffID=id_to_process).first()
                 if faculty:
                     user = faculty.user
                     med_requirements = MedicalRequirement.objects.filter(faculty=faculty).first()
                     if not med_requirements:
-                        messages.info(request, f"No medical requirements found for faculty ID {id_to_process}. Please upload the required documents.")
+                        messages.info(request, f"No medical requirements found for faculty ID {id_to_process}.")
+
+                    # --- START OF FIX ---
+                    # Also check for faculty
+                    if med_requirements:
+                        if (med_requirements.chest_xray and
+                            med_requirements.cbc and
+                            med_requirements.drug_test and
+                            med_requirements.stool_examination):
+                            all_files_uploaded = True
+                        else:
+                            all_files_uploaded = False
+                    # --- END OF FIX ---
 
                 else:
                     messages.error(request, f"No student or faculty found with ID Number: {id_to_process}.")
@@ -1693,19 +1723,17 @@ def student_medical_requirements_tracker(request):
         except Exception as e:
             messages.error(request, f"An unexpected error occurred during search: {e}")
 
-    # If no id_number is provided (e.g., initial GET request to /medicalrequirementstracker/)
-    # variables are already None from initialization, so just render the empty form.
-
-    # Print statements for debugging (optional, remove in production)
-    print("Rendering template with:")
-    print("Student:", student)
-    print("Faculty:", faculty)
-    print("Patient:", patient)
-    print("User:", user) # Print user object
-    print("Medical Requirements:", med_requirements)
-    print("ID to process:", id_to_process) # Print id_to_process
-
-    return render(request, "medical/medicalrequirements.html", { "user_obj": user_obj, "med_requirements": med_requirements, "student": student, "patient": patient, "faculty": faculty, "id_number": id_to_process})
+    return render(request, "medical/medicalrequirements.html", { 
+        "user_obj": user_obj, 
+        "med_requirements": med_requirements, 
+        "student": student, 
+        "patient": patient, 
+        "faculty": faculty, 
+        "id_number": id_to_process,
+        "pending_requirements": pending_list,
+        "approved_requirements": approved_list,
+        "all_files_uploaded": all_files_uploaded # <-- ADD THIS
+    })
 @profile_complete_required
 def upload_requirements(request):
     from ..models import staffInfo as Faculty

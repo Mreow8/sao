@@ -11,21 +11,11 @@ button {
   font-family: "Rubik", sans-serif;
 }
 
-body {
-  background-color: #f8f9fa; /* Light grey background */
-}
-
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 1.5rem 2rem;
-}
-
 /* --- Main Card (from requestgmc.css) --- */
 .content {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 0 0 12px 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }

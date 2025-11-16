@@ -6,12 +6,40 @@
 {% block extra_css %} 
 {% tailwind_css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <style>
+    /* --- [DELETED] Old Style ---
     .tab-button.active {
         background-color: #3B82F6;
         color: white;
     }
+    */
+    
+    /* --- [NEW] Tab Styles from homepage.css --- */
+    .tab-button {
+      font-family: "Rubik", sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: #2c5282; /* Theme Blue */
+      text-decoration: none;
+      padding: 1rem 1.25rem;
+      border: none;
+      border-bottom: 3px solid transparent;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      background-color: transparent;
+      transition: color 0.2s, background-color 0.2s;
+    }
+    .tab-button:hover {
+      color: #2a4365;
+      background-color: #f0f5fa; /* Light blue hover */
+    }
+    .tab-button.active {
+      color: #ffffff;
+      background-color: #2c5282; /* Active tab has blue background */
+      border-bottom-color: #2c5282;
+    }
+    /* --- [END NEW] --- */
+
     .tab-content {
         display: none;
     }
@@ -65,11 +93,126 @@
     .tab-content > div {
         min-height: 100%;
     }
-    .calendar-grid {
-        background-color: white;
-        border-radius: 0.5rem;
-            width: 25vw;
+
+    .calendar-student {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border-radius: 10px;
+        height: 100%;
     }
+    .calendar-header-student {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        margin-bottom: 0.5rem;
+    }
+    .calendar-header-cell-student {
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #6b7280;
+        padding: 0.25rem;
+    }
+    #calendarDaysStudent {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        gap: 2px;
+    }
+    .calendar-day-student {
+        /* aspect-ratio: 1; */ /* Removed this line to fix stretching */
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #374151;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        position: relative;
+        /* min-height: 32px; */ /* Removed this line */
+    }
+    .calendar-day-student:hover:not(.empty-day) {
+        background: #e0e7ff;
+        color: #1d4ed8;
+    }
+    .calendar-day-student.today {
+        background-color: #3b82f6;
+        color: white;
+        font-weight: 700;
+        border: 1.5px solid #2563eb;
+    }
+    .calendar-day-student.empty-day {
+        cursor: default;
+        background: #fff;
+        border: none;
+    }
+    .calendar-day-student.has-approved-event {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #34d399;
+    }
+    .calendar-day-student.has-pending-event {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fbbf24;
+    }
+    .calendar-day-student.has-both-events {
+        background: linear-gradient(135deg, #d1fae5 50%, #fef3c7 50%);
+        color: #065f46;
+        border: 1px solid #34d399;
+    }
+    .calendar-day-student.has-emergency-event {
+        background: #fbe6e6; /* Lighter red */
+        color: #c53030; /* Darker red */
+        border: 1px solid #f68787;
+    }
+    .calendar-day-student.has-completed-event {
+        background: #e0f2fe; /* Lighter blue */
+        color: #2b6cb0; /* Darker blue */
+        border: 1px solid #90cdf4;
+    }
+
+    @media (max-width: 1024px) {
+        .flex.justify-start {
+            /* Adjust wrapper flex behavior if necessary */
+        }
+        
+        .w-\[1300px\] { /* Main card container */
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            flex-direction: column; /* Stack sections vertically */
+        }
+
+        .flex-1.h-full.flex.flex-col.overflow-x-auto.p-8 { /* Center tabbed content */
+            padding: 1rem; /* Reduce padding on mobile */
+            overflow-x: hidden;
+            height: auto; /* Allow height to be auto */
+        }
+
+        .w-\[350px\] { /* Right sidebar */
+            width: 100%; /* Make sidebar full width */
+            height: auto; /* Allow height to be auto */
+            border-l: none; /* Remove left border */
+            border-top: 1px solid #e5e7eb; /* Add top border */
+            padding: 1rem; /* Match padding */
+        }
+
+        .max-h-48 { /* My Requests list */
+            max-height: 250px; /* Allow a bit more space on mobile */
+        }
+
+        .calendar-student {
+            padding-top: 1rem; /* Add padding when it's stacked */
+        }
+    }
+
 </style>
 {% endblock %}
   <div class="sub-title">
@@ -82,21 +225,17 @@
 <div class="w-full flex  justify-start">
     <div class="w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex ml-4">
     {% if patient %}
-        <!-- Left: Profile Section -->
-       
-        <!-- Center: Tabbed Information -->
         <div class="flex-1 h-full flex flex-col overflow-x-auto p-8">
             <div class="border-b sticky top-0 bg-white z-10 mb-4">
-                <div class="flex overflow-x-auto">
-                    <button class="tab-button active px-6 py-3 text-sm font-medium" data-tab="general">General Information</button>
-                    <button class="tab-button px-6 py-3 text-sm font-medium" data-tab="medical">Medical Information</button>
-                    <button class="tab-button px-6 py-3 text-sm font-medium" data-tab="history">Medical History</button>
-                    <button class="tab-button px-6 py-3 text-sm font-medium" data-tab="contact">Contact Information</button>
+                <div class="flex overflow-x-auto gap-2">
+                    <button class="tab-button active" data-tab="general">General Information</button>
+                    <button class="tab-button" data-tab="medical">Medical Information</button>
+                    <button class="tab-button" data-tab="history">Medical History</button>
+                    <button class="tab-button" data-tab="contact">Contact Information</button>
                 </div>
             </div>
             <div class="overflow-y-auto custom-scrollbar flex-1">
                 <div class="p-2">
-                    <!-- General Information Tab -->
                     <div class="tab-content active" id="general-tab">
                         <div class="grid grid-cols-1 gap-4">
                             <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -125,7 +264,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Medical Information Tab -->
                     <div class="tab-content" id="medical-tab">
                         <div class="grid grid-cols-1 gap-4">
                             <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -154,7 +292,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Medical History Tab -->
                     <div class="tab-content" id="history-tab">
                         <div class="grid grid-cols-1 gap-4">
                             {% if medical_history.no_history %}
@@ -249,7 +386,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Contact Information Tab -->
                     <div class="tab-content" id="contact-tab">
                         <div class="grid grid-cols-1 gap-4">
                             <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -281,7 +417,6 @@
                 </div>
             </div>
         </div>
-        <!-- Right: Requests Tracker -->
         <div class="w-[350px] p-6 bg-gray-50 border-l flex flex-col">
             <div>
             <h2 class="text-lg font-bold text-gray-800 mb-4">My Requests</h2>
@@ -320,22 +455,45 @@
                 </table>
             </div>
             </div>
-            <!-- Calendar Section -->
-            <div class="bg-white rounded-lg p-4 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold">Calendar</h2>
-                    <div class="flex space-x-2">
-                        <button id="prevMonth" class="p-2 hover:bg-gray-100 rounded-full">
-                            <i class="fas fa-chevron-left"></i>
+            
+            <div class="bg-white rounded-lg p-4 shadow-sm calendar-student">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-base font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fas fa-calendar-alt text-blue-400"></i> Calendar
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <button
+                        onclick="previousMonthStudent()"
+                        class="text-gray-500 hover:text-blue-600 transition p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        >
+                        <i class="fas fa-chevron-left"></i>
                         </button>
-                        <button id="nextMonth" class="p-2 hover:bg-gray-100 rounded-full">
-                            <i class="fas fa-chevron-right"></i>
+                        <span
+                        id="currentMonthStudent"
+                        class="px-4 py-1 bg-blue-50 text-blue-700 rounded-full font-semibold text-sm shadow-sm border border-blue-100"
+                        style="min-width: 120px; text-align: center"
+                        ></span>
+                        <button
+                        onclick="nextMonthStudent()"
+                        class="text-gray-500 hover:text-blue-600 transition p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        >
+                        <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
-                <div id="calendar" class="calendar-grid"></div>
+                <div class="calendar-header-student">
+                    <div class="calendar-header-cell-student">Sun</div>
+                    <div class="calendar-header-cell-student">Mon</div>
+                    <div class="calendar-header-cell-student">Tue</div>
+                    <div class="calendar-header-cell-student">Wed</div>
+                    <div class="calendar-header-cell-student">Thu</div>
+                    <div class="calendar-header-cell-student">Fri</div>
+                    <div class="calendar-header-cell-student">Sat</div>
                 </div>
+                <div id="calendarDaysStudent" class="flex-1"></div>
             </div>
+
+        </div>
     </div>
     {% else %}
         <div class="bg-white rounded-lg shadow-lg p-6 text-center w-full flex items-center justify-center">
@@ -349,9 +507,7 @@
 </div>
 
 {% block extra_js %}
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 
-<!-- Embed appointments data as JSON for JavaScript -->
 <script id="calendar-events-data" type="application/json">
     {{ appointments_json|safe }}
 </script>
@@ -363,7 +519,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Profile Picture Preview Logic (wrapped in a function and called here)
     initializeProfilePreview();
 
-// Tab Switching Logic
+    // Tab Switching Logic
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -385,48 +541,131 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Calendar Initialization
-    const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: '',
-            center: 'title',
-            right: ''
-        },
-        events: JSON.parse(document.getElementById('calendar-events-data').textContent),
-        eventClick: function(info) {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            modal.innerHTML = `
-                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-lg font-semibold">Appointment Details</h4>
-                        <button class="text-gray-500 hover:text-gray-700" onclick="this.closest('.fixed').remove()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="space-y-3">
-                        <p><span class="font-medium">Type:</span> ${info.event.title}</p>
-                        <p><span class="font-medium">Date:</span> ${info.event.start.toLocaleDateString()}</p>
-                        <p><span class="font-medium">Description:</span> ${info.event.extendedProps.description}</p>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        },
-        dayMaxEvents: true,
-        height: 'auto',
-        aspectRatio: 1.35
-    });
-    calendar.render();
+    // --- [NEW] Custom Calendar Logic (from admin_dashboard.html) ---
 
-    // Calendar Navigation
-    document.getElementById('prevMonth').addEventListener('click', () => {
-        calendar.prev();
+    // 1. Get and transform student event data
+    const studentEventsRaw = JSON.parse(document.getElementById('calendar-events-data').textContent || '[]');
+    const events = studentEventsRaw.map(event => {
+        return {
+            date: event.start, // 'start' field becomes 'date'
+            status: 'approved', // All student appointments are 'accepted', which we map to 'approved'
+            title: event.title,
+            description: event.description || "No description provided." // Add description
+        };
     });
-    document.getElementById('nextMonth').addEventListener('click', () => {
-        calendar.next();
-    });
+
+    let currentDateStudent = new Date();
+    const monthNamesStudent = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    window.updateCalendarStudent = function() {
+        const calendar = document.getElementById("calendarDaysStudent");
+        const monthLabel = document.getElementById("currentMonthStudent");
+        if (!calendar || !monthLabel) return; // Guard clause
+        
+        calendar.innerHTML = "";
+        monthLabel.textContent = `${
+            monthNamesStudent[currentDateStudent.getMonth()]
+        } ${currentDateStudent.getFullYear()}`;
+
+        const firstDay = new Date(
+            currentDateStudent.getFullYear(),
+            currentDateStudent.getMonth(),
+            1
+        );
+        const startingDay = firstDay.getDay();
+        const lastDay = new Date(
+            currentDateStudent.getFullYear(),
+            currentDateStudent.getMonth() + 1,
+            0
+        );
+        const totalDays = lastDay.getDate();
+
+        // Add empty cells
+        for (let i = 0; i < startingDay; i++) {
+            const emptyCell = document.createElement("div");
+            emptyCell.className = "calendar-day-student empty-day";
+            calendar.appendChild(emptyCell);
+        }
+
+        // Add the days of the month
+        for (let day = 1; day <= totalDays; day++) {
+            const cell = document.createElement("div");
+            cell.className = "calendar-day-student";
+
+            const dateString = `${currentDateStudent.getFullYear()}-${String(
+                currentDateStudent.getMonth() + 1
+            ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+            // Check for events on this day
+            const dayEvents = events.filter((event) => event.date === dateString);
+            if (dayEvents.length > 0) {
+                // Since all student events are 'approved', we just use that class
+                cell.className += " has-approved-event";
+
+                // [NEW] Add click listener to show modal (from original student dashboard)
+                cell.addEventListener('click', () => {
+                    const eventInfo = dayEvents[0]; // Show info for the first event
+                    const modal = document.createElement('div');
+                    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                    modal.innerHTML = `
+                        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-lg font-semibold">Appointment Details</h4>
+                                <button class="text-gray-500 hover:text-gray-700" onclick="this.closest('.fixed').remove()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                <p><span class="font-medium">Type:</span> ${eventInfo.title}</p>
+                                <p><span class="font-medium">Date:</span> ${new Date(eventInfo.date + 'T00:00:00').toLocaleDateString()}</p>
+                                <p><span class="font-medium">Description:</span> ${eventInfo.description}</p>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                });
+            }
+
+            // Highlight current day
+            const today = new Date();
+            if (
+                day === today.getDate() &&
+                currentDateStudent.getMonth() === today.getMonth() &&
+                currentDateStudent.getFullYear() === today.getFullYear()
+            ) {
+                cell.className += " today";
+            }
+
+            cell.textContent = day;
+            calendar.appendChild(cell);
+        }
+
+        // Add empty cells for remaining days
+        const remainingDays = 42 - (startingDay + totalDays);
+        for (let i = 0; i < remainingDays; i++) {
+            const emptyCell = document.createElement("div");
+            emptyCell.className = "calendar-day-student empty-day";
+            calendar.appendChild(emptyCell);
+        }
+    }
+
+    // Make navigation functions global
+    window.previousMonthStudent = function() {
+        currentDateStudent.setMonth(currentDateStudent.getMonth() - 1);
+        updateCalendarStudent();
+    }
+
+    window.nextMonthStudent = function() {
+        currentDateStudent.setMonth(currentDateStudent.getMonth() + 1);
+        updateCalendarStudent();
+    }
+
+    // Initial calendar rendering
+    updateCalendarStudent();
+    // --- [END NEW] Custom Calendar Logic ---
 });
 
 // Function to initialize profile preview (Definition remains here)
@@ -471,7 +710,6 @@ function initializeProfilePreview() {
 </script>
 {% endblock %}
 
-<!-- Profile Picture Preview Modal HTML -->
 <div id="profile-preview-modal" class="profile-preview-modal hidden">
     <div class="profile-preview-modal-content">
         <span class="profile-preview-close">&times;</span>

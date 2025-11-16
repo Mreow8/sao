@@ -9,10 +9,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
     
     <link rel="stylesheet" href="{% static 'styles/community/donation.css' %}" />
+
+    <style>
+        .modal-content-image {
+            position: relative;
+            margin: auto;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        #receiptModalImage {
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+        }
+        /* Make close button consistent */
+        #receiptModalCloseBtn {
+            position: absolute;
+            top: 0px;
+            right: 15px;
+            color: #aaa;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+        }
+        #receiptModalCloseBtn:hover {
+            color: #000;
+        }
+    </style>
 {% endblock headcontent %}
 
 {% block bodycontent %}
-<div class="body-content"> <div class="sub-title">
+<div class="body-content"> 
+    <div class="sub-title">
         <h4>COMMUNITY INVOLVEMENT</h4>
         <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
         <p class="certxt">Donation Validate</p>
@@ -46,6 +81,7 @@
                             <th>Amount</th>
                             <th>Date</th>
                             <th>Status</th>
+                            <th>Processed By</th>
                             <th>Details</th>
                             {% if selected_status == "Pending" or not selected_status %}
                             <th>Options</th>
@@ -61,7 +97,7 @@
                             data-amount="{% if donates.amount %}{{ donates.amount|floatformat:2 }}{% else %}N/A{% endif %}"
                             data-date="{{ donates.date }}"
                             data-status="{% if donates.status == None %}Pending{% elif donates.status == 'Accepted' %}Accepted{% else %}Declined{% endif %}"
-                            data-receipt="/media/{{ donates.image_details }}"
+                            data-receipt="/media/images/{{ donates.image_details }}"
                             data-receipt_exists="{% if donates.what_kind != 'SERVICE' and donates.image_details %}true{% else %}false{% endif %}"
                             
                             data-gcash-num="{{ donates.gcash_number|default:'' }}"
@@ -96,9 +132,17 @@
                             <td><span class="status-badge status-declined">Declined</span></td>
                             {% endif %} 
                             
+                            <td>
+                                {% if donates.processed_by %}
+                                    {{ donates.processed_by.first_name|default:donates.processed_by.username }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
                             {% if donates.what_kind != "SERVICE" and donates.image_details %}
                             <td class="view">
-                                <a target="_blank" href="/media/{{ donates.image_details }}">
+                                <a href="#" class="view-receipt-btn" data-image-url="/media/{{ donates.image_details }}">
                                     View Receipt
                                 </a>
                             </td>
@@ -121,7 +165,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="8" style="text-align: center; padding: 20px;">No donations found for this filter.</td>
+                            <td colspan="9" style="text-align: center; padding: 20px;">No donations found for this filter.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -158,96 +202,144 @@
     </div>
 </div>
 
+<div id="receiptModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-content-image">
+        <span id="receiptModalCloseBtn" class="modal-close-btn">&times;</span>
+        <img id="receiptModalImage" src="" alt="Donation Receipt" />
+    </div>
+</div>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- Setup for Details Modal ---
     const modal = document.getElementById('detailsModal');
     const closeModalBtn = document.getElementById('modalCloseBtn');
     const modalBody = document.getElementById('modalBody');
     const tableBody = document.querySelector('.donation-table-wrapper tbody');
 
-    if (!modal || !closeModalBtn || !modalBody || !tableBody) {
-        console.error('Modal components not found!');
-        return;
-    }
-
-    function closeModal() {
-        modal.style.display = 'none';
-        modal.classList.remove('modal-open');
-    }
-
-    closeModalBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-
-    tableBody.addEventListener('click', function(e) {
-        let target = e.target.closest('.view-details-link');
+    if (modal && closeModalBtn && modalBody && tableBody) {
         
-        if (target) {
-            e.preventDefault(); 
-            
-            const row = target.closest('.donation-row');
-            const data = row.dataset;
-            
-            let html = `<h4>Donation for: ${data.event}</h4>`;
-            html += `<p><strong>Donor Name:</strong> ${data.name}</p>`;
-            html += `<p><strong>Donation Mode:</strong> ${data.mode}</p>`;
-            html += `<p><strong>Amount:</strong> ${data.amount}</p>`;
-            html += `<p><strong>Date:</strong> ${data.date}</p>`;
-            html += `<p><strong>Status:</strong> ${data.status}</p>`;
-
-            html += '<hr class="modal-hr">';
-            
-            if(data.mode === 'GCash' && data.gcashNum) {
-                html += `<p><strong>GCash Number:</strong> ${data.gcashNum}</p>`;
-            }
-            if(data.mode === 'Bank' && data.bankCard) {
-                html += `<p><strong>Bank:</strong> ${data.bankCard}</p>`;
-            }
-            if(data.mode === 'Bank' && data.bankNum) {
-                html += `<p><strong>Account No.:</strong> ${data.bankNum}</p>`;
-            }
-            if(data.mode === 'Volunteer' && data.volunteerKind) {
-                html += `<p><strong>Donation Type:</strong> ${data.volunteerKind}</p>`;
-            }
-            if(data.mode === 'Volunteer' && data.volunteerContact) {
-                html += `<p><strong>Contact No.:</strong> ${data.volunteerContact}</p>`;
-            }
-            if(data.mode === 'Volunteer' && data.volunteerRecipient) {
-                html += `<p><strong>Recipient:</strong> ${data.volunteerRecipient}</p>`;
-            }
-            if(data.mode === 'Volunteer' && data.volunteerSched) {
-                html += `<p><strong>Service Schedule:</strong> ${data.volunteerSched}</p>`;
-            }
-
-            if(data.receiptExists === 'true') {
-                html += `<a href="${data.receipt}" target="_blank" class="receipt-link">View Receipt</a>`;
-            }
-
-            html += `<div class="modal-event-details">`;
-            html += `<h4>Event Details</h4>`;
-            
-            if (data.projectImageUrl) {
-                html += `<img src="${data.projectImageUrl}" alt="Event Image">`;
-            }
-            
-            if (data.projectDesc) {
-                // Replace escaped newlines with <br> tags
-                let desc = data.projectDesc.replace(/\\n/g, '<br>');
-                html += `<p>${desc}</p>`;
-            } else {
-                html += `<p><em>No event description found.</em></p>`;
-            }
-            
-            html += `</div>`;
-
-            modalBody.innerHTML = html;
-            modal.style.display = 'flex';
-            modal.classList.add('modal-open');
+        function closeModal() {
+            modal.style.display = 'none';
+            modal.classList.remove('modal-open');
         }
-    });
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        tableBody.addEventListener('click', function(e) {
+            let target = e.target.closest('.view-details-link');
+            if (target) {
+                e.preventDefault(); 
+                
+                const row = target.closest('.donation-row');
+                const data = row.dataset;
+                
+                let html = `<h4>Donation for: ${data.event}</h4>`;
+                html += `<p><strong>Donor Name:</strong> ${data.name}</p>`;
+                html += `<p><strong>Donation Mode:</strong> ${data.mode}</p>`;
+                html += `<p><strong>Amount:</strong> ${data.amount}</p>`;
+                html += `<p><strong>Date:</strong> ${data.date}</p>`;
+                html += `<p><strong>Status:</strong> ${data.status}</p>`;
+
+                html += '<hr class="modal-hr">';
+                
+                if(data.mode === 'GCash' && data.gcashNum) {
+                    html += `<p><strong>GCash Number:</strong> ${data.gcashNum}</p>`;
+                }
+                if(data.mode === 'Bank' && data.bankCard) {
+                    html += `<p><strong>Bank:</strong> ${data.bankCard}</p>`;
+                }
+                if(data.mode === 'Bank' && data.bankNum) {
+                    html += `<p><strong>Account No.:</strong> ${data.bankNum}</p>`;
+                }
+                if(data.mode === 'Volunteer' && data.volunteerKind) {
+                    html += `<p><strong>Donation Type:</strong> ${data.volunteerKind}</p>`;
+                }
+                if(data.mode === 'Volunteer' && data.volunteerContact) {
+                    html += `<p><strong>Contact No.:</strong> ${data.volunteerContact}</p>`;
+                }
+                if(data.mode === 'Volunteer' && data.volunteerRecipient) {
+                    html += `<p><strong>Recipient:</strong> ${data.volunteerRecipient}</p>`;
+                }
+                if(data.mode === 'Volunteer' && data.volunteerSched) {
+                    html += `<p><strong>Service Schedule:</strong> ${data.volunteerSched}</p>`;
+                }
+
+               if(data.receiptExists === 'true') {
+                    html += `<p><strong>Receipt:</strong></p>`;
+                    // This adds a thumbnail image.
+                    // Clicking it will open the large image modal.
+                    html += `<img src="${data.receipt}" alt="Receipt Thumbnail" class="modal-receipt-thumb view-receipt-btn" data-image-url="${data.receipt}">`;
+                }
+
+                html += `<div class="modal-event-details">`;
+                html += `<h4>Event Details</h4>`;
+                
+                if (data.projectImageUrl) {
+                    html += `<img src="${data.projectImageUrl}" alt="Event Image">`;
+                }
+                
+                if (data.projectDesc) {
+                    let desc = data.projectDesc.replace(/\\n/g, '<br>');
+                    html += `<p>${desc}</p>`;
+                } else {
+                    html += `<p><em>No event description found.</em></p>`;
+                }
+                
+                html += `</div>`;
+
+                modalBody.innerHTML = html;
+                modal.style.display = 'flex';
+                modal.classList.add('modal-open');
+            }
+        });
+
+    } else {
+        console.error('Details modal components not found!');
+    }
+
+    // --- Setup for NEW Receipt Modal ---
+    const receiptModal = document.getElementById('receiptModal');
+    const receiptModalImg = document.getElementById('receiptModalImage');
+    const closeReceiptModalBtn = document.getElementById('receiptModalCloseBtn');
+
+    if (receiptModal && receiptModalImg && closeReceiptModalBtn && tableBody) {
+
+        function closeReceiptModal() {
+            receiptModal.style.display = 'none';
+            receiptModalImg.src = ''; // Clear image src
+        }
+
+        tableBody.addEventListener('click', function(e) {
+            const target = e.target.closest('.view-receipt-btn');
+            if (target) {
+                e.preventDefault();
+                const imgUrl = target.dataset.imageUrl;
+                if (imgUrl) {
+                    receiptModalImg.src = imgUrl;
+                    receiptModal.style.display = 'flex';
+                }
+            }
+        });
+
+        closeReceiptModalBtn.addEventListener('click', closeReceiptModal);
+
+        receiptModal.addEventListener('click', function(e) {
+            if (e.target === receiptModal) { // Click on backdrop
+                closeReceiptModal();
+            }
+        });
+
+    } else {
+        console.error('Receipt modal components not found!');
+    }
 });
 </script>
 

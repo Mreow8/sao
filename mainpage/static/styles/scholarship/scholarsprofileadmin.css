@@ -1,241 +1,176 @@
-/* --- Import Font --- */
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
-
-/* --- Global, Container, & Font --- */
-body,
-.container,
-table,
-button,
-input,
-select {
-  font-family: "Rubik", sans-serif;
-}
-
-body {
-  background-color: #f8f9fa; /* Light grey background */
-}
-.search_id_container {
-  display: flex;
-  flex-wrap: wrap; /* Stack on mobile */
-  align-items: center;
-  width: 100%;
-  gap: 15px;
-  padding: 1.5rem;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-}
-/* --- Search Form Card --- */
 .profile {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+}
+
+/* === SEARCH FORM === */
+.search_form_container {
+  margin-bottom: 25px;
+}
+
+.form_div {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.search-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 15px;
   align-items: center;
+}
 
-  /* Card Styles (from .gmc-form) */
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem; /* Space between this card and the table */
-}
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-}
-/* --- Search Inputs (like .search-input, .filter-select) --- */
-#search-box,
-#scholar_type {
-  font-family: "Rubik", sans-serif;
-  font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.search-row input[type="text"],
+.search-row select {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
   color: #333;
-  flex-grow: 1; /* Make them grow */
 }
 
-#search-box:focus,
-#scholar_type:focus {
-  outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
+.search-row select {
+  color: black; /* Overriding potential browser defaults */
 }
 
-/* The <select> needs its black color */
-#scholar_type,
-#scholar_type option {
-  color: black;
-}
-
-/* --- Search/Update Buttons (like .search-btn) --- */
-/* This styles BOTH the <button> and the <a> tag */
+/* Style for both the <button> and the <a><div> button */
 #search-btn {
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  font-size: 1rem;
-
-  padding: 10px 24px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2c5282;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
-
-  /* For the <a> tag version */
-  text-decoration: none;
-  display: inline-block; /* To make padding work */
-  box-sizing: border-box; /* Ensures padding is consistent */
+  text-align: center;
+  transition: background-color 0.3s ease;
+  text-decoration: none; /* For the <a> tag */
+  display: inline-block;
 }
 
 #search-btn:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
+  background-color: #2c5282;
 }
 
-/* Fix for the <a> tag being inside a <div> */
-.search_id_container > a {
+/* Ensure the <a> tag wraps the div correctly */
+.search-row a {
   text-decoration: none;
 }
 
-/* --- Django Messages --- */
-.messages {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-  /* These will appear inside the table card */
-}
-.messages li {
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  border: 1px solid;
-  margin-bottom: 1rem;
-}
-.messages li.success {
-  color: #155724;
-  background-color: #d4edda;
-  border-color: #c3e6cb;
-}
-.messages li.error {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-}
-.messages li.info {
-  color: #0c5460;
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
+/* === DATA TABLE === */
+.table-container {
+  overflow-x: auto; /* Allows table to be scrolled horizontally on small screens */
 }
 
-/* --- Table Card --- */
-/* We apply the card style to the form wrapping the table */
-form[method="POST"] {
-  width: 100%;
-}
-
-/* --- Table Styling --- */
 #requirements-table {
   width: 100%;
-  min-width: 1000px; /* Force scroll */
   border-collapse: collapse;
+  margin-top: 20px;
 }
+
 #requirements-table th,
 #requirements-table td {
-  border-bottom: 1px solid #ddd;
   padding: 12px 15px;
+  border: 1px solid #e0e0e0;
   text-align: left;
-  font-size: 14px;
   vertical-align: middle;
-}
-#requirements-table th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Theme Blue */
-
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-#requirements-table tr:last-child td {
-  border-bottom: none;
-}
-
-/* --- Table Inputs --- */
-#requirements-table input[type="text"] {
-  font-family: "Rubik", sans-serif;
   font-size: 14px;
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  color: #333;
-  width: 100%; /* Make them fill the cell */
-  min-width: 100px; /* Stop them from getting too small */
-  box-sizing: border-box; /* Include padding in width */
 }
 
-#requirements-table input[type="text"]:focus {
-  outline: none;
-  border-color: #2c5282;
-  box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
+#requirements-table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+  color: #2c5282;
+  white-space: nowrap;
 }
 
-/* --- Table Action Buttons --- */
-#btnsss button {
-  font-family: "Rubik", sans-serif;
-  font-size: 0.875rem;
+#requirements-table tbody tr:nth-child(even) {
+  background-color: #fdfdfd;
+}
 
-  padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-  transition: background-color 0.2s;
+#requirements-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Inputs inside the table */
+#requirements-table input[type="text"] {
   width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 
-/* Style for the "ADD" button (like "approve") */
-#btnsss button[value="ADD"] {
-  background-color: #28a745; /* Green */
-}
-#btnsss button[value="ADD"]:hover {
-  background-color: #218838;
+/* "ADD" button in table */
+#btnsss button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2ecc71; /* Green for "ADD" */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
 }
 
-/* --- "No applicants" message (inside the card) --- */
-/* This targets the div you have in your {% else %} block */
-form[method="POST"] > div[style*="text-align: center"] {
-  color: #777;
+#btnsss button:hover {
+  background-color: #27ae60;
+}
+
+/* "No applicants" message */
+.no-data-message {
+  text-align: center;
+  color: gray;
   font-style: italic;
-  padding: 2rem 0;
+  padding: 30px;
+  font-size: 16px;
 }
 
-/* --- Image Modal (from your JS) --- */
+/* === IMAGE MODAL STYLES === */
 .modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  padding-top: 60px;
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
   left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.9);
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
 }
+
 .modal-content {
   margin: auto;
   display: block;
-  width: 80%;
-  max-width: 700px;
+  max-width: 80%;
+  max-height: 80vh;
+  -webkit-animation-name: zoom;
+  -webkit-animation-duration: 0.6s;
+  animation-name: zoom;
+  animation-duration: 0.6s;
 }
+
+@keyframes zoom {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
 .close {
   position: absolute;
   top: 15px;
@@ -245,6 +180,7 @@ form[method="POST"] > div[style*="text-align: center"] {
   font-weight: bold;
   transition: 0.3s;
 }
+
 .close:hover,
 .close:focus {
   color: #bbb;

@@ -1,16 +1,12 @@
 {% extends 'adminmain.html' %} 
 {% block bodycontent %}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <style>
 /* --- Global & Fonts --- */
 #trackerTable,
-.modal-content {
+.custom-modal-content {
   font-family: "Rubik", sans-serif;
 }
-.btn-outline-primary .active{
-  background-color: #2c5282;
-  color: black;
-}
+
 .container {
   padding: 0 1.5rem;
 }
@@ -19,14 +15,12 @@
 /* --- Admin Table Wrapper (THIS CREATES THE CARD) --- */
 .admin-table-wrapper {
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
   overflow-x: auto; /* Clips the table corners */
-  background: #fff;
+ 
 }
 
-/* --- NEW: Search & Filter Bar --- */
+/* --- Search & Filter Bar --- */
 .table-controls {
   display: flex;
   justify-content: space-between;
@@ -54,12 +48,29 @@
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-.filter-buttons .btn {
-  font-size: 14px;
-  
-  padding: 0.65rem 1rem;
+/* --- Custom Filter Buttons --- */
+.filter-buttons {
+  display: flex;
+  gap: 8px;
 }
-/* --- End of NEW CSS --- */
+.filter-btn {
+  font-size: 14px;
+  padding: 0.65rem 1rem;
+  background-color: #fff;
+  border: 1px solid #2c5282;
+  color: #2c5282;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.filter-btn:hover {
+  background-color: #f0f6ff;
+}
+.filter-btn.active {
+  background-color: #2c5282;
+  color: #fff;
+}
+/* --- End of Filter Buttons --- */
 
 
 /* --- Table Styles --- */
@@ -178,33 +189,107 @@
   }
 }
 
-/* --- Modal Styles --- */
-.modal-content {
+/* --- NEW: Custom Modal Styles --- */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none; /* Hidden by default */
+  z-index: 1000;
+  overflow-y: auto;
+}
+.custom-modal-dialog {
+  position: relative;
+  width: 90%;
+  max-width: 1140px; /* (was modal-xl) */
+  margin: 50px auto;
+}
+.custom-modal-content {
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   font-family: "Rubik", sans-serif;
+  background: #fff;
 }
-.modal-header {
+.custom-modal-header {
+  position: relative;
   border-bottom: 1px solid #e0e0e0;
   padding: 1.5rem;
 }
+.custom-modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 2rem;
+  line-height: 1;
+  color: #aaa;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-weight: bold;
+}
+.custom-modal-close:hover {
+  color: #000;
+}
 .modal-title {
-  
   font-size: 1.5rem;
   color: #2c5282;
 }
-.modal-body {
+.custom-modal-body {
   padding: 1.5rem;
+  max-height: 70vh; /* (was modal-dialog-scrollable) */
+  overflow-y: auto;
 }
-.modal-footer {
+.custom-modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
   border-top: 1px solid #e0e0e0;
   padding: 1rem 1.5rem;
   background-color: #f9f9f9;
 }
+.footer-status {
+  margin-right: auto; /* Pushes status text to the left */
+}
+
+/* Modal Footer Action Buttons */
+.btn-action {
+  display: inline-block;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.btn-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-accept { background-color: #28a745; }
+.btn-accept:hover:not(:disabled) { background-color: #218838; }
+
+.btn-decline { background-color: #dc3545; }
+.btn-decline:hover:not(:disabled) { background-color: #c82333; }
+
+.btn-pending { background-color: #ffc107; color: #000; }
+.btn-pending:hover:not(:disabled) { background-color: #e0a800; }
+
+.btn-close-footer { background-color: #6c757d; }
+.btn-close-footer:hover:not(:disabled) { background-color: #5a6268; }
+/* --- End of Custom Modal Styles --- */
+
+
 .modal-section-title {
   font-size: 1.25rem;
-  
   color: #333;
   margin-top: 20px;
   margin-bottom: 15px;
@@ -218,7 +303,6 @@
   font-size: 0.95rem;
 }
 .modal-details dt {
-  
   color: #2c5282;
   text-align: right;
 }
@@ -243,6 +327,19 @@ background-color: #ffffff;
     padding: 2.5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+.table-controls {
+  display: flex;
+  flex-wrap: wrap; /* Stack on mobile */
+  align-items: center;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
 </style>
 
 <div class="sub-title">
@@ -258,15 +355,16 @@ background-color: #ffffff;
   
   <div class="table-controls">
     <div class="search-bar">
-      <input type="text" id="searchInput" class="form-control" placeholder="Search by Student Name, ID, or Email...">
+      <input type="text" id="searchInput" placeholder="Search by Student Name, ID, or Email...">
     </div>
-    <div class="filter-buttons btn-group" role="group">
-      <button type="button" class="btn btn-outline-primary" data-filter="Pending">Pending</button>
-      <button type="button" class="btn btn-outline-primary" data-filter="Processed">Processed</button>
-      <button type="button" class="btn btn-outline-primary" data-filter="Declined">Declined</button>
-      <button type="button" class="btn btn-primary active" data-filter="All">All</button>
+    <div class="filter-buttons">
+      <button type="button" class="filter-btn" data-filter="Pending">Pending</button>
+      <button type="button" class="filter-btn" data-filter="Processed">Processed</button>
+      <button type="button" class="filter-btn" data-filter="Declined">Declined</button>
+      <button type="button" class="filter-btn active" data-filter="All">All</button>
     </div>
   </div>
+
   <div class="admin-table-wrapper">
       <table id="trackerTable">
     <thead>
@@ -283,8 +381,7 @@ background-color: #ffffff;
       {% for graduate_request in graduate_requests %}
       
       <tr class="clickable-row" 
-          data-bs-toggle="modal" 
-          data-bs-target="#modal-{{ graduate_request.graduateID }}"
+          data-modal-target="#modal-{{ graduate_request.graduateID }}"
           data-date="{{ graduate_request.dategraduated|date:"Y-m-d" }}">
         
         <td data-label="Alumni ID">{{ graduate_request.student.studID }}</td>
@@ -304,17 +401,17 @@ background-color: #ffffff;
         </td>
       </tr>
 
-      <div class="modal fade" id="modal-{{ graduate_request.graduateID }}" tabindex="-1" aria-labelledby="modalLabel-{{ graduate_request.graduateID }}" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
+      <div class="custom-modal-overlay" id="modal-{{ graduate_request.graduateID }}" tabindex="-1" aria-labelledby="modalLabel-{{ graduate_request.graduateID }}" aria-hidden="true">
+        <div class="custom-modal-dialog">
+          <div class="custom-modal-content">
+            <div class="custom-modal-header">
               <h5 class="modal-title" id="modalLabel-{{ graduate_request.graduateID }}">
                 Tracer Form Details: {{ graduate_request.student.firstname }} {{ graduate_request.student.lastname }}
               </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="custom-modal-close" aria-label="Close">&times;</button>
             </div>
             
-            <div class="modal-body">
+            <div class="custom-modal-body">
               <h4 class="modal-section-title">Personal Information</h4>
               <dl class="modal-details">
             
@@ -466,40 +563,40 @@ background-color: #ffffff;
               
             </div>
             
-            <div class="modal-footer">
-              <span class="me-auto">
+            <div class="custom-modal-footer">
+              <span class="footer-status">
                 Current Status: 
                 <strong>{{ graduate_request.approval_status }}</strong>
               </span>
 
-              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" class="d-inline">
+              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" style="display: inline-block;">
                 {% csrf_token %}
                 <input type="hidden" name="status" value="Accepted">
-                <button type="submit" class="btn btn-success"
+                <button type="submit" class="btn-action btn-accept"
                   {% if graduate_request.approval_status == 'Accepted' %}disabled{% endif %}>
                   Accept
                 </button>
               </form>
 
-              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" class="d-inline">
+              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" style="display: inline-block;">
                 {% csrf_token %}
                 <input type="hidden" name="status" value="Declined">
-                <button type="submit" class="btn btn-danger"
+                <button type="submit" class="btn-action btn-decline"
                   {% if graduate_request.approval_status == 'Declined' %}disabled{% endif %}>
                   Decline
                 </button>
               </form>
               
-              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" class="d-inline">
+              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" style="display: inline-block;">
                 {% csrf_token %}
                 <input type="hidden" name="status" value="Pending">
-                <button type="submit" class="btn btn-warning text-dark"
+                <button type="submit" class="btn-action btn-pending"
                   {% if graduate_request.approval_status == 'Pending' %}disabled{% endif %}>
                   Set as Pending
                 </button>
               </form>
 
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn-action btn-close-footer custom-modal-close">Close</button>
             </div>
           </div>
         </div>
@@ -510,12 +607,10 @@ background-color: #ffffff;
   </div>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const searchInput = document.getElementById("searchInput");
-  const filterButtons = document.querySelectorAll(".filter-buttons .btn");
+  const filterButtons = document.querySelectorAll(".filter-buttons .filter-btn"); // Changed selector
   const sortHeader = document.getElementById("sortDate");
   const tableBody = document.getElementById("trackerTable").getElementsByTagName("tbody")[0];
   const rows = Array.from(tableBody.getElementsByTagName("tr"));
@@ -566,16 +661,12 @@ document.addEventListener("DOMContentLoaded", function() {
     applyFilters();
   });
 
-  // --- 2. Filter Buttons Event ---
+  // --- 2. Filter Buttons Event (SIMPLIFIED) ---
   filterButtons.forEach(button => {
     button.addEventListener("click", function() {
       // Update active state
-      filterButtons.forEach(btn => {
-        btn.classList.remove("btn-primary", "active");
-        btn.classList.add("btn-outline-primary");
-      });
-      this.classList.add("btn-primary", "active");
-      this.classList.remove("btn-outline-primary");
+      filterButtons.forEach(btn => btn.classList.remove("active"));
+      this.classList.add("active");
 
       // Set filter and apply
       currentStatusFilter = this.dataset.filter;
@@ -611,6 +702,52 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Initial sort on load (latest first)
   sortHeader.click();
+
+  // --- NEW: Custom Modal JS ---
+
+  // Function to open a modal
+  function openModal(modal) {
+    if (modal) {
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+  }
+
+  // Function to close a modal
+  function closeModal(modal) {
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+  }
+
+  // Add click listener to all clickable rows to OPEN the modal
+  document.querySelectorAll('.clickable-row').forEach(row => {
+    row.addEventListener('click', function() {
+      const modalTargetId = this.dataset.modalTarget;
+      const modal = document.querySelector(modalTargetId);
+      openModal(modal);
+    });
+  });
+
+  // Add click listener to all close buttons to CLOSE the modal
+  document.querySelectorAll('.custom-modal-close').forEach(button => {
+    button.addEventListener('click', function() {
+      const modal = this.closest('.custom-modal-overlay');
+      closeModal(modal);
+    });
+  });
+
+  // Add click listener to all modal overlays to CLOSE when clicking outside
+  document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(event) {
+      // Check if the click is on the overlay itself, not its children
+      if (event.target === overlay) {
+        closeModal(this);
+      }
+    });
+  });
+
 });
 </script>
 
