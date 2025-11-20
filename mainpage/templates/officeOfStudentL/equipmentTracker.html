@@ -1,74 +1,202 @@
 {% extends 'main.html' %} {% load static %} {% block bodycontent %}
-<link
-  rel="stylesheet"
-  href="{% static 'styles/studentlife/equipmentTracker.css' %}"
-/>
-<link
-  rel="stylesheet"
-  href="{% static 'styles/studentlife/requestgmc.css' %}"
-/>
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
-  href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
   rel="stylesheet"
 />
+
 <style>
-  /* 📱 Small screen responsive table */
-  @media (max-width: 768px) {
-    .equipmentContents {
-      width: 100%;
-      overflow-x: auto; /* Enables horizontal scroll */
-    }
+  /* --- Container & Layout --- */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: "Rubik", sans-serif;
+  }
 
-    .equipmentTable {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 600px; /* Prevents columns from squishing too much */
-    }
+  /* --- Grid Layout for Cards --- */
+  .tracker-grid {
+    display: grid;
+    /* Auto-fit: creates as many columns as fit, minimum 320px wide */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    padding-top: 20px;
+  }
 
-    .equipmentTable th,
-    .equipmentTable td {
-      padding: 8px;
-      text-align: left;
-      font-size: 14px;
-      white-space: nowrap; /* Keeps text in one line */
+  /* --- Individual Card Design --- */
+  .record-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .record-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e0;
+  }
+
+  /* Card Header: Equipment Name & ID */
+  .card-header {
+    background-color: #1a365d; /* Theme Blue */
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .equip-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .item-id {
+    font-size: 0.8rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  /* Card Body: Details */
+  .card-body {
+    padding: 20px;
+    flex-grow: 1;
+  }
+
+  .info-row {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #718096;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .info-value {
+    font-size: 0.95rem;
+    color: #2d3748;
+    font-weight: 500;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: #edf2f7;
+    margin: 10px 0;
+  }
+
+  /* Dates Section */
+  .date-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 5px;
+  }
+
+  /* --- Empty State Styling --- */
+  .empty-state {
+    grid-column: 1 / -1; /* Span all columns */
+    text-align: center;
+    padding: 60px;
+    background-color: #f8fafc;
+    border-radius: 12px;
+    border: 2px dashed #cbd5e0;
+    color: #718096;
+  }
+  .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #a0aec0;
+  }
+
+  /* Mobile Tweak */
+  @media (max-width: 600px) {
+    .tracker-grid {
+      grid-template-columns: 1fr; /* Full width on mobile */
     }
   }
 </style>
+
 <div class="container">
   <div class="sub-title">
-    <h4>OFFICE OF STUDENT LIFE</h4>
+    <h4>STUDENT LIFE</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">> Equipment Tracker</p>
   </div>
   <hr />
 
-  <div class="equipmentContents">
-    <table class="equipmentTable">
-      <thead>
-        <tr>
-          <th>Item ID</th>
-          <th>Name of Borrower</th>
-          <th>Course/Program</th>
-          <th>Equipment Name</th>
-          <th>Date Borrowed</th>
-          <th>Date Returned</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for record in borrowing_records %}
-        <tr>
-          <td>{{ record.equipment.itemId }}</td>
-          <td>{{ record.student.firstname }} {{ record.student.lastname }}</td>
-          <td>{{ record.student.degree }}</td>
-          <td>{{ record.equipment.equipmentName }}</td>
-          <td>{{ record.date_borrowed }}</td>
-          <td>{{ record.date_returned }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="tracker-grid">
+    {% for record in borrowing_records %}
+    <div class="record-card">
+      <div class="card-header">
+        <h5 class="equip-name">{{ record.equipment.equipmentName }}</h5>
+        <span class="item-id">#{{ record.equipment.itemId }}</span>
+      </div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">Borrower</span>
+          <span class="info-value"
+            >{{ record.student.firstname }} {{ record.student.lastname }}</span
+          >
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">Course/Program</span>
+          <span class="info-value">{{ record.student.degree }}</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="date-grid">
+          <div class="info-row">
+            <span class="info-label">Borrowed</span>
+            <span class="info-value" style="color: #2c5282">
+              <i class="fas fa-calendar-alt"></i> {{ record.date_borrowed }}
+            </span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Returned</span>
+            <span class="info-value">
+              {% if record.date_returned %}
+              <span style="color: #2f855a">
+                <i class="fas fa-check-circle"></i> {{ record.date_returned }}
+              </span>
+              {% else %}
+              <span style="color: #c53030">
+                <i class="fas fa-clock"></i> Pending
+              </span>
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% empty %}
+    <div class="empty-state">
+      <i class="fas fa-box-open"></i>
+      <h3>No borrowing records found</h3>
+      <p>There is currently no equipment being tracked.</p>
+    </div>
+    {% endfor %}
   </div>
 </div>
+
 {% endblock bodycontent %}

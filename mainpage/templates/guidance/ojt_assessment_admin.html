@@ -8,10 +8,11 @@
 .gmc-form {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 0 0 12px 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle lift */
 }</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -90,17 +91,25 @@
                             <span class="status-badge expired">{{ ojt_request.status }}</span>
                             {% endif %}
                         </td>
-                        <td data-label="Action">
-                            <div class="horizontal">
-                                {% if ojt_request.status != 'Expired' %} 
-                                {% if ojt_request.status != 'Accepted' %} 
-                                {% if ojt_request.status != 'Declined' %}
-                                <button class="accept">ACCEPT</button>
-                                <button class="decline">DECLINE</button>
-                                {% endif %} {% endif %} {% endif %}
-                                <button class="delete">DELETE</button>
-                            </div>
-                        </td>
+                      <td data-label="Action">
+    <div class="horizontal action-buttons">
+        {% if ojt_request.status != 'Expired' %} 
+            {% if ojt_request.status != 'Accepted' %} 
+                {% if ojt_request.status != 'Declined' %}
+                    <button class="accept icon-btn" title="Accept">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="decline icon-btn" title="Decline">
+                        <i class="fas fa-times"></i>
+                    </button>
+                {% endif %} 
+            {% endif %} 
+        {% endif %}
+        <button class="delete icon-btn" title="Delete">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</td>
                         <td data-label="Form">
                             {% if ojt_request.status == 'Accepted' %}
                             <a
@@ -125,24 +134,11 @@
                 </tbody>
             </table>
         </div>
-        
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
-                    <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>
-                {% endif %}
-
-                <span class="current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                </span>
-
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Next</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
+         {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+{% endif %}
 </div>
     </div>
 </div>

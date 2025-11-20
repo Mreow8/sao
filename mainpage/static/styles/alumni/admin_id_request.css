@@ -15,29 +15,31 @@ body {
   background-color: #f8f9fa; /* Light grey background */
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem 2rem;
-}
-
 /* --- Main Card (from requestgmc.css) --- */
 .gmc-form {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 0 0 12px 12px;
   padding: 2.5rem;
+  min-height: 82vh;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+.search_id_container {
+  display: flex;
+  flex-wrap: wrap; /* Stack on mobile */
+  align-items: center;
+  gap: 15px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
 
-/* --- Search Form Styling --- */
-
-/* 1. The form container */
 .search-form {
   display: flex;
   width: 100%;
   max-width: 500px; /* Or whatever width you prefer */
-  margin-bottom: 1.5rem; /* Space below the search bar */
 }
 
 /* 2. The text input field */
@@ -80,12 +82,17 @@ body {
 }
 /* --- Table (Responsive Style from #historyTable) --- */
 .gmc-table-wrapper {
-  border: 1px solid #ddd;
   border-radius: 8px;
   overflow-x: auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-
+/* Resets the .desc styles so they don't affect your layout */
+.desc {
+  font-size: inherit !important; /* Uses the parent font size */
+  color: inherit !important; /* Uses the parent color */
+  margin-bottom: 0 !important; /* Removes the 2rem margin */
+  line-height: normal !important; /* Resets line height */
+}
 table {
   width: 100%;
   border-collapse: collapse;
@@ -101,11 +108,11 @@ table td {
 }
 
 table th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue */
-
+  font-weight: 600;
+  margin-bottom: 1.5rem; /* Space below the search bar */
+  color: #2c5282;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 12px;
 }
 
 table tr:last-child td {

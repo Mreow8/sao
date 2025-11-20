@@ -21,8 +21,11 @@ from mainpage.views.alumni import (
     alumni_events_admin,update_form_status,admin_tracer_list
 
 )
+from .. import views
 
 urlpatterns = [
+    path('dashboard/alumni/', views.alumni_dashboard, name='alumni_dashboard'),
+
     path('admin_grad_tracer/', admin_tracer_list, name='admin_tracer_list'),
     path('update-form-status/<str:pk>/', update_form_status, name='update_form_status'),
     path("id_request/", idRequest, name="idRequest"),

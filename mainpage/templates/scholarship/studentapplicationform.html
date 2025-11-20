@@ -28,42 +28,7 @@
         
             <form id="display_search" enctype="multipart/form-data" method="POST">
                 {% csrf_token %}
-                <div>
-                    <label for="">Student ID:</label>
-                    <input type="text" name="studID" value="{{ student.studID }}" >
-                </div>
-                <div>
-                    <label for="">LRN:</label>
-                    <input type="text" name="lrn" value="{{ student.lrn }}" disabled>
-                </div>
-                <div>
-                    <label for="">First Name:</label>
-                    <input type="text" name="fname" value="{{ student.firstname }}" disabled>
-                </div>
-                <div>
-                    <label for="">Middle Name:</label>
-                    <input type="text" name="mname" value="{{ student.middlename }}" disabled>
-                </div>
-                <div>
-                    <label for="">Last Name:</label>
-                    <input type="text" name="lname" value="{{ student.lastname }}" disabled>
-                </div>
-                <div>
-                    <label for="">Suffix:</label>
-                    <input type="text" name="extension" value="{{ student.extension }}" disabled>
-                </div>
-                <div>
-                    <label for="">Gender:</label>
-                    <input type="text" name="sex" value="{{ student.sex }}" disabled>
-                </div>
-                <div>
-                    <label for="birthdate">Birthdate:</label>
-                    <input type="text" id="birthdate" name="birthdate" value="{{ student.birthday }}" disabled>
-                </div>
-                <div>
-                    <label for="">College Program:</label>
-                    <input type="text" name="college_prog" value="{{ student.degree }}" disabled>
-                </div>
+                
                 <div>
                     <label for="semester">Scholarship Type:</label>
                     <select style="color: black;" id="scholar_type" name="scholar_type" required>
@@ -80,7 +45,7 @@
                         <option style="color: black;" value="NGU - Lifebank Foundation">LIFE BANK FOUNDATION</option>
                     </select>
                 </div>
-                <h2 style="color: #C66604;">Submit Requirements</h2>
+                <h2>Submit Requirements</h2>
                 <div>
                     <label for="gradeFile">Upload Image for Grade:</label>
                     <input style="color: black;" type="file" id="gradeFile" name="grade_file" required>
@@ -101,7 +66,7 @@
                 {% if note %}
                     <p style="color: black;">Last submitted requirement note: <span style="color: red;">{{ note.note }}</span></p>
                 {% endif %}
-                <button name="action" value="submit">SUBMIT</button>
+                <button name="action" class="aub" value="submit">SUBMIT</button>
             </form>
         </div>
         {% endif %}

@@ -3,7 +3,7 @@ from ..import views
 
 
 urlpatterns = [
-   path('medical/user-suggestions/', views.user_suggestions, name='user_suggestions'),
+    path('medical/user-suggestions/', views.user_suggestions, name='user_suggestions'),
     path('patientbasicinfo/<str:student_id>/', views.patient_basic_info, name='patient_basicinfo'),
     path('medicalclearance/<str:student_id>/', views.medicalclearance_view, name='medicalclearance'),
     path('eligibilityform/<str:student_id>/', views.eligibilty_form, name='eligibility_form'),
@@ -16,7 +16,7 @@ urlpatterns = [
     path('uploadrequirements/', views.upload_requirements, name='upload_requirements'),
     path('dentalservices/', views.dental_services, name='dentalservice'),
     path('dentalrequest/', views.dental_request, name='dentalrequest'),
- path('getusernamebyid/', views.get_user_name_by_id, name='getusernamebyid'),
+    path('getusernamebyid/', views.get_user_name_by_id, name='getusernamebyid'),
 
     path('dentalschedule/', views.dental_schedule, name='dentalschedule'),
     path('listofpwd/', views.pwd_list, name='pwdlist'),
@@ -32,7 +32,10 @@ urlpatterns = [
     path('daily_transactions/', views.daily_transactions_view, name='daily_transactions'),
     # path('yearly/', views.yearly_transactions, name='yearly_transactions'),
     path('upload/', views.upload_file, name='upload'),
+    
+    # Kept this single definition for mental-health view
     path('mental-health/', views.mental_health_view, name='mental_health'),
+    
     path('update_mental_health_choice/', views.update_mental_health_choice, name='update_mental_health_choice'),
     # PWD verification URLs
     path('pwd/verify/<str:id>/', views.verify_pwd, name='verify_pwd'),
@@ -48,7 +51,9 @@ urlpatterns = [
     path('patient-form/', views.patient_form, name='patient_form'),
     path('admin-dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
     path('student-dashboard/', views.dashboard_view, name='student_dashboard'),
-    path('mental-health/', views.mental_health_view, name='mental_health'),
+    
+    # REMOVED DUPLICATE 'mental-health/' PATH HERE
+    
     path('mental-health/submit/', views.mental_health_submit, name='mental_health_submit'),
     path('mental-health/review/<int:record_id>/', views.mental_health_review, name='mental_health_review'),
     # path('logout/', views.logout_view, name='logout'),

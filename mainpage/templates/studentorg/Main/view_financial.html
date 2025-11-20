@@ -1,127 +1,174 @@
-{% extends base_template|default:"adminmain.html" %} {% load static %} {% block
-title %}Student Organization ({{ org.name|default:"TECHNOCRATS" }}){% endblock
-%}
-<!-- prettier- -->
+{% extends base_template|default:"adminmain.html" %}
+{% load static tailwind_tags %}
+
+{% block title %}Student Organization ({{ org.name }}) - Financials{% endblock %}
+
 {% block headcontent %}
-<link rel="stylesheet" href="{% static 'studentorg/css/viewfinan.css' %}" />
+    {% tailwind_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .tab-button.active { color: #2563eb; border-bottom-color: #2563eb; background-color: transparent; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+{% endblock %}
 
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-/>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{% endblock %} {% block bodycontent %}
-<style>
-  /* Only affects elements inside .guidance-form */
-  .guidance-form input,
-  .guidance-form select,
-  .guidance-form button {
-    width: 100%;
-    border-radius: 5px;
-  }
-</style>
-<div class="container">
-  <div class="sub-title">
-    <h4>STUDENT ORGANIZATION</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
-  </div>
-  <hr />
+{% block bodycontent %}
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <a href="{% url 'org_profile' slug=org.slug %}" class="tab">Profiles</a>
-    <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="tab"
-      >Projects</a
-    >
-    <a href="#" class="tab active">Financial Statements</a>
-    <!-- prettier-ignore -->
-    {% if user.role == 'superadmin' or user.role == 'student_life_staff' or  user.role == 'org_admin' and user.organization == org %}
-
-    <a href="{% url 'view_accreditation_by_slug' slug=org.slug %}" class="tab"
-      >Accreditation Application</a
-    >
-    {% endif %}
-  </div>
-  <!-- prettier-ignore -->
-  {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
-  <div class="guidance-form">
-    <form method="post">
-      <h2>Submit New Financial Record</h2>
-
-      {% csrf_token %}
-      <div class="maincontain">
-        <div class="form-column">
-          <div class="form-group">
-            <label for="date">Date</label>
-            <input type="date" id="date" name="date" required />
-          </div>
-          <div class="form-group">
-            <label for="purpose">Purpose</label>
-            <input type="text" id="purpose" name="purpose" required />
-          </div>
-          <div class="form-group">
-            <label for="source_of_funds">Source of Funds</label>
-            <input type="text" id="source_of_funds" name="source_of_funds" />
-          </div>
-        </div>
-
-        <div class="form-column">
-          <div class="form-group">
-            <label for="amount">Amount</label>
-            <input type="number" id="amount" name="amount" required />
-          </div>
-          <div class="form-group">
-            <label for="org">Organization</label>
-            <select id="org" name="org" required>
-              <option value="{{ org.slug }}">{{ org.name }}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="remarks">Remarks</label>
-            <textarea id="remarks" name="remarks" required></textarea>
-          </div>
-        </div>
-      </div>
-      <button type="submit" class="btn-primary">Submit</button>
-    </form>
-  </div>
-  {% endif %}
-  <!-- Financial Statements Table -->
-  <div class="maincontain">
-    <div class="subcontain">
-      <h2>Financial Statements</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Purpose</th>
-            <th>Source of Funds</th>
-            <th>Organization</th>
-            <th>Amount</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for statement in statements %}
-          <tr>
-            <td>{{ statement.date }}</td>
-            <td>{{ statement.purpose }}</td>
-            <td>{{ statement.source_of_funds }}</td>
-            <td>{{ statement.org }}</td>
-            <td>{{ statement.amount }}</td>
-            <td>{{ statement.remarks }}</td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="6">No financial records available.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+<div class="sub-title mb-6">
+    <h4 class="text-xl font-bold text-gray-800">STUDENT ORGANIZATION</h4>
+    <div class="flex items-center gap-2 text-sm text-gray-500">
+        <a href="{% url 'homepage' %}" class="hover:text-blue-600">Home</a>
+        <span>&gt;</span>
+        <a href="{% url 'org_profile' slug=org.slug %}" class="hover:text-blue-600">{{ org.name }}</a>
+        <span>&gt;</span>
+        <span class="text-blue-600 font-medium">Financials</span>
     </div>
-
-    <!-- Financial Statement Submission Form -->
-  </div>
 </div>
+<hr class="mb-6 border-gray-200">
+
+<div class="w-full flex justify-start">
+    <div class="w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex ml-4 min-h-[600px]">
+        
+        <div class="flex-1 h-full flex flex-col p-8 border-r border-gray-100">
+            
+            <div class="border-b sticky top-0 bg-white z-10 mb-6">
+                <div class="flex gap-6">
+                    <button class="tab-button active pb-3 px-2 border-b-2 border-transparent font-medium text-gray-600 hover:text-blue-600 transition" data-tab="list">
+                        Financial Statements
+                    </button>
+                    {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
+                    <button class="tab-button pb-3 px-2 border-b-2 border-transparent font-medium text-gray-600 hover:text-blue-600 transition" data-tab="form">
+                        Submit New Record
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="overflow-y-auto custom-scrollbar flex-1">
+                
+                <div id="list-tab" class="tab-content active">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Purpose</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Source of Funds</th>
+                                    <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                {% for statement in statements %}
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{{ statement.date|date:"M d, Y" }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ statement.purpose }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">{{ statement.source_of_funds }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 font-bold text-right">₱{{ statement.amount|floatformat:2 }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 italic">{{ statement.remarks }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="px-6 py-10 text-center text-gray-400 italic">
+                                        No financial records available.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
+                <div id="form-tab" class="tab-content">
+                    <div class="bg-green-50 border border-green-100 rounded-xl p-6">
+                        <h3 class="font-bold text-green-900 mb-4"><i class="fas fa-coins mr-2"></i>Submit Financial Record</h3>
+                        <form method="POST" class="space-y-4">
+                            {% csrf_token %}
+                            
+                            <input type="hidden" name="org" value="{{ org.slug }}">
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                                    <input type="date" name="date" required class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Amount (PHP)</label>
+                                    <input type="number" step="0.01" name="amount" required class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Purpose</label>
+                                    <input type="text" name="purpose" required class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500">
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Source of Funds</label>
+                                    <input type="text" name="source_of_funds" class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500">
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
+                                    <textarea name="remarks" rows="3" required class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="pt-2">
+                                <button type="submit" class="w-full md:w-auto px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition shadow-md">
+                                    Save Record
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="w-[350px] bg-gray-50 p-6 border-l border-gray-200 flex flex-col gap-6">
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Organization Menu</h2>
+                <div class="space-y-2">
+                    <a href="{% url 'org_profile' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-info-circle w-6 text-center"></i> About</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-project-diagram w-6 text-center"></i> Projects</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-between p-3 bg-blue-600 text-white rounded-lg shadow-md transition">
+                        <span class="font-medium"><i class="fas fa-file-invoice-dollar w-6 text-center"></i> Financials</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'view_officers' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-user-tie w-6 text-center"></i> Officers</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.tab-button');
+    const contents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            tab.classList.add('active');
+            document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+        });
+    });
+});
+</script>
 {% endblock %}

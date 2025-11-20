@@ -10,6 +10,110 @@
 {% endblock %} 
 
 {% block bodycontent %}
+<style>
+  /* --- Action Column Buttons (Consistent Theme) --- */
+  td form {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .approve, .decline {
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    color: #ffffff;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .approve { background-color: #005a9e; } /* Blue */
+  .approve:hover { background-color: #004a85; }
+
+  .decline { background-color: #e63946; } /* Red */
+  .decline:hover { background-color: #d62839; }
+
+  /* --- View File Button --- */
+  .view-file-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .view-file-btn:hover {
+    background-color: #5a6268;
+  }
+
+  /* --- File Preview Modal (Iframe) --- */
+  .file-modal-overlay {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .file-modal-content {
+    background-color: #fff;
+    width: 80%;
+    height: 85%;
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+
+  .file-modal-header {
+    padding: 10px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .file-modal-close {
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+  }
+  .file-modal-close:hover { color: #000; }
+
+  .iframe-container {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: #f9f9f9;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
+
 <div class="sub-title">
   <h4>Student Organization(Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
@@ -18,51 +122,37 @@
 <hr>
 
 <div class="container">
-  <div class="tabs">
-    <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
-    <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
-    <a href="{% url 'admin_manageproject' %}" class="tab active"
-      >Manage Projects</a
-    >
-    <a href="{% url 'admin_managefinancial' %}" class="tab"
-      >Manage Financial</a
-    >
-    <a href="{% url 'admin_manage_accreditations' %}" class="tab"
-      >Manage Applications</a
-    >
-  </div>
-
-  <div class="maincontain gmc-form">
   
-    <form class="search-form" method="GET" action="">
-      <input
-        type="text"
-        name="search"
-        class="search-input"
-        placeholder="Search by Project ID, Objective, Org, or Officer"
-        value="{{ request.GET.search }}"
-      >
-      <select class="filter-select" name="status" id="status-filter">
-          <option value="">All Statuses</option>
-          <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
-          <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
-          <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
-      </select>
-      <button type="submit" class="search-btn">Search</button>
-    </form>
-    
-    <script>
-        $(document).ready(function() {
-            // Submit form on filter change
-            $('#status-filter').change(function() {
-                $(this).closest('form').submit();
-            });
-        });
-    </script>
+  <div class="maincontain gmc-form">
+    <div class="tabs">
+      <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
+      <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
+      <a href="{% url 'admin_manageproject' %}" class="tab active">Manage Projects</a>
+      <a href="{% url 'admin_managefinancial' %}" class="tab">Manage Financial</a>
+      <a href="{% url 'admin_manage_accreditations' %}" class="tab">Manage Applications</a>
+    </div>
+
+    <div class="search_id_container">
+      <form class="search-form" method="GET" action="">
+        <input
+          type="text"
+          name="search"
+          class="search-input"
+          placeholder="Search by Project ID, Objective, Org, or Officer"
+          value="{{ request.GET.search }}"
+        >
+        <select class="filter-select" name="status" id="status-filter">
+            <option value="">All Statuses</option>
+            <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
+        </select>
+        <button type="submit" class="search-btn">Search</button>
+      </form>
+    </div>
 
     <div class="subcontain">
-      <form method="POST">
-      {% csrf_token %}
+      
       <table>
         <thead>
           <tr>
@@ -103,13 +193,22 @@
             <td>{{ project.involved_officer }}</td>
             <td>{{ project.p_budget }}</td>
             <td>{{ project.expected_output }}</td>
+            
             <td>
               {% if project.actual_accomplishment %}
-              <a href="{{ project.actual_accomplishment.url }}" target="_blank"
-                >View File</a
+              <button 
+                type="button" 
+                class="view-file-btn" 
+                data-file-url="{{ project.actual_accomplishment.url }}"
+                data-file-name="Accomplishment Report - {{ project.project_id }}"
               >
-              {% else %} No file uploaded {% endif %}
+                <i class="fas fa-eye"></i> View File
+              </button>
+              {% else %} 
+                <span style="color: #999;">No file</span> 
+              {% endif %}
             </td>
+
             <td>{{ project.remarks }}</td>
             <td>{{ project.get_status_display }}</td>
             <td>
@@ -121,7 +220,7 @@
                   value="{{ project.project_id }}"
                 />
                 {% if project.status == 'pending' %}
-                <button type="submit" name="action" value="approve">
+                <button type="submit" name="action" value="approve" class="approve">
                   Approve
                 </button>
                 <button
@@ -132,6 +231,10 @@
                 >
                   Decline
                 </button>
+                {% elif project.status == 'approved' %}
+                   <span style="color: green; font-weight: bold;">Approved</span>
+                {% else %}
+                   <span style="color: red;">Declined</span>
                 {% endif %}
               </form>
             </td>
@@ -143,27 +246,65 @@
           {% endfor %}
         </tbody>
       </table>
-      </form>
+      
     </div>
-
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
-                <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>
-            {% endif %}
-
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Last &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
+  
+    {% if page_obj %}
+      {% with query_params="&sort="|add:current_sort %}
+          {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+      {% endwith %}
+    {% endif %}
 
   </div>
-</div>
+
+  <div id="file-modal" class="file-modal-overlay">
+    <div class="file-modal-content">
+      <div class="file-modal-header">
+        <h3 id="file-modal-title" style="margin:0; font-size:1.1rem;">File Preview</h3>
+        <span class="file-modal-close">&times;</span>
+      </div>
+      <div class="iframe-container">
+        <iframe id="preview-iframe" src=""></iframe>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<script>
+$(document).ready(function() {
+    // Filter Logic
+    $('#status-filter').change(function() {
+        $(this).closest('form').submit();
+    });
+
+    // --- Modal Logic ---
+    const modal = $('#file-modal');
+    const iframe = $('#preview-iframe');
+    const modalTitle = $('#file-modal-title');
+
+    // 1. Open Modal
+    $('.view-file-btn').on('click', function() {
+        const url = $(this).data('file-url');
+        const name = $(this).data('file-name');
+
+        iframe.attr('src', url); // Set iframe source
+        modalTitle.text(name);   // Set title
+        modal.css('display', 'flex'); // Show modal
+    });
+
+    // 2. Close Modal
+    $('.file-modal-close').on('click', function() {
+        modal.css('display', 'none');
+        iframe.attr('src', ''); // Clear src to stop playing media/loading
+    });
+
+    // 3. Close on Overlay Click
+    $(window).on('click', function(event) {
+        if ($(event.target).is(modal)) {
+            modal.css('display', 'none');
+            iframe.attr('src', '');
+        }
+    });
+});
+</script>
 {% endblock bodycontent %}

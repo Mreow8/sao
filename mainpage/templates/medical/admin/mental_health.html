@@ -8,10 +8,7 @@
 {% block extra_css %}
   {% tailwind_css %}
   <style>
-    /* Add any specific styles for the admin mental health view here */
-    /* Keep the modal styles from medupload.html for consistency */
-
-    /* Modal styles copied from medupload.html */
+    /* Modal styles */
     .modal {
       display: none;
       position: fixed;
@@ -21,36 +18,34 @@
       width: 100%;
       height: 100%;
       background-color: rgba(0, 0, 0, 0.5);
-      overflow: auto; /* Allow scrolling for modal itself if content is large */
-      padding: 20px; /* Adjust padding for better spacing */
-      box-sizing: border-box; /* Include padding in element's total width and height */
+      overflow: auto;
+      padding: 20px;
+      box-sizing: border-box;
     }
     .modal-content {
       background-color: #fefefe;
-      margin: 20px auto; /* Adjust margin for centering and spacing */
+      margin: 20px auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 95%; /* Increase width slightly */
-      max-width: 1000px; /* Increase max-width */
+      width: 95%;
+      max-width: 1000px;
       border-radius: 8px;
       position: relative;
       display: flex;
       flex-direction: column;
-      max-height: calc(
-        100vh - 40px
-      ); /* Limit modal content height, considering modal padding */
-      box-sizing: border-box; /* Include padding in element's total width and height */
+      max-height: calc(100vh - 40px);
+      box-sizing: border-box;
     }
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
-      padding-bottom: 10px; /* Add padding below header */
-      border-bottom: 1px solid #eee; /* Add a subtle separator */
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
     }
     .modal-title {
-      font-size: 1.5rem; /* Larger title font size */
+      font-size: 1.5rem;
       font-weight: bold;
     }
     .close-modal {
@@ -61,220 +56,66 @@
     #previewContainer {
       flex-grow: 1;
       width: 100%;
-      overflow: auto; /* Allow scrolling within preview area */
+      overflow: auto;
       text-align: center;
-      /* Max height relative to the modal content height, considering header/footer */
-      max-height: calc(
-        100% - 70px
-      ); /* Approximation based on header+footer height */
-      padding-top: 10px; /* Add some space above preview content */
+      max-height: calc(100% - 70px);
+      padding-top: 10px;
     }
     #previewContainer img,
     #previewContainer object {
-      display: block; /* Prevent extra space below inline elements */
+      display: block;
       max-width: 100%;
-      height: auto; /* Maintain aspect ratio */
-      margin: auto; /* Center image/object */
-      transform-origin: top left; /* Set transform origin for zooming */
+      height: auto;
+      margin: auto;
+      transform-origin: top left;
     }
     #previewContainer object {
-      width: 100%; /* Allow object to take full width of container if needed */
-      height: 100%; /* Allow object to take full height of container if needed */
+      width: 100%;
+      height: 100%;
     }
     .zoom-controls {
       margin-top: 10px;
-      padding-top: 10px; /* Add padding above controls */
-      border-top: 1px solid #eee; /* Add a subtle separator */
+      padding-top: 10px;
+      border-top: 1px solid #eee;
       text-align: center;
-      flex-shrink: 0; /* Prevent controls from shrinking */
+      flex-shrink: 0;
     }
     .zoom-controls button {
       padding: 8px 16px;
       margin: 0 5px;
       cursor: pointer;
-      background-color: #3b82f6; /* Blue background */
-      color: white; /* White text */
+      background-color: #3b82f6;
+      color: white;
       border: none;
-      border-radius: 4px; /* Rounded corners */
-      font-size: 1rem; /* Readable font size */
-      transition: background-color 0.3s ease; /* Smooth hover effect */
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
     }
     .zoom-controls button:hover {
-      background-color: #2563eb; /* Darker blue on hover */
+      background-color: #2563eb;
     }
   </style>
 {% endblock %} 
 
 {% block bodycontent %}
-<div
-  class="bg-white xs:h-fit md:h-full xs:p-4 lg:p-8 flex flex-col gap-6 rounded-[18px] xs:w-full md:w-auto shadow-lg"
->
-  <h2
-    class="font-bold text-[1.5rem] text-black tracking-tight text-center mb-2"
-  >
-    Mental Health Records
-  </h2>
 
-  <div class="bg-[#f8fafc] rounded-lg p-4 mb-6 border border-gray-200 w-full">
-    <h3 class="font-semibold text-blue-700 mb-4">Mental Health Records List</h3>
-
-    <div class="flex border-b border-gray-200">
-      <button
-        id="student-tab"
-        class="px-4 py-2 -mb-px text-sm font-medium text-center text-blue-700 bg-transparent border-b-2 border-blue-700 sm:text-base dark:text-blue-500 dark:border-blue-500 focus:outline-none"
-        type="button"
-        role="tab"
-        aria-controls="student-list"
-        aria-selected="true"
-      >
-        Students
-      </button>
-      <button
-        id="faculty-tab"
-        class="px-4 py-2 -mb-px text-sm font-medium text-center text-gray-500 bg-transparent border-b-2 border-transparent sm:text-base dark:text-gray-400 dark:border-gray-700 hover:text-gray-700 hover:border-gray-300 dark:hover:text-gray-300 focus:outline-none"
-        type="button"
-        role="tab"
-        aria-controls="faculty-list"
-        aria-selected="false"
-      >
-        Faculty
-      </button>
-    </div>
-
-    <div id="tab-content" class="mt-4">
-      <div
-        id="student-list"
-        class="tab-pane"
-        role="tabpanel"
-        aria-labelledby="student-tab"
-      >
-        <div
-          class="overflow-x-auto"
-          style="max-height: 250px; overflow-y: auto"
-        >
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  ID Number
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Name
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              {% comment %} Loop through student mental health records here {% endcomment %} 
-              {% for record in student_mhr_list %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ record.id_number_display }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ record.name_display }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ record.status|title }}
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td
-                  colspan="3"
-                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
-                >
-                  No student mental health records found.
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div
-        id="faculty-list"
-        class="tab-pane hidden"
-        role="tabpanel"
-        aria-labelledby="faculty-tab"
-      >
-        <div
-          class="overflow-x-auto"
-          style="max-height: 250px; overflow-y: auto"
-        >
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  ID Number
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Name
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              {% comment %} Loop through faculty mental health records here {% endcomment %} 
-              {% for record in faculty_mhr_list %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ record.id_number_display }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ record.name_display }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ record.status|title }}
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td
-                  colspan="3"
-                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
-                >
-                  No faculty mental health records found.
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+<div class="sub-title">
+    <h4>MEDICAL</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+    <p class="certxt">&gt; Mental Health</p>
   </div>
+<hr>
+<div
+  class="bg-white xs:h-fit md:h-full xs:p-4 lg:p-8 flex flex-col gap-6 rounded-b-[18px] xs:w-full md:w-auto shadow-lg"
+>
+  
 
   <div class="bg-[#f8fafc] rounded-lg p-4 mb-2 border border-gray-200 w-full">
     <h3 class="font-semibold text-blue-700 mb-2">Submitted Records</h3>
 
     <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
       <p class="text-sm text-blue-800">
-        Search for a student or faculty by ID to review and manage their mental
-        health record.
+        Search for a student or faculty by ID to review and manage their mental health record.
       </p>
     </div>
 
@@ -299,13 +140,11 @@
     {% if fetched_mental_health_record %} 
       {% if fetched_student %}
       <h4 class="font-semibold text-lg text-gray-800 mb-4">
-        Record for: {{ fetched_student.firstname }} {{ fetched_student.lastname }}
-        ({{ fetched_student.student_id }})
+        Record for: {{ fetched_student.firstname }} {{ fetched_student.lastname }} ({{ fetched_student.studID }})
       </h4>
       {% elif fetched_faculty %}
       <h4 class="font-semibold text-lg text-gray-800 mb-4">
-        Record for: {{ fetched_faculty.user.get_full_name }} ({{
-        fetched_faculty.faculty_id }})
+        Record for: {{ fetched_faculty.user.get_full_name }} ({{ fetched_faculty.staffID }})
       </h4>
       {% endif %}
 
@@ -322,9 +161,7 @@
 
         <div class="table-container">
           <div class="overflow-x-auto">
-            <table
-              class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow"
-            >
+            <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow">
               <thead class="bg-[#e6e6e6]">
                 <tr>
                   <th class="p-2 text-left">Document Type</th>
@@ -417,15 +254,191 @@
       </form>
 
     {% elif search_id %}
-    <p class="text-center text-gray-600">
+    <p class="text-center text-gray-600 mt-4">
       No record found for ID Number: {{ search_id }}
     </p>
     {% else %}
-    <p class="text-center text-gray-600">
+    <p class="text-center text-gray-600 mt-4">
       Please enter an ID to search for a mental health record.
     </p>
     {% endif %}
   </div>
+
+  
+  <div class="bg-[#f8fafc] rounded-lg p-4 mb-6 border border-gray-200 w-full">
+    <h3 class="font-semibold text-blue-700 mb-4">Mental Health Records List</h3>
+
+    <div class="flex border-b border-gray-200">
+      <button
+        id="student-tab"
+        class="px-4 py-2 -mb-px text-sm font-medium text-center text-blue-700 bg-transparent border-b-2 border-blue-700 sm:text-base dark:text-blue-500 dark:border-blue-500 focus:outline-none"
+        type="button"
+        role="tab"
+        aria-controls="student-list"
+        aria-selected="true"
+      >
+        Students
+      </button>
+      <button
+        id="faculty-tab"
+        class="px-4 py-2 -mb-px text-sm font-medium text-center text-gray-500 bg-transparent border-b-2 border-transparent sm:text-base dark:text-gray-400 dark:border-gray-700 hover:text-gray-700 hover:border-gray-300 dark:hover:text-gray-300 focus:outline-none"
+        type="button"
+        role="tab"
+        aria-controls="faculty-list"
+        aria-selected="false"
+      >
+        Faculty
+      </button>
+    </div>
+
+    <div id="tab-content" class="mt-4">
+      
+      <div
+        id="student-list"
+        class="tab-pane"
+        role="tabpanel"
+        aria-labelledby="student-tab"
+      >
+        <div
+          class="overflow-x-auto"
+          style="min-height: 200px;"
+        >
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Number</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% for record in student_mhr_list %}
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.id_number_display }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.name_display }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {% if record.status == 'approved' %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
+                    {% elif record.status == 'rejected' %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+                    {% else %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                    {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No student mental health records found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if student_mhr_list.has_other_pages %}
+        <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+          <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Showing <span class="font-medium">{{ student_mhr_list.start_index }}</span> to <span class="font-medium">{{ student_mhr_list.end_index }}</span> of <span class="font-medium">{{ student_mhr_list.paginator.count }}</span> results
+              </p>
+            </div>
+            <div>
+              <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                {% if student_mhr_list.has_previous %}
+                  <a href="?student_page={{ student_mhr_list.previous_page_number }}&tab=student" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                    <span class="sr-only">Previous</span> &larr;
+                  </a>
+                {% endif %}
+                <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
+                  Page {{ student_mhr_list.number }}
+                </span>
+                {% if student_mhr_list.has_next %}
+                  <a href="?student_page={{ student_mhr_list.next_page_number }}&tab=student" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                    <span class="sr-only">Next</span> &rarr;
+                  </a>
+                {% endif %}
+              </nav>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div
+        id="faculty-list"
+        class="tab-pane hidden"
+        role="tabpanel"
+        aria-labelledby="faculty-tab"
+      >
+        <div
+          class="overflow-x-auto"
+          style="min-height: 200px;"
+        >
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Number</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% for record in faculty_mhr_list %}
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.id_number_display }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.name_display }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {% if record.status == 'approved' %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
+                    {% elif record.status == 'rejected' %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+                    {% else %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                    {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No faculty mental health records found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if faculty_mhr_list.has_other_pages %}
+        <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+          <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Showing <span class="font-medium">{{ faculty_mhr_list.start_index }}</span> to <span class="font-medium">{{ faculty_mhr_list.end_index }}</span> of <span class="font-medium">{{ faculty_mhr_list.paginator.count }}</span> results
+              </p>
+            </div>
+            <div>
+              <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                 {% if faculty_mhr_list.has_previous %}
+                  <a href="?faculty_page={{ faculty_mhr_list.previous_page_number }}&tab=faculty" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                    <span class="sr-only">Previous</span> &larr;
+                  </a>
+                {% endif %}
+                <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
+                  Page {{ faculty_mhr_list.number }}
+                </span>
+                {% if faculty_mhr_list.has_next %}
+                  <a href="?faculty_page={{ faculty_mhr_list.next_page_number }}&tab=faculty" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                    <span class="sr-only">Next</span> &rarr;
+                  </a>
+                {% endif %}
+              </nav>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div id="previewModal" class="modal">
@@ -446,19 +459,16 @@
 
 {% block extra_js %}
 <script>
-  // JavaScript for modal and zoom functionality (copied from medupload.html, adapted)
-
-  let currentZoom = 1.0; // Initial zoom level
-  const zoomStep = 0.1; // How much to zoom in/out by
+  // --- Modal & Zoom Logic ---
+  let currentZoom = 1.0;
+  const zoomStep = 0.1;
 
   function previewFile(fileUrl, studentName, documentType) {
     const modal = document.getElementById("previewModal");
     const previewContainer = document.getElementById("previewContainer");
     const modalTitle = document.getElementById("modalTitle");
 
-    // Clear previous content
     previewContainer.innerHTML = "";
-
     modalTitle.textContent = `Preview: ${studentName} - ${documentType}`;
 
     const isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileUrl);
@@ -468,51 +478,41 @@
       const img = document.createElement("img");
       img.id = "imagePreview";
       img.src = fileUrl;
-      img.style.maxWidth = "100%"; // Ensure image doesn't overflow initially
+      img.style.maxWidth = "100%";
       img.style.height = "auto";
       previewContainer.appendChild(img);
-      currentZoom = 1.0; // Reset zoom for new image
+      currentZoom = 1.0;
       img.style.transform = `scale(${currentZoom})`;
     } else if (isPDF) {
       const obj = document.createElement("object");
       obj.id = "filePreview";
       obj.data = fileUrl;
       obj.type = "application/pdf";
-      obj.style.width = "100%"; // PDF object can take full width
-      obj.style.height = "100%"; // PDF object can take full height
-      // For PDFs, embedding might not support direct CSS zoom. Fallback to link or iframe.
-      // For simplicity and consistency with admin, let's use an iframe if object fails or for better control
-      // Or keep object and note zoom might not work depending on browser/PDF viewer
+      obj.style.width = "100%";
+      obj.style.height = "100%";
+      
       const fallbackLink = document.createElement("p");
       fallbackLink.innerHTML = `Unable to display PDF file. <a href="${fileUrl}" target="_blank">Download</a> instead.`;
       obj.appendChild(fallbackLink);
 
       previewContainer.appendChild(obj);
-      currentZoom = 1.0; // Reset zoom for new PDF
-      // Note: CSS transform might not work reliably on <object> or <iframe> for PDFs
-      // If true PDF zoom is needed, consider a library or server-side rendering approach.
-      // For now, the zoom buttons will be added but might not affect the PDF object depending on the browser.
-      obj.style.transform = `scale(${currentZoom})`; // Apply transform, but manage expectations for PDFs
+      currentZoom = 1.0;
+      obj.style.transform = `scale(${currentZoom})`; 
     }
 
     modal.style.display = "block";
-    // Hide body scrollbars when modal is open
     document.body.style.overflow = "hidden";
   }
 
   function closeModal() {
     const modal = document.getElementById("previewModal");
     modal.style.display = "none";
-    // Show scrollbars again
     document.body.style.overflow = "auto";
-    currentZoom = 1.0; // Reset zoom when closing modal
+    currentZoom = 1.0; 
   }
 
-  // Close modal when clicking outside the modal-content
   window.onclick = function (event) {
     const modal = document.getElementById("previewModal");
-    const modalContent = document.querySelector(".modal-content");
-    // Check if the clicked area is outside the modal-content but inside the modal
     if (event.target === modal) {
       closeModal();
     }
@@ -524,7 +524,7 @@
   }
 
   function zoomOut() {
-    currentZoom = Math.max(zoomStep, currentZoom - zoomStep); // Prevent zooming out to zero or negative
+    currentZoom = Math.max(zoomStep, currentZoom - zoomStep); 
     applyZoom();
   }
 
@@ -534,17 +534,12 @@
 
     if (imageElement) {
       imageElement.style.transform = `scale(${currentZoom})`;
-      // Adjust transform origin if needed, currently set to top left in CSS
     } else if (objectElement) {
-      // Applying transform to object element (for PDFs) - behavior may vary across browsers
-      // Consider alternative PDF viewers for reliable zoom
       objectElement.style.transform = `scale(${currentZoom})`;
-      // You might need to adjust the container's overflow and dimensions if zooming causes content to exceed boundaries
     }
-    // You might also want to update a visual indicator of the current zoom level
   }
 
-  // JavaScript for tab switching
+  // --- Tab Switching Logic (Preserves active tab on page load) ---
   document.addEventListener("DOMContentLoaded", function () {
     const studentTab = document.getElementById("student-tab");
     const facultyTab = document.getElementById("faculty-tab");
@@ -552,16 +547,16 @@
     const facultyList = document.getElementById("faculty-list");
 
     function activateTab(tabButton, contentPane) {
-      // Deactivate all tabs and hide all content panes
-      document.querySelectorAll(".flex.border-b button").forEach((btn) => {
+      // Reset
+      [studentTab, facultyTab].forEach((btn) => {
         btn.classList.remove("border-blue-700", "text-blue-700");
         btn.classList.add("border-transparent", "text-gray-500");
       });
-      document.querySelectorAll(".tab-pane").forEach((pane) => {
+      [studentList, facultyList].forEach((pane) => {
         pane.classList.add("hidden");
       });
 
-      // Activate the selected tab and show the corresponding content pane
+      // Activate
       tabButton.classList.add("border-blue-700", "text-blue-700");
       tabButton.classList.remove("border-transparent", "text-gray-500");
       contentPane.classList.remove("hidden");
@@ -575,8 +570,15 @@
       activateTab(facultyTab, facultyList);
     });
 
-    // Activate the student tab by default on page load
-    activateTab(studentTab, studentList);
+    // Check URL params for active tab (default to student)
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+
+    if (activeTab === 'faculty') {
+        activateTab(facultyTab, facultyList);
+    } else {
+        activateTab(studentTab, studentList);
+    }
   });
 </script>
 {% endblock %}

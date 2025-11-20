@@ -140,15 +140,25 @@
               {% endif %}
             </td>
            <td data-label="Action">
-  <div class="horizontal">
-    {% if interview_request.status != 'Expired' %} 
-    {% if interview_request.status != 'Accepted' %} 
-    {% if interview_request.status != 'Declined' %}
-    <button class="accept" >ACCEPT</button>
-    <button class="decline" >DECLINE</button>
-    {% endif %} {% endif %} {% endif %}
-    <button class="delete" >DELETE</button>
-  </div>
+              <div class="horizontal">
+                  {% if interview_request.status != 'Expired' %} 
+                      {% if interview_request.status != 'Accepted' %} 
+                          {% if interview_request.status != 'Declined' %}
+                              <button class="accept action-btn" data-tooltip="Accept">
+                                  <i class="fas fa-check-circle"></i>
+                              </button>
+
+                              <button class="decline action-btn" data-tooltip="Decline">
+                                  <i class="fas fa-times-circle"></i>
+                              </button>
+                          {% endif %} 
+                      {% endif %} 
+                  {% endif %}
+                  
+                  <button class="delete action-btn" data-tooltip="Delete Record">
+                      <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
 </td>
             <td data-label="Form">
               {% if interview_request.status == 'Accepted' %}
@@ -174,29 +184,11 @@
         </tbody>
       </table>
     </div>
-
-    <div class="pagination">
-        <span class="step-links">
-            
-            {% with all_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|add:"&order="|add:current_order|add:"&status_filter="|add:current_status_filter|default:"" %}
-
-            {% if page_obj.has_previous %}
-                <a href="?page=1{{ all_params }}">&laquo; First</a>
-                <a href="?page={{ page_obj.previous_page_number }}{{ all_params }}">Previous</a>
-            {% endif %}
-
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{{ all_params }}">Next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}{{ all_params }}">Last &raquo;</a>
-            {% endif %}
-
-            {% endwith %}
-        </span>
-    </div>
+  {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+{% endif %}
     </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

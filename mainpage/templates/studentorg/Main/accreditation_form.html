@@ -1,400 +1,239 @@
-{% extends base_template|default:"adminmain.html" %} {% load static %}
-<!-- prettier-ignore -->
-{% block  title %}Student Organization ({{ organization.name|default:"TECHNOCRATS" }}){% endblock  %}
-<!-- prettier- -->
-{%block bodycontent%}
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-/>
+{% extends base_template|default:"adminmain.html" %}
+{% load static tailwind_tags %}
 
-<style>
-  /* --- Global & Fonts --- */
-  /* Establishes the Rubik font, same as requestgmc.css */
-  body,
-  form,
-  button,
-  input,
-  select,
-  textarea,
-  .tab,
-  .sub-title,
-  table {
-    font-family: "Rubik", sans-serif;
-    line-height: 1.6;
-  }
+{% block title %}Student Organization ({{ organization.name }}) - Accreditation{% endblock %}
 
-  body {
-    color: #333;
-    background-color: #f4f4f4; /* Match inline style */
-  }
+{% block headcontent %}
+    {% tailwind_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Style Django's file input widgets to match Tailwind */
+        .file-input-wrapper input[type="file"] {
+            display: block;
+            width: 100%;
+            font-size: 0.875rem;
+            color: #4b5563; /* text-gray-600 */
+            background-color: #ffffff;
+            border: 1px solid #d1d5db; /* border-gray-300 */
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .file-input-wrapper input[type="file"]:hover {
+            border-color: #93c5fd; /* border-blue-300 */
+        }
+        .file-input-wrapper input[type="file"]::file-selector-button {
+            padding: 0.5rem 1rem;
+            margin-right: 1rem;
+            border: 0;
+            background-color: #eff6ff; /* bg-blue-50 */
+            color: #1d4ed8; /* text-blue-700 */
+            font-weight: 600;
+            border-right: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .file-input-wrapper input[type="file"]::file-selector-button:hover {
+            background-color: #dbeafe; /* bg-blue-100 */
+        }
 
-  /* --- Container --- */
-  /* Matches the padding from requestgmc.css */
-  .container {
-    padding: 0 1.5rem 2rem; /* Added bottom padding */
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto; /* Center the container */
-  }
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+    </style>
+{% endblock %}
 
-  /* ---
+{% block bodycontent %}
 
-/* --- Tabs (Adapted for <button>) --- */
-  .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    border-bottom: 1px solid #ddd;
-  }
-  .tab {
-    font-family: "Rubik", sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    color: #2c5282; /* Theme Blue */
-    text-decoration: none;
-    padding: 1rem 1.25rem;
-    border: none;
-    border-bottom: 3px solid transparent;
-    border-radius: 8px 8px 0 0;
-    cursor: pointer;
-    background-color: transparent;
-    transition: color 0.2s, background-color 0.2s;
-  }
-  .tab:hover {
-    color: #2a4365;
-    background-color: #f0f5fa; /* Light blue hover */
-  }
-  .tab.active {
-    color: #ffffff;
-
-    background-color: #2c5282; /* Active tab has blue background */
-    border-bottom-color: #2c5282;
-  }
-
-  /* --- Main Form Card --- */
-  /* This is styled just like .gmc-form from requestgmc.css */
-  form {
-    max-width: 800px;
-    margin: 2rem auto; /* Give it space from the tabs */
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem; /* Space between form items */
-  }
-
-  /* --- Form Labels & Text --- */
-  form p {
-    font-size: 1rem;
-    color: #333;
-    margin: 0;
-  }
-
-  form label {
-    font-weight: 500;
-    color: #333;
-    font-size: 1rem;
-    margin: 0;
-    display: block; /* Ensures it's on its own line */
-  }
-
-  /* --- Form Inputs --- */
-  /* Styled just like #comboBox and .ornum-input */
-  form input[type="file"],
-  form select {
-    width: 100%;
-    box-sizing: border-box; /* Important for 100% width */
-    font-family: "Rubik", sans-serif;
-    font-size: 0.95rem;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px; /* Override inline style */
-    background-color: #f9f9f9;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  /* Focus style from requestgmc.css */
-  form input[type="file"]:focus,
-  form select:focus {
-    outline: none;
-    border-color: #2c5282; /* Primary Blue */
-    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-    background-color: #fff;
-  }
-
-  /* --- "View Uploaded" Links --- */
-  form a {
-    font-family: "Rubik", sans-serif;
-    color: #2c5282; /* Primary Blue */
-    font-weight: 500;
-    font-size: 0.9rem;
-    text-decoration: none;
-    display: inline-block;
-    margin-top: -10px; /* Pulls it closer to the input */
-    margin-bottom: 10px; /* Adds space before next label */
-  }
-
-  form a:hover {
-    color: #2a4365; /* Darker Blue */
-    text-decoration: underline;
-  }
-
-  /* --- Submit Button --- */
-  /* Styled just like .requestBtn from requestgmc.css */
-  form button[type="submit"] {
-    font-family: "Rubik", sans-serif;
-    background-color: #2c5282; /* Primary Blue */
-    color: white;
-    font-size: 1rem;
-
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px; /* Override inline style */
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: background-color 0.2s, transform 0.2s;
-    margin-top: 1rem;
-    align-self: center; /* Center the button */
-    width: 50%;
-    max-width: 300px;
-    height: auto; /* Override inline style */
-  }
-
-  form button[type="submit"]:hover {
-    background-color: #2a4365; /* Darker Blue */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  /* --- Fallback Table Styles (from tables.css) --- */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    border: none;
-  }
-
-  table th,
-  table td {
-    border-bottom: 1px solid #ddd;
-    padding: 12px 15px;
-    text-align: left;
-    font-size: 14px;
-    vertical-align: middle;
-  }
-
-  table th {
-    background-color: #f9f9f9;
-    color: #2c5282; /* Primary Blue */
-
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-</style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-  }
-
-  h1,
-  h2,
-  h3 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  form {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-
-  input[type="file"],
-  select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-
-  button {
-    background-color: #2c5282;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 15px;
-    height: 60px;
-    width: 90px;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background-color: #2c5282;
-  }
-</style>
-
-<div class="container">
-  <div class="sub-title">
-    <h4>STUDENT ORGANIZATION</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
-  </div>
-  <hr />
-
-  <div class="tabs">
-    <a href="{% url 'org_profile' slug=organization.slug  %}" class="tab"
-      >Profiles</a
-    >
-    <a
-      href="{% url 'view_project_by_slug' slug=organization.slug %}"
-      class="tab"
-      >Projects</a
-    >
-    <a
-      href="{% url 'view_financial_by_slug' slug=organization.slug %}"
-      class="tab"
-      >Financial Statements</a
-    >
-    <a
-      href="{% url 'view_accreditation_by_slug' slug=organization.slug  %}"
-      class="tab active"
-      >Accreditation Application</a
-    >
-  </div>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-
-    <input
-      type="hidden"
-      name="organization"
-      value="{{ organization.org_id }}"
-    />
-    <p><strong>Organization:</strong> {{ organization.name }}</p>
-
-    <label for="letter_of_intent">Letter of Intent:</label>
-    {{ form.letter_of_intent }} {% if uploaded_files.letter_of_intent %}
-    <a href="{{ uploaded_files.letter_of_intent.url }}" target="_blank"
-      >View Uploaded Letter of Intent</a
-    >
-    {% endif %}
-
-    <label for="list_of_officers">List of Officers:</label>
-    {{ form.list_of_officers }} {% if uploaded_files.list_of_officers %}
-    <a href="{{ uploaded_files.list_of_officers.url }}" target="_blank"
-      >View Uploaded List of Officers</a
-    >
-    {% endif %}
-
-    <label for="certificate_of_registration"
-      >Certificate of Registration:</label
-    >
-    {{ form.certificate_of_registration }}
-    <!-- prettier-ignore -->
-    {% if  uploaded_files.certificate_of_registration %}
-    <a
-      href="{{ uploaded_files.certificate_of_registration.url }}"
-      target="_blank"
-      >View Uploaded Certificate of Registration</a
-    >
-    {% endif %}
-
-    <label for="list_of_members">List of Members:</label>
-    {{ form.list_of_members }} {% if uploaded_files.list_of_members %}
-    <a href="{{ uploaded_files.list_of_members.url }}" target="_blank"
-      >View Uploaded List of Members</a
-    >
-    {% endif %}
-
-    <label for="accomplishment_report">Accomplishment Report:</label>
-    {{ form.accomplishment_report }}
-    <!-- prettier-ignore -->
-
-    {% if   uploaded_files.accomplishment_report %}
-    <a href="{{ uploaded_files.accomplishment_report.url }}" target="_blank"
-      >View Uploaded Accomplishment Report</a
-    >
-    {% endif %}
-
-    <label for="calendar_of_activities">Calendar of Activities:</label>
-    {{ form.calendar_of_activities }}
-    <!-- prettier-ignore -->
-
-    {% if    uploaded_files.calendar_of_activities %}
-    <a href="{{ uploaded_files.calendar_of_activities.url }}" target="_blank"
-      >View Uploaded Calendar of Activities</a
-    >
-    {% endif %}
-
-    <label for="financial_statement">Financial Statement:</label>
-    <!-- prettier-ignore -->
-
-    {{ form.financial_statement }} {% if uploaded_files.financial_statement     %}
-    <a href="{{ uploaded_files.financial_statement.url }}" target="_blank"
-      >View Uploaded Financial Statement</a
-    >
-    {% endif %}
-
-    <label for="bank_passbook">Bank Passbook:</label>
-    {{ form.bank_passbook }} {% if uploaded_files.bank_passbook %}
-    <a href="{{ uploaded_files.bank_passbook.url }}" target="_blank"
-      >View Uploaded Bank Passbook</a
-    >
-    {% endif %}
-
-    <label for="inventory_of_properties">Inventory of Properties:</label>
-    <!-- prettier-ignore -->
-
-    {{ form.inventory_of_properties }} {% if  uploaded_files.inventory_of_properties %}
-    <a href="{{ uploaded_files.inventory_of_properties.url }}" target="_blank"
-      >View Uploaded Inventory of Properties</a
-    >
-    {% endif %}
-
-    <label for="organization_bylaws">Organization Bylaws:</label>
-    <!-- prettier-ignore -->
-
-    {{ form.organization_bylaws }} {% if uploaded_files.organization_bylaws  %}
-    <a href="{{ uploaded_files.organization_bylaws.url }}" target="_blank"
-      >View Uploaded Organization Bylaws</a
-    >
-    {% endif %}
-
-    <label for="faculty_adviser_appointment"
-      >Faculty Adviser Appointment:</label
-    >
-    <!-- prettier-ignore -->
-
-    {{ form.faculty_adviser_appointment }} {% if   uploaded_files.faculty_adviser_appointment %}
-    <a
-      href="{{ uploaded_files.faculty_adviser_appointment.url }}"
-      target="_blank"
-      >View Uploaded Faculty Adviser Appointment</a
-    >
-    {% endif %}
-
-    <label for="other_documents">Other Documents:</label>
-    {{ form.other_documents }} {% if uploaded_files.other_documents %}
-    <a href="{{ uploaded_files.other_documents.url }}" target="_blank"
-      >View Uploaded Other Documents</a
-    >
-    {% endif %}
-
-    <button type="submit">Submit</button>
-  </form>
+<div class="sub-title mb-6">
+    <h4 class="text-xl font-bold text-gray-800">STUDENT ORGANIZATION</h4>
+    <div class="flex items-center gap-2 text-sm text-gray-500">
+        <a href="{% url 'homepage' %}" class="hover:text-blue-600">Home</a>
+        <span>&gt;</span>
+        <a href="{% url 'org_profile' slug=organization.slug %}" class="hover:text-blue-600">{{ organization.name }}</a>
+        <span>&gt;</span>
+        <span class="text-blue-600 font-medium">Accreditation</span>
+    </div>
 </div>
-{%endblock%}
+<hr class="mb-6 border-gray-200">
+
+<div class="w-full flex justify-start">
+    <div class="w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex ml-4 min-h-[600px]">
+        
+        <div class="flex-1 h-full flex flex-col p-8 border-r border-gray-100 overflow-y-auto custom-scrollbar">
+            
+            <div class="mb-6 border-b pb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Accreditation Application</h2>
+                <p class="text-gray-500 text-sm mt-1">Submit required documents for <strong>{{ organization.name }}</strong>.</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="organization" value="{{ organization.org_id }}" />
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Letter of Intent</label>
+                        {{ form.letter_of_intent }}
+                        {% if uploaded_files.letter_of_intent %}
+                        <a href="{{ uploaded_files.letter_of_intent.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">List of Officers</label>
+                        {{ form.list_of_officers }}
+                        {% if uploaded_files.list_of_officers %}
+                        <a href="{{ uploaded_files.list_of_officers.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Certificate of Registration</label>
+                        {{ form.certificate_of_registration }}
+                        {% if uploaded_files.certificate_of_registration %}
+                        <a href="{{ uploaded_files.certificate_of_registration.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">List of Members</label>
+                        {{ form.list_of_members }}
+                        {% if uploaded_files.list_of_members %}
+                        <a href="{{ uploaded_files.list_of_members.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Accomplishment Report</label>
+                        {{ form.accomplishment_report }}
+                        {% if uploaded_files.accomplishment_report %}
+                        <a href="{{ uploaded_files.accomplishment_report.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Calendar of Activities</label>
+                        {{ form.calendar_of_activities }}
+                        {% if uploaded_files.calendar_of_activities %}
+                        <a href="{{ uploaded_files.calendar_of_activities.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Financial Statement</label>
+                        {{ form.financial_statement }}
+                        {% if uploaded_files.financial_statement %}
+                        <a href="{{ uploaded_files.financial_statement.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Bank Passbook</label>
+                        {{ form.bank_passbook }}
+                        {% if uploaded_files.bank_passbook %}
+                        <a href="{{ uploaded_files.bank_passbook.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Inventory of Properties</label>
+                        {{ form.inventory_of_properties }}
+                        {% if uploaded_files.inventory_of_properties %}
+                        <a href="{{ uploaded_files.inventory_of_properties.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Organization Bylaws</label>
+                        {{ form.organization_bylaws }}
+                        {% if uploaded_files.organization_bylaws %}
+                        <a href="{{ uploaded_files.organization_bylaws.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Faculty Adviser Appointment</label>
+                        {{ form.faculty_adviser_appointment }}
+                        {% if uploaded_files.faculty_adviser_appointment %}
+                        <a href="{{ uploaded_files.faculty_adviser_appointment.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition file-input-wrapper">
+                        <label class="block font-semibold text-gray-700 mb-2">Other Documents</label>
+                        {{ form.other_documents }}
+                        {% if uploaded_files.other_documents %}
+                        <a href="{{ uploaded_files.other_documents.url }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 bg-white px-3 py-1 rounded border border-blue-100 inline-flex">
+                            <i class="fas fa-external-link-alt"></i> View Uploaded File
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-gray-200">
+                    <button type="submit" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition transform hover:-translate-y-0.5 w-full md:w-auto">
+                        <i class="fas fa-paper-plane mr-2"></i> Submit Application
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="w-[350px] bg-gray-50 p-6 border-l border-gray-200 flex flex-col gap-6">
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Organization Menu</h2>
+                <div class="space-y-2">
+                    <a href="{% url 'org_profile' slug=organization.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-info-circle w-6 text-center"></i> About</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="{% url 'view_project_by_slug' slug=organization.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-project-diagram w-6 text-center"></i> Projects</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="{% url 'view_financial_by_slug' slug=organization.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-file-invoice-dollar w-6 text-center"></i> Financials</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    
+                    <a href="#" class="flex items-center justify-between p-3 bg-blue-600 text-white rounded-lg shadow-md transition">
+                        <span class="font-medium"><i class="fas fa-award w-6 text-center"></i> Accreditation</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <h3 class="text-blue-800 font-bold mb-2 text-sm"><i class="fas fa-question-circle"></i> Need Help?</h3>
+                <p class="text-xs text-blue-600 leading-relaxed">
+                    Make sure all uploaded files are clear and in valid formats (PDF, JPG, PNG). If you need to update a file, simply upload a new one to replace it.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

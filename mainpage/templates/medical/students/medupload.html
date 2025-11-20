@@ -1,692 +1,527 @@
-{% extends 'main.html' %} {% load static tailwind_tags %}
-{% block bodycontent%}
-
-
-{% block extra_css %} {% tailwind_css %}
+{% extends 'main.html' %}
+{% load static tailwind_tags %}
+{% block title %}HealthHub Connect | Medical Requirements Upload{% endblock %}
+{% block extra_css %}
+{% tailwind_css %}
 
 {% endblock %}
 
-<style>
-  :root {
-    --brand-blue: #2c5282;
-    /* I've added these light tints of your color for info boxes */
-    --brand-blue-bg: #ebf4ff;
-    --brand-blue-border: #dbeafe;
-  }
-   @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+{% block bodycontent %}
 
-  /* --- GLOBAL STYLES --- */
-  body {
-    font-family: "Rubik", sans-serif;
-    background-color: #f8f9fa; /* Light grey background from Manage.css */
-  }
-  .upload {
-    background-color: var(--brand-blue);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease; /* Changed */
-  }
-  /* Added hover effect */
-  .upload:hover {
-    filter: brightness(90%);
-  }
-</style>
 <style>
-  /* Disable textarea resizing */
-  textarea {
-    resize: none;
-  }
-  /* Modal styles */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: auto; /* Allow scrolling for modal itself if content is large */
-    padding: 20px; /* Adjust padding for better spacing */
-    box-sizing: border-box; /* Include padding in element's total width and height */
-  }
-  .modal-content {
-    background-color: #fefefe;
-    margin: 20px auto; /* Adjust margin for centering and spacing */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 95%; /* Increase width slightly */
-    max-width: 1000px; /* Increase max-width */
-    border-radius: 8px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    max-height: calc(
-      100vh - 40px
-    ); /* Limit modal content height, considering modal padding */
-    box-sizing: border-box; /* Include padding in element's total width and height */
-  }
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    padding-bottom: 10px; /* Add padding below header */
-    border-bottom: 1px solid #eee; /* Add a subtle separator */
-  }
-  .modal-title {
-    font-size: 1.5rem; /* Larger title font size */
-    font-weight: bold;
-  }
-  .close-modal {
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  #previewContainer {
-    flex-grow: 1;
-    width: 100%;
-    overflow: auto; /* Allow scrolling within preview area */
-    text-align: center;
-    /* Max height relative to the modal content height, considering header/footer */
-    max-height: calc(
-      100% - 70px
-    ); /* Approximation based on header+footer height */
-    padding-top: 10px; /* Add some space above preview content */
-  }
-  #previewContainer img,
-  #previewContainer object,
-  #previewContainer iframe {
-    display: block; /* Prevent extra space below inline elements */
-    max-width: 100%;
-    height: auto; /* Maintain aspect ratio */
-    margin: auto; /* Center image/object */
-    transform-origin: top left; /* Set transform origin for zooming */
-  }
-  #previewContainer object,
-  #previewContainer iframe {
-    width: 100%; /* Allow object to take full width of container if needed */
-    min-height: 60vh; /* Give PDF viewer height */
-  }
-  .zoom-controls {
-    margin-top: 10px;
-    padding-top: 10px; /* Add padding above controls */
-    border-top: 1px solid #eee; /* Add a subtle separator */
-    text-align: center;
-    flex-shrink: 0; /* Prevent controls from shrinking */
-  }
-  .zoom-controls button {
-    padding: 8px 16px;
-    margin: 0 5px;
-    cursor: pointer;
-    background-color: var(--brand-blue); /* CHANGED */
-    color: white; /* White text */
-    border: none;
-    border-radius: 4px; /* Rounded corners */
-    font-size: 1rem; /* Readable font size */
-    transition: all 0.3s ease; /* CHANGED */
-  }
-  .zoom-controls button:hover {
-    filter: brightness(90%); /* CHANGED */
-  }
+    /* Disable textarea resizing */
+    textarea {
+        resize: none;
+    }
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        overflow: auto; /* Allow scrolling for modal itself if content is large */
+        padding: 20px; /* Adjust padding for better spacing */
+        box-sizing: border-box; /* Include padding in element's total width and height */
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 20px auto; /* Adjust margin for centering and spacing */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 95%; /* Increase width slightly */
+        max-width: 1000px; /* Increase max-width */
+        border-radius: 8px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 40px); /* Limit modal content height, considering modal padding */
+        box-sizing: border-box; /* Include padding in element's total width and height */
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-bottom: 10px; /* Add padding below header */
+        border-bottom: 1px solid #eee; /* Add a subtle separator */
+    }
+    .modal-title {
+        font-size: 1.5rem; /* Larger title font size */
+        font-weight: bold;
+    }
+    .close-modal {
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    #previewContainer {
+        flex-grow: 1;
+        width: 100%;
+        overflow: auto; /* Allow scrolling within preview area */
+        text-align: center;
+        /* Max height relative to the modal content height, considering header/footer */
+        max-height: calc(100% - 70px); /* Approximation based on header+footer height */
+        padding-top: 10px; /* Add some space above preview content */
+    }
+    #previewContainer img,
+    #previewContainer object {
+        display: block; /* Prevent extra space below inline elements */
+        max-width: 100%;
+        height: auto; /* Maintain aspect ratio */
+        margin: auto; /* Center image/object */
+        transform-origin: top left; /* Set transform origin for zooming */
+    }
+     #previewContainer object {
+        width: 100%; /* Allow object to take full width of container if needed */
+        height: 100%; /* Allow object to take full height of container if needed */
+     }
+    .zoom-controls {
+        margin-top: 10px;
+        padding-top: 10px; /* Add padding above controls */
+        border-top: 1px solid #eee; /* Add a subtle separator */
+        text-align: center;
+        flex-shrink: 0; /* Prevent controls from shrinking */
+    }
+    .zoom-controls button {
+        padding: 8px 16px;
+        margin: 0 5px;
+        cursor: pointer;
+        background-color: #3b82f6; /* Blue background */
+        color: white; /* White text */
+        border: none;
+        border-radius: 4px; /* Rounded corners */
+        font-size: 1rem; /* Readable font size */
+        transition: background-color 0.3s ease; /* Smooth hover effect */
+    }
+    .zoom-controls button:hover {
+        background-color: #2563eb; /* Darker blue on hover */
+    }
 </style>
+<div class="bg-white xs:h-fit md:h-full xs:p-4 lg:p-8 flex flex-col gap-6 rounded-[18px] xs:w-full md:w-auto shadow-lg">
+    <h2 class="font-bold text-[1.5rem] text-black tracking-tight text-center mb-2">Upload Medical Requirements</h2>
+    
+    <!-- Section for Mental Health Service -->
+    <form method="POST" id="mental-health-form" class="flex flex-col gap-4 w-full">
+        {% csrf_token %}
+        {% if is_faculty %}
+            <input type="hidden" name="faculty_id" value="{{ faculty.faculty_id }}">
+        {% else %}
+            <input type="hidden" name="student_id" value="{{ student.student_id|default:user.username }}">
+        {% endif %}
+        <div class="bg-[#f8fafc] rounded-lg p-4 mb-6 border border-gray-200 w-full">
+            <h3 class="font-semibold text-blue-700 mb-2">Mental health</h3>
+            <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
+                <p class="text-sm text-blue-800">Do you have any history regarding Mental Health or taking any prescriptions?</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <input type="radio" id="avail_mh_yes" name="avail_mental_health" value="yes" class="form-radio text-blue-600" {% if mental_health_record and mental_health_record.is_availing_mental_health %}checked{% endif %}>
+                <label for="avail_mh_yes" class="text-gray-700">Yes</label>
+                <input type="radio" id="avail_mh_no" name="avail_mental_health" value="no" class="form-radio text-red-600" {% if mental_health_record and not mental_health_record.is_availing_mental_health %}checked{% endif %}>
+                <label for="avail_mh_no" class="text-gray-700">No</label>
+            </div>
+             <div class="mt-4 flex justify-center">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">Save Choice</button>
+            </div>
+        </div>
+    </form>
 
-<div class="sub-title">
-  <h4>MEDICAL</h4>
-  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt;Medical Requirements Upload</p>
-   <p>Upload and manage your medical requirements here.</p>
+    <!-- Single form for all uploads -->
+    <form method="POST" enctype="multipart/form-data" id="upload-all-form" class="flex flex-col gap-4 w-full">
+        {% csrf_token %}
+        {% if is_faculty %}
+            <input type="hidden" name="faculty_id" value="{{ faculty.faculty_id }}">
+        {% else %}
+            <input type="hidden" name="student_id" value="{{ student.student_id|default:user.username }}">
+        {% endif %}
+        
+        <!-- Required Medical Documents Section (with table) -->
+        <div class="bg-[#f8fafc] rounded-lg p-4 mb-2 border border-gray-200 w-full">
+            <h3 class="font-semibold text-blue-700 mb-2">Required Medical Documents</h3>
+            <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
+                <p class="text-sm text-blue-800">Please submit all required medical documents. These are essential for ensuring the health and safety of all {{ is_faculty|yesno:'faculty,students' }}.</p>
+            </div>
+            <div class="mb-4">
+                <label class="font-semibold">ID Number:</label>
+                <input type="text" class="w-full p-2 border rounded-md" value="{{ id_number }}" readonly>
+            </div>
+            <div class="mb-4">
+                <label class="font-semibold">Name:</label>
+                {% if is_faculty %}
+                    <input type="text" class="w-full p-2 border rounded-md" value="{{ faculty.user.get_full_name }}" readonly>
+                {% else %}
+                    <input type="text" class="w-full p-2 border rounded-md" value="{{ student.firstname }} {{ student.lastname }}" readonly>
+                {% endif %}
+            </div>
+            <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow">
+                <thead class="bg-[#e6e6e6]">
+                    <tr>
+                        <th class="p-2 text-center">Remarks</th>
+                        <th class="p-2 text-center">Requirement Type</th>
+                        <th class="p-2 text-center">File</th>
+                        <th class="p-2 text-center">Status</th>
+                        <th class="p-2 text-center">Choose File</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requirements %}
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td class="p-2 text-center">
+                            {% if md %}
+                                {% if req.slug == 'chest_xray' %}{{ md.x_ray_remarks|default:'None' }}
+                                {% elif req.slug == 'cbc' %}{{ md.cbc_remarks|default:'None' }}
+                                {% elif req.slug == 'drug_test' %}{{ md.drug_test_remarks|default:'None' }}
+                                {% elif req.slug == 'stool_examination' %}{{ md.stool_examination_remarks|default:'None' }}
+                                {% elif req.slug == 'pwd_card' %}{{ md.pwd_card_remarks|default:'None' }}
+                                {% else %}None{% endif %}
+                            {% else %}None{% endif %}
+                        </td>
+                        <td class="p-2 font-medium text-center">{{ req.name }}</td>
+                        <td class="p-2 text-center">
+                            {% if md %}
+                                {% if req.slug == 'chest_xray' and md.chest_xray %}
+                                    <button type="button" onclick="previewFile('{{ md.chest_xray.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                {% elif req.slug == 'cbc' and md.cbc %}
+                                    <button type="button" onclick="previewFile('{{ md.cbc.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                {% elif req.slug == 'drug_test' and md.drug_test %}
+                                    <button type="button" onclick="previewFile('{{ md.drug_test.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                {% elif req.slug == 'stool_examination' and md.stool_examination %}
+                                    <button type="button" onclick="previewFile('{{ md.stool_examination.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                {% elif req.slug == 'pwd_card' and md.pwd_card %}
+                                    <button type="button" onclick="previewFile('{{ md.pwd_card.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                {% else %}
+                                    <span class="text-gray-400">None</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-gray-400">None</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-2 text-center">
+        {% if md %}
+                                {% if req.slug == 'chest_xray' and md.chest_xray %}
+                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                {% elif req.slug == 'cbc' and md.cbc %}
+                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                {% elif req.slug == 'drug_test' and md.drug_test %}
+                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                {% elif req.slug == 'stool_examination' and md.stool_examination %}
+                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                {% elif req.slug == 'pwd_card' and md.pwd_card %}
+                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                {% else %}
+                                    <span class="text-red-500 text-xl">&#10007;</span>
+            {% endif %}
+                            {% else %}
+                                <span class="text-gray-400">None</span>
+        {% endif %}
+                        </td>
+                        <td class="p-2 text-center">
+                            <input type="file" name="file_{{ req.slug }}" id="file_{{ req.slug }}" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+                            <label for="file_{{ req.slug }}" class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold">Choose File</label>
+                            <span id="file_{{ req.slug }}_filename" class="ml-2 text-gray-600">No file chosen</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+            
+            <!-- Mental Health Documents Section (Integrated) -->
+            <div class="bg-[#f8fafc] rounded-lg p-4 mt-6 mb-2 border border-gray-200 w-full hidden" id="mental-health-docs-section">
+                <h3 class="font-semibold text-blue-700 mb-2">Required Documents for Mental Health</h3>
+                <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
+                    <p class="text-sm text-blue-800">Please upload your mental health prescription and certification documents here.</p>
+                </div>
+                <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow">
+                    <thead class="bg-[#e6e6e6]">
+                        <tr>
+                            <th class="p-2 text-center">Remarks</th>
+                            <th class="p-2 text-center">Document Type</th>
+                            <th class="p-2 text-center">File</th>
+                            <th class="p-2 text-center">Status</th>
+                            <th class="p-2 text-center">Choose File</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="p-2 text-center">
+                                {% if mental_health_record %}
+                                    {{ mental_health_record.prescription_remarks|default:'None' }}
+                                {% else %}None{% endif %}
+                            </td>
+                            <td class="p-2 font-medium text-center">Prescription</td>
+                            <td class="p-2 text-center">
+                                {% if mental_health_record and mental_health_record.prescription %}
+                                    <button type="button" onclick="previewFile('{{ mental_health_record.prescription.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', 'Mental Health Prescription')" class="text-blue-600 hover:underline">Preview</button>
+                                {% else %}
+                                    <span class="text-gray-400">None</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-2 text-center">
+                                {% if mental_health_record and mental_health_record.prescription %}
+                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                {% else %}
+                                    <span class="text-red-500 text-xl">&#10007;</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-2 text-center">
+                                <input type="file" name="file_prescription" id="file_prescription" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+                                <label for="file_prescription" class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold">Choose File</label>
+                                <span id="file_prescription_filename" class="ml-2 text-gray-600">No file chosen</span>
+                            </td>
+                        </tr>
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="p-2 text-center">
+                                {% if mental_health_record %}
+                                    {{ mental_health_record.certification_remarks|default:'None' }}
+                                {% else %}None{% endif %}
+                            </td>
+                            <td class="p-2 font-medium text-center">Certification</td>
+                            <td class="p-2 text-center">
+                                {% if mental_health_record and mental_health_record.certification %}
+                                    <button type="button" onclick="previewFile('{{ mental_health_record.certification.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', 'Mental Health Certification')" class="text-blue-600 hover:underline">Preview</button>
+                                {% else %}
+                                    <span class="text-gray-400">None</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-2 text-center">
+                                {% if mental_health_record and mental_health_record.certification %}
+                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                {% else %}
+                                    <span class="text-red-500 text-xl">&#10007;</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-2 text-center">
+                                <input type="file" name="file_certification" id="file_certification" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+                                <label for="file_certification" class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold">Choose File</label>
+                                <span id="file_certification_filename" class="ml-2 text-gray-600">No file chosen</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Upload Documents Section (with single button) -->
+            <div class="mt-6 p-4 bg-[#f8fafc] rounded-lg border border-gray-200 w-full">
+                <h3 class="font-semibold text-blue-700 mb-2">Upload Documents</h3>
+                <p class="text-sm text-blue-800 mb-4">Select 'Choose File' for each document type you wish to upload, then click the button below to submit all selected files.</p>
+                <div class="flex justify-center">
+                    <button type="submit" class="bg-[#3b82f6] text-white px-6 py-2 rounded-md font-semibold hover:bg-[#2563eb] transition-colors">
+                        Upload Documents
+                    </button>
+                </div>
+            </div>
+
+    </form>
 </div>
-<hr />
-<div class="container">
 
-
-  <div
-    class="bg-white xs:h-fit md:h-full xs:p-4 lg:p-8 flex flex-col gap-6 rounded-[18px] xs:w-full md:w-auto shadow-lg"
-  >
-    <form
-      method="POST"
-      id="mental-health-form"
-      class="flex flex-col gap-4 w-full"
-    >
-      {% csrf_token %} {% if is_faculty %}
-      <input type="hidden" name="faculty_id" value="{{ faculty.faculty_id }}" />
-      {% else %}
-      <input
-        type="hidden"
-        name="student_id"
-        value="{{ student.student_id|default:user.username }}"
-      />
-      {% endif %}
-      <div
-        class="bg-[#f8fafc] rounded-lg p-4 mb-6 border border-gray-200 w-full"
-      >
-        <h3 class="font-semibold text-[var(--brand-blue)] mb-2">Mental health</h4>
-        <div class="mb-4 p-3 bg-[var(--brand-blue-bg)] rounded-md border border-[var(--brand-blue-border)]">
-          <p class="text-sm text-[var(--brand-blue)]">
-            Do you have any history regarding Mental Health or taking any
-            prescriptions?
-          </p>
-        </div>
-        <div class="flex items-center space-x-4">
-          <input
-            type="radio"
-            id="avail_mh_yes"
-            name="avail_mental_health"
-            value="yes"
-            class="form-radio text-[var(--brand-blue)]"
-            {%
-            if
-            mental_health_record
-            and
-            mental_health_record.is_availing_mental_health
-            %}checked{%
-            endif
-            %}
-          />
-          <label for="avail_mh_yes" class="text-gray-700">Yes</label>
-          <input
-            type="radio"
-            id="avail_mh_no"
-            name="avail_mental_health"
-            value="no"
-            class="form-radio text-red-600"
-            {%
-            if
-            mental_health_record
-            and
-            not
-            mental_health_record.is_availing_mental_health
-            %}checked{%
-            endif
-            %}
-          />
-          <label for="avail_mh_no" class="text-gray-700">No</label>
-        </div>
-      <div class="mt-4 flex justify-center">
-  <button
-    type="submit"
-    class="upload"
-  >
-            Save Choice
-          </button>
-        </div>
-      </div>
-    </form>
-
-    <form
-      method="POST"
-      enctype="multipart/form-data"
-      id="upload-all-form"
-      class="flex flex-col gap-4 w-full"
-    >
-      {% csrf_token %} {% if is_faculty %}
-      <input type="hidden" name="faculty_id" value="{{ faculty.faculty_id }}" />
-      {% else %}
-      <input
-        type="hidden"
-        name="student_id"
-        value="{{ student.student_id|default:user.username }}"
-      />
-      {% endif %}
-
-      <div
-        class="bg-[#f8fafc] rounded-lg p-4 mb-2 border border-gray-200 w-full"
-      >
-        <h3 class="font-semibold text-[var(--brand-blue)] mb-2">
-          Required Medical Documents
-        </h4>
-        <div class="mb-4 p-3 bg-[var(--brand-blue-bg)] rounded-md border border-[var(--brand-blue-border)]">
-          <p class="text-sm text-[var(--brand-blue)]">
-            Please submit all required medical documents. These are essential
-            for ensuring the health and safety of all
-            {{ is_faculty|yesno:'faculty,students' }}.
-          </p>
-        </div>
-        <div class="mb-4">
-          <label class="font-semibold">ID Number:</label>
-          <input
-            type="text"
-            class="w-full p-2 border rounded-md"
-            value="{{ id_number }}"
-            readonly
-          />
-        </div>
-        <div class="mb-4">
-          <label class="font-semibold">Name:</label>
-          {% if is_faculty %}
-          <input
-            type="text"
-            class="w-full p-2 border rounded-md"
-            value="{{ faculty.user.get_full_name }}"
-            readonly
-          />
-          {% else %}
-          <input
-            type="text"
-            class="w-full p-2 border rounded-md"
-            value="{{ student.firstname }} {{ student.lastname }}"
-            readonly
-          />
-          {% endif %}
-        </div>
-        <table
-          class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow"
-        >
-          <thead class="bg-[#e6e6e6]">
-            <tr>
-              <th class="p-2 text-center">Remarks</th>
-              <th class="p-2 text-center">Requirement Type</th>
-              <th class="p-2 text-center">File</th>
-              <th class="p-2 text-center">Status</th>
-              <th class="p-2 text-center">Choose File</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for req in requirements %}
-            <tr class="bg-white border-b hover:bg-gray-50">
-              <td class="p-2 text-center">
-                {% if md %}
-  {% if req.slug == 'chest_xray' %}
-    {{ md.x_ray_remarks|default:'None' }}
-  {% elif req.slug == 'cbc' %}
-    {{ md.cbc_remarks|default:'None' }}
-  {% elif req.slug == 'drug_test' %}
-    {{ md.drug_test_remarks|default:'None' }}
-  {% elif req.slug == 'stool_examination' %}
-    {{ md.stool_examination_remarks|default:'None' }}
-  {% elif req.slug == 'pwd_card' %}
-    {{ md.pwd_card_remarks|default:'None' }}
-  {% else %}
-    None
-  {% endif %}
-{% else %}
-  None
-{% endif %}
-              </td>
-              <td class="p-2 font-medium text-center">{{ req.name }}</td>
-              <td class="p-2 text-center">
-                {% if md %} {% if req.slug == 'chest_xray' and md.chest_xray %}
-                <button
-                  type="button"
-                  onclick="previewFile('{{ md.chest_xray.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')"
-                  class="text-[var(--brand-blue)] hover:underline"
-                >
-                  Preview
-                </button>
-                {% elif req.slug == 'cbc' and md.cbc %}
-                <button
-                  type="button"
-                  onclick="previewFile('{{ md.cbc.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')"
-                  class="text-[var(--brand-blue)] hover:underline"
-                >
-                  Preview
-                </button>
-                {% elif req.slug == 'drug_test' and md.drug_test %}
-                <button
-                  type="button"
-                  onclick="previewFile('{{ md.drug_test.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')"
-                  class="text-[var(--brand-blue)] hover:underline"
-                >
-                  Preview
-                </button>
-                {% elif req.slug == 'stool_examination' and md.stool_examination  %}
-                <button
-                  type="button"
-                  onclick="previewFile('{{ md.stool_examination.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')"
-                  class="text-[var(--brand-blue)] hover:underline"
-                >
-                  Preview
-                </button>
-                {% elif req.slug == 'pwd_card' and md.pwd_card %}
-                <button
-                  type="button"
-                  onclick="previewFile('{{ md.pwd_card.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')"
-                  class="text-[var(--brand-blue)] hover:underline"
-                >
-                  Preview
-                </button>
-                {% else %}
-                <span class="text-gray-400">None</span>
-                {% endif %} {% else %}
-                <span class="text-gray-400">None</span>
-                {% endif %}
-              </td>
-              <td class="p-2 text-center">
-                {% if md %} {% if req.slug == 'chest_xray' and md.chest_xray %}
-                <span class="text-green-600 text-xl">&#10003;</span>
-                {% elif req.slug == 'cbc' and md.cbc %}
-                <span class="text-green-600 text-xl">&#10003;</span>
-                {% elif req.slug == 'drug_test' and md.drug_test %}
-                <span class="text-green-600 text-xl">&#10003;</span>
-                {% elif req.slug == 'stool_examination' and md.stool_examination %}
-                <span class="text-green-600 text-xl">&#10003;</span>
-                {% elif req.slug == 'pwd_card' and md.pwd_card %}
-                <span class="text-green-600 text-xl">&#10003;</span>
-                {% else %}
-                <span class="text-red-500 text-xl">&#10007;</span>
-                {% endif %} {% else %}
-                <span class="text-gray-400">None</span>
-                {% endif %}
-              </td>
-              <td class="p-2 text-center">
-                <input
-                  type="file"
-                  name="file_{{ req.slug }}"
-                  id="file_{{ req.slug }}"
-                  class="hidden"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-                <label
-                  for="file_{{ req.slug }}"
-                  class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold"
-                  >Choose File</label
-                >
-                <span
-                  id="file_{{ req.slug }}_filename"
-                  class="ml-2 text-gray-600"
-                  >No file chosen</span
-                >
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
-      <div
-        class="bg-[#f8fafc] rounded-lg p-4 mt-6 mb-2 border border-gray-200 w-full hidden"
-        id="mental-health-docs-section"
-      >
-        <h3 class="font-semibold text-[var(--brand-blue)] mb-2">
-          Required Documents for Mental Health
-        </h4>
-        <div class="mb-4 p-3 bg-[var(--brand-blue-bg)] rounded-md border border-[var(--brand-blue-border)]">
-          <p class="text-sm text-[var(--brand-blue)]">
-            Please upload your mental health prescription and certification
-            documents here.
-          </p>
-        </div>
-        <table
-          class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow"
-        >
-          <thead class="bg-[#e6e6e6]">
-            <tr>
-              <th class="p-2 text-center">Remarks</th>
-              <th class="p-2 text-center">Document Type</th>
-              <th class="p-2 text-center">File</th>
-              <th class="p-2 text-center">Status</th>
-              <th class="p-2 text-center">Choose File</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="bg-white border-b hover:bg-gray-50">
-              <td class="p-2 text-center">
-                {% if mental_health_record %}
-               {{  mental_health_record.prescription_remarks|default:'None' }} 
-               {%  else %}None{% endif %}
-              </td>
-              <td class="p-2 font-medium text-center">Prescription</td>
-              <td class="p-2 text-center">
-                {% if mental_health_record and mental_health_record.prescription   %}
-                <button
-                  type="button"
-                  onclick="previewFile('{{ mental_health_record.prescription.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', 'Mental Health Prescription')"
-                  class="text-[var(--brand-blue)] hover:underline"
-                >
-                  Preview
-                </button>
-                {% else %}
-                <span class="text-gray-400">None</span>
-                {% endif %}
-              </td>
-              <td class="p-2 text-center">
-                {% if mental_health_record and mental_health_record.prescription  %}
-                <span class="text-green-600 text-xl">&#10003;</span>
-                {% else %}
-                <span class="text-red-500 text-xl">&#10007;</span>
-                {% endif %}
-              </td>
-              <td class="p-2 text-center">
-                <input
-                  type="file"
-                  name="file_prescription"
-                  id="file_prescription"
-                  class="hidden"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-                <label
-                  for="file_prescription"
-                  class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold"
-                  >Choose File</label
-                >
-                <span id="file_prescription_filename" class="ml-2 text-gray-600"
-                  >No file chosen</span
-                >
-              </td>
-            </tr>
-            <tr class="bg-white hover:bg-gray-50">
-              <td class="p-2 text-center">
-                {% if mental_health_record %}
-                {{mental_health_record.certification_remarks|default:'None' }} 
-              {% else %}None{% endif %}
-              </td>
-              <td class="p-2 font-medium text-center">Certification</td>
-              <td class="p-2 text-center">
-                {% if mental_health_record and mental_health_record.certification    %}
-                <button
-                  type="button"
-                  onclick="previewFile('{{ mental_health_record.certification.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', 'Mental Health Certification')"
-                  class="text-[var(--brand-blue)] hover:underline"
-                >
-                  Preview
-                </button>
-                {% else %}
-                <span class="text-gray-400">None</span>
-                {% endif %}
-              </td>
-              <td class="p-2 text-center">
-                {% if mental_health_record and mental_health_record.certification   %}
-                <span class="text-green-600 text-xl">&#10003;</span>
-                {% else %}
-                <span class="text-red-500 text-xl">&#10007;</span>
-                {% endif %}
-              </td>
-              <td class="p-2 text-center">
-                <input
-                  type="file"
-                  name="file_certification"
-                  id="file_certification"
-                  class="hidden"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-                <label
-                  for="file_certification"
-                  class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold"
-                  >Choose File</label
-                >
-                <span
-                  id="file_certification_filename"
-                  class="ml-2 text-gray-600"
-                  >No file chosen</span
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div
-        class="mt-6 p-4 bg-[#f8fafc] rounded-lg border border-gray-200 w-full"
-      >
-        <h3 class="font-semibold text-[var(--brand-blue)] mb-2">Upload Documents</h4>
-        <p class="text-sm text-[var(--brand-blue)] mb-4">
-          Select 'Choose File' for each document type you wish to upload, then
-          click the button below to submit all selected files.
-        </p>
-        <div class="flex justify-center">
-          <button class="upload">Upload Documents</button>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div id="previewModal" class="modal">
+<!-- Add Modal for File Preview -->
+<div id="previewModal" class="modal">
     <div class="modal-content" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">File Preview</h5>
-        <span class="close-modal" onclick="closeModal()" aria-label="Close Preview">&times;</span>
-      </div>
-      <div id="previewContainer"></div>
-      <div class="zoom-controls" style="display: none;">
-        <button onclick="zoomOut()">-</button>
-        <button onclick="zoomIn()">+</button>
-      </div>
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">File Preview</h5>
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+        </div>
+        <div id="previewContainer"></div>
+        <div class="zoom-controls">
+            <button onclick="zoomOut()">-</button>
+            <button onclick="zoomIn()">+</button>
+        </div>
     </div>
-  </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-  // Script to display chosen filename next to Choose File button
-  document.addEventListener("change", function (event) {
-    if (event.target.type === "file") {
-      const fileNameSpan = document.getElementById(
-        event.target.id + "_filename"
-      );
-      if (fileNameSpan) {
-        fileNameSpan.textContent =
-          event.target.files.length > 0
-            ? event.target.files[0].name
-            : "No file chosen";
-      }
-    }
-  });
-
-  // Modal JavaScript
-  var modal = document.getElementById("previewModal");
-  var previewContainer = document.getElementById("previewContainer");
-  var modalTitle = document.getElementById("modalTitle");
-  var currentZoom = 1;
-  var zoomStep = 0.1;
-  var minZoom = 0.5;
-  var maxZoom = 3;
-
-  function previewFile(fileUrl, studentName, requirementType) {
-    modalTitle.textContent = `${studentName} - ${requirementType}`;
-    previewContainer.innerHTML = ""; // Clear previous content
-    currentZoom = 1; // Reset zoom level
-    
-    var showZoom = false; // Flag to control zoom visibility
-
-    // Determine file type
-    var fileExtension = fileUrl.split(".").pop().toLowerCase();
-
-    if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
-      var img = document.createElement("img");
-      img.id = "imagePreview"; // Give it an ID for zooming
-      img.src = fileUrl;
-      img.style.transform = `scale(${currentZoom})`;
-      img.style.transformOrigin = "top left"; // Set transform origin
-      previewContainer.appendChild(img);
-      showZoom = true; // Show zoom for images
-
-    } else if (fileExtension === "pdf") {
-      // Use a more reliable iframe for PDFs
-      var iframe = document.createElement("iframe");
-      iframe.src = fileUrl;
-      iframe.style.width = "100%";
-      iframe.style.height = "100%"; // Use height from CSS
-      previewContainer.appendChild(iframe);
-      // showZoom remains false
-    
-    } else {
-      previewContainer.innerHTML =
-        "<p>Preview not available for this file type.</p>";
-      // showZoom remains false
-    }
-
-    // Set zoom controls visibility ONCE
-    document.querySelector(".zoom-controls").style.display = showZoom ? "flex" : "none";
-    
-    modal.style.display = "block";
-    // Hide body scrollbars when modal is open
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal() {
-    modal.style.display = "none";
-    previewContainer.innerHTML = ""; // Clear content when closing
-    // Show scrollbars again
-    document.body.style.overflow = "auto";
-    currentZoom = 1.0; // Reset zoom when closing modal
-  }
-
-  function zoomIn() {
-    currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
-    applyZoom();
-  }
-
-  function zoomOut() {
-    currentZoom = Math.max(currentZoom - zoomStep, minZoom);
-    applyZoom();
-  }
-
-  function applyZoom() {
-    var img = previewContainer.querySelector("#imagePreview");
-    if (img) {
-      img.style.transform = `scale(${currentZoom})`;
-    }
-  }
-
-  // Close modal when clicking outside the modal-content
-  window.onclick = function (event) {
-    if (event.target == modal) {
-      closeModal();
-    }
-  };
-
-  // JavaScript for showing/hiding Mental Health Documents section
-  document.addEventListener("DOMContentLoaded", function () {
-    const availMentalHealthRadios = document.querySelectorAll(
-      'input[name="avail_mental_health"]'
-    );
-    const mentalHealthDocsSection = document.getElementById(
-      "mental-health-docs-section"
-    );
-
-    function toggleMentalHealthDocsSection() {
-      // Check if a radio button is selected
-      const selectedRadio = document.querySelector(
-        'input[name="avail_mental_health"]:checked'
-      );
-      if (selectedRadio) {
-          // If one is selected (e.g., on page load from server), check its value
-          if (selectedRadio.value === "yes") {
-            mentalHealthDocsSection.classList.remove("hidden");
-          } else {
-            mentalHealthDocsSection.classList.add("hidden");
-          }
-      } else {
-          // If no radio is selected, default to hidden
-          mentalHealthDocsSection.classList.add("hidden");
-      }
-    }
-
-    // Run the check on page load
-    toggleMentalHealthDocsSection(); 
-
-    // Add listeners to *change* the visibility when a radio is clicked
-    availMentalHealthRadios.forEach(radio => {
-        radio.addEventListener('change', toggleMentalHealthDocsSection);
+    // Script to display chosen filename next to Choose File button
+    document.addEventListener('change', function(event) {
+        if (event.target.type === 'file') {
+            const fileNameSpan = document.getElementById(event.target.id + '_filename');
+            if (fileNameSpan) {
+                fileNameSpan.textContent = event.target.files.length > 0 ? event.target.files[0].name : 'No file chosen';
+            }
+        }
     });
 
-    // --- The 'mentalHealthForm.addEventListener("submit", ...)' block has been removed ---
-    // --- This will allow the form to submit normally, which your Python code handles ---
-  });
+    let currentZoom = 1.0; // Initial zoom level
+    const zoomStep = 0.1; // How much to zoom in/out by
+
+    function previewFile(fileUrl, studentName, requirementName) {
+        const modal = document.getElementById('previewModal');
+        const previewContainer = document.getElementById('previewContainer');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        // Clear previous content
+        previewContainer.innerHTML = '';
+        
+        modalTitle.textContent = `Preview: ${studentName} - ${requirementName}`;
+
+        const isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileUrl);
+        const isPDF = /\.pdf$/i.test(fileUrl);
+        
+        if (isImage) {
+            const img = document.createElement('img');
+            img.id = 'imagePreview';
+            img.src = fileUrl;
+            img.style.maxWidth = '100%'; // Ensure image doesn't overflow initially
+            img.style.height = 'auto';
+            previewContainer.appendChild(img);
+             currentZoom = 1.0; // Reset zoom for new image
+             img.style.transform = `scale(${currentZoom})`;
+
+        } else if (isPDF) {
+            const obj = document.createElement('object');
+            obj.id = 'filePreview';
+            obj.data = fileUrl;
+            obj.type = 'application/pdf';
+            obj.style.width = '100%'; // PDF object can take full width
+            obj.style.height = '100%'; // PDF object can take full height
+             // For PDFs, embedding might not support direct CSS zoom. Fallback to link or iframe.
+             // For simplicity and consistency with admin, let's use an iframe if object fails or for better control
+             // Or keep object and note zoom might not work depending on browser/PDF viewer
+            const fallbackLink = document.createElement('p');
+            fallbackLink.innerHTML = `Unable to display PDF file. <a href="${fileUrl}" target="_blank">Download</a> instead.`;
+            obj.appendChild(fallbackLink);
+
+             previewContainer.appendChild(obj);
+            currentZoom = 1.0; // Reset zoom for new PDF
+            // Note: CSS transform might not work reliably on <object> or <iframe> for PDFs
+            // If true PDF zoom is needed, consider a library or server-side rendering approach.
+            // For now, the zoom buttons will be added but might not affect the PDF object depending on the browser.
+             obj.style.transform = `scale(${currentZoom})`; // Apply transform, but manage expectations for PDFs
+        }
+        
+        modal.style.display = 'block';
+        // Hide body scrollbars when modal is open
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('previewModal');
+        modal.style.display = 'none';
+        // Show scrollbars again
+        document.body.style.overflow = 'auto';
+         currentZoom = 1.0; // Reset zoom when closing modal
+    }
+
+    // Close modal when clicking outside the modal-content
+    window.onclick = function(event) {
+        const modal = document.getElementById('previewModal');
+        const modalContent = document.querySelector('.modal-content');
+        // Check if the clicked area is outside the modal-content but inside the modal
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    function zoomIn() {
+        currentZoom += zoomStep;
+        applyZoom();
+    }
+
+    function zoomOut() {
+        currentZoom = Math.max(zoomStep, currentZoom - zoomStep); // Prevent zooming out to zero or negative
+        applyZoom();
+    }
+
+    function applyZoom() {
+        const imageElement = document.getElementById('imagePreview');
+        const objectElement = document.getElementById('filePreview');
+
+        if (imageElement) {
+            imageElement.style.transform = `scale(${currentZoom})`;
+             // Adjust transform origin if needed, currently set to top left in CSS
+        } else if (objectElement) {
+            // Applying transform to object element (for PDFs) - behavior may vary across browsers
+             // Consider alternative PDF viewers for reliable zoom
+            objectElement.style.transform = `scale(${currentZoom})`;
+             // You might need to adjust the container's overflow and dimensions if zooming causes content to exceed boundaries
+        }
+         // You might also want to update a visual indicator of the current zoom level
+    }
+
+    // JavaScript for showing/hiding Mental Health Documents section and SweetAlert
+    document.addEventListener('DOMContentLoaded', function () {
+        const availMentalHealthRadios = document.querySelectorAll('input[name="avail_mental_health"]');
+        const mentalHealthDocsSection = document.getElementById('mental-health-docs-section');
+        const mentalHealthForm = document.getElementById('mental-health-form');
+
+        function toggleMentalHealthDocsSection() {
+            const selectedValue = document.querySelector('input[name="avail_mental_health"]:checked').value;
+            if (selectedValue === 'yes') {
+                mentalHealthDocsSection.classList.remove('hidden');
+            } else {
+                mentalHealthDocsSection.classList.add('hidden');
+            }
+        }
+
+        // Removed: Add event listeners to radio buttons to prevent automatic display on change
+        // availMentalHealthRadios.forEach(radio => {
+        //     radio.addEventListener('change', toggleMentalHealthDocsSection);
+        // });
+
+        // Set initial visibility on page load
+        // toggleMentalHealthDocsSection(); // This line is intentionally commented out to prevent automatic display
+
+        // Handle mental health form submission
+        mentalHealthForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(this); // 'this' refers to the form
+            
+            try {
+                const response = await fetch('/med/update_mental_health_choice/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: result.message || 'Mental Health choice saved successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                    // Re-evaluate visibility immediately after saving
+                    toggleMentalHealthDocsSection();
+                    // Hide the mental health choice section itself after saving
+                    mentalHealthForm.classList.add('hidden'); // ADDED THIS LINE
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: result.error || 'Failed to save mental health choice.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (error) {
+                console.error('Error submitting mental health form:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An unexpected error occurred.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+
+    });
+
+     // Event listeners for file input change to display filename
+     document.addEventListener('change', function(event) {
+         if (event.target.type === 'file') {
+             const fileNameSpan = document.getElementById(event.target.id + '_filename');
+             if (fileNameSpan) {
+                 fileNameSpan.textContent = event.target.files.length > 0 ? event.target.files[0].name : 'No file chosen';
+             }
+         }
+     });
+
 </script>
 {% endblock %}

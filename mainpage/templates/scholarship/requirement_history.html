@@ -134,48 +134,12 @@
             </table>
         </div>
         
-        {% if page_obj.has_other_pages %}
-        <div class="pagination">
-            <span class="step-links">
-            
-                {% if base_query_string %}
-                    {% with separator='&'|add:base_query_string %}
-                        
-                        {% if page_obj.has_previous %}
-                            <a href="?page=1{{ separator }}" aria-label="First Page">&laquo; First</a>
-                            <a href="?page={{ page_obj.previous_page_number }}{{ separator }}" aria-label="Previous Page">Previous</a>
-                        {% endif %}
+      
+      {% with query_params="&search_year="|add:search_year|add:"&search_semester="|add:search_semester|add:"&search_type="|add:search_type|add:"&search_status="|add:search_status %}
 
-                        <span class="current">
-                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                        </span>
-
-                        {% if page_obj.has_next %}
-                            <a href="?page={{ page_obj.next_page_number }}{{ separator }}" aria-label="Next Page">Next</a>
-                            <a href="?page={{ page_obj.paginator.num_pages }}{{ separator }}" aria-label="Last Page">Last &raquo;</a>
-                        {% endif %}
-                    
-                    {% endwith %}
-                {% else %}
-                    {% comment %} If no filters are active, use a simple query string. {% endcomment %}
-                    {% if page_obj.has_previous %}
-                        <a href="?page=1" aria-label="First Page">&laquo; First</a>
-                        <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous Page">Previous</a>
-                    {% endif %}
-
-                    <span class="current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                    </span>
-
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}" aria-label="Next Page">Next</a>
-                        <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last Page">Last &raquo;</a>
-                    {% endif %}
-                {% endif %}
-
-            </span>
-        </div>
-        {% endif %}
+    {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    
+{% endwith %}
     </div>
 </div>
 

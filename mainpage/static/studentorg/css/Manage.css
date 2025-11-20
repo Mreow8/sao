@@ -1,181 +1,365 @@
-/* === MAIN CONTENT BOX === */
+/* =========================================
+   1. Global Variables & Reset
+   ========================================= */
+:root {
+  --primary-color: #2c5282; /* Deep Blue */
+  --primary-hover: #2a4365;
+  --accent-color: #3182ce; /* Brighter Blue */
+  --success-color: #10b981; /* Green */
+  --success-hover: #059669;
+  --danger-color: #ef4444; /* Red */
+  --danger-hover: #dc2626;
+  --bg-light: #f3f4f6; /* Light Gray Background */
+  --text-dark: #1f2937; /* Dark Gray Text */
+  --text-muted: #6b7280; /* Muted Text */
+  --border-color: #e5e7eb;
+  --white: #ffffff;
+  --radius: 8px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  font-family: "Rubik", sans-serif;
+}
+
+/* =========================================
+   2. Main Container & Titles
+   ========================================= */
+.container {
+  max-width: 95%;
+  margin: 2rem auto;
+}
+
+/* The Main Card */
 .maincontain {
-  background-color: #ffffff;
-  border-radius: 0 0 8px 8px; /* Attached to tabs */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 25px;
+  background-color: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  overflow: hidden; /* Keeps corners rounded */
 }
 
-/* === SEARCH FORM === */
-.search-form {
-  display: flex;
-  flex-wrap: wrap; /* Allows form to stack on small screens */
-  gap: 15px;
-  margin-bottom: 25px;
-}
-.search-input {
-  flex: 3; /* Makes search input wider */
-  min-width: 250px;
-}
-.filter-select {
-  flex: 1;
-  min-width: 180px;
-}
-.search-input,
-.filter-select {
-  padding: 12px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-.search-btn {
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #ffffff;
-  background-color: #2c5282;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-.search-btn:hover {
-  background-color: #2980b9;
-}
-
-/* === DATA TABLE === */
-.subcontain {
-  overflow-x: auto; /* Makes table scroll horizontally on small screens */
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-th,
-td {
-  padding: 12px 15px;
-  border: 1px solid #e0e0e0;
-  text-align: left;
-  vertical-align: middle;
-  font-size: 14px;
-}
-thead {
-  background-color: #f9fafb;
-}
-th {
-  font-weight: 600;
-  color: #2c5282;
-  white-space: nowrap;
-}
-tbody tr:nth-child(even) {
-  background-color: #fdfdfd;
-}
-tbody tr:hover {
-  background-color: #f5f5f5;
-}
-
-/* Sortable Table Headers */
-th.sortable a {
-  text-decoration: none;
-  color: #2c5282;
-  font-weight: 700;
-}
-th.sortable a:hover {
-  color: #3498db;
-}
-
-/* Table Content */
-td img {
-  display: block;
-  /* Styles are in HTML, but this is a good fallback */
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-.no-applicants {
-  text-align: center;
-  color: gray;
-  font-style: italic;
-  padding: 30px;
-}
-
-/* Action Buttons */
-td button {
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 2px;
-  transition: opacity 0.3s ease;
-  width: 80px;
-}
-td button[value="approve"] {
-  background-color: #2ecc71; /* Green */
-}
-td button[value="decline"] {
-  background-color: #e74c3c; /* Red */
-}
-td button:hover {
-  opacity: 0.8;
-}
-
-/* === PAGINATION === */
-.pagination {
-  text-align: center;
-  margin-top: 30px;
-  font-size: 14px;
-}
-.pagination .step-links a {
-  margin: 0 4px;
-  padding: 6px 12px;
-  text-decoration: none;
-  color: #3498db;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-.pagination .step-links a:hover {
-  background-color: #f0f0f0;
-  text-decoration: none;
-}
-.pagination .current {
-  margin: 0 10px;
-  font-weight: 600;
-  color: #333;
-}
+/* =========================================
+   3. Navigation Tabs
+   ========================================= */
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  border-bottom: 1px solid #ddd;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
 }
-.tab {
-  font-family: "Rubik", sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  color: #2c5282; /* Theme Blue */
-  text-decoration: none;
-  padding: 1rem 1.25rem;
-  border: none;
-  border-bottom: 3px solid transparent;
-  border-radius: 8px 8px 0 0;
-  cursor: pointer;
-  background-color: transparent;
-  transition: color 0.2s, background-color 0.2s;
-}
-.tab:hover {
-  color: #2a4365;
-  background-color: #f0f5fa; /* Light blue hover */
-}
-.tab.active {
-  color: #ffffff;
 
-  background-color: #2c5282; /* Active tab has blue background */
-  border-bottom-color: #2c5282;
+.tab {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.tab:hover {
+  background-color: #edf2f7;
+  color: var(--primary-color);
+}
+
+.tab.active {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+/* =========================================
+   4. Search & Filter Bar
+   ========================================= */
+.search_id_container {
+  background-color: #f8fafc;
+  padding: 15px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 250px;
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.filter-select {
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--white);
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.search-btn {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.search-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+/* =========================================
+   5. Data Table Styling
+   ========================================= */
+.subcontain {
+  overflow-x: auto; /* Responsive scrolling */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+thead {
+  background-color: #f1f5f9;
+  border-bottom: 2px solid var(--border-color);
+}
+
+th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Sortable Links in Headers */
+th.sortable a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+th.sortable a:hover {
+  color: var(--accent-color);
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+td {
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  vertical-align: middle;
+  color: var(--text-dark);
+}
+
+/* Profile Picture in Table */
+td img {
+  border: 2px solid var(--border-color);
+  transition: transform 0.2s;
+}
+
+td img:hover {
+  transform: scale(1.1);
+  border-color: var(--accent-color);
+}
+
+/* No Applicants Row */
+.no-applicants {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* =========================================
+   6. Action Buttons (Approve/Decline)
+   ========================================= */
+td form {
+  display: flex;
+  gap: 8px;
+}
+
+.approve,
+.decline {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+/* Approve Button */
+.approve {
+  background-color: var(--success-color);
+}
+.approve:hover {
+  background-color: var(--success-hover);
+  transform: translateY(-1px);
+}
+
+/* Decline / End Term Button */
+.decline {
+  background-color: var(--danger-color);
+}
+.decline:hover {
+  background-color: var(--danger-hover);
+  transform: translateY(-1px);
+}
+
+/* Status Label (Inactive) */
+.status-label {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #e5e7eb;
+  color: #6b7280;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* =========================================
+   7. Image Modal
+   ========================================= */
+.image-modal-overlay {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(3px);
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal-content {
+  max-width: 90%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: zoomIn 0.2s ease-out;
+}
+
+.image-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: var(--white);
+  font-size: 3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.image-modal-close:hover {
+  color: var(--danger-color);
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =========================================
+   8. Pagination Styling (Generic)
+   ========================================= */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 5px;
+}
+
+.pagination a,
+.pagination span {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  color: var(--primary-color);
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.pagination .current {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border-color: var(--primary-color);
+}
+
+/* =========================================
+   9. Responsive Design
+   ========================================= */
+@media (max-width: 768px) {
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input,
+  .filter-select,
+  .search-btn {
+    width: 100%;
+  }
+
+  .tabs {
+    justify-content: center;
+  }
+
+  th,
+  td {
+    padding: 10px;
+  }
 }

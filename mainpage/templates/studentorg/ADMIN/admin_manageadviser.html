@@ -7,34 +7,93 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-
-<style>
-  .approve {
-    background-color: #28a745;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .approve:hover {
-    background-color: #218838;
-  }
-  .decline {
-    background-color: #dc3545;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .decline:hover {
-    background-color: #c82333;
-  }
-</style>
 {% endblock %} 
 
 {% block bodycontent %}
+<style>
+  /* --- Action Column Layout --- */
+  td form {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* --- Base Button Styles --- */
+  .approve,
+  .decline {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+  }
+
+  /* --- Approve / Activate (Matte Blue) --- */
+  .approve {
+    background-color: #005a9e; 
+  }
+  .approve:hover {
+    background-color: #004a85; 
+  }
+
+  /* --- Decline / Deactivate (Matte Red) --- */
+  .decline {
+    background-color: #e63946; 
+  }
+  .decline:hover {
+    background-color: #d62839; 
+  }
+
+  /* --- Declined Text Label --- */
+  td span.status-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+   .image-modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-modal-content {
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+  }
+
+  .image-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
+
 <div class="sub-title">
   <h4>Student Organization(Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
@@ -43,7 +102,10 @@
 <hr>
 
 <div class="container">
-  <div class="tabs">
+
+  <div class="maincontain gmc-form">
+
+    <div class="tabs">
     <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
     <a href="{% url 'admin_manageadviser' %}" class="tab active"
       >Manage Adviser</a
@@ -57,9 +119,8 @@
     >
     <a href="/admin_transactionreport" class="tab">Manage Transactions </a>
   </div>
-
-  <div class="maincontain gmc-form">
   
+    <div class="search_id_container">
     <form class="search-form" method="GET" action="">
       <input
         type="text"
@@ -92,14 +153,7 @@
       
       <button type="submit" class="search-btn">Search</button>
     </form>
-    
-    <script>
-        $(document).ready(function() {
-            $('#status-filter, #active-filter, #org-filter').change(function() {
-                $(this).closest('form').submit();
-            });
-        });
-    </script>
+    </div>
 
     <div class="subcontain">
       <table>
@@ -115,12 +169,9 @@
             <th class="sortable">
               <a href="?sort=firstname&order={% if current_sort == 'firstname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">First Name</a>
             </th>
-            <th>Middle Name</th>
-
             <th class="sortable">
               <a href="?sort=organization&order={% if current_sort == 'organization' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Organization</a>
             </th>
-            
             <th class="sortable">
               <a href="?sort=position&order={% if current_sort == 'position' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Position</a>
             </th>
@@ -142,7 +193,9 @@
                 <img 
                   src="{{ adviser.profile_picture.url }}" 
                   alt="Profile" 
-                  style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;"
+                  class="clickable-profile-pic"
+                   style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover; cursor: pointer;"
+                  data-full-img="{{ adviser.profile_picture.url }}"
                 >
               {% else %}
                 <span style="color: #777;">No Pic</span>
@@ -151,7 +204,6 @@
 
             <td>{{ adviser.surname }}</td>
             <td>{{ adviser.firstname }}</td>
-            <td>{{ adviser.middlename }}</td>
             <td>{{ adviser.organization }}</td>
              <td>{{ adviser.position }}</td>
             <td>{{ adviser.get_status_display }}</td>
@@ -159,7 +211,7 @@
             <td>
               {% if adviser.date_deactivated is None %} <span style="color: green; font-weight: bold;">&#10003; Yes</span>
               {% else %}
-                  <span style="color: red;">&#10007; No</span>
+                  <span style="color: red; font-weight: bold;">&#10007; No</span>
               {% endif %}
             </td>
 
@@ -196,7 +248,7 @@
                   {% endif %}
                 
                 {% else %}
-                    <span style="color: #666;">Declined</span>
+                    <span class="status-label">Declined</span>
                 {% endif %}
               </form>
             </td>
@@ -210,24 +262,48 @@
       </table>
     </div>
 
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
-                <a href="?page={{ page_obj.previous_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>
-            {% endif %}
-
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}{{ search_params }}&sort={{ current_sort }}&order={{ current_order }}">Last &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
+    {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+    {% endif %}
 
   </div>
+
+  <div id="image-modal" class="image-modal-overlay">
+    <span class="image-modal-close">&times;</span>
+    <img class="image-modal-content" id="modal-image">
+  </div>
+
 </div>
+
+<script>
+$(document).ready(function() {
+    // Filter Logic
+    $('#status-filter, #active-filter, #org-filter').change(function() {
+        $(this).closest('form').submit();
+    });
+
+    // --- Image Modal Logic ---
+    
+    // Open modal on image click
+    $('.clickable-profile-pic').on('click', function() {
+        let imageUrl = $(this).data('full-img'); // Get URL from data attribute
+        $('#modal-image').attr('src', imageUrl); // Set modal image source
+        $('#image-modal').css('display', 'flex'); // Show modal
+    });
+
+    // Close modal on close button click
+    $('.image-modal-close').on('click', function() {
+        $('#image-modal').css('display', 'none'); 
+    });
+    
+    // Close modal on clicking outside the image
+    $('#image-modal').on('click', function(e) {
+        if (e.target.id === 'image-modal') {
+            $('#image-modal').css('display', 'none'); 
+        }
+    });
+});
+</script>
 {% endblock bodycontent %}

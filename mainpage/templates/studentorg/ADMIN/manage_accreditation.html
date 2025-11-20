@@ -9,17 +9,18 @@
 <hr />
 
 <div class="container">
-  <div class="tabs">
-    <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
-    <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
-    <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
-    <a href="{% url 'admin_managefinancial' %}" class="tab">Manage Financial</a>
-    <a href="{% url 'admin_manage_accreditations' %}" class="tab active"
-      >Manage Applications</a
-    >
-  </div>
-
   <div class="maincontain gmc-form">
+    <div class="tabs">
+      <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
+      <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
+      <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
+      <a href="{% url 'admin_managefinancial' %}" class="tab"
+        >Manage Financial</a
+      >
+      <a href="{% url 'admin_manage_accreditations' %}" class="tab active"
+        >Manage Applications</a
+      >
+    </div>
     {% if accreditations %} {% for accreditation in accreditations %}
     <h1>Accreditation Review</h1>
     <div>

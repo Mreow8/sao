@@ -1,108 +1,312 @@
-{% extends "adminmain.html" %} {% load static %} {% block title %}Student
-Organization (FSTLP){% endblock %} {% block headcontent %}
+{% extends "adminmain.html" %} {% load static tailwind_tags %} {% block title
+%}Student Organization ({{ organization.name }}) - Register Officer{% endblock
+%} {% block headcontent %} {% tailwind_css %}
 <link
   rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 />
-<link rel="stylesheet" href="{% static 'studentorg/css/officerform.css' %}" />
-<style>
-  /* ... your existing styles ... */
-
-  /* ADD THIS */
-  .errorlist {
-    color: red;
-    font-weight: bold;
-    list-style-type: none; /* Removes bullets */
-    padding: 0;
-    margin: 5px 0 0 0;
-  }
-  .errorlist li {
-    padding: 2px 0;
-  }
-</style>
 <link
   rel="stylesheet"
   href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css"
 />
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+
 <style>
-  form p {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
-    align-items: center;
-    margin: 0;
+  /* === Custom Form Styling for Django {{ form.as_p }} === */
+  /* This forces the Django-rendered inputs to match Tailwind styles */
+
+  #officer-main-form p {
+    margin-bottom: 1rem;
+  }
+
+  #officer-main-form label {
+    display: block;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600;
+    color: #374151; /* text-gray-700 */
+    margin-bottom: 0.25rem;
+  }
+
+  #officer-main-form input[type="text"],
+  #officer-main-form input[type="number"],
+  #officer-main-form input[type="email"],
+  #officer-main-form input[type="date"],
+  #officer-main-form input[type="password"],
+  #officer-main-form select,
+  #officer-main-form textarea {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+    border: 1px solid #d1d5db; /* border-gray-300 */
+    border-radius: 0.5rem; /* rounded-lg */
+    font-size: 0.875rem;
+    color: #1f2937;
+    transition: all 0.2s;
+  }
+
+  #officer-main-form input:focus,
+  #officer-main-form select:focus,
+  #officer-main-form textarea:focus {
+    outline: none;
+    border-color: #3b82f6; /* blue-500 */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  #officer-main-form input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+  }
+
+  /* Error List Styling */
+  .errorlist {
+    color: #dc2626; /* red-600 */
+    font-size: 0.75rem;
+    font-weight: 600;
+    list-style: none;
+    padding: 0;
+    margin-top: 0.25rem;
+  }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
   }
 </style>
 {% endblock %} {% block bodycontent %}
-<style></style>
 
-<div class="overlay" id="overlay">
-  <div class="form-card" id="offcier-modal-container">
-    <a href="{% url 'org_profile' slug=organization.slug %}" class="close-btn"
-      >&times;</a
+<div class="sub-title mb-6">
+  <h4 class="text-xl font-bold text-gray-800">STUDENT ORGANIZATION</h4>
+  <div class="flex items-center gap-2 text-sm text-gray-500">
+    <a href="{% url 'homepage' %}" class="hover:text-blue-600">Home</a>
+    <span>&gt;</span>
+    <a
+      href="{% url 'org_profile' slug=organization.slug %}"
+      class="hover:text-blue-600"
+      >{{ organization.name }}</a
     >
+    <span>&gt;</span>
+    <span class="text-blue-600 font-medium">Register Officer</span>
+  </div>
+</div>
+<hr class="mb-6 border-gray-200" />
 
-    <div class="sub-title">
-      <h1>{{ organization.name }}</h1>
+<div class="w-full flex justify-start">
+  <div
+    class="w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex ml-4 min-h-[600px]"
+  >
+    <div
+      class="flex-1 h-full flex flex-col p-8 border-r border-gray-100 overflow-y-auto custom-scrollbar"
+    >
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">Officer Registration</h2>
+          <p class="text-gray-500 text-sm mt-1">
+            Add a new officer to <strong>{{ organization.name }}</strong>.
+          </p>
+        </div>
+        <a
+          href="{% url 'org_profile' slug=organization.slug %}"
+          class="text-gray-400 hover:text-gray-600 transition"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </a>
+      </div>
+
+      <form
+        method="post"
+        enctype="multipart/form-data"
+        id="officer-main-form"
+        class="space-y-8"
+      >
+        {% csrf_token %}
+
+        <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
+          <h3 class="text-blue-800 font-bold mb-4 flex items-center gap-2">
+            <i class="fas fa-user-shield"></i> Officer Info
+          </h3>
+          <div class="grid grid-cols-1 gap-2">{{ officer_form.as_p }}</div>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-gray-700 font-bold flex items-center gap-2">
+              <i class="fas fa-users"></i> Membership
+            </h3>
+            <button
+              type="button"
+              id="add-membership"
+              class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition"
+            >
+              <i class="fas fa-plus"></i> Add Row
+            </button>
+          </div>
+          <p class="text-xs text-gray-500 mb-4 italic">If none, leave blank.</p>
+
+          <div id="membership-container" class="space-y-4">
+            <div
+              class="membership-row bg-white p-4 rounded-lg border border-gray-200 shadow-sm"
+            >
+              {{ membership_form.as_p }}
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-gray-700 font-bold flex items-center gap-2">
+              <i class="fas fa-chalkboard-teacher"></i> Seminars Attended
+            </h3>
+            <button
+              type="button"
+              id="add-seminar"
+              class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition"
+            >
+              <i class="fas fa-plus"></i> Add Row
+            </button>
+          </div>
+
+          <div id="seminar-container" class="space-y-4">
+            <div
+              class="seminar-row bg-white p-4 rounded-lg border border-gray-200 shadow-sm"
+            >
+              {{ seminar_form.as_p }}
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <button
+            type="submit"
+            class="w-full py-3 px-6 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg transition transform hover:-translate-y-0.5"
+          >
+            Save Officer Profile
+          </button>
+        </div>
+      </form>
     </div>
 
-    <form method="post" enctype="multipart/form-data" id="officer-main-form">
-      {% csrf_token %}
-
-      <div class="form-section">
-        <h3 class="section-title"><i></i> Officer Info</h4>
-
-        {{ officer_form.as_p }}
+    <div
+      class="w-[350px] bg-gray-50 p-6 border-l border-gray-200 flex flex-col gap-6"
+    >
+      <div>
+        <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+          Organization Menu
+        </h2>
+        <div class="space-y-2">
+          <a
+            href="{% url 'org_profile' slug=organization.slug %}"
+            class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group"
+          >
+            <span class="text-gray-700 font-medium group-hover:text-blue-700"
+              ><i class="fas fa-info-circle w-6 text-center"></i> About</span
+            >
+            <i
+              class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"
+            ></i>
+          </a>
+          <a
+            href="{% url 'view_project_by_slug' slug=organization.slug %}"
+            class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group"
+          >
+            <span class="text-gray-700 font-medium group-hover:text-blue-700"
+              ><i class="fas fa-project-diagram w-6 text-center"></i>
+              Projects</span
+            >
+            <i
+              class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"
+            ></i>
+          </a>
+          <a
+            href="{% url 'view_financial_by_slug' slug=organization.slug %}"
+            class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group"
+          >
+            <span class="text-gray-700 font-medium group-hover:text-blue-700"
+              ><i class="fas fa-file-invoice-dollar w-6 text-center"></i>
+              Financials</span
+            >
+            <i
+              class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"
+            ></i>
+          </a>
+          <a
+            href="{% url 'view_officers' slug=organization.slug %}"
+            class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group"
+          >
+            <span class="text-gray-700 font-medium group-hover:text-blue-700"
+              ><i class="fas fa-user-tie w-6 text-center"></i> Officers</span
+            >
+            <i
+              class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"
+            ></i>
+          </a>
+        </div>
       </div>
 
-      <h3 class="section-title"><i></i> Membership</h4>
-      <div class="form-section">
-        <p>If none, leave the form blank</p>
-        <div id="membership-container">{{ membership_form.as_p }}</div>
+      <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
+        <h4 class="text-yellow-800 font-bold text-sm mb-2">
+          <i class="fas fa-lightbulb"></i> Tips
+        </h4>
+        <ul class="text-xs text-yellow-700 space-y-2 list-disc pl-4">
+          <li>
+            Use the <strong>Search Student</strong> field to auto-fill details
+            from the student database.
+          </li>
+          <li>
+            Birthdate selection will automatically calculate the
+            <strong>Age</strong>.
+          </li>
+          <li>
+            Click <strong>+ Add Row</strong> to input multiple memberships or
+            seminars.
+          </li>
+        </ul>
       </div>
-      <button type="button" id="add-membership" class="button">
-        + Add Membership
-      </button>
-
-      <h3 class="section-title"><i></i> Seminar</h4>
-
-      <div id="seminar-container">{{ seminar_form.as_p }}</div>
-      <button type="button" id="add-seminar" class="button">
-        + Add Seminar
-      </button>
-
-      <button type="submit" class="button">Save</button>
-    </form>
+    </div>
   </div>
 </div>
 
 <script>
-  // Membership clone
+  // --- 1. Dynamic Form Fields (Membership & Seminars) ---
+  // Logic adapted to work with Tailwind containers
+
   document
     .getElementById("add-membership")
     .addEventListener("click", function () {
       let container = document.getElementById("membership-container");
-      let newMembership = container.cloneNode(true);
-      newMembership.querySelectorAll("input, select").forEach((el) => {
-        el.value = "";
-      });
-      container.parentNode.insertBefore(newMembership, this);
+      // Clone the first row
+      let firstRow = container.querySelector(".membership-row");
+      if (firstRow) {
+        let newRow = firstRow.cloneNode(true);
+        // Clear inputs
+        newRow.querySelectorAll("input, select").forEach((el) => {
+          el.value = "";
+        });
+        container.appendChild(newRow);
+      }
     });
 
-  // Seminar clone
   document.getElementById("add-seminar").addEventListener("click", function () {
     let container = document.getElementById("seminar-container");
-    let newSeminar = container.cloneNode(true);
-    newSeminar.querySelectorAll("input, select").forEach((el) => {
-      el.value = "";
-    });
-    container.parentNode.insertBefore(newSeminar, this);
+    let firstRow = container.querySelector(".seminar-row");
+    if (firstRow) {
+      let newRow = firstRow.cloneNode(true);
+      newRow.querySelectorAll("input, select").forEach((el) => {
+        el.value = "";
+      });
+      container.appendChild(newRow);
+    }
   });
-</script>
-<script>
-  // Age calculation
+
+  // --- 2. Age Calculation ---
   document.addEventListener("DOMContentLoaded", function () {
     const dobInput = document.getElementById("id_date_of_birth");
     const ageInput = document.getElementById("id_age");
@@ -120,49 +324,35 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
       return age;
     }
 
-    dobInput?.addEventListener("change", function () {
-      if (this.value) {
-        ageInput.value = calculateAge(this.value);
-      } else {
-        ageInput.value = "";
-      }
-    });
+    if (dobInput && ageInput) {
+      dobInput.addEventListener("change", function () {
+        if (this.value) {
+          ageInput.value = calculateAge(this.value);
+        } else {
+          ageInput.value = "";
+        }
+      });
+    }
   });
-</script>
-<script>
-  // Message fade out
-  document.addEventListener("DOMContentLoaded", function () {
-    const messages = document.querySelectorAll(".popup-message");
-    messages.forEach((msg) => {
-      setTimeout(() => {
-        msg.remove();
-      }, 4000); // auto remove after 4s
-    });
-  });
-</script>
 
-<script>
+  // --- 3. jQuery Autocomplete ---
   $(function () {
-    // 1. Target the search box from our forms.py
     $("#id_student_search").autocomplete({
-      source: "{% url 'search_students' %}", // Use our search view
+      source: "{% url 'search_students' %}",
       minLength: 2,
-
-      // 2. This runs when you select a student
       select: function (event, ui) {
-        event.preventDefault(); // Stop it from just pasting the label
+        event.preventDefault();
+        $(this).val(ui.item.label);
 
-        // --- AUTOFILL THE FORM ---
-        $(this).val(ui.item.label); // Fill search box
-        $("#id_student").val(ui.item.id); // Fill hidden student ID
-        $("#id_firstname").val(ui.item.firstname); // Fill firstname
-        $("#id_surname").val(ui.item.surname); // Fill surname
-        $("#id_year").val(ui.item.year); // Fill year dropdown
+        // Autofill fields (Ensure IDs match Django form output)
+        $("#id_student").val(ui.item.id);
+        $("#id_firstname").val(ui.item.firstname);
+        $("#id_surname").val(ui.item.surname);
+        $("#id_year").val(ui.item.year);
         $("#id_course").val(ui.item.course);
       },
     });
 
-    // 3. Clear fields if the search box is cleared
     $("#id_student_search").on("keyup", function () {
       if ($(this).val() === "") {
         $("#id_student").val("");
@@ -172,7 +362,7 @@ Organization (FSTLP){% endblock %} {% block headcontent %}
       }
     });
 
-    // 4. IMPORTANT: Re-enable disabled fields just before submitting
+    // Enable year field before submit
     $("#officer-main-form").on("submit", function () {
       $("#id_year").prop("disabled", false);
     });

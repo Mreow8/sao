@@ -1,9 +1,55 @@
 /*
- * CSS for Monthly Calendar of Activities
- * (calendarOfEvents.css)
- */
+=========================================
+--- MOBILE RESPONSIVENESS ---
+=========================================
+*/
+/*
+=========================================
+--- MOBILE RESPONSIVENESS ---
+=========================================
+*/
 
-/* --- Import Font --- */
+@media (max-width: 768px) {
+  /* 1. Force the Calendar Container to be Taller */
+  .fc {
+    min-height: 650px; /* Forces the whole calendar to be at least this tall */
+    height: auto; /* Allows it to grow if needed */
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  /* 2. Increase the Height of Each Day Row */
+  .fc .fc-daygrid-day-frame {
+    min-height: 85px !important; /* Increased from 60px to 85px */
+    height: auto !important; /* Allows row to expand for events */
+  }
+
+  /* 3. Header Toolbar Stacking (Keep this) */
+  .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.25rem;
+  }
+
+  /* 4. Ensure Events are visible */
+  .fc .fc-daygrid-event {
+    white-space: normal; /* Allows text to wrap if needed */
+    margin-top: 2px;
+  }
+}
+/* Ultra-small screens (e.g., older phones) */
+@media (max-width: 400px) {
+  .fc .fc-toolbar-title {
+    font-size: 1rem;
+  }
+
+  .fc .fc-daygrid-day-frame {
+    min-height: 40px; /* Even shorter rows */
+  }
+}
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
 
 /* --- Global, Container, & Font --- */

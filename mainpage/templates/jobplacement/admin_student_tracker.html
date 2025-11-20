@@ -109,11 +109,6 @@ headcontent %}
     background-color: #c82333;
   }
 
-  /* --- Pagination --- */
-  .pagination {
-    margin: 2rem 0 1rem;
-    text-align: center;
-  }
   .step-links a,
   .step-links .current {
     display: inline-block;
@@ -204,38 +199,13 @@ headcontent %}
       </tbody>
     </table>
   </div>
-
+  <!-- prettier-ignore -->
   {% if page_obj.has_other_pages %}
-  <div class="pagination">
-    <span class="step-links">
-      {% if base_query_string %} {% with separator='&'|add:base_query_string %}
-      {% if page_obj.has_previous %}
-      <a href="?page=1{{ separator }}">&laquo; First</a>
-      <a href="?page={{ page_obj.previous_page_number }}{{ separator }}"
-        >Previous</a
-      >
-      {% endif %}
-      <span class="current"
-        >Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span
-      >
-      {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}{{ separator }}">Next</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}{{ separator }}"
-        >Last &raquo;</a
-      >
-      {% endif %} {% endwith %} {% else %} {% if page_obj.has_previous %}
-      <a href="?page=1">&laquo; First</a>
-      <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-      {% endif %}
-      <span class="current"
-        >Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span
-      >
-      {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}">Next</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
-      {% endif %} {% endif %}
-    </span>
-  </div>
+   {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+{% endif %}
   {% endif %}
 </div>
 {% endblock bodycontent %}

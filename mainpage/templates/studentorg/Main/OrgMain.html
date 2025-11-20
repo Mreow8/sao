@@ -1,406 +1,346 @@
-{% extends base_template|default:"adminmain.html" %}{% load static %}
-<!-- prettier-ignore -->
-<!-- DEBUG: user.username={{ user.username }} | user.id={{ user.id }} -->
+{% extends base_template|default:"adminmain.html" %}
+{% load static tailwind_tags %}
 
-{% block title%}Student Organization (FSTLP){% endblock %}
-<!-- prettier-ignore -->
+{% block title %}Student Organization ({{ org.name }}){% endblock %}
 
-{% block headcontent%}
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-/>
+{% block headcontent %}
+    {% tailwind_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Inherited Tab Styles from Dashboard */
+        .tab-button {
+            font-family: "Rubik", sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #2c5282;
+            padding: 1rem 1.25rem;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-button:hover {
+            color: #2a4365;
+            background-color: #f0f5fa;
+        }
+        .tab-button.active {
+            color: #2c5282;
+            border-bottom-color: #2c5282;
+            background-color: transparent;
+        }
+        
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+        
+        /* Modal Transition */
+        .modal-overlay { transition: opacity 0.3s ease; }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
 
-<link rel="stylesheet" href="{% static 'studentorg/css/orgfinal.css' %}" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{% endblock %} {% block bodycontent %}<style>
-  /* --- Basic Modal Styles --- */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1000; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  padding-top: 60px;
-}
+{% block bodycontent %}
 
-/* Modal Content Box */
-.modal-content {
-  background-color: #fefefe;
-  margin: 5% auto; /* 5% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 500px; /* Max width */
-  border-radius: 8px;
-}
-
-/* The Close Button */
-.close-btn {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close-btn:hover,
-.close-btn:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-    display: none; /* Hidden by default */
-  }
-
-  .modal-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #fff;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 900px; /* Adjust as needed */
-    height: 90vh; /* 90% of the viewport height */
-    z-index: 1001;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  }
-/* Add this to your orgfinal.css */
-
-/* This wrapper holds the "Edit" button and places it 
-  in the top-right corner of the card *before* the content.
-*/
-.button-edit-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem; /* Adds space before the content below it */
-}
-
-/* This is the new style for the edit button itself */
-.button.button-edit {
-  background: #f9f9f9;
-  background-image: none;
-  color: #2c5282;
-  border: 1px solid #ddd;
-  box-shadow: none;
-}
-.button.button-edit:hover {
-  background: #f0f4f8;
-  color: #2a4365;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  filter: brightness(100%);
-  transform: translateY(-2px);
-  border-color: #ccc;
-}
-  .modal-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .modal-header h2 {
-    margin: 0;
-  }
-
-  .modal-close-btn {
-    font-size: 24px;
-    font-weight: bold;
-    color: #888;
-    cursor: pointer;
-    border: none;
-    background: none;
-  }
-  
-  .modal-close-btn:hover {
-    color: #000;
-  }
-
-  .modal-body {
-    flex-grow: 1; /* Makes the body fill the space */
-    padding: 0;
-    overflow-y: hidden; /* The iframe will handle its own scroll */
-  }
-
-  .modal-body iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-</style>
-
-<div class="modal-overlay" id="adviser-modal-overlay">
-  <div class="modal-container" id="adviser-modal-container">
-    
-    <div class="modal-header">
-      <h2>Register New Adviser</h2>
-      <button class="modal-close-btn" onclick="closeAdviserModal()">&times;</button>
-    </div>
-    
-    <div class="modal-body">
-      <iframe id="adviser-form-iframe" src="" frameborder="0"></iframe>
-    </div>
-
-  </div>
-</div>
- <div class="sub-title">
-    <h4>STUDENT ORGANIZATION</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt; {{ org.name|default:"Organization Name" }}</p>
-  </div>
-<hr>
-
-<div class="container">
- 
-  <div class="tabs">
-    <a href="" class="tab active">Profiles</a>
-    <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="tab"
-      >Projects</a
-    >
-    <a href="{% url 'view_financial_by_slug' slug=org.slug %}" class="tab"
-      >Financial Statements</a
-    > 
-    <!-- prettier-ignore -->
-    {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
-
-    <a href="{% url 'view_accreditation_by_slug' slug=org.slug %}" class="tab"
-      >Accreditation Application</a
-    >
-    {%endif%}
-  </div>
-
-  <div class="maincontain">
-    <div class="subcontain">
-      <div class="text-content">
-        <div class="f1">
-          <h2>{{ org.name }} LOGO SYMBOLISM</h2>
-          <img src="{{ org.logo.url }}" alt="{{ org.name }}" class="logoimg" />
+<div id="adviser-modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h3 class="text-lg font-bold text-gray-800">Register New Adviser</h3>
+            <button onclick="closeAdviserModal()" class="text-gray-500 hover:text-red-500 text-xl">&times;</button>
         </div>
-       {% if user.is_authenticated and not is_edit %}
-  {% if user.role == 'superadmin' or user.role == 'org_member' and user.organization == org %}
-    
-    <div class="button-edit-wrapper">
-      <a href="?edit=true" class="button button-edit">
-        <i class="fas fa-edit"></i> Edit Page
-      </a>
+        <div class="h-[500px]">
+            <iframe id="adviser-form-iframe" src="" class="w-full h-full border-0"></iframe>
+        </div>
     </div>
+</div>
 
-  {% endif %}
-{% endif %}
-
-{% if is_edit %}
-        <!-- Edit Mode -->
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %} {{ form.as_p }}
-
-          <p>Input elements like this "Title: Elements"</p>
-          <!-- Add Element Button (Optional) -->
-          <div id="key-elements-container">
-            {% for element in key_elements %}
-            <div class="key-element">
-              <input
-                type="text"
-                name="key_elements[]"
-                value="{% if element.title %}{{ element.title }}: {{ element.description }}{% else %}{{ element.description }}{% endif %}"
-                placeholder="Enter element meaning..."
-                class="key-input"
-              />
+<div id="cblModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-bold text-gray-800">Upload CBL</h4>
+            <span class="close-btn cursor-pointer text-gray-500 hover:text-red-500 text-xl">&times;</span>
+        </div>
+        <p class="text-sm text-gray-600 mb-4">Upload a new Constitution and By-Laws for {{ org.name }}.</p>
+        <form action="{% url 'upload_org_cbl' org.slug %}" method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <div class="border border-dashed border-gray-300 p-4 rounded-lg">
+                {{ cbl_form.as_p }}
             </div>
-            {% endfor %}
-
-            <div class="key-element">
-              <input
-                type="text"
-                name="key_elements[]"
-                placeholder="Enter element meaning..."
-                class="key-input"
-              />
-            </div>
-          </div>
-
-          <button type="button" id="add-element-btn" class="button">
-            Add Element
-          </button>
-          <button type="submit" class="button">Save</button>
-          <a href="{% url 'org_profile' slug=org.slug %}" class="button"
-            >Cancel</a
-          >
+            <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Upload and Save</button>
         </form>
-        {% else %}
-        <!-- View Mode -->
-        <div class="top bot">
-          <p>{{ org.description|linebreaksbr }}</p>
-        </div>
-        <div class="con bot">
-  {% if active_cbl %}
-  <a href="{% url 'view_org_cbl' organization.slug %}" class="button" target="_blank">View CBL</a>
-{% else %}
-  {% if user.is_staff or user.role == 'superadmin' %}
-    <button type="button" class="button" id="openCblModalBtn">
-      <i class="fa fa-upload"></i> Upload CBL
-    </button>
-  {% else %}
-    <button type="button" class="button-disabled" disabled>CBL Not Available</button>
-  {% endif %}
-{% endif %}
-
-
-<div id="cblModal" class="modal">
-  <div class="modal-content">
-    <span class="close-btn">&times;</span>
-    
-    <h4>Upload New CBL for {{ organization.name }}</h4>
-    <p>This will replace any existing CBL as the new active document.</p>
-    
-    <form action="{% url 'upload_org_cbl' organization.slug %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        {{ cbl_form.as_p }}
-        
-        <button type="submit" class="button">Upload and Save</button>
-    </form>
-  </div>
-</div>
-{% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
- <a href="{% url 'view_officers' slug=org.slug %}" class="button">View Officers</a>
-          <a href="{% url 'officer_form' slug=org.slug %}" class="button"
-            >Register Officer</a
-          >{%endif%}
-    <a href="{% url 'view_adviser_list' org_slug=org.slug %}" class="button">
-  View Advisers for {{ org.name }}
-</a>
-{% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
-  
-<button 
-  type="button" 
-  class="button" 
-  onclick="openAdviserModal('{% url 'register_adviser' slug=org.slug %}')"
->
-  Register Adviser
-</button>
-
-{% endif %}
-        </div>
-        {% if key_elements %}
-        <h2 class="pf">Key elements of the logo include:</h2>
-        <div class="pf2">
-          <ul>
-            {% for item in key_elements %} {% if item.title %}
-            <li><strong>{{ item.title }}:</strong> {{ item.description }}</li>
-            {% else %}
-            <li>{{ item.description }}</li>
-            {% endif %} {% endfor %}
-          </ul>
-        </div>
-        {% else %}
-        <p>No key elements provided.</p>
-        {% endif %}
-        <!-- prettier-ignore -->
-        {% endif %}
-      </div>
     </div>
-  </div>
 </div>
 
-{% if is_edit %}
+<div class="sub-title mb-6">
+    <h4 class="text-xl font-bold text-gray-800">STUDENT ORGANIZATION</h4>
+    <div class="flex items-center gap-2 text-sm text-gray-500">
+        <a href="{% url 'homepage' %}" class="hover:text-blue-600">Home</a>
+        <span>&gt;</span>
+        <span class="text-blue-600 font-medium">{{ org.name|default:"Organization Name" }}</span>
+    </div>
+</div>
+<hr class="mb-6 border-gray-200">
+
+<div class="w-full flex justify-start">
+    <div class="w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex ml-4 min-h-[600px]">
+        
+        <div class="flex-1 h-full flex flex-col p-8 border-r border-gray-100">
+            
+            <div class="border-b sticky top-0 bg-white z-10 mb-6">
+                <div class="flex gap-4">
+                    <button class="tab-button active" data-tab="about">About Organization</button>
+                    <button class="tab-button" data-tab="symbolism">Logo & Symbolism</button>
+                    {% if is_edit %}
+                    <button class="tab-button text-amber-600 border-amber-600" data-tab="editmode">Editing Mode</button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="overflow-y-auto custom-scrollbar flex-1 pr-2">
+                
+                {% if is_edit %}
+                <div class="tab-content active" id="editmode-tab">
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-6">
+                        <h3 class="font-bold text-amber-800 mb-4"><i class="fas fa-edit mr-2"></i>Edit Profile</h3>
+                        <form method="post" enctype="multipart/form-data" class="space-y-4">
+                            {% csrf_token %}
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                {{ form.as_p }}
+                            </div>
+
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <label class="block font-semibold text-gray-700 mb-2">Logo Elements (Symbolism)</label>
+                                <p class="text-xs text-gray-500 mb-3">Format: "Title: Description"</p>
+                                <div id="key-elements-container" class="space-y-2">
+                                    {% for element in key_elements %}
+                                    <div class="flex gap-2">
+                                        <input type="text" name="key_elements[]" 
+                                            value="{% if element.title %}{{ element.title }}: {{ element.description }}{% else %}{{ element.description }}{% endif %}"
+                                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition">
+                                    </div>
+                                    {% endfor %}
+                                    <input type="text" name="key_elements[]" placeholder="Add new element..." 
+                                        class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition">
+                                </div>
+                                <button type="button" id="add-element-btn" class="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium">
+                                    <i class="fas fa-plus-circle"></i> Add Another Element
+                                </button>
+                            </div>
+
+                            <div class="flex gap-3 pt-4">
+                                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md">Save Changes</button>
+                                <a href="{% url 'org_profile' slug=org.slug %}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+
+                <div class="tab-content active" id="about-tab">
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="w-48 h-48 rounded-full shadow-lg overflow-hidden border-4 border-white mb-4 bg-gray-50 flex items-center justify-center">
+                            {% if org.logo %}
+                                <img src="{{ org.logo.url }}" alt="{{ org.name }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <i class="fas fa-users text-6xl text-gray-300"></i>
+                            {% endif %}
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 text-center">{{ org.name }}</h2>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3">About Us</h3>
+                        <p class="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
+                            {{ org.description|default:"No description provided yet." }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="symbolism-tab">
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 mb-4">
+                        <h3 class="text-lg font-bold text-blue-800 mb-4">Logo Symbolism & Key Elements</h3>
+                        {% if key_elements %}
+                        <div class="grid gap-4">
+                            {% for item in key_elements %}
+                            <div class="bg-white p-4 rounded-lg shadow-sm flex items-start gap-3">
+                                <div class="mt-1 text-blue-500"><i class="fas fa-star"></i></div>
+                                <div>
+                                    {% if item.title %}
+                                        <span class="font-bold text-gray-800">{{ item.title }}:</span> 
+                                        <span class="text-gray-600">{{ item.description }}</span>
+                                    {% else %}
+                                        <span class="text-gray-600">{{ item.description }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-gray-500 italic">No key elements listed.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %} </div>
+        </div>
+
+        <div class="w-[350px] bg-gray-50 p-6 flex flex-col gap-6">
+            
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Organization Menu</h2>
+                <div class="space-y-2">
+                    <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group text-decoration-none">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-project-diagram w-6 text-center"></i> Projects</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="{% url 'view_financial_by_slug' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group text-decoration-none">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-file-invoice-dollar w-6 text-center"></i> Financials</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    
+                    {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
+                    <a href="{% url 'view_accreditation_by_slug' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group text-decoration-none">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-award w-6 text-center"></i> Accreditation</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    {% endif %}
+                    
+                    <a href="{% url 'view_officers' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group text-decoration-none">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-user-tie w-6 text-center"></i> Officers</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+
+                    <a href="{% url 'view_adviser_list' org_slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group text-decoration-none">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-chalkboard-teacher w-6 text-center"></i> Advisers</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                </div>
+            </div>
+
+            {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Admin Actions</h2>
+                <div class="grid grid-cols-1 gap-3">
+                    {% if not is_edit %}
+                    <a href="?edit=true" class="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-center font-medium">
+                        <i class="fas fa-pen mr-2"></i> Edit Page
+                    </a>
+                    {% endif %}
+
+                    <div class="flex gap-2">
+                        <a href="{% url 'officer_form' slug=org.slug %}" class="flex-1 py-2 px-2 bg-white border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-50 text-center text-sm font-medium transition">
+                            <i class="fas fa-plus mr-1"></i> Officer
+                        </a>
+                        <button onclick="openAdviserModal('{% url 'register_adviser' slug=org.slug %}')" class="flex-1 py-2 px-2 bg-white border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-50 text-center text-sm font-medium transition">
+                            <i class="fas fa-plus mr-1"></i> Adviser
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow-sm mt-2">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-bold text-gray-700">CBL Status</span>
+                            {% if active_cbl %}
+                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Active</span>
+                            {% else %}
+                                <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">Missing</span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if active_cbl %}
+                            <a href="{% url 'view_org_cbl' org.slug %}" target="_blank" class="block w-full py-2 bg-gray-100 text-gray-700 text-center rounded hover:bg-gray-200 text-sm mb-2">
+                                <i class="fas fa-eye mr-1"></i> View Current CBL
+                            </a>
+                        {% endif %}
+
+                        <button id="openCblModalBtn" class="w-full py-2 border border-dashed border-gray-400 text-gray-600 rounded hover:bg-gray-50 text-sm">
+                            <i class="fas fa-upload mr-1"></i> Upload New CBL
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
 <script>
-  document
-    .getElementById("add-element-btn")
-    .addEventListener("click", function () {
-      const container = document.getElementById("key-elements-container");
-      const div = document.createElement("div");
-      div.classList.add("key-element");
-      div.innerHTML = `
-      <input type="text" name="key_elements[]" placeholder="Enter element meaning..." class="key-input" />
-    `;
-      container.appendChild(div);
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- TAB SWITCHING LOGIC ---
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // If in edit mode, prevent switching if unsaved? (Optional logic)
+                
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // --- ADD ELEMENT SCRIPT (EDIT MODE) ---
+        const addBtn = document.getElementById("add-element-btn");
+        if (addBtn) {
+            addBtn.addEventListener("click", function () {
+                const container = document.getElementById("key-elements-container");
+                const div = document.createElement("div");
+                div.className = "flex gap-2";
+                div.innerHTML = `
+                <input type="text" name="key_elements[]" placeholder="Enter element meaning..." 
+                    class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition" />
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // --- CBL MODAL LOGIC ---
+        const cblModal = document.getElementById("cblModal");
+        const cblBtn = document.getElementById("openCblModalBtn");
+        const cblClose = cblModal ? cblModal.querySelector(".close-btn") : null;
+
+        if (cblBtn && cblModal) {
+            cblBtn.onclick = () => cblModal.classList.remove('hidden');
+        }
+        if (cblClose) {
+            cblClose.onclick = () => cblModal.classList.add('hidden');
+        }
+        if (cblModal) {
+            cblModal.onclick = (e) => {
+                if(e.target === cblModal) cblModal.classList.add('hidden');
+            }
+        }
     });
+
+    // --- ADVISER MODAL FUNCTIONS ---
+    function openAdviserModal(url) {
+        const overlay = document.getElementById('adviser-modal-overlay');
+        const iframe = document.getElementById('adviser-form-iframe');
+        if (overlay && iframe) {
+            iframe.src = url;
+            overlay.classList.remove('hidden');
+        }
+    }
+
+    function closeAdviserModal() {
+        const overlay = document.getElementById('adviser-modal-overlay');
+        const iframe = document.getElementById('adviser-form-iframe');
+        if (overlay && iframe) {
+            overlay.classList.add('hidden');
+            iframe.src = "";
+        }
+    }
 </script>
-{% endif %} <script>
-  function openAdviserModal(url) {
-    // 1. Get the modal elements
-    var overlay = document.getElementById('adviser-modal-overlay');
-    var modal = document.getElementById('adviser-modal-container');
-    var iframe = document.getElementById('adviser-form-iframe');
+{% endblock %}
 
-    // 2. Set the iframe's src to the form URL
-    iframe.src = url;
-
-    // 3. Show the modal
-    overlay.style.display = 'block';
-    modal.style.display = 'flex';
-  }
-
-  function closeAdviserModal() {
-    var overlay = document.getElementById('adviser-modal-overlay');
-    var modal = document.getElementById('adviser-modal-container');
-    var iframe = document.getElementById('adviser-form-iframe');
-
-    // 1. Hide the modal
-    overlay.style.display = 'none';
-    modal.style.display = 'none';
-
-    // 2. Clear the iframe src to stop any network activity
-    iframe.src = "";
-
-    // 3. (Optional) Refresh the main page so the new adviser appears
-    // window.location.reload(); 
-  }
-
-  // Optional: Close modal if user clicks on the dark overlay
-  document.getElementById('adviser-modal-overlay').addEventListener('click', function(event) {
-    if (event.target === this) {
-      closeAdviserModal();
-    }
-  });
-</script>
-
-<script>document.addEventListener("DOMContentLoaded", function() {
-    // Get the modal
-    var modal = document.getElementById("cblModal");
-    
-    // Get the button that opens the modal
-    var btn = document.getElementById("openCblModalBtn");
-    
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close-btn")[0];
-    
-    // When the user clicks the button, open the modal 
-    if(btn) {
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-    }
-    
-    // When the user clicks on <span> (x), close the modal
-    if(span) {
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-    }
-    
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-});</script>
 {% endblock %}

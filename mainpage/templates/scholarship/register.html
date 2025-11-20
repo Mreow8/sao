@@ -3,6 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Student Register - CTU</title>
     <style>
       /* --- [NEW] Import Rubik Font --- */
@@ -206,8 +207,8 @@
       /* --- Responsive Design --- */
       @media (max-width: 900px) {
         .container {
-          background: url("{% static 'imgs/signinBackground.jpg' %}") no-repeat
-            center center;
+          /* ✅ FIXED: Use same background as Login for consistency */
+          background: url("{% static 'imgs/CTU.jpg' %}") no-repeat center center;
           background-size: cover;
           position: relative;
           display: flex;

@@ -4,20 +4,14 @@ body, button, input {
   font-family: "Rubik", sans-serif;
 }
 
-/* --- Main Layout --- */
-.content {
-  padding: 0 1.5rem; /* Add horizontal padding like .body-content */
-}
-
 /* --- Main Content Card --- */
 /* This mimics the .gmc-form style from requestgmc.css */
 .form_div {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 0 0 12px 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-top: 2.5rem; /* Add spacing from top */
 }
 
 /* --- Page Title --- */
@@ -63,11 +57,15 @@ body, button, input {
   text-align: center;
 }
 
-.logo-container img {
-  height: 80px;
-  width: 80px;
-  object-fit: contain;
-}
+  /* Target the images inside the logo containers */
+  .logo-container img {
+    width: 220px; /* Sets a fixed large width */
+    height: 220px; /* Sets the same height to make the box uniform */
+    object-fit: contain; /* Ensures the image scales correctly without stretching/distorting */
+    display: block; /* Helps with centering */
+    margin: 0 auto 15px; /* Centers the image horizontally and adds space below */
+  }
+
 
 .logo-container a {
   text-decoration: none;
@@ -136,8 +134,9 @@ body, button, input {
 }</style>  <div class="sub-title">
     <h4>SCHOLARSHIP (Admin)</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">Transaction Reports</p>
+    <p class="certxt"> > Transaction Reports</p>
   </div>
+  <hr>
         <div class="content">
             <div class="form_div">
                     <div class="title">

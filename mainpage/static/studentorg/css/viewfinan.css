@@ -1,212 +1,214 @@
-/* --- Global Font & Container --- */
-/* Establishes the Rubik font, same as requestgmc.css */
-body,
-button,
-input,
-select,
-textarea,
-.tab,
-.sub-title,
-table {
-  font-family: "Rubik", sans-serif;
+:root {
+  --main-blue: #2c5282;
+  --main-blue-dark: #2a4365;
+  --primary-blue: #007bff;
+  --light-gray-bg: #f8f9fa;
+  --container-bg: #ffffff;
+  --text-color: #343a40;
+  --text-light: #6c757d;
+  --border-color: #dee2e6;
 }
 
+/* ========================================
+   Container & Headers
+   ======================================== */
 .container {
-  width: 100%;
-  max-width: 1200px; /* Optional: sets a max width */
-  margin: 0 auto; /* Centers the container */
-  padding: 0 1.5rem;
+  background-color: var(--container-bg);
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
 }
 
-/* --- Tabs (Adapted for <button>) --- */
+/* ========================================
+   Tabs
+   ======================================== */
 .tabs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 30px;
 }
+
 .tab {
-  font-family: "Rubik", sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  color: #2c5282; /* Theme Blue */
+  padding: 10px 18px;
   text-decoration: none;
-  padding: 1rem 1.25rem;
-  border: none;
+  color: var(--text-light);
+  font-weight: 500;
+  font-size: 16px;
   border-bottom: 3px solid transparent;
-  border-radius: 8px 8px 0 0;
-  cursor: pointer;
-  background-color: transparent;
-  transition: color 0.2s, background-color 0.2s;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
 }
+
 .tab:hover {
-  color: #2a4365;
-  background-color: #f0f5fa; /* Light blue hover */
+  background-color: #f0f5fa;
+  color: var(--main-blue);
 }
+
 .tab.active {
-  color: #ffffff;
-
-  background-color: #2c5282; /* Active tab has blue background */
-  border-bottom-color: #2c5282;
+  color: var(--main-blue);
+  font-weight: 600;
+  border-bottom-color: var(--main-blue);
 }
 
-/* --- Main Card Container (for Form and Table) --- */
-/* This is styled just like .gmc-form from requestgmc.css */
-.guidance-form,
+/* ========================================
+   Forms (Guidance Form)
+   ======================================== */
+.guidance-form {
+  margin-bottom: 40px;
+}
+
+form {
+  padding: 25px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #fdfdfd;
+}
+
+form h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--main-blue);
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
 .maincontain {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
 }
 
-/* --- Form Headings --- */
-.guidance-form h2,
-.maincontain h2 {
-  font-size: 1.5rem; /* 24px */
-
-  color: #333;
-  margin-top: 0;
-  margin-bottom: 2rem;
+.form-column {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
-/* --- Form Layout --- */
-/* This styles the .maincontain *inside* the .guidance-form */
-.guidance-form .maincontain {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  /* Reset card styles for the inner container */
-  padding: 0;
-  margin: 0;
-  border: none;
-  box-shadow: none;
-  background-color: transparent;
-  margin-top: 0;
-}
-
-/* On mobile, stack the columns */
-@media (max-width: 768px) {
-  .guidance-form .maincontain {
-    grid-template-columns: 1fr;
-    gap: 0; /* Remove gap, .form-group margin will handle it */
-  }
-}
-
-/* --- Form Group --- */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Space between label and input */
-  margin-bottom: 1rem;
 }
 
 .form-group label {
   font-weight: 500;
-  color: #333;
+  color: var(--text-color);
+  margin-bottom: 6px;
+  font-size: 15px;
 }
 
-/* --- Form Inputs --- */
-/* Styled just like #comboBox and .ornum-input */
-.guidance-form input[type="text"],
-.guidance-form input[type="date"],
-.guidance-form input[type="number"],
-.guidance-form select,
-.guidance-form textarea {
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group textarea,
+.form-group select {
   width: 100%;
-  box-sizing: border-box; /* Important for 100% width */
-  font-family: "Rubik", sans-serif;
-  font-size: 0.95rem;
   padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px; /* Override inline 5px */
-  background-color: #f9f9f9;
+  border: 1px solid var(--border-color);
+  border-radius: 6px; /* Matches your inline style requirement */
+  font-size: 15px;
+  font-family: "Rubik", sans-serif;
+  box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fff;
 }
 
-.guidance-form textarea {
+.form-group textarea {
   min-height: 100px;
   resize: vertical;
 }
 
-/* Focus style from requestgmc.css */
-.guidance-form input[type="text"]:focus,
-.guidance-form input[type="date"]:focus,
-.guidance-form input[type="number"]:focus,
-.guidance-form select:focus,
-.guidance-form textarea:focus {
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
   outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
-/* --- Submit Button --- */
-/* Styled just like .requestBtn from requestgmc.css */
 .btn-primary {
-  font-family: "Rubik", sans-serif;
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  font-size: 1rem;
-
-  padding: 12px 24px;
+  background-color: var(--main-blue);
+  color: #ffffff;
+  padding: 12px 20px;
   border: none;
-  border-radius: 8px; /* Override inline 5px */
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 16px;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
-  margin-top: 1rem;
-  width: 100%; /* Match inline style request */
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  margin-top: 20px;
+  display: inline-block;
+  width: auto; /* Default width */
+}
+
+.guidance-form .btn-primary {
+  width: 100%; /* Full width for form submit button per your inline style */
 }
 
 .btn-primary:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
+  background-color: var(--main-blue-dark);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
-/* --- Table Styles --- */
-/* Table Wrapper (for horizontal scrolling) */
+/* ========================================
+   Tables
+   ======================================== */
 .subcontain {
   width: 100%;
   overflow-x: auto;
 }
 
+.subcontain h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--main-blue);
+  margin-bottom: 15px;
+}
+
 table {
   width: 100%;
-  min-width: 700px; /* Ensures table doesn't cramp */
-  border-collapse: collapse;
-  border: none;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 table th,
 table td {
-  border-bottom: 1px solid #ddd;
   padding: 12px 15px;
   text-align: left;
+  border-bottom: 1px solid var(--border-color);
   font-size: 14px;
-  vertical-align: middle;
+  line-height: 1.5;
 }
 
 table th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue */
-
+  background-color: var(--light-gray-bg);
+  font-weight: 600;
+  color: var(--main-blue);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 12px;
 }
 
-/* Remove bottom border from last row */
+table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+table tbody tr:hover {
+  background-color: #f0f5fa;
+}
+
 table tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* Style for "No records" row */
-table tbody tr td[colspan] {
+table td[colspan="6"] {
   text-align: center;
-  color: #777;
-  font-style: italic;
-  padding: 2rem;
+  color: var(--text-light);
+  padding: 30px;
 }

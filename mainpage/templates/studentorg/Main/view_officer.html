@@ -1,391 +1,167 @@
-{% extends base_template|default:"main.html" %}
-{% load static %}
+{% extends base_template|default:"adminmain.html" %}
+{% load static tailwind_tags %}
 
-{% block title %}
-Student Organization ({{ org.name }}) - Officers
-{% endblock %}
+{% block title %}Student Organization ({{ org.name }}) - Officers{% endblock %}
 
 {% block headcontent %}
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-/>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<style>
-  /* === General Container === */
-  .container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-  }
-
-  .sub-title {
-    margin-bottom: 1.5rem;
-  }
-
-  .container h1 {
-    font-size: 1.6rem;
-    
-    color: #1a365d;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: 3px solid #2563eb;
-    display: inline-block;
-    padding-bottom: 0.3rem;
-  }
-
-  /* === Page Header and Filter === */
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .year-filter-nav {
-    position: relative;
-  }
-
-  .year-filter-btn {
-    background-color: #fff;
-    border: 1px solid #cbd5e0;
-    padding: 8px 16px;
-    border-radius: 6px;
-    
-    color: #2d3748;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-  }
-
-  .year-filter-btn:hover {
-    background-color: #f7fafc;
-    border-color: #a0aec0;
-  }
-
-  .year-filter-btn .fa-chevron-down {
-    margin-left: 8px;
-    font-size: 0.8rem;
-  }
-
-  .year-filter-dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: #fff;
-    border: 1px solid #cbd5e0;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    min-width: 180px;
-    z-index: 20;
-    margin-top: 4px;
-    padding: 4px;
-  }
-
-  .year-filter-nav:hover .year-filter-dropdown {
-    display: block;
-  }
-
-  .year-filter-dropdown a {
-    display: block;
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    color: #2d3748;
-    text-decoration: none;
-    border-radius: 4px;
-  }
-
-  .year-filter-dropdown a:hover {
-    background-color: #edf2f7;
-    color: #1a202c;
-  }
-
-  .year-filter-dropdown a.active {
-    background-color: #2563eb;
-    color: white;
-    
-  }
-
-  /* === Officer Grid === */
-  .officer-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .officer-card {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    text-align: center;
-    padding: 1.5rem 1rem;
-    transition: all 0.25s ease;
-    position: relative;
-  }
-
-  .officer-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  }
-
-  .officer-image {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #1e40af;
-    margin-bottom: 1rem;
-    cursor: pointer;
-  }
-
-  .officer-name {
-    font-size: 1.1rem;
-    
-    color: #1a365d;
-    margin-bottom: 0.3rem;
-  }
-
-  .officer-position {
-    font-size: 0.95rem;
-    color: #2563eb;
-    font-weight: 500;
-    margin-bottom: 0.2rem;
-  }
-
-  .officer-course {
-    font-size: 0.9rem;
-    color: #4a5568;
-    margin-bottom: 1rem;
-  }
-
-  /* === Active Badge === */
-  .active-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #28a745;
-    color: white;
-    font-size: 0.75rem;
-    
-    padding: 4px 8px;
-    border-radius: 12px;
-  }
-
-  /* === History Popup === */
-  .history-icon {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    font-size: 1.1rem;
-    color: #718096;
-    cursor: pointer;
-  }
-
-  .history-popup {
-    display: none;
-    position: absolute;
-    bottom: 40px;
-    right: 10px;
-    background-color: #1a365d;
-    color: white;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    z-index: 10;
-    width: 220px;
-    text-align: left;
-  }
-
-  .history-popup h4 {
-    margin: 0 0 10px 0;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    border-bottom: 1px solid #4a5568;
-    padding-bottom: 5px;
-  }
-
-  .history-popup ul {
-    margin: 0;
-    padding: 0 0 0 15px;
-    list-style-type: disc;
-  }
-
-  .history-popup li {
-    font-size: 0.85rem;
-    margin-bottom: 5px;
-  }
-
-  .officer-card:hover .history-popup {
-    display: block;
-  }
-
-  /* === Image Modal === */
-  #image-modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  #image-modal-content {
-    max-width: 90vw;
-    max-height: 90vh;
-    object-fit: contain;
-    border: 3px solid white;
-    border-radius: 5px;
-  }
-
-  #image-modal-close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    color: #fff;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.2s ease;
-  }
-
-  #image-modal-close:hover {
-    color: #ccc;
-  }
-</style>
+    {% tailwind_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+        
+        /* Officer Card Hover Effect */
+        .officer-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .officer-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    </style>
 {% endblock %}
 
 {% block bodycontent %}
-<div class="container">
-  <div class="sub-title">
-    <h4>STUDENT ORGANIZATION</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">
-      &gt; <a href="{% url 'org_profile' slug=org.slug %}">{{ org.name|default:"Organization Name" }}</a>
-    </p>
-    <p class="certxt">&gt; View Officers</p>
-  </div>
-<hr>
 
-  <div class="page-header">
-    <h1>
-      {{ org.name }} Officers
-      <span style="color: #4a5568; font-weight: 500;">
-        {% if selected_year %}
-          ({{ selected_year }})
-        {% else %}
-          (All Years)
-        {% endif %}
-      </span>
-    </h1>
-
-    <div class="year-filter-nav">
-      <button class="year-filter-btn">
-        {% if selected_year %}
-          Filter: {{ selected_year }}
-        {% else %}
-          Filter by Year
-        {% endif %}
-        <i class="fas fa-chevron-down"></i>
-      </button>
-      <div class="year-filter-dropdown">
-        <a href="{% url 'view_officers' slug=org.slug %}"
-           class="{% if not selected_year %}active{% endif %}">
-          All Years
-        </a>
-        {% for year in distinct_years %}
-        <a href="?year={{ year }}"
-           class="{% if selected_year == year %}active{% endif %}">
-          {{ year }}
-        </a>
-        {% endfor %}
-      </div>
+<div class="sub-title mb-6">
+    <h4 class="text-xl font-bold text-gray-800">STUDENT ORGANIZATION</h4>
+    <div class="flex items-center gap-2 text-sm text-gray-500">
+        <a href="{% url 'homepage' %}" class="hover:text-blue-600">Home</a>
+        <span>&gt;</span>
+        <a href="{% url 'org_profile' slug=org.slug %}" class="hover:text-blue-600">{{ org.name }}</a>
+        <span>&gt;</span>
+        <span class="text-blue-600 font-medium">Officers</span>
     </div>
-  </div>
+</div>
+<hr class="mb-6 border-gray-200">
 
-  <div class="officer-grid">
-    {% for officer_list in grouped_officer_lists %}
-      {% with officer=officer_list.0 %}
-      <div class="officer-card">
-        {% if officer.is_active %}
-          <div class="active-badge">Active</div>
-        {% endif %}
-<img
-  src="{% if officer.profile_picture %}{{ officer.profile_picture.url }}{% else %}/static/images/default_profile.png{% endif %}"
-  alt="{{ officer.firstname }}'s Profile"
->
-        <div class="officer-name">
-          {{ officer.firstname }} {{ officer.middlename|default:'' }} {{ officer.surname }}
-        </div>
-        <div class="officer-position">{{ officer.position }}</div>
-        <div class="officer-course">{{ officer.course }} ({{ officer.academic_year }})</div>
+<div class="w-full flex justify-start">
+    <div class="w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex ml-4 min-h-[600px]">
+        
+        <div class="flex-1 h-full flex flex-col p-8 border-r border-gray-100">
+            
+            <div class="flex justify-between items-center mb-8 border-b pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Officers</h2>
+                    <p class="text-sm text-gray-500">
+                        {% if selected_year %}Academic Year: {{ selected_year }}{% else %}All Years{% endif %}
+                    </p>
+                </div>
 
-        {% if officer_list|length > 1 %}
-        <i class="fas fa-history history-icon"></i>
-        <div class="history-popup">
-          <h4>Service History</h4>
-          <ul>
-            {% for record in officer_list %}
-              <li><b>{{ record.academic_year }}:</b> {{ record.position }}</li>
-            {% endfor %}
-          </ul>
+                <div class="relative group">
+                    <button class="flex items-center gap-2 bg-gray-50 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition">
+                        <i class="fas fa-calendar-alt text-blue-500"></i>
+                        <span>{% if selected_year %}{{ selected_year }}{% else %}Filter Year{% endif %}</span>
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl hidden group-hover:block z-20">
+                        <a href="{% url 'view_officers' slug=org.slug %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">All Years</a>
+                        {% for year in distinct_years %}
+                        <a href="?year={{ year }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 {% if selected_year == year %}bg-blue-50 text-blue-600 font-bold{% endif %}">
+                            {{ year }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-y-auto custom-scrollbar flex-1 pr-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
+                    {% for officer_list in grouped_officer_lists %}
+                        {% with officer=officer_list.0 %}
+                        <div class="officer-card bg-white border border-gray-100 rounded-xl p-6 flex flex-col items-center text-center relative group">
+                            
+                            {% if officer.is_active %}
+                            <span class="absolute top-3 right-3 bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium">
+                                Active
+                            </span>
+                            {% endif %}
+
+                            <div class="w-28 h-28 rounded-full p-1 border-2 border-blue-100 mb-4 cursor-pointer overflow-hidden" onclick="openImageModal('{% if officer.profile_picture %}{{ officer.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}')">
+                                <img src="{% if officer.profile_picture %}{{ officer.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" 
+                                     class="w-full h-full rounded-full object-cover hover:scale-110 transition-transform duration-300" 
+                                     alt="{{ officer.firstname }}">
+                            </div>
+
+                            <h3 class="text-lg font-bold text-gray-800">{{ officer.firstname }} {{ officer.middlename|default:'' }} {{ officer.surname }}</h3>
+                            <p class="text-blue-600 font-medium mb-1">{{ officer.position }}</p>
+                            <p class="text-xs text-gray-500 mb-4">{{ officer.course }} • {{ officer.academic_year }}</p>
+
+                            {% if officer_list|length > 1 %}
+                            <div class="relative mt-auto w-full group/history">
+                                <div class="text-gray-400 text-xs flex items-center justify-center gap-1 cursor-help">
+                                    <i class="fas fa-history"></i> View History
+                                </div>
+                                <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-56 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 group-hover/history:opacity-100 pointer-events-none transition-opacity z-10">
+                                    <h4 class="font-bold border-b border-slate-600 pb-1 mb-2">Service History</h4>
+                                    <ul class="text-left space-y-1">
+                                        {% for record in officer_list %}
+                                        <li><span class="text-slate-400">{{ record.academic_year }}:</span> {{ record.position }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endwith %}
+                    {% empty %}
+                        <div class="col-span-full flex flex-col items-center justify-center py-12 text-gray-400">
+                            <i class="fas fa-users-slash text-4xl mb-3"></i>
+                            <p>No officers found for this selection.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        {% endif %}
-      </div>
-      {% endwith %}
-    {% empty %}
-      <p style="text-align: center; color: #555; font-style: italic; grid-column: 1 / -1;">
-        No approved officers found
-        {% if selected_year %}
-          for the {{ selected_year }} academic year.
-        {% else %}
-          for this organization.
-        {% endif %}
-      </p>
-    {% endfor %}
-  </div>
+
+        <div class="w-[350px] bg-gray-50 p-6 border-l border-gray-200 flex flex-col gap-6">
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Organization Menu</h2>
+                <div class="space-y-2">
+                    <a href="{% url 'org_profile' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-info-circle w-6 text-center"></i> About</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="{% url 'view_project_by_slug' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-project-diagram w-6 text-center"></i> Projects</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="{% url 'view_financial_by_slug' slug=org.slug %}" class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group">
+                        <span class="text-gray-700 font-medium group-hover:text-blue-700"><i class="fas fa-file-invoice-dollar w-6 text-center"></i> Financials</span>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-between p-3 bg-blue-600 text-white rounded-lg shadow-md transition">
+                        <span class="font-medium"><i class="fas fa-user-tie w-6 text-center"></i> Officers</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            {% if user.role == 'superadmin' or user.role == 'student_life_staff' or user.role == 'org_admin' and user.organization == org %}
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Admin Actions</h2>
+                <a href="{% url 'officer_form' slug=org.slug %}" class="w-full block py-2 px-4 bg-white border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center font-medium transition">
+                    <i class="fas fa-plus mr-2"></i> Register New Officer
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
-<!-- Image Modal -->
-<div id="image-modal-overlay">
-  <span id="image-modal-close">&times;</span>
-  <img id="image-modal-content" src="" alt="Officer Profile" />
+<div id="image-modal-overlay" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4" onclick="closeImageModal()">
+    <span class="absolute top-5 right-8 text-white text-4xl cursor-pointer hover:text-gray-300">&times;</span>
+    <img id="image-modal-content" src="" alt="Profile" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl border-4 border-white">
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const modalOverlay = document.getElementById('image-modal-overlay');
-  const modalImage = document.getElementById('image-modal-content');
-  const closeModal = document.getElementById('image-modal-close');
-  const officerImages = document.querySelectorAll('.officer-image');
-  const defaultImgSrc = "{% static 'images/default_profile.png' %}";
-
-  officerImages.forEach(image => {
-    image.addEventListener('click', function() {
-      const imgSrc = this.src;
-      if (imgSrc && !imgSrc.endsWith(defaultImgSrc)) {
-        modalImage.src = imgSrc;
-        modalOverlay.style.display = 'flex';
-      }
-    });
-  });
-
-  function hideModal() {
-    modalOverlay.style.display = 'none';
-    modalImage.src = '';
-  }
-
-  closeModal.addEventListener('click', hideModal);
-  modalOverlay.addEventListener('click', function(e) {
-    if (e.target === modalOverlay) hideModal();
-  });
-});
+    function openImageModal(src) {
+        const modal = document.getElementById('image-modal-overlay');
+        const img = document.getElementById('image-modal-content');
+        if(src) {
+            img.src = src;
+            modal.classList.remove('hidden');
+        }
+    }
+    function closeImageModal() {
+        document.getElementById('image-modal-overlay').classList.add('hidden');
+    }
 </script>
 {% endblock %}

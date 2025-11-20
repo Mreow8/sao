@@ -14,7 +14,16 @@
 <link
   rel="stylesheet"
   href="{% static 'styles/scholarship/chedreports.css' %}"
-/>
+/><style>
+  /* Target the images inside the logo containers */
+  .logo-container img {
+    width: 220px; /* Sets a fixed large width */
+    height: 220px; /* Sets the same height to make the box uniform */
+    object-fit: contain; /* Ensures the image scales correctly without stretching/distorting */
+    display: block; /* Helps with centering */
+    margin: 0 auto 15px; /* Centers the image horizontally and adds space below */
+  }
+</style>
 
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 {% endblock headcontent %} {% block bodycontent %}

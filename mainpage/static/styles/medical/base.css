@@ -3,40 +3,37 @@
 /* --- GLOBAL STYLES --- */
 body {
   font-family: "Rubik", sans-serif;
-  background-color: #f8f9fa; /* Light grey background from Manage.css */
-}
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Align card to the top */
-  padding: 2rem; /* From Tailwind p-8 */
-  min-height: 100vh;
-  box-sizing: border-box;
-  margin: 0;
-}
-.form-page-wrapper {
+  background-color: #f8f9fa;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 2rem;
-  width: 100%;
   min-height: 100vh;
   box-sizing: border-box;
+  margin: 0;
 }
+
+.form-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .form-card {
   background-color: #ffffff;
   width: 100%;
-  max-width: 1000px; /* Added for better layout on large screens */
-  padding: 2.5rem; /* Matches requestgmc.css */
-  border-radius: 18px; /* From Tailwind rounded-[18px] */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* From requestgmc.css */
+  max-width: 1000px;
+  padding: 2.5rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* Spacing for header, form, etc. */
+  gap: 1.5rem;
 }
 
-/* --- 3. Form Header --- */
+/* --- Form Header --- */
 .form-header {
   display: flex;
   flex-direction: column;
@@ -47,66 +44,73 @@ body {
 }
 
 .logo-img {
-  width: 48px; /* From Tailwind w-12 */
-  height: 48px; /* From Tailwind h-12 */
+  width: 48px;
+  height: 48px;
 }
 
 .main-title {
-  font-size: 1.5rem; /* From Tailwind text-[1.5rem] */
-  font-weight: 700; /* From Tailwind font-bold */
+  font-size: 1.5rem;
+  font-weight: 700;
   margin: 0;
+  color: #1a365d; /* Added branding color */
 }
 
 .sub-title-text {
-  font-size: 1rem; /* From Tailwind text-base */
-  color: #333;
+  font-size: 1rem;
+  color: #555; /* Slightly lighter than #333 */
   margin: 0;
 }
 
-/* --- 4. Form & Sections --- */
+/* --- Form & Sections --- */
 .main-form-content {
   display: flex;
   flex-direction: column;
-  gap: 2rem; /* From Tailwind gap-4, increased for sections */
+  gap: 2rem;
 }
 
 .form-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* From Tailwind gap-2, increased for rows */
+  gap: 1.25rem; /* Slightly increased for breathing room */
 }
 
 .section-title {
-  font-weight: 700; /* From Tailwind font-bold */
+  font-weight: 700;
   font-size: 1.25rem;
-  color: #2c5282; /* Theme color */
+  color: #2c5282;
   margin: 0;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid #e0e0e0;
 }
 
-/* --- 5. Form Layout (Rows & Groups) --- */
+/* --- Form Layout (Rows & Groups) --- */
 .form-row {
   display: flex;
-  flex-direction: column; /* Mobile-first (from flex-col) */
-  gap: 1rem; /* From Tailwind gap-2 */
-}
-
-/* Apply row layout on medium screens (from md:flex-row) */
-@media (min-width: 768px) {
-  .form-row {
-    flex-direction: row;
-  }
+  flex-direction: column; /* Mobile-first: Stacked */
+  gap: 1rem;
+  width: 100%;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  width: 100%; /* From Tailwind w-full */
-  gap: 0.35rem; /* Space between label and input */
+  width: 100%;
+  gap: 0.35rem;
 }
 
-/* --- 6. Form Elements (Moved from inline <style>) --- */
+/* Apply row layout on medium screens and up */
+@media (min-width: 768px) {
+  .form-row {
+    flex-direction: row;
+  }
+
+  /* CRITICAL FIX: This ensures inputs share width equally (e.g., the 3 address inputs) */
+  .form-row > .form-group {
+    flex: 1;
+  }
+}
+
+/* --- Form Elements --- */
 label {
   font-size: 14px;
   font-weight: 500;
@@ -122,112 +126,143 @@ input[type="password"],
 textarea,
 select {
   width: 100%;
-  padding: 10px 14px;
+  padding: 12px 14px; /* Increased padding for touch targets */
   font-size: 14px;
-  font-family: "Rubik", sans-serif; /* Added theme font */
+  font-family: "Rubik", sans-serif;
   color: #333;
   background-color: #f9fafb;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-sizing: border-box; /* IMPORTANT */
+  border-radius: 8px; /* Increased radius slightly */
+  box-sizing: border-box;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  appearance: none; /* Removes default OS styles on iOS/Android */
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: #2c5282; /* Use theme color for focus */
+  border-color: #2c5282;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Theme glow */
-}
-
-input:disabled,
-textarea:disabled,
-select:disabled {
-  background-color: #e5e7eb;
-  cursor: not-allowed;
-  opacity: 0.7;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.2); /* Softer glow */
+  background-color: #fff;
 }
 
 .input-hint {
-  font-size: 0.8rem;
-  color: #777;
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 2px;
 }
 
-/* --- 7. Checkbox Section --- */
+/* --- Checkbox Section --- */
 .checkbox-section-grid {
   display: grid;
-  grid-template-columns: 1fr; /* Mobile-first: stacked */
-  gap: 1rem; /* From Tailwind gap-2 */
+  grid-template-columns: 1fr; /* Mobile: 1 column */
+  gap: 1.5rem;
 }
 
-/* (from grid-cols-2) */
+/* Tablet/Desktop: 2 columns */
 @media (min-width: 768px) {
   .checkbox-section-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
   }
 }
 
 .checkbox-category {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; /* From Tailwind gap-2 */
+  gap: 0.75rem;
+  background: #f8fafc; /* Subtle background for groups */
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
 }
 
 .checkbox-category > label {
-  /* The label FOR the group, e.g., "Allergies" */
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  color: #2d3748;
+  margin-bottom: 5px;
 }
 
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* Space between checkbox items */
+  gap: 0.75rem;
 }
 
 .checkbox-item {
   display: flex;
-  align-items: center;
-  gap: 0.5rem; /* Space between checkbox and label */
+  align-items: flex-start; /* Aligns box with top of multi-line text */
+  gap: 0.75rem;
 }
 
 .checkbox-item input[type="checkbox"] {
-  width: 1.15em;
-  height: 1.15em;
-  accent-color: #2c5282; /* Theme color */
+  width: 18px;
+  height: 18px;
+  margin-top: 2px; /* Visual alignment correction */
+  accent-color: #2c5282;
   cursor: pointer;
 }
 
 .checkbox-item label {
-  font-weight: 400; /* Lighter weight for options */
+  font-weight: 400;
   cursor: pointer;
+  line-height: 1.4;
+  font-size: 14px;
 }
 
-/* --- 8. Submit Button --- */
+/* --- Submit Button --- */
 .submit-button {
   font-family: "Rubik", sans-serif;
-  background-color: #2c5282; /* From inline style */
+  background-color: #2c5282;
   color: white;
-  font-size: 14px; /* From Tailwind text-[14px] */
-  font-weight: 500;
-  padding: 1rem; /* From Tailwind p-4 */
+  font-size: 16px; /* Larger text for mobile readability */
+  font-weight: 600;
+  padding: 14px 24px;
   border: none;
-  border-radius: 8px; /* From Tailwind rounded-[8px] */
-  margin-top: 1rem; /* From Tailwind mt-4 */
+  border-radius: 8px;
+  margin-top: 1.5rem;
   cursor: pointer;
+  width: 100%; /* Full width on mobile */
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
 }
 
 .submit-button:hover {
-  background-color: #2a4365; /* Darker Blue from requestgmc.css */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #1a365d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
 }
 
-.submit-button:active {
-  transform: translateY(0);
-  box-shadow: none;
+/* --- MOBILE OPTIMIZATIONS (Max-width: 640px) --- */
+@media (max-width: 640px) {
+  body {
+    padding: 1rem; /* Reduced padding */
+    align-items: flex-start;
+  }
+
+  .form-card {
+    padding: 1.5rem; /* Reduced padding inside card */
+    border-radius: 12px;
+  }
+
+  .main-title {
+    font-size: 1.25rem; /* Smaller title */
+  }
+
+  .sub-title-text {
+    font-size: 0.9rem;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  /* On mobile, ensure the "Other" inputs in checkboxes have enough space */
+  .form-group.other-allergies input,
+  #other_conditions_input input {
+    margin-top: 5px;
+  }
 }

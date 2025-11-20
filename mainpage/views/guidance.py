@@ -3,6 +3,11 @@ import csv
 
 from django.contrib.auth.decorators import login_required # 👈 Import this
 from datetime import datetime
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import IntegrityError
+import csv
+import io
 import json
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -43,52 +48,89 @@ from django.http import HttpResponse
 #         form = UploadFileForm()
 #     return render(request, 'upload.html', {'form': form})
 def upload_files(request):
-    student_form = UploadFileForm()
-    staff_form = UploadFileForm()
-    staff_manual_form = StaffForm()
+    # Initialize forms with None so they aren't bound unless it's a POST
+    student_form = UploadFileForm(prefix='student')
+    staff_form = UploadFileForm(prefix='staff')
+    staff_manual_form = StaffForm(prefix='manual')
 
-    return render(request, 'upload.html', {
-        'form': student_form,   # for students
-        'staff_form': staff_form,   # for staff CSV
-        'staff_manual_form': staff_manual_form  # for manual staff
-    })
-
-def staff_input(request):
-    if request.method == "POST":
-        form = StaffForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("staff_input")  # reload page after save
-    else:
-        form = StaffForm()
-    return render(request, "staff_input.html", {"form": form})
-def staff_upload(request):
     if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            csv_file = request.FILES['file']
-            decoded_file = csv_file.read().decode('utf-8').splitlines()
-            reader = csv.DictReader(decoded_file)
-            
-            for row in reader:
-                staffInfo.objects.create(
-                    staffID=row['staffID'],
-                    lrn=row['lrn'],
-                    lastname=row['lastname'],
-                    firstname=row['firstname'],
-                    middlename=row['middlename'],
-                    sex=row['sex'],
-                    emailadd=row['emailadd'],
-                    contact=row['contact']
-                )
-            
-            messages.success(request, 'File uploaded and data imported successfully')
-            return redirect('upload_file')
-    else:
-        form = UploadFileForm()
-    return render(request, 'upload.html', {'form': form})
+        # --- HANDLE STAFF MANUAL INPUT ---
+        if 'staff_manual' in request.POST:
+            staff_manual_form = StaffForm(request.POST, prefix='manual')
+            if staff_manual_form.is_valid():
+                try:
+                    staff_manual_form.save()
+                    messages.success(request, "Staff member added successfully via Manual Input.")
+                    return redirect('upload_files') # Redirect to clear the form
+                except IntegrityError:
+                    messages.error(request, "Error: A staff member with this ID or Email already exists.")
+                except Exception as e:
+                    messages.error(request, f"An unexpected error occurred: {e}")
+            else:
+                messages.error(request, "Please correct the errors in the manual input form.")
 
-#Page View
+        # --- HANDLE STAFF CSV UPLOAD ---
+        elif 'staff_upload' in request.POST:
+            staff_form = UploadFileForm(request.POST, request.FILES, prefix='staff')
+            if staff_form.is_valid():
+                csv_file = request.FILES['staff-file'] # Access via prefix if needed, or just request.FILES
+                
+                # VALIDATION: Check file type
+                if not csv_file.name.endswith('.csv'):
+                    messages.error(request, "Error: Please upload a CSV file.")
+                else:
+                    try:
+                        decoded_file = csv_file.read().decode('utf-8-sig').splitlines() # utf-8-sig handles Excel BOM
+                        reader = csv.DictReader(decoded_file)
+                        
+                        # Validate headers exist before looping
+                        required_headers = {'staffID', 'lrn', 'lastname', 'firstname', 'middlename', 'sex', 'emailadd', 'contact'}
+                        if not reader.fieldnames or not required_headers.issubset(reader.fieldnames):
+                            missing = required_headers - set(reader.fieldnames or [])
+                            messages.error(request, f"CSV Error: Missing columns: {', '.join(missing)}")
+                        else:
+                            count = 0
+                            for row in reader:
+                                staffInfo.objects.create(
+                                    staffID=row['staffID'],
+                                    lrn=row['lrn'],
+                                    lastname=row['lastname'],
+                                    firstname=row['firstname'],
+                                    middlename=row['middlename'],
+                                    sex=row['sex'],
+                                    emailadd=row['emailadd'],
+                                    contact=row['contact']
+                                )
+                                count += 1
+                            
+                            messages.success(request, f"Successfully uploaded {count} staff members.")
+                            return redirect('upload_files')
+
+                    except IntegrityError:
+                        messages.error(request, f"Database Error: Duplicate ID or Email found in CSV (Row {reader.line_num}).")
+                    except UnicodeDecodeError:
+                        messages.error(request, "File Error: Unable to decode file. Please ensure it is UTF-8 encoded.")
+                    except Exception as e:
+                        messages.error(request, f"Error processing file: {e}")
+            else:
+                messages.error(request, "Please upload a valid file.")
+
+        # --- HANDLE STUDENT UPLOAD ---
+        elif 'student_upload' in request.POST:
+            student_form = UploadFileForm(request.POST, request.FILES, prefix='student')
+            if student_form.is_valid():
+                 # ... Insert your Student CSV logic here similar to Staff above ...
+                 messages.success(request, "Student file processed (Logic placeholder).")
+                 return redirect('upload_files')
+            else:
+                 messages.error(request, "Error in student upload form.")
+
+    # Render the page with forms (containing errors if any)
+    return render(request, 'upload.html', {
+        'form': student_form, 
+        'staff_form': staff_form,
+        'staff_manual_form': staff_manual_form
+    })
 def home(request):
 	return render(request, 'main.html',{})
 
@@ -1041,7 +1083,7 @@ def update_exit_interview_status(request):
             obj = get_object_or_404(exit_interview_db, exitinterviewId=requestID)
             obj.status = 'Accepted'
             message = f"Hello {obj.studentID.firstname.title()} {obj.studentID.lastname.title()} your Exit Interview request has been approved."
-            email = obj.emailadd
+            email = obj.studentID.user.email
             obj.save()
             send_mail(
                 'Exit Interview Request',
@@ -1058,7 +1100,7 @@ def update_exit_interview_status(request):
             obj = get_object_or_404(exit_interview_db, exitinterviewId=requestID)
             obj.status = 'Declined'
             message = f"Hello {obj.studentID.firstname.title()} {obj.studentID.lastname.title()} your Exit Interview request has been declined."
-            email = obj.emailadd
+            email = obj.studentID.user.email
             obj.save()
             send_mail(
                 'Exit Interview Request',
@@ -1086,7 +1128,7 @@ def update_ojt_assessment(request):
             obj.status = 'Accepted'
             obj.dateAccepted = timezone.now()
             message = f"Hello {obj.studentID.firstname.title()} {obj.studentID.lastname.title()} your OJT Assessments/Psychological Issuance request has been approved."
-            email = obj.emailadd
+            email = obj.studentID.user.email
             obj.save()
             send_mail(
                 'OJT Assessments/Psychological Issuance Request',
@@ -1103,7 +1145,7 @@ def update_ojt_assessment(request):
             obj.status = 'Declined'
             obj.save()
             message = f"Hello {obj.studentID.firstname.title()} {obj.studentID.lastname.title()} your OJT Assessments/Psychological Issuance request has been declined."
-            email = obj.emailadd
+            email = obj.studentID.user.email
             send_mail(
                 'OJT Assessments/Psychological Issuance Request',
                 message,

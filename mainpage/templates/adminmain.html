@@ -9,19 +9,14 @@
 
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
       integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
     />
 
     <link rel="stylesheet" href="{% static 'styles/guidance/main.css' %}" />
@@ -35,25 +30,44 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     {% block headcontent %}{% endblock %}
+    <style>.sub-title{
+    margin-top: -90px;}</style>
   </head>
   <body>
 
-     <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Open sidebar">
-      &#9776;
+     <button id="sidebar-toggle" class="sidebar-toggle glass-button" aria-label="Toggle sidebar">
+      <i class="fas fa-bars" id="toggle-icon"></i>
     </button>
     
+    <div class="account-info-wrapper fixed-profile">
+        <div id="profile-trigger" class="profile-summary">
+          <i class="fas fa-user-circle profile-icon"></i>
+        </div>
+
+        <div id="profile-dropdown" class="profile-popup">
+            <div class="popup-header">
+                <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                <span class="popup-username">{{ user.username }}</span>
+            </div>
+            <div class="popup-divider"></div>
+            <a href="{% url 'logout' %}" class="popup-logout-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
     <div class="left-side">
       <div class="sidebar-brand">
          <a href="{% url 'homepage' %}">
-    <img src="{% static 'scholar/CTU_Logo.png' %}" class="logo" />
-  </a>
+            <img src="{% static 'scholar/CTU_Logo.png' %}" class="logo" />
+         </a>
         <div class="brand-text">
           <span class="brand-title">Cebu Technological</span>
           <span class="brand-subtitle">University</span>
         </div>
       </div>
 
-      {% comment %} Get the name of the current URL pattern {% endcomment %}
       {% with current_url=request.resolver_match.url_name %}
       <nav class="side-nav flex flex-col h-screen">
 
@@ -65,6 +79,7 @@
               <span class="fas fa-caret-down first {% if current_url in section_urls %}rotate{% endif %}"></span>
             </a>
             <ul class="studentlife {% if current_url in section_urls %}active{% endif %}">
+              <li><a href="{% url 'studentlifedashboard' %}" class="{% if current_url == 'dashboard' %}active-link{% endif %}">Student Life Dashboard</a></li>
               <li><a href="{% url 'assign_role' %}" class="{% if current_url == 'assign_role' %}active-link{% endif %}">Profiles</a></li>
               <li><a href="{% url 'equipmentTrackerAdmin' %}" class="{% if current_url == 'equipmentTrackerAdmin' %}active-link{% endif %}">Equipment Tracker</a></li>
               <li><a href="{% url 'adminRequestedGmc' %}" class="{% if current_url == 'adminRequestedGmc' %}active-link{% endif %}">Good Moral Certificate Issuance</a></li>
@@ -74,7 +89,8 @@
           </li>
           {% endwith %}
           {% endif %}
-{% if user.role == 'scholarship_officer' or user.role == 'superadmin' %}
+
+          {% if user.role == 'scholarship_officer' or user.role == 'superadmin' %}
           {% with section_urls='admin_req,adminapplication,profile,liquidation,ched' %}
           <li>
             <a href="#" class="scholar-btn {% if current_url in section_urls %}active{% endif %}">SCHOLARSHIP
@@ -84,9 +100,7 @@
               <li><a href="{% url 'admin_req'%}" class="{% if current_url == 'admin_req' %}active-link{% endif %}">Submission of Requirements Tracker</a></li>
               <li><a href="{% url "requirement_history" %}" class="{% if current_url == 'requirement_history' %}active-link{% endif %}">Requirement History</a></li>
               <li><a href="{% url 'adminapplication' %}" class="{% if current_url == 'adminapplication' %}active-link{% endif %}">Application tracker</a></li>
-
               <li><a href="{% url 'profile'%}" class="{% if current_url == 'profile' %}active-link{% endif %}">Scholars Profile and Validation</a></li>
-       
               <li><a href="{% url 'liquidation'%}" class="{% if current_url == 'liquidation' %}active-link{% endif %}">Admin Cost Liquidation Tracker</a></li>
               <li><a href="{% url 'ched'%}" class="{% if current_url == 'ched' %}active-link{% endif %}">CHED Reports Submission</a></li>
               <li><a href="{% url 'transaction' %}" class="{% if current_url == 'transaction' %}active-link{% endif %}">Transaction History Report</a></li>
@@ -94,9 +108,8 @@
           </li>
           {% endwith %}
           {% endif %}
-
           
-{% if user.role == 'placement_officer' or user.role == 'superadmin' %}
+          {% if user.role == 'placement_officer' or user.role == 'superadmin' %}
           {% with section_urls='ojt_hiring,seminar_page,ojt_requirements_tracker' %}
           <li>
             <a href="#" class="jobplace-btn {% if current_url in section_urls %}active{% endif %}">JOB PLACEMENT
@@ -110,7 +123,8 @@
           </li>
           {% endwith %}
           {% endif %}
-{% if user.role == 'discipline_officer' or user.role == 'superadmin' %}
+
+          {% if user.role == 'discipline_officer' or user.role == 'superadmin' %}
           {% with section_urls='case_profile' %}
           <li>
             <a href="#" class="student_disc-btn {% if current_url in section_urls %}active{% endif %}">STUDENT DISCIPLINE
@@ -123,81 +137,61 @@
           {% endwith %}
           {% endif %}
 
+          {% if user.role == 'guidance' or user.role == 'superadmin' %}
+          {% with section_urls='Counseling App With Scheduler Admin View,Intake Interview,Exit Interview Admin View,OJT Assessment Admin View' %}
+            {% if user.role == 'guidance' %}
+            <li>
+              <a class="guide-btn active" style="pointer-events: none; cursor: default;">GUIDANCE</a>
+              <ul class="guide-show active">
+                <li><a href="{% url 'Counseling App With Scheduler Admin View' %}" class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}">Counseling App with Scheduler</a></li>
+                <li><a href="{% url 'Intake Interview' %}" class="{% if current_url == 'Intake Interview' %}active-link{% endif %}">Intake Interview</a></li>
+                <li><a href="{% url 'Exit Interview Admin View' %}" class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}">Exit Interview</a></li>
+                <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li>
+              <a href="#" class="guide-btn {% if current_url in section_urls %}active{% endif %}">GUIDANCE
+                <span class="fas fa-caret-down fifth {% if current_url in section_urls %}rotate{% endif %}"></span>
+              </a>
+              <ul class="guide-show {% if current_url in section_urls %}active{% endif %}">
+                <li><a href="{% url 'Counseling App With Scheduler Admin View' %}" class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}">Counseling App with Scheduler</a></li>
+                <li><a href="{% url 'Intake Interview' %}" class="{% if current_url == 'Intake Interview' %}active-link{% endif %}">Intake Interview</a></li>
+                <li><a href="{% url 'Exit Interview Admin View' %}" class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}">Exit Interview</a></li>
+                <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
+              </ul>
+            </li>
+            {% endif %}
+          {% endwith %}
+          {% endif %}
 
-
-
-{% if user.role == 'guidance' or user.role == 'superadmin' %}
-  {% with section_urls='Counseling App With Scheduler Admin View,Intake Interview,Exit Interview Admin View,OJT Assessment Admin View' %}
-
-    {% if user.role == 'guidance' %}
-    {% comment %} --- SPECIAL VERSION FOR GUIDANCE (ALWAYS OPEN) --- {% endcomment %}
-    <li>
-      <a class="guide-btn active" style="pointer-events: none; cursor: default;">GUIDANCE
-        {% comment %} No caret icon, it's not a dropdown {% endcomment %}
-      </a>
-      <ul class="guide-show active"> {% comment %} <-- Always active (open) {% endcomment %}
-        <li><a href="{% url 'Counseling App With Scheduler Admin View' %}" class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}">Counseling App with Scheduler</a></li>
-        <li><a href="{% url 'Intake Interview' %}" class="{% if current_url == 'Intake Interview' %}active-link{% endif %}">Intake Interview</a></li>
-        <li><a href="{% url 'Exit Interview Admin View' %}" class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}">Exit Interview</a></li>
-        <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
-      </ul>
-    </li>
-
-    {% else %}
-    
-
-
-
-    <li>
-      <a href="#" class="guide-btn {% if current_url in section_urls %}active{% endif %}">GUIDANCE
-        <span class="fas fa-caret-down fifth {% if current_url in section_urls %}rotate{% endif %}"></span>
-      </a>
-      <ul class="guide-show {% if current_url in section_urls %}active{% endif %}">
-        <li><a href="{% url 'Counseling App With Scheduler Admin View' %}" class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}">Counseling App with Scheduler</a></li>
-        <li><a href="{% url 'Intake Interview' %}" class="{% if current_url == 'Intake Interview' %}active-link{% endif %}">Intake Interview</a></li>
-        <li><a href="{% url 'Exit Interview Admin View' %}" class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}">Exit Interview</a></li>
-        <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
-      </ul>
-    </li>
-    {% endif %}
-
-  {% endwith %}
-{% endif %}
-
-{% if user.role == 'alumni_officer' or user.role == 'superadmin' %}
-  {% with section_urls='admin_idRequest,admin_gradTracer,admin_events,admin_jobfairs' %}
-
-    {% if user.role == 'alumni_officer' %}
-    {% comment %} --- SPECIAL VERSION FOR ALUMNI OFFICER (ALWAYS OPEN) --- {% endcomment %}
-    <li>
-      <a class="alumni-btn active" style="pointer-events: none; cursor: default;">ALUMNI
-        {% comment %} No caret icon, it's not a dropdown {% endcomment %}
-      </a>
-      <ul class="alumni-show active"> {% comment %} <-- Always active (open) {% endcomment %}
-        <li><a href="{% url 'admin_idRequest' %}" class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">Alumni ID Requests</a></li>
-        <li><a href="{% url 'admin_gradTracer' %}" class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">Graduate Tracer</a></li>
-        <li><a href="{% url 'admin_events' %}" class="{% if current_url == 'admin_events' %}active-link{% endif %}">Alumni Reunion and Events</a></li>
-        <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
-      </ul>
-    </li>
-    
-    {% else %}
-    {% comment %} --- ORIGINAL VERSION FOR SUPERADMIN (CLICKABLE) --- {% endcomment %}
-    <li>
-      <a href="#" class="alumni-btn {% if current_url in section_urls %}active{% endif %}">ALUMNI
-        <span class="fas fa-caret-down sixth {% if current_url in section_urls %}rotate{% endif %}"></span>
-      </a>
-      <ul class="alumni-show {% if current_url in section_urls %}active{% endif %}">
-        <li><a href="{% url 'admin_idRequest' %}" class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">Alumni ID Requests</a></li>
-        <li><a href="{% url 'admin_gradTracer' %}" class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">Graduate Tracer</a></li>
-        <li><a href="{% url 'admin_events' %}" class="{% if current_url == 'admin_events' %}active-link{% endif %}">Alumni Reunion and Events</a></li>
-        <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
-      </ul>
-    </li>
-    {% endif %}
-
-  {% endwith %}
-{% endif %}
+          {% if user.role == 'alumni_officer' or user.role == 'superadmin' %}
+          {% with section_urls='admin_idRequest,admin_gradTracer,admin_events,admin_jobfairs' %}
+            {% if user.role == 'alumni_officer' %}
+            <li>
+              <a class="alumni-btn active" style="pointer-events: none; cursor: default;">ALUMNI</a>
+              <ul class="alumni-show active">
+                <li><a href="{% url 'admin_idRequest' %}" class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">Alumni ID Requests</a></li>
+                <li><a href="{% url 'admin_gradTracer' %}" class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">Graduate Tracer</a></li>
+                <li><a href="{% url 'admin_events' %}" class="{% if current_url == 'admin_events' %}active-link{% endif %}">Alumni Reunion and Events</a></li>
+                <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li>
+              <a href="#" class="alumni-btn {% if current_url in section_urls %}active{% endif %}">ALUMNI
+                <span class="fas fa-caret-down sixth {% if current_url in section_urls %}rotate{% endif %}"></span>
+              </a>
+              <ul class="alumni-show {% if current_url in section_urls %}active{% endif %}">
+                <li><a href="{% url 'admin_idRequest' %}" class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">Alumni ID Requests</a></li>
+                <li><a href="{% url 'admin_gradTracer' %}" class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">Graduate Tracer</a></li>
+                <li><a href="{% url 'admin_events' %}" class="{% if current_url == 'admin_events' %}active-link{% endif %}">Alumni Reunion and Events</a></li>
+                <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
+              </ul>
+            </li>
+            {% endif %}
+          {% endwith %}
+          {% endif %}
 
           {% if user.role == 'student_life_staff' or user.role == 'superadmin' %}
           {% with section_urls='programs,crowdfunding_list,donation-validate,donation_dashboard' %}
@@ -214,7 +208,8 @@
           </li>
           {% endwith %}
           {% endif %}
-{% if user.role == 'org_admin' or user.role == 'superadmin' %}
+
+          {% if user.role == 'org_admin' or user.role == 'superadmin' %}
           {% with section_urls='admin_manageofficer,Gen_Home' %}
           <li>
             <a href="#" class="student_org-btn {% if current_url in section_urls %}active{% endif %}">STUDENT ORGANIZATION
@@ -228,201 +223,203 @@
           {% endwith %}
           {% endif %}
 
-
-          {% comment %} --- AFTER --- {% endcomment %}
-
-{% if user.role == 'clinic_admin' or user.role == 'superadmin' %}
-  {% with section_urls='admin_dashboard,viewrequest,medtracker,emergency_asst,pwdlist,dentalrequest,prescription,mental_health' %}
-
-    {% if user.role == 'clinic_admin' %}
-    {% comment %} --- SPECIAL VERSION FOR CLINIC ADMIN (ALWAYS OPEN) --- {% endcomment %}
-    <li>
-      <a class'="medical-btn active" style="pointer-events: none; cursor: default;">MEDICAL
-        {% comment %} No caret icon, it's not a dropdown {% endcomment %}
-      </a>
-      <ul class="medical-show active"> {% comment %} <-- Always active (open) {% endcomment %}
-        <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
-        <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
-        <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
-        <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
-        <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
-        <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
-        <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
-        <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
-        <br /><br /><br />
-      </ul>
-    </li>
-    
-    {% else %}
-    {% comment %} --- ORIGINAL VERSION FOR SUPERADMIN (CLICKABLE) --- {% endcomment %}
-    <li>
-      <a href="#" class="medical-btn {% if current_url in section_urls %}active{% endif %}">MEDICAL
-        <span class="fas fa-caret-down ninth {% if current_url in section_urls %}rotate{% endif %}"></span>
-      </a>
-      <ul class="medical-show {% if current_url in section_urls %}active{% endif %}">
-        <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
-        <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
-        <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
-        <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
-        <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
-        <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
-        <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
-        <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
-        <br /><br /><br />
-      </ul>
-    </li>
-    {% endif %}
-    
-  {% endwith %}
-{% endif %}
-
+          {% if user.role == 'clinic_admin' or user.role == 'superadmin' %}
+          {% with section_urls='admin_dashboard,viewrequest,medtracker,emergency_asst,pwdlist,dentalrequest,prescription,mental_health' %}
+            {% if user.role == 'clinic_admin' %}
+            <li>
+              <a class="medical-btn active" style="pointer-events: none; cursor: default;">MEDICAL</a>
+              <ul class="medical-show active">
+                <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
+                <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
+                <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
+                <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
+                <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
+                <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
+                <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
+                <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
+                <br /><br /><br />
+              </ul>
+            </li>
+            {% else %}
+            <li>
+              <a href="#" class="medical-btn {% if current_url in section_urls %}active{% endif %}">MEDICAL
+                <span class="fas fa-caret-down ninth {% if current_url in section_urls %}rotate{% endif %}"></span>
+              </a>
+              <ul class="medical-show {% if current_url in section_urls %}active{% endif %}">
+                <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
+                <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
+                <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
+                <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
+                <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
+                <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
+                <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
+                <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
+                <br /><br /><br />
+              </ul>
+            </li>
+            {% endif %}
+          {% endwith %}
+          {% endif %}
         </ul>
-          <div class="mt-auto mb-4">
-    <a href="{% url 'transaction_report_view' %}" 
-   class="btn btn-primary w-full text-center flex items-center justify-center gap-2">
-  <i class="fas fa-file-alt"></i>
-  <span>TRANSACTION REPORT</span>
-</a>
-
-  </div>
+        <div class="mt-auto mb-4">
+            <a href="{% url 'transaction_report_view' %}" class="btn btn-primary w-full text-center flex items-center justify-center gap-2">
+                <i class="fas fa-file-alt"></i>
+                <span>TRANSACTION REPORT</span>
+            </a>
+        </div>
       </nav>
       {% endwith %}
-
-
     </div>
 
     <div class="right-side">
-
-<div class="custom-search-wrapper">
-    <div class="search-container">
-        <div class="right-controls" style="margin-left: auto;">
-          {% if user.role == 'superadmin' or user.role == 'student_life_staff' %}
-           <a href="{% url 'upload_files' %}" class="upload-button">
-
-                <i class="fas fa-upload"></i>
-                <span>Upload</span>
-            </a>
-            {% endif %}
-            <div class="account-info-wrapper">
-                
-                <div id="profile-trigger" class="profile-summary">
-                    <i class="fas fa-user-circle profile-icon"></i>
-                    <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
-                    <i class="fas fa-caret-down caret-icon"></i>
-                </div>
-
-                <div id="profile-dropdown" class="profile-popup">
-                    <div class="popup-header">
-                        <strong></strong>
-                        <span class="popup-username">{{ user.username }}</span>
-                    </div>
-                    <div class="popup-divider"></div>
-                    <a href="{% url 'logout' %}" class="popup-logout-link">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
+        <div class="custom-search-wrapper">
+            <div class="search-container">
+                <div class="right-controls" style="margin-left: auto;">
+                  {% if user.role == 'superadmin' or user.role == 'student_life_staff' %}
+                   <a href="{% url 'upload_files' %}" class="upload-button">
+                        <i class="fas fa-upload"></i>
+                        <span>Upload</span>
                     </a>
-                </div>
-                
+                    {% endif %}
+                    </div>
             </div>
         </div>
-    </div>
-</div>
-{% block extra_css %}{% endblock %}
-{% block extra_js %}{% endblock %}
-      <main class="main_content">{% block bodycontent %}{% endblock %}</main>
-      
+        {% block extra_css %}{% endblock %}
+        {% block extra_js %}{% endblock %}
+        <main class="main_content">{% block bodycontent %}{% endblock %}</main>
     </div>
 
     <script src="{% static 'scripts/main.js' %}"></script>
+    
     <script>
-      // Sidebar toggle logic (single instance)
-      const sidebarToggle = document.getElementById("sidebar-toggle");
-      const leftSide = document.querySelector(".left-side");
+      document.addEventListener('DOMContentLoaded', function() {
+          
+          // Elements
+          const sidebarToggle = document.getElementById('sidebar-toggle');
+          const leftSide = document.querySelector('.left-side');
+          const toggleIcon = document.getElementById('toggle-icon');
+          
+          // Profile Elements
+          const profileWrapper = document.querySelector('.account-info-wrapper');
+          const profileTrigger = document.getElementById('profile-trigger');
+          const profileDropdown = document.getElementById('profile-dropdown');
 
-      if (sidebarToggle && leftSide) {
-        sidebarToggle.addEventListener("click", function (e) {
-          e.stopPropagation(); // Prevent click from bubbling to document
-          leftSide.classList.toggle("active");
-        });
-
-        // Hide sidebar when clicking outside on small screens
-        document.addEventListener("click", function (e) {
-          if (
-            window.innerWidth <= 900 &&
-            leftSide.classList.contains("active") &&
-            !leftSide.contains(e.target) &&
-            e.target !== sidebarToggle
-          ) {
-            leftSide.classList.remove("active");
+          // --- Helper Functions ---
+          function closeProfile() {
+              if (profileDropdown && profileDropdown.classList.contains('active')) {
+                  profileDropdown.classList.remove('active');
+                  if(profileTrigger) profileTrigger.classList.remove('active');
+              }
           }
-        });
 
-        // Remove .active on resize to large screens
-        window.addEventListener("resize", function () {
-          if (window.innerWidth > 900) {
-            leftSide.classList.remove("active");
-            leftSide.style.transform = "";
+          function closeSidebar() {
+              if (leftSide && leftSide.classList.contains('active')) {
+                  leftSide.classList.remove('active');
+                  if(sidebarToggle) sidebarToggle.classList.toggle('active'); 
+                  
+                  // Show profile again if sidebar closes
+                  if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+
+                  if(toggleIcon) {
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+              }
           }
-        });
-      }
-    </script><script>
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // --- Profile Dropdown Functionality ---
-            const profileTrigger = document.getElementById('profile-trigger');
-            const profileDropdown = document.getElementById('profile-dropdown');
 
-            if (profileTrigger && profileDropdown) {
-                // Toggle dropdown on trigger click
-                profileTrigger.addEventListener('click', function(event) {
-                    event.stopPropagation(); 
-                    profileDropdown.classList.toggle('active');
-                    profileTrigger.classList.toggle('active');
-                });
+          // --- Event Listeners ---
 
-                // Close dropdown when clicking anywhere else on the page
-                window.addEventListener('click', function() {
-                    if (profileDropdown.classList.contains('active')) {
-                        profileDropdown.classList.remove('active');
-                        profileTrigger.classList.remove('active');
-                    }
-                });
+          // 1. Sidebar Toggle
+          if (sidebarToggle && leftSide) {
+              sidebarToggle.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  closeProfile();
+                  leftSide.classList.toggle('active');
+                  sidebarToggle.classList.toggle('active');
 
-                // Stop the dropdown from closing when clicking inside it
-                profileDropdown.addEventListener('click', function(event) {
-                    event.stopPropagation();
-                });
-            }
-        });
-    </script>
-    {% if messages %}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer);
-        toast.addEventListener('mouseleave', Swal.resumeTimer);
-      }
-    });
+                  if (leftSide.classList.contains('active')) {
+                      if(profileWrapper) profileWrapper.classList.add('hidden-profile');
+                      toggleIcon.classList.remove('fa-bars');
+                      toggleIcon.classList.add('fa-times');
+                  } else {
+                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+              });
+          }
 
-    {% for message in messages %}
-      Toast.fire({
-        icon: '{{ message.tags }}',
-        title: '{{ message|escapejs }}'
+          // 2. Profile Trigger
+          if (profileTrigger && profileDropdown) {
+              profileTrigger.addEventListener('click', function(event) {
+                  event.stopPropagation(); 
+                  profileDropdown.classList.toggle('active');
+                  profileTrigger.classList.toggle('active');
+              });
+
+              profileDropdown.addEventListener('click', function(event) {
+                  event.stopPropagation();
+              });
+          }
+
+          // 3. Window Click
+          document.addEventListener('click', function(e) {
+              if (
+                  window.innerWidth <= 900 &&
+                  leftSide.classList.contains('active') &&
+                  !leftSide.contains(e.target) &&
+                  !sidebarToggle.contains(e.target)
+              ) {
+                  closeSidebar();
+              }
+
+              if (profileDropdown && profileDropdown.classList.contains('active')) {
+                  closeProfile();
+              }
+          });
+
+          // 4. Resize
+          window.addEventListener('resize', function() {
+              if (window.innerWidth > 900) {
+                  if (leftSide.classList.contains('active')) {
+                      leftSide.classList.remove('active');
+                      sidebarToggle.classList.remove('active');
+                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+                  leftSide.style.transform = '';
+              }
+          });
       });
-    {% endfor %}
-  });
-</script>
-{% endif %}
+    </script>
+
+    {% if messages %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
+        });
+
+        {% for message in messages %}
+          Toast.fire({
+            icon: '{{ message.tags }}',
+            title: '{{ message|escapejs }}'
+          });
+        {% endfor %}
+      });
+    </script>
+    {% endif %}
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
-  
 </html>

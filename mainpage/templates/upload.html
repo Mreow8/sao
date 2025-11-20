@@ -4,35 +4,37 @@
   type="text/css"
   href="{% static 'styles/upload.css' %}"
 />
+
 <div class="sub-title">
-  <h4>OFFICE OF STUDENT LIFE</h4>
+  <h4>STUDENT LIFE</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Upload CSV / Manual Input</p>
 </div>
 <hr />
+
 <div class="main-wrapper">
-  <!-- Left side: Uploads -->
   <div class="upload-section">
-    <!-- Student Upload -->
+    <h3>Upload Students</h3>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %} {{ form.as_p }}
       <button type="submit" name="student_upload">Upload Students</button>
     </form>
+    <br />
 
-    <!-- Staff Upload -->
+    <h3>Upload Staff</h3>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %} {{ staff_form.as_p }}
       <button type="submit" name="staff_upload">Upload Staff</button>
     </form>
   </div>
 
-  <!-- Right side: Manual Input -->
-  <div class="manual-section">
+   <div class="manual-section">
     <form method="post">
       {% csrf_token %} {{ staff_manual_form.as_p }}
       <button type="submit" name="staff_manual">Save Staff</button>
     </form>
   </div>
+</div>
 </div>
 
 {% endblock %}

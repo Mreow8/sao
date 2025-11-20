@@ -1,153 +1,303 @@
-{% extends 'main.html' %} 
-{% block bodycontent %} 
+{% extends 'main.html' %}
+{% block bodycontent %}
 {% load static %}
 
 <style>
-    .header-bar {
+    /* --- Reset & Base --- */
+    .id-request-container {
+        margin: 0 auto;
+        padding: 0 0 12px 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #333;
+    }
+
+
+
+    /* --- Card Container --- */
+    .card-box {
+        background-color: #ffffff;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 40px;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    /* --- Student Info Section (Read-only) --- */
+    .student-info-box {
+        background-color: #f8f9fa; /* Neutral Light Grey */
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #e9ecef;
+    }
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #005a9e; /* Primary Blue */
+        margin-bottom: 15px;
+        border-bottom: 2px solid #cfe2ff; /* Light Blue Border */
+        padding-bottom: 8px;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    .info-item label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 2px;
+    }
+    .info-item span {
+        font-size: 0.95rem;
+        color: #111;
+        word-wrap: break-word;
+    }
+
+    /* --- Form Styles --- */
+    .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .form-row {
+        display: flex;
+        gap: 20px;
         flex-wrap: wrap;
     }
+    .form-group {
+        flex: 1;
+        min-width: 220px;
+        display: flex;
+        flex-direction: column;
+    }
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #444;
+        margin-bottom: 6px;
+    }
+    .form-input {
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+    .form-input:focus {
+        outline: none;
+        border-color: #005a9e; /* Primary Blue */
+        box-shadow: 0 0 0 3px rgba(0, 90, 158, 0.1); /* Blue Glow */
+    }
+    
+    /* Style for readonly inputs (like the date) */
+    .form-input.readonly-input {
+        background-color: #e9ecef;
+        color: #666;
+        cursor: not-allowed;
+    }
+
+    /* --- Submit Button --- */
+    .btn-submit {
+        background-color: #005a9e; /* Primary Blue */
+        color: #fff;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        align-self: center;
+        margin-top: 10px;
+    }
+    .btn-submit:hover {
+        background-color: #004a80; /* Darker Blue */
+    }
+
+    /* --- Status Alerts --- */
+    .alert-box {
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+    }
+    .alert-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+    }
+    .alert-content {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    .highlight-text {
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .status-pending {
+        background-color: #eef6fc; 
+        color: #004085;
+        border-color: #b8daff;
+    }
+    .status-pending .alert-title {
+        border-bottom-color: #b8daff;
+    }
+
+    .status-approved {
+       background-color: #eef6fc; 
+        color: #2c5282;
+        border-color: #b8daff;
+    }
+    .status-approved .alert-title {
+        border-bottom-color: #c3e6cb;
+    }
+
+    .status-claimed {
+        background-color: #cce5ff;
+        color: #2c5282;
+        border-color: #b8daff;
+    }
+    .status-claimed .alert-title {
+        border-bottom-color: #b8daff;
+    }
+
+    .schedule-list, .requirements-list {
+        margin: 10px 0 10px 20px;
+        font-size: 0.9rem;
+    }
+    .schedule-list li, .requirements-list li {
+        margin-bottom: 4px;
+    }
+    .section-header-small {
+        font-weight: 700;
+        margin-top: 12px;
+        color: #2c5282;
+    }
+    .helper-text {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 4px;
+    }
 </style>
-<div class="container">
+
+<div class="id-request-container">
     <div class="sub-title">
         <h4>ALUMNI</h4>
         <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
         <p class="certxt">&gt; Id Request</p>
     </div>
-<hr>
+    <hr>
 
-    <div class="header-bar"></div>
-    <div class="w-full max-w-3xl mx-auto">
-        <div class="bg-white rounded-2xl p-10 flex flex-col gap-10">
-            
-           
-
-            {% if student %}
-          
-           
+    <div class="card-box">
+        {% if student %}
             {% if alumni %}
                 
                 {% comment %} --- STATE 1: PENDING APPROVAL --- {% endcomment %}
                 {% if not alumni.approved %}
-                <div
-                    class="bg-yellow-100 text-yellow-800 border border-yellow-300 px-4 py-4 rounded-xl shadow-md space-y-2"
-                >
-                    <p class="font-semibold text-lg border-b border-yellow-400 pb-2">
-                        ✅ Request Submitted
-                    </p>
-                    <p class="text-sm">
-                        Your Alumni ID is:
-                        <span class="text-xl font-bold">{{ alumni.student.studID }}</span>
-                    </p>
-                    <p class="text-sm font-medium">Status: Pending Approval</p>
-                    <p class="text-xs italic text-yellow-700">
-                        Please check back here later for approval and claiming instructions.
-                    </p>
+                <div class="alert-box status-pending">
+                    <div class="alert-title">Request Submitted</div>
+                    <div class="alert-content">
+                        <p>Your Alumni ID is: <span class="highlight-text">{{ alumni.student.studID }}</span></p>
+                        <p style="margin-top: 5px; font-weight: 500;">Status: Pending Approval</p>
+                        <p style="margin-top: 5px; font-style: italic; font-size: 0.85rem;">
+                            Please check back here later for approval and claiming instructions.
+                        </p>
+                    </div>
                 </div>
 
                 {% comment %} --- STATE 2: APPROVED, READY TO CLAIM --- {% endcomment %}
                 {% elif alumni.approved and not alumni.claimed_date %} 
-                <div
-                    class="bg-green-100 text-green-800 border border-green-300 px-4 py-4 rounded-xl shadow-md space-y-4"
-                >
-                    <p class="font-bold text-xl border-b border-green-400 pb-2">
-                        🎉 YOUR ID IS READY FOR CLAIMING!
-                    </p>
-                    <p class="font-semibold text-lg">
-                        Alumni ID No.: <span class="text-2xl font-bold">{{ alumni.student.studID }}</span>
-                    </p>
-                    
-                    <h3 class="text-base font-bold text-green-900 mt-3">WALK-IN CLAIM SCHEDULE:</h4>
-                    <p class="text-sm">
-                        Issuance is conducted Monday to Thursday, based on your respective course schedule (Starting July 21, 2025).
-                    </p>
-                    <ul class="list-disc list-inside text-sm ml-4 space-y-1">
-                        <li>Monday: CoEd, BS in Info Tech (BSIT)</li>
-                        <li>Tuesday: CAFE, Forestry, Environment, BSHM, BS in Industrial Engineering (BSIE)</li>
-                        <li>Wednesday: CAS, BS in Industrial Engineering (BSIE)</li>
-                        <li>Thursday: BS in Industrial Technology (BIT)</li>
-                    </ul>
-                    <p class="text-sm font-bold">Operating Hours (First-Come, First-Served):</p>
-                    <ul class="list-disc list-inside text-sm ml-4 space-y-1">
-                        <li>Morning Session: 10:00 AM</li>
-                        <li>Afternoon Session: 3:00 PM</li>
-                    </ul>
+                <div class="alert-box status-approved">
+                    <div class="alert-title">YOUR ID IS READY FOR CLAIMING!</div>
+                    <div class="alert-content">
+                        <p style="font-size: 1rem;">Alumni ID No.: <span class="highlight-text">{{ alumni.student.studID }}</span></p>
+                        
+                        <div class="section-header-small">WALK-IN CLAIM SCHEDULE:</div>
+                        <p>Issuance is conducted Monday to Thursday, based on your respective course schedule (Starting July 21, 2025).</p>
+                        <ul class="schedule-list">
+                            <li>Monday: CoEd, BS in Info Tech (BSIT)</li>
+                            <li>Tuesday: CAFE, Forestry, Environment, BSHM, BS in Industrial Engineering (BSIE)</li>
+                            <li>Wednesday: CAS, BS in Industrial Engineering (BSIE)</li>
+                            <li>Thursday: BS in Industrial Technology (BIT)</li>
+                        </ul>
+                        
+                        <p style="font-weight: 600; margin-top: 8px;">Operating Hours (First-Come, First-Served):</p>
+                        <ul class="schedule-list">
+                            <li>Morning Session: 10:00 AM</li>
+                            <li>Afternoon Session: 3:00 PM</li>
+                        </ul>
 
-                    <h3 class="text-base font-bold text-green-900 mt-3 border-t pt-2">CLAIM REQUIREMENTS:</h4>
-                    <ul class="list-decimal list-inside text-sm ml-4 space-y-1">
-                        <li>Membership Fee: Pay Php 250.00 at the Registrar's Office for verification.</li>
-                        <li>Picture: Send a soft copy of your picture (wearing a toga without a cap, or formal attire) via the Facebook page.</li>
-                        <li>An e-signature and a soft copy of the owner's picture must be sent through the Facebook page.</li>
-                    </ul>
-                    <h4 class="text-sm font-semibold mt-2">If claiming by a representative, they must bring:</h4>
-                    <ul class="list-disc list-inside text-xs ml-4 space-y-1">
-                        <li>Authorization Letter</li>
-                        <li>Authorized representative's Valid ID (photocopy only) and Valid ID of the requesting alumnus/Alumna (photocopy only)</li>
-                    </ul>
+                        <div class="section-header-small" style="border-top: 1px solid #c3e6cb; padding-top: 8px;">CLAIM REQUIREMENTS:</div>
+                        <ol class="requirements-list">
+                            <li>Membership Fee: Pay Php 250.00 at the Registrar's Office for verification.</li>
+                            <li>Picture: Send a soft copy of your picture (wearing a toga without a cap, or formal attire) via the Facebook page.</li>
+                            <li>An e-signature and a soft copy of the owner's picture must be sent through the Facebook page.</li>
+                        </ol>
+
+                        <div style="font-weight: 600; font-size: 0.9rem; margin-top: 10px;">If claiming by a representative, they must bring:</div>
+                        <ul class="requirements-list" style="font-size: 0.85rem;">
+                            <li>Authorization Letter</li>
+                            <li>Authorized representative's Valid ID (photocopy only) and Valid ID of the requesting alumnus/Alumna (photocopy only)</li>
+                        </ul>
+                    </div>
                 </div>
                 
                 {% comment %} --- STATE 3: ALREADY CLAIMED --- {% endcomment %}
                 {% elif alumni.approved and alumni.claimed_date %}
-                <div class="bg-blue-100 text-blue-800 border border-blue-300 px-4 py-4 rounded-xl shadow-md space-y-2">
-                    <p class="font-bold text-xl border-b border-blue-400 pb-2">
-                        🆔 ID Claimed
-                    </p>
-                    <p class="font-semibold text-lg">
-                        Alumni ID No.: <span class="text-2xl font-bold">{{ alumni.student.studID }}</span>
-                    </p>
-                    <p class="text-sm">
-                        Your Alumni ID was successfully claimed on: 
-                        <span class="font-medium">{{ alumni.claimed_date|date:"F d, Y" }}</span>.
-                    </p>
-                    <p class="text-sm italic text-blue-700">
-                        Welcome to the Alumni Association!
-                    </p>
+                <div class="alert-box status-claimed">
+                    <div class="alert-title">🆔 ID Claimed</div>
+                    <div class="alert-content">
+                        <p>Alumni ID No.: <span class="highlight-text">{{ alumni.student.studID }}</span></p>
+                        <p style="margin-top: 8px;">Your Alumni ID was successfully claimed on: <strong>{{ alumni.claimed_date|date:"F d, Y" }}</strong>.</p>
+                        <p style="margin-top: 8px; font-style: italic;">Welcome to the Alumni Association!</p>
+                    </div>
                 </div>
                 {% endif %}
 
             {% else %}
               {% comment %} --- This is the form for a NEW request --- {% endcomment %}
-              <div
-                style="background-color: hsla(23, 74%, 91%, 0.678)"
-                class="rounded-xl p-6 shadow-inner space-y-4"
-            >
-                <h2 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">
-                    Student Information
-                </h2>
-                <div
-                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm"
-                >
-                    <div>
-                        <p class="text-gray-600 font-semibold">Student ID</p>
-                        <p class="text-gray-900">{{ student.studID }}</p>
+              
+              <div class="student-info-box">
+                <h2 class="section-title">Student Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Student ID</label>
+                        <span>{{ student.studID }}</span>
                     </div>
-                    <div>
-                        <p class="text-gray-600 font-semibold">First Name</p>
-                        <p class="text-gray-900">{{ student.firstname }}</p>
+                    <div class="info-item">
+                        <label>First Name</label>
+                        <span>{{ student.firstname }}</span>
                     </div>
-                    <div>
-                        <p class="text-gray-600 font-semibold">Last Name</p>
-                        <p class="text-gray-900">{{ student.lastname }}</p>
+                    <div class="info-item">
+                        <label>Last Name</label>
+                        <span>{{ student.lastname }}</span>
                     </div>
-                    <div>
-                        <p class="text-gray-600 font-semibold">Email</p>
-                        <p class="text-gray-900 break-words">{{ student.emailadd }}</p>
+                    <div class="info-item">
+                        <label>Email</label>
+                        <span>{{ student.emailadd }}</span>
                     </div>
-                    <div>
-                        <p class="text-gray-600 font-semibold">Degree</p>
-                        <p class="text-gray-900">{{ student.degree }}</p>
+                    <div class="info-item">
+                        <label>Degree</label>
+                        <span>{{ student.degree }}</span>
                     </div>
                 </div>
             </div>
             
-        <form class="space-y-6" method="post" action="{% url 'add_alumni' %}">
+            <form method="post" action="{% url 'add_alumni' %}" class="form-section">
                 {% csrf_token %}
-                <h3 class="text-xl font-semibold text-indigo-700 mb-4 border-b pb-2">
-                    Complete Alumni ID Information
-                </h4>
+                
+                <div>
+                    <h3 class="section-title" style="margin-bottom: 0;">Complete Alumni ID Information</h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Please fill out the remaining details to process your ID.</p>
+                </div>
                 
                 <input type="hidden" name="student_id" value="{{ student.studID }}" />
                 <input type="hidden" name="firstname" value="{{ student.firstname }}" />
@@ -156,111 +306,71 @@
                 <input type="hidden" name="degree" value="{{ student.degree }}" />
                 <input type="hidden" name="sex" value="{{ student.sex }}" />
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >Date Requested</label
-                        >
-                        <input
-                            type="date"
-                            name="alumnidate"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                            min="{{ today|date:'Y-m-d' }}"
-                        />
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Date Requested</label>
+                        <input type="date" id="alumnidate" name="alumnidate" class="form-input readonly-input" readonly />
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >Birth Date</label
-                        >
-                        <input
-                            type="date"
-                            name="alumnibirthday"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                            max="{{ sixteen_years_ago|date:'Y-m-d' }}"
-                        />
+                    <div class="form-group">
+                        <label class="form-label">Birth Date</label>
+                        <input type="date" name="alumnibirthday" class="form-input" required max="{{ sixteen_years_ago|date:'Y-m-d' }}" />
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >Contact No.</label
-                        >
-                        <input
-                            type="text"
-                            name="alumnicontact"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                            pattern="^(09\d{9}|\+639\d{9})$"
-                            title="Please enter a valid Philippine phone number (e.g., 09171234567 or +639171234567)."
-                        />
+                    <div class="form-group">
+                        <label class="form-label">Contact No.</label>
+                        <input type="text" name="alumnicontact" class="form-input" required 
+                               placeholder="09123456789"
+                               maxlength="11"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);" 
+                               pattern="^09\d{9}$"
+                               title="Please enter a valid 11-digit mobile number starting with 09" />
+                        <p class="helper-text">Format: 09XXXXXXXXX (11 digits)</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >SSS/GSIS</label
-                        >
-                        <input
-                            type="text"
-                            name="sssgsis"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                        />
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">SSS/GSIS</label>
+                        <input type="text" name="sssgsis" class="form-input" required 
+                               oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
+                               placeholder="Enter SSS or GSIS No." />
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >TIN</label
-                        >
-                        <input
-                            type="text"
-                            name="tin"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                        />
+                    <div class="form-group">
+                        <label class="form-label">TIN</label>
+                        <input type="text" name="tin" class="form-input" required 
+                               oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
+                               placeholder="Enter TIN" />
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >Parent/Guardian</label
-                        >
-                        <input
-                            type="text"
-                            name="parentguardian"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                        />
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Parent/Guardian</label>
+                        <input type="text" name="parentguardian" class="form-input" required />
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >Address</label
-                        >
-                        <input
-                            type="text"
-                            name="alumniaddress"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                        />
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="alumniaddress" class="form-input" required />
                     </div>
                 </div>
 
-                <div class="flex justify-center">
-                    <button
-                        type="submit"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-10 py-3 rounded-lg shadow-md transition duration-200"
-                    >
-                        Submit Request
-                    </button>
+                <div style="text-align: center;">
+                    <button type="submit" class="btn-submit">Submit Request</button>
                 </div>
 
             </form>
             {% endif %} 
-            
-        </div>
+        {% endif %} 
     </div>
 </div>
-            {% endif %} 
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateInput = document.getElementById("alumnidate");
+        if (dateInput) {
+            const today = new Date().toISOString().split("T")[0];
+            dateInput.value = today;
+        }
+    });
+</script>
 
 {% endblock %}

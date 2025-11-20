@@ -330,16 +330,55 @@ def signinuser(request):
 
             if user.is_superuser:
                 return redirect('homepage')
-            elif hasattr(user, 'role') and user.role == 'student':
-                 return redirect('homepage')
-            elif hasattr(user, 'role') and user.role in ['clinic_admin', 'staff', 'guidance', 'scholarship_officer', 'placement_officer', 'discipline_officer', 'alumni_officer', 'student_life_staff']:
-                 return redirect('adminmain')
-            elif hasattr(user, 'role') and user.role == 'guard':
-                return redirect('guard_homepage')
-            elif hasattr(user, 'role') and user.role == 'org_admin':
-                return redirect('orgmain')
+            if user.is_superuser:
+    # You might want to create a specific 'superadmin_dashboard' later
+                return redirect('homepage') 
+
+            elif hasattr(user, 'role'):
+                # --- Student ---
+                if user.role == 'student':
+                    return redirect('homepage')
+
+                # --- Student Life Staff (and generic staff) ---
+                elif user.role == 'student_life_staff' or user.role == 'staff':
+                    return redirect('student_life_dashboard')
+
+                # --- Scholarship ---
+                elif user.role == 'scholarship_officer':
+                    return redirect('scholarship_dashboard')
+
+                # --- Guidance ---
+                elif user.role == 'guidance':
+                    return redirect('guidance_dashboard')
+
+                # --- Medical / Clinic ---
+                elif user.role == 'clinic_admin':
+                    return redirect('clinic_dashboard')
+
+                # --- Job Placement ---
+                elif user.role == 'placement_officer':
+                    return redirect('placement_dashboard')
+
+                # --- Discipline ---
+                elif user.role == 'discipline_officer':
+                    return redirect('discipline_dashboard')
+
+                # --- Alumni ---
+                elif user.role == 'alumni_officer':
+                    return redirect('alumni_dashboard')
+
+                # --- Organization Admin ---
+                elif user.role == 'org_admin':
+                    return redirect('org_dashboard') # Updated from 'orgmain' for consistency
+
+                # --- Security Guard ---
+                elif user.role == 'guard':
+                    return redirect('guard_homepage')
+
+                else:
+                    return redirect('homepage')
             else:
-                 return redirect('homepage')
+                return redirect('homepage')
         else:
             messages.error(request, "Incorrect password.")
             return render(request, 'login.html', context)
@@ -660,3 +699,27 @@ def view_transaction_history(request):
     }
 
     return render(request, 'reports/transaction_report.html', context)
+
+def student_life_dashboard(request):
+    return render(request, 'student_life_staff.html')
+
+def scholarship_dashboard(request):
+    return render(request, 'scholarship_officer.html')
+
+def guidance_dashboard(request):
+    return render(request, 'guidance_officer.html')
+
+def clinic_dashboard(request):
+    return render(request, 'clinic_admin.html')
+
+def placement_dashboard(request):
+    return render(request, 'placement_officer.html')
+
+def discipline_dashboard(request):
+    return render(request, 'discipline_officer.html')
+
+def alumni_dashboard(request):
+    return render(request, 'alumni_officer.html')
+
+def org_dashboard(request):
+    return render(request, 'org_admin.html')

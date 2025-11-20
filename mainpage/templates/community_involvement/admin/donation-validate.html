@@ -9,40 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
     
     <link rel="stylesheet" href="{% static 'styles/community/donation.css' %}" />
-
-    <style>
-        .modal-content-image {
-            position: relative;
-            margin: auto;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 8px;
-            max-width: 90vw;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        #receiptModalImage {
-            max-width: 100%;
-            max-height: 85vh;
-            object-fit: contain;
-        }
-        /* Make close button consistent */
-        #receiptModalCloseBtn {
-            position: absolute;
-            top: 0px;
-            right: 15px;
-            color: #aaa;
-            font-size: 35px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10;
-        }
-        #receiptModalCloseBtn:hover {
-            color: #000;
-        }
-    </style>
 {% endblock headcontent %}
 
 {% block bodycontent %}
@@ -55,7 +21,6 @@
     <hr>
 
     <div class="data">
-        <div class="table">
             <form class="filter-bar" action="{% url 'donation-validate' %}" method="GET">
                 <select name="filterStatus">
                     <option value="" {% if not selected_status %}selected{% endif %}>All Donations</option>
@@ -82,7 +47,7 @@
                             <th>Date</th>
                             <th>Status</th>
                             <th>Processed By</th>
-                            <th>Details</th>
+                            <th style="text-align: center;"><i class="fas fa-image"></i></th> 
                             {% if selected_status == "Pending" or not selected_status %}
                             <th>Options</th>
                             {% endif %}
@@ -124,13 +89,16 @@
                                 {% endif %}
                             </td>
                             <td>{{ donates.date }}</td>
-                            {% if donates.status == None %}
-                            <td><span class="status-badge status-pending">Pending</span></td>
-                            {% elif donates.status == "Accepted" %}
-                            <td><span class="status-badge status-accepted">Accepted</span></td>
-                            {% elif donates.status == "Declined" %}
-                            <td><span class="status-badge status-declined">Declined</span></td>
-                            {% endif %} 
+                            
+                            <td>
+                                {% if donates.status == None %}
+                                    <span class="status-badge status-pending">Pending</span>
+                                {% elif donates.status == 'Accepted' %}
+                                    <span class="status-badge status-accepted">Accepted</span>
+                                {% else %}
+                                    <span class="status-badge status-declined">Declined</span>
+                                {% endif %}
+                            </td>
                             
                             <td>
                                 {% if donates.processed_by %}
@@ -140,27 +108,28 @@
                                 {% endif %}
                             </td>
 
-                            {% if donates.what_kind != "SERVICE" and donates.image_details %}
-                            <td class="view">
-                                <a href="#" class="view-receipt-btn" data-image-url="/media/{{ donates.image_details }}">
-                                    View Receipt
-                                </a>
+                            <td style="text-align: center;">
+                                {% if donates.what_kind != "SERVICE" and donates.image_details %}
+                                    <a href="#" class="btn-icon view view-receipt-btn" data-image-url="/media/{{ donates.image_details }}" title="View Receipt">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                {% else %}
+                                    <span style="color: #ccc;">-</span>
+                                {% endif %}
                             </td>
-                            {% else %}
-                            <td></td>
-                            {% endif %} 
-                            
-                            {% if donates.status == None %}
-                            <td class="options">
-                                <a class="btn-accept" href="{% url 'donation_accept' donates.id %}">
-                                    Accept
-                                </a>
-                                <a class="btn-decline" href="{% url 'donation_decline' donates.id %}">
-                                    Decline
-                                </a>
-                            </td>
-                            {% elif selected_status == "Pending" or not selected_status %}
-                            <td></td>
+
+                            {% if selected_status == "Pending" or not selected_status %}
+                                <td class="options">
+                                    {% if donates.status == None %}
+                                        <a class="btn-icon accept" href="{% url 'donation_accept' donates.id %}" title="Accept">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a class="btn-icon decline" href="{% url 'donation_decline' donates.id %}" title="Decline">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    {% else %}
+                                        {% endif %}
+                                </td>
                             {% endif %}
                         </tr>
                         {% empty %}
@@ -172,33 +141,18 @@
                 </table>
             </div>
 
-            <div class="pagination-controls">
-                <span class="step-links">
-                    {% if loadDonations.has_previous %}
-                        <a href="?page=1{% if selected_status %}&filterStatus={{ selected_status }}{% endif %}">&laquo; first</a>
-                        <a href="?page={{ loadDonations.previous_page_number }}{% if selected_status %}&filterStatus={{ selected_status }}{% endif %}">previous</a>
-                    {% endif %}
-            
-                    <span class="current">
-                        Page {{ loadDonations.number }} of {{ loadDonations.paginator.num_pages }}.
-                    </span>
-            
-                    {% if loadDonations.has_next %}
-                        <a href="?page={{ loadDonations.next_page_number }}{% if selected_status %}&filterStatus={{ selected_status }}{% endif %}">next</a>
-                        <a href="?page={{ loadDonations.paginator.num_pages }}{% if selected_status %}&filterStatus={{ selected_status }}{% endif %}">last &raquo;</a>
-                    {% endif %}
-                </span>
-            </div>
-
-        </div>
+        {% if page_obj %}
+            {% with query_params="&sort="|add:current_sort %}
+                {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+            {% endwith %}
+        {% endif %}
     </div>
 </div>
 
 <div id="detailsModal" class="modal-backdrop">
     <div class="modal-content">
         <span id="modalCloseBtn" class="modal-close-btn">&times;</span>
-        <div id="modalBody">
-            </div>
+        <div id="modalBody"></div>
     </div>
 </div>
 
@@ -208,7 +162,6 @@
         <img id="receiptModalImage" src="" alt="Donation Receipt" />
     </div>
 </div>
-
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -274,8 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                if(data.receiptExists === 'true') {
                     html += `<p><strong>Receipt:</strong></p>`;
-                    // This adds a thumbnail image.
-                    // Clicking it will open the large image modal.
                     html += `<img src="${data.receipt}" alt="Receipt Thumbnail" class="modal-receipt-thumb view-receipt-btn" data-image-url="${data.receipt}">`;
                 }
 
@@ -301,11 +252,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-    } else {
-        console.error('Details modal components not found!');
     }
 
-    // --- Setup for NEW Receipt Modal ---
+    // --- Setup for Receipt Modal ---
     const receiptModal = document.getElementById('receiptModal');
     const receiptModalImg = document.getElementById('receiptModalImage');
     const closeReceiptModalBtn = document.getElementById('receiptModalCloseBtn');
@@ -314,10 +263,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function closeReceiptModal() {
             receiptModal.style.display = 'none';
-            receiptModalImg.src = ''; // Clear image src
+            receiptModalImg.src = ''; 
         }
 
-        tableBody.addEventListener('click', function(e) {
+        // Event delegation for the Eye Icon AND the thumbnail in the details modal
+        document.body.addEventListener('click', function(e) {
             const target = e.target.closest('.view-receipt-btn');
             if (target) {
                 e.preventDefault();
@@ -332,15 +282,11 @@ document.addEventListener('DOMContentLoaded', function() {
         closeReceiptModalBtn.addEventListener('click', closeReceiptModal);
 
         receiptModal.addEventListener('click', function(e) {
-            if (e.target === receiptModal) { // Click on backdrop
+            if (e.target === receiptModal) { 
                 closeReceiptModal();
             }
         });
-
-    } else {
-        console.error('Receipt modal components not found!');
     }
 });
 </script>
-
 {% endblock %}

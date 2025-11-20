@@ -3,6 +3,8 @@ import json
 import re
 import random
 import uuid
+from django.core.exceptions import FieldError
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ..decorators import profile_complete_required
 import os
 from django.db import IntegrityError
@@ -975,15 +977,141 @@ def dashboard_view(request):
 
 
 @user_passes_test(can_access_medical_admin)
-
 def mental_health_view(request):
-    records = MentalHealthRecord.objects.all().order_by('-date_submitted')
-    pending_count = records.filter(status='pending').count()
+    print("--- DEBUG: Entering mental_health_view ---")
+
+    # Initialize variables
+    fetched_student = None
+    fetched_faculty = None
+    fetched_mental_health_record = None
     
+    # Get search ID
+    search_id = request.GET.get('search_id') or request.POST.get('search_id')
+    
+    # --- 1. QUERYSETS (FILTERS OFF FOR DEBUGGING) ---
+    # We are grabbing ALL records to see if the database is returning anything at all
+    student_qs = MentalHealthRecord.objects.filter(
+        patient__isnull=False
+        # is_availing_mental_health=True  <-- COMMENTED OUT TO SHOW ALL
+    ).select_related('patient__user').order_by('-pk')
+    
+    print(f"DEBUG: Total Student Records Found in DB: {student_qs.count()}")
+
+    faculty_qs = MentalHealthRecord.objects.filter(
+        faculty__isnull=False
+        # is_availing_mental_health=True <-- COMMENTED OUT TO SHOW ALL
+    ).select_related('faculty__user').order_by('-pk')
+
+    print(f"DEBUG: Total Faculty Records Found in DB: {faculty_qs.count()}")
+
+    # --- 2. PAGINATION ---
+    student_paginator = Paginator(student_qs, 10)
+    student_page = request.GET.get('student_page')
+    try:
+        student_mhr_list = student_paginator.page(student_page)
+    except PageNotAnInteger:
+        student_mhr_list = student_paginator.page(1)
+    except EmptyPage:
+        student_mhr_list = student_paginator.page(student_paginator.num_pages)
+
+    faculty_paginator = Paginator(faculty_qs, 10)
+    faculty_page = request.GET.get('faculty_page')
+    try:
+        faculty_mhr_list = faculty_paginator.page(faculty_page)
+    except PageNotAnInteger:
+        faculty_mhr_list = faculty_paginator.page(1)
+    except EmptyPage:
+        faculty_mhr_list = faculty_paginator.page(faculty_paginator.num_pages)
+
+    # --- 3. ENRICHMENT LOOP (STUDENTS) ---
+    for record in student_mhr_list:
+        # Default values
+        record.id_number_display = "N/A"
+        record.name_display = "Unknown"
+        
+        if record.patient and record.patient.user:
+            user = record.patient.user
+            try:
+                # Try to get Student Info
+                student_obj = studentInfo.objects.get(studID=user.username)
+                record.id_number_display = student_obj.studID
+                record.name_display = f'{student_obj.firstname} {student_obj.lastname}'
+            except studentInfo.DoesNotExist:
+                # FALLBACK: If not in studentInfo, use User data
+                record.id_number_display = user.username
+                record.name_display = user.get_full_name() or user.username
+            except Exception as e:
+                print(f"Error processing record {record.pk}: {e}")
+
+    # --- 4. ENRICHMENT LOOP (FACULTY) ---
+    for record in faculty_mhr_list:
+        if record.faculty:
+            record.id_number_display = record.faculty.staffID
+            if record.faculty.user:
+                 record.name_display = f"{record.faculty.firstname} {record.faculty.lastname}"
+            else:
+                 record.name_display = f"{record.faculty.firstname} {record.faculty.lastname}"
+        else:
+            record.id_number_display = "N/A"
+            record.name_display = "Faculty Data Missing"
+
+    # --- 5. SEARCH LOGIC ---
+    if search_id:
+        try:
+            student_obj = studentInfo.objects.filter(studID=search_id).first()
+            if student_obj:
+                fetched_student = student_obj
+                user_obj = User.objects.filter(username=student_obj.studID).first()
+                if user_obj:
+                    patient_obj = Patient.objects.filter(user=user_obj).first()
+                    if patient_obj:
+                         fetched_mental_health_record = MentalHealthRecord.objects.filter(patient=patient_obj).first()
+
+            if not fetched_mental_health_record:
+                faculty_obj = Faculty.objects.filter(staffID=search_id).first()
+                if faculty_obj:
+                    fetched_faculty = faculty_obj
+                    fetched_mental_health_record = MentalHealthRecord.objects.filter(faculty=faculty_obj).first()       
+        except Exception as e:
+            messages.error(request, f"Error searching for ID {search_id}: {e}")
+
+    # --- 6. POST LOGIC ---
+    if request.method == 'POST' and 'record_id' in request.POST:
+        try:
+            record_id = request.POST.get('record_id')
+            action = request.POST.get('action')
+            mhr = MentalHealthRecord.objects.get(pk=record_id)
+            mhr.prescription_remarks = request.POST.get('prescription_remarks')
+            mhr.certification_remarks = request.POST.get('certification_remarks')
+
+            if action == 'approved':
+                mhr.status = 'approved'
+                messages.success(request, "Record approved.")
+            elif action == 'rejected':
+                mhr.status = 'rejected'
+                messages.error(request, "Record rejected.")
+            elif action == 'save_remarks':
+                messages.success(request, "Remarks saved.")
+            
+            mhr.save()
+            fetched_mental_health_record = mhr 
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+
+    pending_count = MentalHealthRecord.objects.filter(status='pending').count()
+
     context = {
-        'records': records,
+        'student_mhr_list': student_mhr_list, 
+        'faculty_mhr_list': faculty_mhr_list, 
         'pending_count': pending_count,
+        'search_id': search_id,
+        'fetched_student': fetched_student,
+        'fetched_faculty': fetched_faculty,
+        'fetched_mental_health_record': fetched_mental_health_record,
+        'active_tab': request.GET.get('tab', 'student') 
     }
+    
+    print("--- DEBUG: Rendering Template ---")
     return render(request, 'medical/admin/mental_health.html', context)
 
 @login_required

@@ -48,7 +48,85 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from ..models import PPMPDocument
 from ..forms import PPMPDocumentForm
+from django.shortcuts import render
+from django.db.models import Q
+from django.utils import timezone
+import json
+from ..models import (
+    studentInfo, RequestedGMC, BorrowingRecord, Schedule, Equipment
+)
 
+@sao_admin_required
+def admin_dashboard(request):
+    # 1. Calculate Top Stats
+    total_students = studentInfo.objects.count()
+    total_equipment = Equipment.objects.count()
+    
+    pending_gmc = RequestedGMC.objects.filter(processed=False).count()
+    pending_equipment = BorrowingRecord.objects.filter(is_returned=False).count()
+    total_pending = pending_gmc + pending_equipment
+
+    # 2. Prepare Calendar Events
+    # Converting Schedule objects to the JSON format required by the JS calendar
+    schedules = Schedule.objects.all()
+    events_data = []
+    for sched in schedules:
+        events_data.append({
+            'date': sched.start_date.strftime("%Y-%m-%d"),
+            'status': 'approved', # You can add logic here to vary colors
+            'title': sched.title
+        })
+
+    # 3. Prepare Request List (Combining GMC and Equipment)
+    all_upcoming_requests = []
+
+    # A. Process GMC Requests (Mapped to 'documentary')
+    gmc_requests = RequestedGMC.objects.filter(processed=False).select_related('student')
+    for req in gmc_requests:
+        all_upcoming_requests.append({
+            'type': 'documentary',
+            'user_info': {
+                'id': req.student.studID,
+                'name': f"{req.student.firstname} {req.student.lastname}",
+            },
+            'request': {
+                'request_type': 'Good Moral Certificate',
+                'date_requested': req.request_date,
+                'status': 'pending'
+            }
+        })
+
+    # B. Process Equipment Borrowing (Mapped to 'equipment')
+    borrow_requests = BorrowingRecord.objects.filter(is_returned=False).select_related('student', 'equipment')
+    for req in borrow_requests:
+        all_upcoming_requests.append({
+            'type': 'equipment',
+            'user_info': {
+                'id': req.student.studID,
+                'name': f"{req.student.firstname} {req.student.lastname}",
+            },
+            'request': {
+                'request_type': f"Borrowed: {req.equipment.equipmentName}",
+                'date_requested': req.date_borrowed,
+                'status': 'active' # Using 'active' effectively acts as pending return
+            }
+        })
+
+    # Sort requests by date (newest first)
+    # Note: handling different date field names in sorting might be complex, 
+    # so we append them first then sort if needed, or just display as is.
+
+    context = {
+        'total_patients': total_students, # Labelled as Students in UI
+        'total_records': total_equipment, # Labelled as Inventory/Equipment
+        'pending_requests': total_pending,
+        'events': events_data, # Passed as raw list, template will json_script it
+        'all_upcoming_requests': all_upcoming_requests,
+        'active_tab': 'all',
+        'base_template': 'adminmain.html'
+    }
+
+    return render(request, 'officeOfStudentL/adminUser/admin_dashboard.html', context)
 # --- NEW AJAX VIEW ---
 @csrf_exempt
 def get_student_details_ajax(request):

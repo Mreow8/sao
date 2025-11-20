@@ -111,7 +111,25 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from functools import wraps
 # In mainpage/decorators.py
+from django.http import HttpResponseForbidden
+from functools import wraps
 
+def sao_admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden("You must be logged in.")
+        
+        # Check the 'role' field instead of 'user_type'
+        # We allow 'student_life_staff' and 'superadmin' to access this dashboard
+        allowed_roles = ['student_life_staff', 'superadmin']
+        
+        if request.user.role in allowed_roles or request.user.is_staff:
+            return view_func(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden("You are not authorized to view this page.")
+            
+    return _wrapped_view
 from django.shortcuts import redirect
 from django.contrib import messages
 from ..models import studentInfo

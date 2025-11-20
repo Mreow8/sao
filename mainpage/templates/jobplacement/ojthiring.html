@@ -42,26 +42,7 @@
   .controls-bar label {
     font-weight: bold;
   }
-  .pagination {
-    text-align: center;
-    margin-top: 2rem;
-  }
-  .pagination a, .pagination .current {
-    margin: 0 0.25rem;
-    padding: 0.5rem 0.75rem;
-    text-decoration: none;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    color: #007bff;
-  }
-  .pagination .current {
-    font-weight: bold;
-    background-color: #f0f0f0;
-    color: #333;
-  }
-  .pagination a:hover {
-    background-color: #e9ecef;
-  }
+
 </style>
 <link
   rel="stylesheet"
@@ -481,23 +462,11 @@
 </div>
 
 {% if page_obj.has_other_pages %}
-<div class="pagination">
-  <span class="step-links">
-    {% if page_obj.has_previous %}
-      <a href="?page=1&search={{ search_query }}&sort={{ sort_by }}">&laquo; first</a>
-      <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&sort={{ sort_by }}">previous</a>
-    {% endif %}
-
-    <span class="current">
-      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-    </span>
-
-    {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&sort={{ sort_by }}">next</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}&sort={{ sort_by }}">last &raquo;</a>
-    {% endif %}
-  </span>
-</div>
+  {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+{% endif %}
 {% endif %}
 <script src="{% static 'scripts/job_placement/ojthiring_show.js' %}?321"></script>
 

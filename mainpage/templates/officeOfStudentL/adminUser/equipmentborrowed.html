@@ -241,38 +241,6 @@ hr {
   color: #9b2c2c;
 }
 
-/* --- Pagination --- */
-.pagination {
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.pagination .step-links {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.pagination .step-links a {
-  text-decoration: none;
-  color: #2c5282;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.pagination .step-links a:hover {
-  background-color: #ebf8ff;
-  border-color: #2c5282;
-}
-
-.pagination .current {
-  padding: 8px 12px;
-  color: #333;
-  font-weight: 600;
-}
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
@@ -297,11 +265,9 @@ hr {
     overflow-x: auto;
   }
 
-  .pagination .step-links {
-    flex-wrap: wrap;
-  }
+  
 }</style>  <div class="sub-title">
-    <h4>OFFICE OF STUDENT LIFE (Admin)</h4>
+    <h4>F STUDENT LIFE (Admin)</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">> Equipment Tracker</p>
   </div>
@@ -384,23 +350,11 @@ hr {
 
 </div>
   {% if page_obj.has_other_pages %}
-  <div class="pagination">
-    <span class="step-links">
-      {% if page_obj.has_previous %}
-        <a href="?page=1{{ search_sort_params }}&sort={{ current_sort }}&order={{ current_order }}">&laquo; First</a>
-        <a href="?page={{ page_obj.previous_page_number }}{{ search_sort_params }}&sort={{ current_sort }}&order={{ current_order }}">Previous</a>
-      {% endif %}
-
-      <span class="current">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-      </span>
-
-      {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}{{ search_sort_params }}&sort={{ current_sort }}&order={{ current_order }}">Next</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}{{ search_sort_params }}&sort={{ current_sort }}&order={{ current_order }}">Last &raquo;</a>
-      {% endif %}
-    </span>
-  </div>
+   {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+{% endif %}
   {% endif %}
 </div>
 <script>

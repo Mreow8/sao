@@ -14,12 +14,6 @@ body {
   background-color: #f8f9fa; /* Light grey background */
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem 2rem;
-}
-
 /* --- Horizontal Rule --- */
 hr#demo {
   border: 0;
@@ -35,7 +29,6 @@ hr#demo {
   border-radius: 12px;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  max-width: 800px; /* Constrain form width */
   margin: 0 auto; /* Center the card */
 }
 

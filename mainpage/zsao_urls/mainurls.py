@@ -8,16 +8,19 @@ urlpatterns = [
     path('captcha/', include('captcha.urls')),
 
            path('assign-role/', views.assign_role, name='assign_role'), 
-           path('staff_upload/', views.staff_upload, name='staff_upload'),
            
   path("search/students/", views.search_students, name="search_students"),
-
+path('dashboard/student-life/', views.student_life_dashboard, name='student_life_dashboard'),
+    path('dashboard/scholarship/', views.scholarship_dashboard, name='scholarship_dashboard'),
+    path('dashboard/guidance/', views.guidance_dashboard, name='guidance_dashboard'),
+    path('dashboard/clinic/', views.clinic_dashboard, name='clinic_dashboard'),
+    path('dashboard/placement/', views.placement_dashboard, name='placement_dashboard'),
 # urls.py
-
+path('dashboard/organization/', views.org_dashboard, name='org_dashboard'),
 path('organization/<slug:org_slug>/advisers/', views.view_adviser, name='view_adviser_list'),
 path('orgmain/', views.orgmain, name='orgmain'),
 
-
+path('studentlifedashboard/', views.admin_dashboard, name='studentlifedashboard'),
 
   path("organizations/<slug:slug>/accreditations/upload/", views.upload_accreditation, name="view_accreditation_by_slug"),
     # ... your other direct paths ...

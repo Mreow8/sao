@@ -1,15 +1,9 @@
 {% load static %}
 <!DOCTYPE html>
+<html lang="en">
   <head>
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -17,25 +11,49 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'styles/guidance/main.css'%}">
     <link rel="stylesheet" href="{% static 'styles/sub-title.css'%}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% block headcontent %}
-
     {% endblock headcontent %}
-
   </head>
     
   <body>
-    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Open sidebar">
-      &#9776;
+    <button id="sidebar-toggle" class="sidebar-toggle glass-button" aria-label="Toggle sidebar">
+      <i class="fas fa-bars" id="toggle-icon"></i>
     </button>
-    
+
+    <div class="account-info-wrapper fixed-profile">
+        <div id="profile-trigger" class="profile-summary">
+          <i class="fas fa-user-circle profile-icon"></i>
+        </div>
+
+        <div id="profile-dropdown" class="profile-popup">
+          <div class="popup-header">
+            <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+            <span class="popup-username">{{ user.username }}</span>
+          </div>
+          <div class="popup-divider"></div>
+          <a href="{% url 'logout' %}" class="popup-logout-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+    </div>
+
     <div class="left-side">
       <div class="sidebar-brand">
-     <a href="{% url 'homepage' %}">
-    <img src="{% static 'scholar/CTU_Logo.png' %}" class="logo" />
-  </a>
+        <a href="{% url 'homepage' %}">
+            <img src="{% static 'scholar/CTU_Logo.png' %}" class="logo" />
+        </a>
         <div class="brand-text">
           <span class="brand-title">Cebu Technological</span>
           <span class="brand-subtitle">University</span>
@@ -52,7 +70,7 @@
                 href="#"
                 class="studentlife-btn {% if current_url in section_urls %}active{% endif %}"
               >
-                OFFICE OF STUDENT LIFE
+                STUDENT LIFE
                 <span
                   class="fas fa-caret-down first {% if current_url in section_urls %}rotate{% endif %}"
                 ></span>
@@ -95,27 +113,27 @@
                 ></span>
               </a>
              <ul class="scholar-show {% if current_url in section_urls %}active{% endif %}">
-    {% if is_scholar %}
-    <li>
-        <a href="{% url 'student_req' %}" class="{% if current_url == 'student_req' %}active-link{% endif %}">
-            Submission of Requirements
-        </a>
-    </li>
-    {% else %}
-    <li>
-        <a href="{% url 'studentapplication' %}" class="{% if current_url == 'studentapplication' %}active-link{% endif %}">
-            Application form
-        </a>
-    </li>
-    {% endif %}
+                {% if is_scholar %}
+                <li>
+                    <a href="{% url 'student_req' %}" class="{% if current_url == 'student_req' %}active-link{% endif %}">
+                        Submission of Requirements
+                    </a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="{% url 'studentapplication' %}" class="{% if current_url == 'studentapplication' %}active-link{% endif %}">
+                        Application form
+                    </a>
+                </li>
+                {% endif %}
 
-    <li>
-        <a href="{% url 'profile_student' %}" class="{% if current_url == 'profile_student' %}active-link{% endif %}">
-            Scholars Profile
-        </a>
-    </li>
-</ul>
-</li>
+                <li>
+                    <a href="{% url 'profile_student' %}" class="{% if current_url == 'profile_student' %}active-link{% endif %}">
+                        Scholars Profile
+                    </a>
+                </li>
+            </ul>
+            </li>
             {% endwith %} 
             
             {% with section_urls='ojt_hiring,seminar_page,ojt_requirements_tracker' %}
@@ -360,120 +378,158 @@
         {% endwith %}
       </div>
     </div>
-   <div class="right-side"><div class="custom-search-wrapper">
-  <div class="search-container"> 
-  <div class="account-info-wrapper" style="margin-left: auto;">
-    <div id="profile-trigger" class="profile-summary">
-      <i class="fas fa-user-circle profile-icon"></i>
-      <span class="profile-name">{{ user.first_name }} {{ user.last_name }}</span>
-      <i class="fas fa-caret-down caret-icon"></i>
-    </div>
-
-    <div id="profile-dropdown" class="profile-popup">
-      <div class="popup-header">
-        <strong></strong>
-        <span class="popup-username">{{ user.username }}</span>
-      </div>
-      <div class="popup-divider"></div>
-      <a href="{% url 'logout' %}" class="popup-logout-link">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>Logout</span>
-      </a>
-    </div>
-  </div>
-</div>
-  <main class="main_content"> {% block bodycontent %}{% endblock %}
-  </main>
-</div>
+    
+   <div class="right-side">
+     <main class="main_content"> {% block bodycontent %}{% endblock %}</main>
+   </div>
 
     <script src="{% static 'scripts/main.js'%}"></script>
-   
-    <script>
-      // Sidebar toggle logic (single instance)
-      const sidebarToggle = document.getElementById('sidebar-toggle');
-      const leftSide = document.querySelector('.left-side');
+   <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          
+          // Elements
+          const sidebarToggle = document.getElementById('sidebar-toggle');
+          const leftSide = document.querySelector('.left-side');
+          const toggleIcon = document.getElementById('toggle-icon');
+          
+          // Select the Profile Wrapper (The parent div we want to hide)
+          const profileWrapper = document.querySelector('.account-info-wrapper');
+          const profileTrigger = document.getElementById('profile-trigger');
+          const profileDropdown = document.getElementById('profile-dropdown');
 
-      if (sidebarToggle && leftSide) {
-        sidebarToggle.addEventListener('click', function(e) {
-          e.stopPropagation(); // Prevent click from bubbling to document
-          leftSide.classList.toggle('active');
-        });
-
-        // Hide sidebar when clicking outside on small screens
-        document.addEventListener('click', function(e) {
-          if (
-            window.innerWidth <= 900 &&
-            leftSide.classList.contains('active') &&
-            !leftSide.contains(e.target) &&
-            e.target !== sidebarToggle
-          ) {
-            leftSide.classList.remove('active');
+          // --- Helper Functions ---
+          
+          function closeProfile() {
+              if (profileDropdown && profileDropdown.classList.contains('active')) {
+                  profileDropdown.classList.remove('active');
+                  if(profileTrigger) profileTrigger.classList.remove('active');
+              }
           }
-        });
 
-        // Remove .active on resize to large screens
-        window.addEventListener('resize', function() {
-          if (window.innerWidth > 900) {
-            leftSide.classList.remove('active');
-            leftSide.style.transform = '';
+          function closeSidebar() {
+              if (leftSide && leftSide.classList.contains('active')) {
+                  leftSide.classList.remove('active');
+                  if(sidebarToggle) sidebarToggle.classList.toggle('active'); // Toggle back the button animation
+                  
+                  // SHOW Profile again
+                  if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+
+                  // Reset Icon
+                  if(toggleIcon) {
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+              }
           }
-        });
-      }
+
+          // --- Event Listeners ---
+
+          // 1. Sidebar Toggle Click
+          if (sidebarToggle && leftSide) {
+              sidebarToggle.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  
+                  // Force Close Profile dropdown if open
+                  closeProfile();
+
+                  // Toggle Sidebar
+                  leftSide.classList.toggle('active');
+                  sidebarToggle.classList.toggle('active');
+
+                  // Toggle Profile Visibility
+                  // If sidebar is now active -> Hide profile. Else -> Show profile.
+                  if (leftSide.classList.contains('active')) {
+                      if(profileWrapper) profileWrapper.classList.add('hidden-profile');
+                  } else {
+                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                  }
+
+                  // Icon Logic (Bars vs X)
+                  if (sidebarToggle.classList.contains('active')) {
+                      toggleIcon.classList.remove('fa-bars');
+                      toggleIcon.classList.add('fa-times');
+                  } else {
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+              });
+          }
+
+          // 2. Profile Trigger Click
+          if (profileTrigger && profileDropdown) {
+              profileTrigger.addEventListener('click', function(event) {
+                  event.stopPropagation(); 
+                  profileDropdown.classList.toggle('active');
+                  profileTrigger.classList.toggle('active');
+              });
+
+              // Prevent closing when clicking inside the dropdown
+              profileDropdown.addEventListener('click', function(event) {
+                  event.stopPropagation();
+              });
+          }
+
+          // 3. Window Click (Close everything)
+          document.addEventListener('click', function(e) {
+              // Close Sidebar if clicking outside on mobile
+              if (
+                  window.innerWidth <= 900 &&
+                  leftSide.classList.contains('active') &&
+                  !leftSide.contains(e.target) &&
+                  !sidebarToggle.contains(e.target)
+              ) {
+                  closeSidebar();
+              }
+
+              // Close Profile if clicking outside
+              if (profileDropdown.classList.contains('active')) {
+                  closeProfile();
+              }
+          });
+
+          // 4. Resize Reset
+          window.addEventListener('resize', function() {
+              if (window.innerWidth > 900) {
+                  // On desktop, ensure sidebar logic resets
+                  if (leftSide.classList.contains('active')) {
+                      leftSide.classList.remove('active');
+                      sidebarToggle.classList.remove('active');
+                      
+                      // Ensure profile is visible again on resize
+                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+                  leftSide.style.transform = '';
+              }
+          });
+      });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% if messages %}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // --- Profile Dropdown Functionality ---
-            const profileTrigger = document.getElementById('profile-trigger');
-            const profileDropdown = document.getElementById('profile-dropdown');
-
-            if (profileTrigger && profileDropdown) {
-                // Toggle dropdown on trigger click
-                profileTrigger.addEventListener('click', function(event) {
-                    event.stopPropagation(); 
-                    profileDropdown.classList.toggle('active');
-                    profileTrigger.classList.toggle('active');
-                });
-
-                // Close dropdown when clicking anywhere else on the page
-                window.addEventListener('click', function() {
-                    if (profileDropdown.classList.contains('active')) {
-                        profileDropdown.classList.remove('active');
-                        profileTrigger.classList.remove('active');
-                    }
-                });
-
-                // Stop the dropdown from closing when clicking inside it
-                profileDropdown.addEventListener('click', function(event) {
-                    event.stopPropagation();
-                });
-            }
+      document.addEventListener('DOMContentLoaded', function() {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
         });
-    </script> {% if messages %}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer);
-        toast.addEventListener('mouseleave', Swal.resumeTimer);
-      }
-    });
 
-    {% for message in messages %}
-      Toast.fire({
-        icon: '{{ message.tags }}',
-        title: '{{ message|escapejs }}'
+        {% for message in messages %}
+          Toast.fire({
+            icon: '{{ message.tags }}',
+            title: '{{ message|escapejs }}'
+          });
+        {% endfor %}
       });
-    {% endfor %}
-  });
-</script>
-{% endif %}
+    </script>
+    {% endif %}
   </body>
-    
 </html>

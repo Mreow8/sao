@@ -23,17 +23,13 @@ class AlumniAdmin(admin.ModelAdmin):
 
 class graduateFormAdmin(admin.ModelAdmin):
     list_display = (
-        "get_alumniID",
         "dategraduated",
         "firstname",
         "lastname",
         "alumniaddress",
     )
 
-    def get_alumniID(self, obj):
-        return obj.alumniID.alumniID
 
-    get_alumniID.short_description = "Alumni ID"
 
 
 class EventAdmin(admin.ModelAdmin):

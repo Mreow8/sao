@@ -3,6 +3,9 @@
   display: flex;
   flex-wrap: wrap;
 }
+table {
+  font-size: 12px;
+}
 /* Add this to your main CSS file */
 #info_table_head th {
   cursor: pointer;
@@ -180,38 +183,49 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap; /* Allow buttons to wrap on mobile */
-}
-.accept,
-.decline,
-.delete {
-  font-family: "Rubik", sans-serif;
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 6px 10px;
-  color: white;
-  cursor: pointer;
+} /* Remove default button borders and backgrounds */
+.icon-btn {
+  background: none;
   border: none;
-  border-radius: 6px;
-  transition: background-color 0.2s;
-  text-transform: uppercase;
+  cursor: pointer;
+  font-size: 1.2rem; /* Adjust icon size */
+  padding: 5px 8px;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
+
+/* Add hover effect */
+.icon-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Green for Accept */
 .accept {
-  background-color: #2f855a; /* Green */
+  color: #28a745;
 }
 .accept:hover {
-  background-color: #276749;
+  color: #218838;
 }
+
+/* Red for Decline */
 .decline {
-  background-color: #c53030; /* Red */
+  color: #dc3545;
 }
 .decline:hover {
-  background-color: #9b2c2c;
+  color: #c82333;
 }
+
+/* Darker Red or Gray for Delete */
 .delete {
-  background-color: #a0aec0; /* Gray */
+  color: #6c757d; /* Or use #dc3545 for red */
 }
 .delete:hover {
-  background-color: #718096;
+  color: #343a40; /* Darker on hover */
+}
+
+.horizontal {
+  display: flex;
+  gap: 10px; /* Space between icons */
+  align-items: center;
 }
 
 /* --- Form Button --- */

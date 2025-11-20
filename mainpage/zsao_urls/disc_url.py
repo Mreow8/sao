@@ -5,6 +5,7 @@ from .. import views  # Assumes your views are in the app's views.py
 
 urlpatterns = [
    path('update-status/<int:case_id>/', views.update_case_status, name='update_case_status'),
+    path('dashboard/discipline/', views.discipline_dashboard, name='discipline_dashboard'),
   
     path('case-profile/', views.case_profile_create, name='case_profile'),
   

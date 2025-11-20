@@ -18,6 +18,7 @@ mainpage/templates/jobplacement/ojt_requirements.html
 mainpage/templates/jobplacement/ojthiring.html
 mainpage/templates/alumni/users/admin_idRequest.html
 mainpage/templates/guidance/ojt_assessment_admin.html
+mainpage/templates/guidance/print_exit.html
 mainpage/templates/guidance/counseling_app_admin_view.html
 mainpage/templates/guidance/ojt_assessment.html
 mainpage/templates/guidance/exit_interview_admin.html
@@ -26,6 +27,9 @@ mainpage/templates/community_involvement/programs.html
 mainpage/templates/community_involvement/donate.html
 mainpage/templates/studentorg/Main/register_adviser_new.html
 mainpage/templates/studentorg/Main/view_officer.html
+mainpage/templates/studentorg/Main/view_projects.html
+mainpage/templates/studentorg/Main/view_financial.html
+mainpage/templates/studentorg/Main/accreditation_form.html
 mainpage/templates/officeOfStudentL/adminUser/monthlyCalendarAdmin.html
 mainpage/templates/scholarship/studentrequirements.html
 mainpage/templates/scholarship/adminrequirements.html
@@ -37,3 +41,5 @@ mainpage/templates/medical/students/requestform.html
 mainpage/templates/officeOfStudentL/adminUser/adminRequestedGmc.html
 mainpage/templates/community_involvement/admin/volunteer-dashboard.html
 mainpage/templates/community_involvement/admin/donation.html
+mainpage/templates/_pagination.html
+mainpage/templates/medical/admin/mental_health.html

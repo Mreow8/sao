@@ -1,22 +1,8 @@
-.side-nav {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; /* full height */
-}
-
-.nav-list {
-  flex-grow: 1; /* pushes the bottom link down */
-  padding-bottom: 10px;
-}
-
-.bottom-link {
-  margin-top: auto; /* this keeps it at the bottom */
-  padding: 10px;
-}
-
+/* =========================================
+   1. IMPORTS & GLOBAL STYLES
+   ========================================= */
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
 
-/* --- Global, Container, & Font --- */
 body,
 .container,
 .tabs,
@@ -27,21 +13,34 @@ input,
 select {
   font-family: "Rubik", sans-serif !important;
 }
+
 body {
   margin: 0;
   padding: 0;
-  background-color: #d1ddf4;
+  background-color: rgb(240, 246, 253) !important; /* Light Blue Background */
   color: #141414;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-/* --- Main Layout --- */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   2. LAYOUT (Sidebar & Content Area)
+   ========================================= */
 .left-side {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   width: 260px; /* Sidebar width */
-  background-color: #1a365d; /* Dark blue */
+  background-color: #1a365d; /* Dark blue theme */
   color: #e2e8f0;
   display: flex;
   flex-direction: column;
@@ -51,12 +50,21 @@ body {
 }
 
 .right-side {
-  margin-left: 260px; /* Same as sidebar width */
+  margin-left: 260px; /* Matches sidebar width */
   width: calc(100% - 260px);
   transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+  min-height: 100vh;
 }
 
-/* --- Sidebar Brand (Logo/Title) --- */
+/* Main Content Padding */
+.main_content {
+  padding: 20px;
+}
+
+/* =========================================
+   3. SIDEBAR NAVIGATION DESIGN
+   ========================================= */
+/* Brand / Logo Area */
 .sidebar-brand {
   display: flex;
   align-items: center;
@@ -84,10 +92,10 @@ body {
 
 .sidebar-brand .brand-subtitle {
   font-size: 0.875rem;
-  color: #a0aec0; /* Lighter text */
+  color: #a0aec0;
 }
 
-/* --- Sidebar Navigation Menu --- */
+/* Navigation Links */
 .side-nav ul {
   list-style: none;
   padding: 0;
@@ -98,8 +106,7 @@ body {
 .side-nav ul li a {
   display: block;
   padding: 14px 24px;
-  color: #cbd5e0; /* Off-white */
-  text-decoration: none;
+  color: #cbd5e0;
   font-size: 0.9rem;
   font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -108,17 +115,17 @@ body {
 }
 
 .side-nav ul li a:hover {
-  background-color: #2a4365; /* Slightly lighter blue */
+  background-color: #2a4365;
   color: #fff;
 }
 
-/* Style for the active (clicked) main link */
+/* Active Link State */
 .side-nav > ul > li > a.active {
-  background-color: #2c5282; /* Active blue */
+  background-color: #2c5282;
   color: #fff;
 }
 
-/* Caret Icon */
+/* Caret Icon Rotation */
 .side-nav ul li a .fas {
   position: absolute;
   right: 20px;
@@ -127,21 +134,24 @@ body {
   transition: transform 0.3s ease;
 }
 
-/* Active (rotated) caret */
-.side-nav ul li a.active .fas {
+.side-nav ul li a.active .fas.rotate {
   transform: translateY(-50%) rotate(-90deg);
 }
 
-/* --- Sub-Menus (Hidden by default) --- */
+/* Sub-Menus */
 .side-nav ul li ul {
   list-style: none;
   padding: 0;
-  background-color: #1c2b41; /* Even darker blue for nesting */
-  display: none; /* JS will handle showing this */
+  background-color: #1c2b41; /* Darker for nested items */
+  display: none; /* JS toggles this */
+}
+
+.side-nav ul li ul.active {
+  display: block;
 }
 
 .side-nav ul li ul li a {
-  padding: 12px 24px 12px 48px; /* Indented text */
+  padding: 12px 24px 12px 48px; /* Indented */
   font-size: 0.85rem;
   color: #a0aec0;
 }
@@ -151,191 +161,224 @@ body {
   color: #fff;
 }
 
-/* --- Header / Right Side Content --- .custom-search-wrapper {
-  background-color: #fff;
-
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-} */
-
-/* Profile Dropdown */
-/* The .account-info container needs to be relative */
-.account-info {
-  position: relative;
+.side-nav ul li ul li a.active-link {
+  background-color: #2a4365;
+  color: #fff;
+  border-left: 4px solid #63b3ed; /* Visual accent */
 }
 
-.profile-popup {
-  display: none; /* Hidden by default */
-  position: absolute;
-  top: 100%; /* Position below the icon/name */
-  right: 0;
-  background-color: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 280px;
-  padding: 1rem;
-  margin-top: 8px;
-  z-index: 50;
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
+/* =========================================
+   4. RESPONSIVE TOGGLE & PROFILE LOGIC
+   ========================================= */
 
-/* Show popup on hover of the .account-info container */
-.account-info:hover .profile-popup,
-.profile-summary:focus-within + .profile-popup {
-  display: block;
-}
-
-.profile-popup strong {
-  color: #2d3748;
-}
-
-.logout-btn {
-  /* Tailwind classes are already doing this, but this is a fallback */
-  width: 100%;
-  text-align: center;
-}
-.logout-btn a {
-  text-decoration: none;
-  color: white;
-}
-
-/* --- Mobile Responsive Toggle --- */
+/* --- Sidebar Toggle (Hidden on Desktop) --- */
 .sidebar-toggle {
-  display: none; /* Hidden on desktop */
+  display: none; /* Hidden by default */
   position: fixed;
   top: 15px;
   left: 15px;
-  z-index: 1001; /* Above the sidebar */
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 24px;
-  padding: 5px 10px;
+  z-index: 1100;
+
+  /* Glassmorphism Style */
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  color: #1a365d;
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- Media Query for Mobile (<= 900px) --- */
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-3px);
+  color: #2c5282;
+}
+
+.sidebar-toggle.active {
+  background: #1a365d;
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+/* --- Profile Wrapper (Desktop: Top Right) --- */
+.account-info-wrapper.fixed-profile {
+  position: fixed;
+  top: 20px;
+  right: 30px; /* Top Right on Desktop */
+  left: auto;
+  z-index: 1100;
+  margin-left: 0 !important;
+  transition: all 0.3s ease;
+}
+
+/* Profile Trigger Button Style */
+.account-info-wrapper.fixed-profile #profile-trigger {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.account-info-wrapper.fixed-profile #profile-trigger:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.account-info-wrapper.fixed-profile .profile-icon {
+  font-size: 1.5rem;
+  color: #1a365d;
+}
+
+/* Dropdown Menu (Desktop: Opens Down) */
+.account-info-wrapper.fixed-profile .profile-popup {
+  top: 120%;
+  right: 0;
+  left: auto;
+  width: 280px;
+  margin-top: 10px;
+  transform-origin: top right;
+
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1200;
+}
+
+.account-info-wrapper.fixed-profile .profile-popup.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.popup-header {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.popup-logout-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  color: #334155;
+  font-weight: 500;
+}
+
+.popup-logout-link:hover {
+  background-color: #f8fafc;
+}
+
+/* Helper to hide profile when sidebar opens on mobile */
+.account-info-wrapper.hidden-profile {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.9);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* =========================================
+   5. MOBILE MEDIA QUERIES (Max-width: 900px)
+   ========================================= */
 @media (max-width: 900px) {
-  .sidebar-toggle {
-    display: block;
-  }
-
+  /* 1. Layout Shifts */
   .left-side {
-    /* Hide sidebar off-screen by default */
-    transform: translateX(-100%);
+    transform: translateX(-100%); /* Hide sidebar off-screen */
+    width: 260px;
   }
 
-  /* This class will be added by your inline JS */
   .left-side.active {
-    transform: translateX(0);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    transform: translateX(0); /* Slide in */
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.2);
   }
 
   .right-side {
     margin-left: 0;
     width: 100%;
   }
-}
-/* --- --- */
-/* Add these new rules to main.css */
 
-/* This rule makes the submenu visible on page load if Django added the 'active' class */
-.side-nav ul li ul.active {
-  display: block;
-}
+  /* 2. Show Toggle Button */
+  .sidebar-toggle {
+    display: flex;
+  }
 
-/* This rule highlights the specific page link you are on */
-.side-nav ul li ul li a.active-link {
-  background-color: #2a4365; /* Active blue background */
-  color: #fff; /* White text */
+  /* 3. Move Profile to Left (Below Toggle) */
+  .account-info-wrapper.fixed-profile {
+    top: 80px; /* Position below the 50px toggle + spacing */
+    left: 15px; /* Move to left side */
+    right: auto; /* Reset right alignment */
+  }
 
-  border-radius: 4px;
-  padding-left: 36px; /* Original 48px - 12px margin */
-}
-
-/* This styles the main button when its section is active (already in your CSS) */
-.side-nav > ul > li > a.active {
-  background-color: #2c5282; /* Active blue */
-  color: #fff;
+  /* 4. Change Dropdown Direction (Opens Right) */
+  .account-info-wrapper.fixed-profile .profile-popup {
+    top: 0;
+    left: 60px; /* To the right of the button */
+    right: auto;
+    transform-origin: top left;
+  }
 }
 
-/* This rotates the caret (already in your CSS, but good to confirm) */
-.side-nav ul li a .fas.rotate {
-  transform: translateY(-50%) rotate(-90deg);
-}
-
-/* --- --- */
-/* Apply to the whole page */
+/* =========================================
+   6. SCROLLBAR STYLING
+   ========================================= */
 html {
-  /* --- For Firefox --- */
-  scrollbar-width: thin; /* Makes scrollbar "thin" or "auto" */
-  scrollbar-color: #a0bcdc #f0f5fa; /* [Thumb Color] [Track Color] */
+  scrollbar-width: thin;
+  scrollbar-color: #a0bcdc #f0f5fa;
 }
 
-/* --- For Chrome, Edge, Safari (WebKit browsers) --- */
-
-/* 1. Sets the overall width of the scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px; /* For horizontal scrollbars */
+  width: 8px;
+  height: 8px;
 }
 
-/* 2. The 'track' (the background the handle slides on) */
 ::-webkit-scrollbar-track {
-  background: #f0f5fa; /* Light-blue-white, matches your hover bg */
+  background: #f0f5fa;
   border-radius: 10px;
 }
 
-/* 3. The 'thumb' (the handle itself) */
 ::-webkit-scrollbar-thumb {
-  background-color: #a0bcdc; /* A light, subtle blue */
+  background-color: #a0bcdc;
   border-radius: 10px;
-  border: 2px solid #f0f5fa; /* Creates a nice padding effect */
+  border: 2px solid #f0f5fa;
 }
 
-/* 4. The 'thumb' on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #2c5282; /* Your main theme blue */
-}
-/* --- Global & Fonts --- */
-body {
-  margin: 0;
-  /* Using the page background color for demo */
-  background-color: #f8fafc;
-  color: #1e293b;
-  /* Add padding for demo */
-  padding: 2rem;
+  background-color: #2c5282;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-/* --- Header / Right Side Content --- */
-/* .custom-search-wrapper {
-  background-color: #fff;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 16px 24px;
-  /* Added for standalone demo */
-/* border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-} */
-
-/* --- STYLES FOR YOUR HEADER HTML --- */
-
+/* =========================================
+   7. SEARCH & UTILITIES (Preserved)
+   ========================================= */
 .search-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
+  margin-bottom: 20px;
 }
 
 .search-box {
@@ -344,10 +387,8 @@ a {
   background-color: #f1f5f9;
   border-radius: 8px;
   padding: 10px 14px;
-  min-width: 300px;
   flex: 1;
   max-width: 500px;
-  transition: all 0.2s ease-in-out;
   border: 1px solid transparent;
 }
 
@@ -357,245 +398,77 @@ a {
   box-shadow: 0 0 0 1px #3b82f6;
 }
 
-.search-icon {
-  color: #64748b;
-  margin-right: 10px;
-}
-
 .search-input {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 1rem;
   width: 100%;
   color: #1e293b;
 }
+/* =========================
+   UPLOAD BUTTON STYLES
+   ========================= */
 
-.search-input::placeholder {
-  color: #94a3b8;
-}
-
-.right-controls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
+/* The Button Container */
 .upload-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background-color: #2c5282;
-  color: #ffffff;
+  justify-content: center;
+  gap: 10px; /* Space between Icon and Text */
+
+  background-color: #2c5282; /* Primary Brand Blue */
+  color: #ffffff; /* White Text */
+
   font-size: 0.9rem;
-  font-weight: 500;
-  padding: 10px 16px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  padding: 10px 20px;
+  border-radius: 8px; /* Smooth rounded corners */
   border: 1px solid transparent;
+
+  text-decoration: none; /* Removes underline from links */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  /* Ensure it doesn't shrink if screen gets small */
+  white-space: nowrap;
 }
 
+/* Hover Effect (Lift & Shadow) */
 .upload-button:hover {
-  background-color: #3a6dab;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+  background-color: #1a365d; /* Darker Blue */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
 }
 
-.upload-button .fa-upload {
-  font-size: 0.9rem;
-}
-
-.account-info-wrapper {
-  position: relative;
-}
-
-#profile-trigger {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-#profile-trigger:hover {
-  background-color: #f1f5f9;
-}
-
-.profile-icon {
-  font-size: 1.5rem;
-  color: #475569;
-}
-
-.profile-name {
-  font-weight: 500;
-  color: #334155;
-  display: none; /* Hidden by default */
-}
-
-.caret-icon {
-  color: #64748b;
-  transition: transform 0.2s ease;
-}
-
-#profile-trigger.active .caret-icon {
-  transform: rotate(180deg);
-}
-
-.profile-popup {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 10px;
-  width: 260px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
-  z-index: 1000;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.profile-popup.active {
-  display: block;
-  opacity: 1;
+/* Active/Click Effect */
+.upload-button:active {
   transform: translateY(0);
+  box-shadow: none;
 }
 
-.popup-header {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+/* Icon Styling */
+.upload-button i {
+  font-size: 1.1rem; /* Slightly larger icon */
 }
 
-.popup-header strong {
-  font-size: 1rem;
-
-  color: #1e293b;
-}
-
-.popup-header .popup-username {
-  font-size: 0.875rem;
-  color: #64748b;
-}
-
-.popup-divider {
-  height: 1px;
-  background-color: #f1f5f9;
-}
-
-.popup-logout-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #334155;
-  transition: background-color 0.2s ease;
-}
-
-.popup-logout-link:hover {
-  background-color: #f8fafc;
-}
-
-.popup-logout-link i {
-  width: 16px;
-  color: #64748b;
-}
-
-.student-account-info .signin-link {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #334155;
-  padding: 10px 16px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-.student-account-info .signin-link:hover {
-  background-color: #f1f5f9;
-}
-
-/* --- Media Queries --- */
-
-@media (min-width: 640px) {
-  .profile-name {
-    display: inline;
-  }
-}
-
+/* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-  .search-container {
-    flex-direction: column;
-    align-items: stretch;
+  .upload-button {
+    /* On mobile, you might want it smaller or icon-only */
+    padding: 8px 12px;
+    font-size: 0.8rem;
   }
 
-  .search-box {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .right-controls {
-    justify-content: space-between;
-    width: 100%;
-  }
+  /* Optional: Hide text on very small screens, show only icon */
+  /* .upload-button span {
+    display: none;
+  } 
+  */
 }
-/* --- Message Box Styling (Add to main CSS file or adminmain.html <head>) --- */
-.messages {
-  list-style-type: none;
-  padding: 0;
-  margin: 1em 0;
-  /* Add z-index if it appears behind other elements */
-  position: relative;
-  z-index: 100;
-}
-
-.messages li {
-  padding: 15px 40px 15px 20px; /* 40px right-padding for 'x' */
-  margin-bottom: 10px;
-  border-radius: 5px;
-  font-weight: 500;
-  position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.messages li.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.messages li.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.messages li.warning {
-  background-color: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeeba;
-}
-
-/* --- Close Button Style --- */
-.message-close-btn {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  font-size: 24px;
-  font-weight: bold;
-  color: inherit;
-  opacity: 0.6;
-  cursor: pointer;
-}
-
-.message-close-btn:hover {
-  opacity: 1;
+.custom-search-wrapper {
+  margin-right: 100px;
+  margin-top: 25px;
 }

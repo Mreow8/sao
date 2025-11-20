@@ -68,7 +68,7 @@
 
 <div class="container">
   
-  <p class="desc">
+  <p class="descs">
     Get involved! This is your hub for all upcoming workshops, volunteer opportunities, 
     local meetups, and community gatherings. Find an event that interests you and join us!
   </p>
@@ -214,27 +214,13 @@
       
     </div>
     {% endfor %}
-    
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
     {% else %}
     <p>No crowdfunding projects available.</p>
     {% endif %}
-  </div> <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1&sort={{ current_sort }}">&laquo; First</a>
-                <a href="?page={{ page_obj.previous_page_number }}&sort={{ current_sort }}">Previous</a>
-            {% endif %}
-
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}&sort={{ current_sort }}">Next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ current_sort }}">Last &raquo;</a>
-            {% endif %}
-        </span>
-  </div>
+  </div> 
   
 </div> <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div id="modalContent" class="bg-white rounded-lg shadow-xl max-w-md w-full"></div>

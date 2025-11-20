@@ -1,121 +1,108 @@
-/* --- Global & Fonts --- */
-/* Apply "Rubik" font, matching requestgmc.css */
-body,
-.sub-title,
-.tab,
-table,
-label,
-input,
-select,
-textarea,
-.btn-primary {
-  font-family: "Rubik", sans-serif;
+:root {
+  --main-blue: #2c5282;
+  --main-blue-dark: #2a4365;
+  --primary-blue: #007bff;
+  --light-gray-bg: #f8f9fa;
+  --container-bg: #ffffff;
+  --text-color: #343a40;
+  --text-light: #6c757d;
+  --border-color: #dee2e6;
 }
 
 body {
-  background-color: #f9f9f9; /* Light background to make card pop */
+  font-family: "Rubik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  background-color: var(--light-gray-bg);
+  color: var(--text-color);
+  line-height: 1.6;
 }
 
-/* --- Main Container --- */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+
 .container {
-  max-width: 1100px;
-  margin: 2rem auto;
-  padding: 0 1.5rem; /* From requestgmc.css */
+  background-color: var(--container-bg);
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
 }
 
-/* --- Tabs (Adapted for <button>) --- */
 .tabs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 2px solid var(--border-color);
 }
+
 .tab {
-  font-family: "Rubik", sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  color: #2c5282; /* Theme Blue */
+  padding: 10px 18px;
   text-decoration: none;
-  padding: 1rem 1.25rem;
-  border: none;
+  color: var(--text-light);
+  font-weight: 500;
+  font-size: 16px;
   border-bottom: 3px solid transparent;
-  border-radius: 8px 8px 0 0;
-  cursor: pointer;
-  background-color: transparent;
-  transition: color 0.2s, background-color 0.2s;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
 }
+
 .tab:hover {
-  color: #2a4365;
-  background-color: #f0f5fa; /* Light blue hover */
+  background-color: #f0f5fa;
+  color: var(--main-blue);
 }
+
 .tab.active {
-  color: #ffffff;
-
-  background-color: #2c5282; /* Active tab has blue background */
-  border-bottom-color: #2c5282;
+  color: var(--main-blue);
+  font-weight: 600;
+  border-bottom-color: var(--main-blue);
 }
-/* --- Base Card Style (for Table) --- */
-/* This styles the table's .maincontain */
+
+.container > h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--main-blue);
+  margin-top: 25px;
+  margin-bottom: 5px;
+}
+
+.container > p {
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-bottom: 30px;
+}
+
+form {
+  padding: 25px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #fdfdfd;
+}
+
 .maincontain {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle lift */
-  overflow: hidden; /* Clips table corners */
-}
-
-/* --- Project Form Styles --- */
-form .hd {
-  font-size: 1.5rem; /* 24px */
-
-  margin-bottom: 1.5rem;
-  color: #333;
-}
-
-/* This styles the form's .maincontain */
-form .maincontain {
   display: flex;
-  flex-wrap: wrap; /* Stack columns on mobile */
-  gap: 2rem;
-  padding: 2.5rem; /* Padding for the form card */
-  overflow: visible; /* Override base card style */
+  flex-wrap: wrap;
+  gap: 30px;
 }
 
 .form-column {
-  flex: 1; /* Each column takes half the space */
-  min-width: 300px; /* Prevents over-squishing */
+  flex: 1;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 18px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
-/* Style for side-by-side items in a form group */
-.form-group.con {
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.form-group.con label {
-  width: 100%; /* Full width for main label */
-}
-
-.form-group.con select {
-  flex: 1; /* Share space */
-  min-width: 150px;
-}
-
-/* --- Form Input Styling (from requestgmc.css) --- */
 .form-group label {
-  font-size: 0.95rem;
-
-  color: #333;
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 6px;
+  font-size: 15px;
 }
 
 .form-group input[type="text"],
@@ -123,127 +110,143 @@ form .maincontain {
 .form-group input[type="file"],
 .form-group textarea,
 .form-group select {
-  font-family: "Rubik", sans-serif;
-  font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
   width: 100%;
-  background-color: #f9f9f9;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: "Rubik", sans-serif;
+  box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box; /* Important for 100% width */
-}
-
-.form-group textarea {
-  min-height: 120px;
-  resize: vertical;
 }
 
 .form-group input[type="file"] {
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  color: #555;
+  padding: 8px;
+  background-color: #fff;
 }
 
 .form-group input[type="file"]::file-selector-button {
-  font-family: "Rubik", sans-serif;
-
-  padding: 4px 10px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 6px;
-  background-color: #2c5282;
-  color: white;
+  border-radius: 4px;
+  background-color: #f0f5fa;
+  color: var(--main-blue);
+  font-weight: 500;
   cursor: pointer;
   margin-right: 10px;
   transition: background-color 0.2s;
 }
 
 .form-group input[type="file"]::file-selector-button:hover {
-  background-color: #2a4365;
+  background-color: #e0e7f1;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
-  background-color: #fff;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
-/* --- Form Button (Styled like .requestBtn) --- */
+.form-group.con {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.form-group.con label {
+  margin-bottom: 0;
+}
+
+.form-group.con select {
+  width: auto;
+  flex-grow: 1;
+}
+
 .buttons {
-  text-align: right;
-  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
 }
 
 .btn-primary {
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  font-size: 1rem;
-
-  padding: 10px 24px;
+  background-color: var(--main-blue);
+  color: #ffffff;
+  padding: 12px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 16px;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
 }
 
 .btn-primary:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
+  background-color: var(--main-blue-dark);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
-/* --- Table Wrapper (for horizontal scroll) --- */
+.maincontain[style="margin-top: 40px"] {
+  margin-top: 40px;
+}
+
 .subcontain {
   width: 100%;
-  overflow-x: auto; /* Adds horizontal scrollbar on small screens */
+  overflow-x: auto;
 }
 
-/* --- Project Table (Styled like #trackerTable) --- */
-.maincontain table {
+table {
   width: 100%;
-  border-collapse: collapse;
-  border: none;
-  min-width: 900px; /* Ensure space for all columns */
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.maincontain th,
-.maincontain td {
-  border-bottom: 1px solid #ddd;
+table th,
+table td {
   padding: 12px 15px;
   text-align: left;
+  border-bottom: 1px solid var(--border-color);
   font-size: 14px;
-  vertical-align: middle;
+  line-height: 1.5;
 }
 
-.maincontain th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue */
-
+table th {
+  background-color: var(--light-gray-bg);
+  font-weight: 600;
+  color: var(--text-color);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 12px;
 }
 
-/* Remove bottom border from last row */
-.maincontain tbody tr:last-child td {
+table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+table tbody tr:hover {
+  background-color: #f0f5fa;
+}
+
+table tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* "No projects" message */
-.maincontain tbody tr td[colspan="8"] {
+table td[colspan="8"] {
   text-align: center;
-  color: #555;
-  font-style: italic;
-  padding: 2rem;
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-  form .maincontain {
-    padding: 1.5rem; /* Smaller padding on mobile */
-  }
+  color: var(--text-light);
+  padding: 30px;
 }

@@ -1,55 +1,39 @@
-/* ================================
-   ORGMAIN PAGE STYLES
-   Based on requestgmc.css theme
-   With Circular Div Containers
-================================ */
-
-/* --- Global Font & Base Layout --- */
-.container,
-.sub-title,
-.add-org-btn,
-.image {
-  font-family: "Rubik", sans-serif;
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 40px;
 }
 
-.container {
-  padding: 0 1.5rem;
-  margin: 0 auto;
-  max-width: 1200px;
-}
-
-/* --- Add Organization Button --- */
 .add-org-btn {
-  background-color: #2c5282;
-  color: white;
+  background-color: #007bff; /* Primary blue */
+  color: #ffffff;
+  padding: 14px 24px;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
-
-  padding: 10px 22px;
+  font-weight: 500;
+  font-size: 18px;
   cursor: pointer;
-  margin-bottom: 1.5rem;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: inherit;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
 }
 
 .add-org-btn:hover {
-  background-color: #2a4365;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #0056b3; /* Darker blue on hover */
 }
 
-.add-org-btn:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-/* --- Organization Grid Layout --- */
+/* ========================================
+   Organization Grid
+   ======================================== */
 .row {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2.5rem;
-  justify-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px; /* Gap between items */
+  justify-content: center;
+  padding-top: 20px;
 }
 
 .image {
@@ -57,32 +41,32 @@
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  background-color: transparent;
+  color: #343a40;
+  font-weight: 500;
+  width: 220px; /* INCREASED: Width of the item container */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 20px 10px;
+  border-radius: 12px;
 }
 
 .image:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  color: #0056b3;
 }
 
-/* --- Circle Wrapper for Image --- */
 .org-circle {
-  width: 160px;
-  height: 160px;
+  width: 180px; /* INCREASED: Image circle width */
+  height: 180px; /* INCREASED: Image circle height */
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid #2c5282;
-  background-color: #ffffff;
+  margin-bottom: 24px; /* INCREASED: Space below image */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Deeper shadow */
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.org-circle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  background-color: #f4f4f4;
+  border: 6px solid #fff; /* INCREASED: White border */
 }
 
 .org-circle img {
@@ -91,71 +75,18 @@
   object-fit: cover;
 }
 
-/* --- Organization Name Below Circle --- */
 .image div {
-  font-size: 1rem;
-
-  color: #2c5282;
+  font-size: 18px; /* INCREASED: Font size for name */
   text-align: center;
-  margin-top: 0.7rem;
+  word-wrap: break-word;
+  max-width: 100%;
+  line-height: 1.5;
 }
 
-/* --- SweetAlert Customization --- */
-.swal2-input,
+/* ========================================
+   SweetAlert Modal Fix
+   ======================================== */
 .swal2-file {
-  border: 1px solid #ccc !important;
-  border-radius: 8px !important;
-  padding: 10px 12px !important;
-  font-family: "Rubik", sans-serif !important;
-}
-
-.swal2-confirm {
-  background-color: #2c5282 !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s ease !important;
-}
-
-.swal2-confirm:hover {
-  background-color: #2a4365 !important;
-}
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
-  .sub-title {
-    text-align: center;
-  }
-
-  .sub-title h3 {
-    font-size: 1.5rem;
-  }
-
-  .add-org-btn {
-    display: block;
-    margin: 0 auto 1.5rem;
-    width: 80%;
-  }
-
-  .row {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .org-circle {
-    width: 130px;
-    height: 130px;
-  }
-
-  .image div {
-    font-size: 0.95rem;
-  }
-}
-
-/* --- Divider for sections (optional) --- */
-hr {
-  margin: 2rem 0;
-  border: 0;
-  height: 1px;
-  background-color: #e0e0e0;
+  margin: 1.2em auto;
+  font-size: 1.1em;
 }

@@ -22,7 +22,7 @@
     <div class="sub-title">
         <h4>GUIDANCE(Admin)</h4>
         <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-        <p class="certxt">Counseling App with Schedule</p>
+        <p class="certxt">> Counseling App with Schedule</p>
     </div>
     <hr>
 
@@ -146,13 +146,20 @@
                             {% endif %}
                         </td>
                         <td data-label="Action">
-                            <div class="horizontal">
-                                {% if item.display_status != 'Expired' and item.display_status != 'Accepted' and item.display_status != 'Declined' %}
-                                    <button class="accept">ACCEPT</button>
-                                    <button class="decline">DECLINE</button>
-                                {% endif %}
-                            </div>
-                        </td>
+                                <div class="horizontal">
+                      {% if item.display_status != 'Expired' and item.display_status != 'Accepted' and item.display_status != 'Declined' %}
+                                        
+                                        <button class="accept action-btn" data-tooltip="Accept Request">
+                                            <i class="fas fa-check-circle"></i>
+                                        </button>
+
+                                        <button class="decline action-btn" data-tooltip="Decline Request">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+
+                                    {% endif %}
+                                </div>
+                            </td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -165,21 +172,11 @@
             </table>
         </div>
 
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page=1{{ all_params }}">&laquo; First</a>
-                    <a href="?page={{ page_obj.previous_page_number }}{{ all_params }}">Previous</a>
-                {% endif %}
-                <span class="current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                </span>
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}{{ all_params }}">Next</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}{{ all_params }}">Last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
+     {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+{% endif %}
     </div>
 </div>
 {% endwith %}

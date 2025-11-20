@@ -15,12 +15,6 @@ body {
 
 /* --- Sub-title / Breadcrumbs --- */
 
-hr {
-  border: none;
-  border-top: 1px solid #e0e0e0;
-  margin-bottom: 2rem;
-}
-
 /* --- Main Layout Wrapper --- */
 .main-wrapper {
   display: flex;
@@ -70,6 +64,7 @@ form label {
 form input[type="text"],
 form input[type="email"],
 form input[type="password"],
+form input[type="number"],
 form select {
   font-family: "Rubik", sans-serif;
   font-size: 1rem;

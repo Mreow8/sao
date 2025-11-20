@@ -1,206 +1,270 @@
-/* --- Import Font (from Manage.css) --- */
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
-
-/* --- Global, Container, & Font (from Manage.css) --- */
-body,
-.container,
-.tabs,
-table,
-button,
-a {
-  font-family: "Rubik", sans-serif;
+/* =========================================
+   1. Global Variables & Reset
+   ========================================= */
+:root {
+  --primary-color: #2c5282; /* Deep Blue */
+  --accent-color: #3182ce; /* Brighter Blue */
+  --success-color: #10b981; /* Green */
+  --danger-color: #ef4444; /* Red */
+  --bg-light: #f3f4f6; /* Light Gray Background */
+  --text-dark: #1f2937; /* Dark Gray Text */
+  --text-muted: #6b7280; /* Muted Text */
+  --border-color: #e5e7eb;
+  --white: #ffffff;
+  --radius: 8px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 body {
-  background-color: #f8f9fa; /* Light grey background */
+  background-color: var(--bg-light);
+  font-family: "Rubik", sans-serif;
+  color: var(--text-dark);
 }
 
+/* =========================================
+   2. Main Container & Headings
+   ========================================= */
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem 2rem;
+  max-width: 95%;
+  margin: 2rem auto;
 }
 
-/* --- Tabs (from Manage.css) --- */
+hr {
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  margin: 1.5rem 0;
+}
+
+/* Main Card Wrapper */
+.maincontain {
+  background-color: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+/* Application Card Header */
+.maincontain h1 {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  border-left: 5px solid var(--accent-color);
+  padding-left: 15px;
+}
+
+/* Application Meta Data */
+.maincontain div {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.maincontain strong {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-right: 5px;
+}
+
+/* Status Badge */
+.status {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.status strong {
+  margin-right: 5px;
+}
+
+/* =========================================
+   3. Navigation Tabs
+   ========================================= */
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 2rem;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
 }
+
 .tab {
-  font-weight: 500;
-  font-size: 1rem;
-  color: #555;
   text-decoration: none;
-  padding: 1rem 1.25rem;
-  border-bottom: 3px solid transparent;
-}
-.tab:hover {
-  color: #333;
-}
-.tab.active {
-  color: #2c5282; /* Theme Blue */
-  border-bottom-color: #2c5282;
-}
-
-/* --- Main Card (from Manage.css .gmc-form) --- */
-/* NOTE: You need to wrap your content in this class.
-  See the "HTML Setup" section below.
-*/
-.maincontain.gmc-form {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* --- NEW: Accreditation Review Content --- */
-.gmc-form h1 {
-  font-size: 1.75rem;
-
-  color: #2c5282; /* Theme Blue */
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #eee;
-}
-
-/* Styles for info divs like "Application ID:", "Organization:", etc. */
-.gmc-form > div {
-  font-size: 1rem;
-  color: #555;
-  margin-bottom: 0.75rem;
-}
-.gmc-form > div strong {
-  color: #333;
+  color: var(--text-muted);
   font-weight: 500;
-  min-width: 120px;
-  display: inline-block;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
 }
 
-/* Special style for the .status div */
-.gmc-form .status strong {
-  font-weight: 700;
-  color: #2c5282;
+.tab:hover {
+  background-color: #edf2f7;
+  color: var(--primary-color);
 }
 
-/* --- Table Wrapper (from Manage.css .subcontain) --- */
-/* NOTE: You should wrap your <table> in this class
-  for consistent borders and shadows.
-*/
+.tab.active {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+/* =========================================
+   4. Documents Table Styling
+   ========================================= */
 .subcontain {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  margin-top: 2rem;
+  overflow-x: auto; /* Responsive scrolling */
+  margin-top: 20px;
+  margin-bottom: 25px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
 }
 
-/* --- Table (from Manage.css #trackerTable) --- */
 table {
   width: 100%;
   border-collapse: collapse;
+  background-color: var(--white);
 }
-table th,
-table td {
-  border-bottom: 1px solid #ddd;
-  padding: 12px 15px;
-  text-align: left;
-  font-size: 14px;
-  vertical-align: middle;
-}
-table th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Theme Blue */
 
+th {
+  background-color: #f8fafc;
+  color: var(--text-dark);
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 20px;
+  border-bottom: 2px solid var(--border-color);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  width: 30%; /* Give the header column a set width */
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
 }
-table tr:last-child td {
+
+td {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+tr:last-child td {
   border-bottom: none;
 }
 
-/* --- Table Content (from Manage.css) --- */
-td a {
-  /* For "View Letter", "View List", etc. */
-  color: #2c5282;
-  font-weight: 500;
-  text-decoration: none;
-}
-td a:hover {
-  text-decoration: underline;
+tr:hover {
+  background-color: #fdfdfd;
 }
 
-/* --- NEW: Action Buttons --- */
+/* Document Links */
+td a {
+  display: inline-block;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 4px 10px;
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+td a:hover {
+  background-color: var(--accent-color);
+  color: var(--white);
+}
+
+/* "No file" text */
+td:nth-child(2) {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* =========================================
+   5. Action Buttons
+   ========================================= */
 .buttons {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #eee; /* Separator line */
+  gap: 15px;
+  margin-top: 20px;
+  align-items: center;
 }
 
-/* Base style for all buttons/links in the .buttons div */
-.buttons .approve,
-.buttons .decline,
-.buttons .print {
-  font-family: "Rubik", sans-serif;
+button.approve,
+button.decline,
+a.print {
+  padding: 10px 24px;
+  border-radius: 6px;
   font-size: 0.9rem;
-
-  padding: 10px 18px;
-  border: none;
-  border-radius: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  color: white;
+  border: none;
+  color: var(--white);
+  transition: all 0.2s ease;
   text-decoration: none;
-  display: inline-block;
-  text-align: center;
-  transition: background-color 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.buttons .approve:hover,
-.buttons .decline:hover,
-.buttons .print:hover {
+/* Approve Button */
+.approve {
+  background-color: var(--success-color);
+}
+.approve:hover {
+  background-color: #059669; /* Darker Green */
   transform: translateY(-2px);
 }
 
-/* Green Approve Button (from Manage.css) */
-.buttons .approve {
-  background-color: #28a745;
+/* Decline Button */
+.decline {
+  background-color: var(--danger-color);
 }
-.buttons .approve:hover {
-  background-color: #218838;
-}
-
-/* Red Decline Button (from Manage.css) */
-.buttons .decline {
-  background-color: #dc3545;
-}
-.buttons .decline:hover {
-  background-color: #c82333;
+.decline:hover {
+  background-color: #dc2626; /* Darker Red */
+  transform: translateY(-2px);
 }
 
-/* Blue Print Button (from Manage.css .search-btn) */
-.buttons .print {
-  background-color: #2c5282;
+/* Print Button */
+.print {
+  background-color: var(--primary-color);
 }
-.buttons .print:hover {
-  background-color: #2a4365;
+.print:hover {
+  background-color: #1e3a8a; /* Darker Blue */
+  transform: translateY(-2px);
 }
 
-/* --- NEW: "No Applications" Message (from Manage.css .no-applicants) --- */
-/* NOTE: You should add this class to your "else" div.
-  See the "HTML Setup" section below.
-*/
+/* =========================================
+   6. Empty State Message
+   ========================================= */
 .no-applications-message {
   text-align: center;
-  color: #777;
-  font-style: italic;
-  padding: 3rem 1rem;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 1.1rem;
   line-height: 1.6;
+  background-color: #f9fafb;
+  border-radius: var(--radius);
+  border: 2px dashed var(--border-color);
+}
+
+/* =========================================
+   7. Responsive Design
+   ========================================= */
+@media (max-width: 768px) {
+  .buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  button.approve,
+  button.decline,
+  a.print {
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: 10px;
+  }
 }

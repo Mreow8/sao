@@ -63,33 +63,7 @@
 .swal2-cancel:hover {
   background-color: #5a6268 !important; /* Darker gray for hover */
 }
-    /* --- Pagination --- */
-    .pagination {
-        margin-top: 20px;
-        text-align: center;
-    }
-    .pagination a, .pagination .current {
-        padding: 8px 12px;
-        margin: 0 3px;
-        border: 1px solid #ddd;
-        text-decoration: none;
-        color: #2a4365;
-        border-radius: 4px;
-    }
-    .pagination .current {
-        background-color: #2a4365;
-        color: white;
-        border-color: #2a4365;
-    }
-    .pagination a:hover {
-        background-color: #f4f4f4;
-    }
-    .pagination .disabled {
-        color: #aaa;
-        border-color: #ddd;
-        pointer-events: none;
-    }
-
+    
     /* --- Sorting --- */
     th.sortable a {
         text-decoration: none;
@@ -405,30 +379,11 @@
             </tbody>
         </table>
     </div>
-
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1{{ pagination_params|safe }}">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}{{ pagination_params|safe }}">previous</a>
-            {% else %}
-                <span class="disabled">&laquo; first</span>
-                <span class="disabled">previous</span>
-            {% endif %}
-
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{{ pagination_params|safe }}">next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}{{ pagination_params|safe }}">last &raquo;</a>
-            {% else %}
-                <span class="disabled">next</span>
-                <span class="disabled">last &raquo;</span>
-            {% endif %}
-        </span>
-    </div>
+  {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+{% endif %}
 
 </div>
 

@@ -57,12 +57,6 @@
     text-decoration: underline;
   }
 
-  /* === Pagination Styling === */
-  .pagination {
-    margin: 2rem 0 1rem;
-    text-align: center;
-  }
-
   .step-links {
     display: inline-flex;
     justify-content: center;
@@ -141,25 +135,14 @@
       </tbody>
     </table>
   </div>
+  <!-- prettier-ignore -->
 
   {% if page_obj and page_obj.has_other_pages %}
-  <div class="pagination">
-    <span class="step-links">
-      {% if page_obj.has_previous %}
-      <a href="?page=1">&laquo; First</a>
-      <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-      {% endif %}
-
-      <span class="current">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-      </span>
-
-      {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}">Next</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
-      {% endif %}
-    </span>
-  </div>
+  {% if page_obj %}
+    {% with query_params="&sort="|add:current_sort %}
+        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+{% endif %}
   {% endif %} {# END PAGINATION BLOCK #}
 </div>
 {% endblock %}

@@ -1,261 +1,331 @@
-/* --- Global & Fonts --- */
-/* Apply "Rubik" font to main elements, matching requestgmc.css */
-body,
-.sub-title,
-.tab,
-.button,
-.key-input {
-  font-family: "Rubik", sans-serif;
+/* ========================================
+   Global Page Styles & Variables
+   ======================================== */
+:root {
+  --main-blue: #2c5282; /* Your main theme color (dark blue) */
+  --main-blue-dark: #2a4365; /* Darker hover for main blue */
+  --primary-blue: #007bff; /* A brighter blue for links */
+  --light-gray-bg: #f8f9fa;
+  --container-bg: #ffffff;
+  --text-color: #343a40;
+  --text-light: #6c757d;
+  --border-color: #dee2e6;
 }
 
-body {
-  background-color: #f9f9f9; /* Light background to make card pop */
-}
-
-/* --- Main Container & Card --- */
 .container {
-  max-width: 1100px;
-  margin: 2rem auto;
-  padding: 0 1.5rem; /* From requestgmc.css */
+  background-color: var(--container-bg);
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
 }
 
-/* This is the main white card, styled like .gmc-form */
 .maincontain {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle lift */
+  display: flex;
+  margin-top: 25px;
 }
 
-/* --- Tabs (Adapted for <button>) --- */
+.subcontain {
+  flex: 1;
+}
+
+/* ========================================
+   Tabs Navigation
+   ======================================== */
 .tabs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 2px solid var(--border-color);
 }
+
 .tab {
-  font-family: "Rubik", sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  color: #2c5282; /* Theme Blue */
+  padding: 10px 18px;
   text-decoration: none;
-  padding: 1rem 1.25rem;
-  border: none;
+  color: var(--text-light);
+  font-weight: 500;
+  font-size: 16px;
   border-bottom: 3px solid transparent;
-  border-radius: 8px 8px 0 0;
-  cursor: pointer;
-  background-color: transparent;
-  transition: color 0.2s, background-color 0.2s;
+  margin-bottom: -2px; /* Pulls tab border to cover container border */
+  transition: all 0.2s ease;
 }
+
 .tab:hover {
-  color: #2a4365;
-  background-color: #f0f5fa; /* Light blue hover */
+  background-color: #f0f5fa;
+  color: var(--main-blue);
 }
+
 .tab.active {
-  color: #ffffff;
-
-  background-color: #2c5282; /* Active tab has blue background */
-  border-bottom-color: #2c5282;
+  color: var(--main-blue);
+  font-weight: 600;
+  border-bottom-color: var(--main-blue);
 }
 
-/* --- Profile Content Area --- */
-.text-content {
-  width: 100%;
-}
-
+/* ========================================
+   Page Header (Logo & Title)
+   ======================================== */
 .f1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap; /* For mobile */
-  border-bottom: 1px solid #e0e0e0; /* Divider */
-  padding-bottom: 1.5rem;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .f1 h2 {
-  font-size: 1.75rem;
-
-  color: #2c5282; /* Primary blue */
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--main-blue);
   margin: 0;
 }
 
 .logoimg {
-  height: 120px;
   width: 120px;
+  height: 120px;
   border-radius: 50%;
-  border: 1px solid #ddd;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
 }
 
-/* --- Generic Button (Styled like .requestBtn) --- */
+/* ========================================
+   Main Button Styles
+   ======================================== */
 .button {
-  font-family: "Rubik", sans-serif;
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  font-size: 0.9rem;
-
-  padding: 5px 10px;
+  background-color: var(--main-blue);
+  color: #ffffff;
+  padding: 10px 16px;
   border: none;
-  border-radius: 8px; /* Consistent radius */
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: all 0.2s ease-in-out;
   text-decoration: none;
-  display: inline-block;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .button:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
+  background-color: var(--main-blue-dark);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
-.button:active {
-  transform: translateY(0);
-  box-shadow: none;
+a.button {
+  display: inline-flex;
 }
 
-/* --- View Mode Content --- */
-.top.bot p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #333;
-}
-
+/* Container for all the action buttons */
 .con.bot {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 1.5rem 0;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e0e0e0; /* Divider */
+  gap: 12px;
+  margin: 25px 0;
 }
 
-/* "Key elements" heading */
-.pf {
-  font-size: 1.25rem;
+.button-disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 
-  color: #333;
-  margin-top: 2rem;
+/* Edit Page Button */
+.button-edit-wrapper {
+  display: flex;
+  justify-content: flex-end;
   margin-bottom: 1rem;
+}
+
+.button.button-edit {
+  background: #f9f9f9;
+  color: var(--main-blue);
+  border: 1px solid #ddd;
+  box-shadow: none;
+}
+
+.button.button-edit:hover {
+  background: #f0f4f8;
+  color: var(--main-blue-dark);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+  border-color: #ccc;
+}
+
+/* ========================================
+   Content & Form Styles
+   ======================================== */
+.top.bot p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+/* Key Elements List */
+h2.pf {
+  font-size: 1.5rem;
+  color: var(--main-blue);
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
 }
 
 .pf2 ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 0;
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 10px;
 }
 
 .pf2 li {
-  position: relative;
-  padding-left: 20px;
-  margin-bottom: 0.75rem;
-  line-height: 1.5;
-  color: #555;
+  margin-bottom: 12px;
+  line-height: 1.6;
 }
 
-/* Custom bullet point with primary color */
-.pf2 li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: #2c5282; /* Primary Blue */
-
-  font-size: 1.2rem;
+/* Edit Mode Form */
+form p {
+  margin-bottom: 15px;
 }
 
-.pf2 li strong {
-  color: #2c5282; /* Primary Blue */
-}
-
-/* --- Edit Mode (Form) --- */
-form {
-  margin-top: 1.5rem;
-}
-
-/* Helper text for form */
-form > p {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 1rem;
-  background-color: #f9f9f9;
-  padding: 0.75rem;
-  border-radius: 8px;
-}
-
-/* Style for input, based on .ornum-input and #comboBox */
-.key-input {
-  font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+form .key-input,
+form input[type="text"] {
   width: 100%;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box; /* Ensures padding doesn't break width */
-}
-
-.key-input:focus {
-  outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
-  background-color: #fff;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  box-sizing: border-box; /* Important for 100% width */
 }
 
 .key-element {
-  margin-bottom: 0.75rem;
+  margin-bottom: 10px;
 }
 
-/* Form button spacing */
 form .button {
-  margin-top: 1rem;
-  margin-right: 0.5rem;
+  margin-top: 10px;
+  margin-right: 10px;
 }
 
-/* Secondary button style for "Add Element" and "Cancel" */
-#add-element-btn,
-a.button[href*="org_profile"] /* Targets the cancel button */ {
-  background-color: #f9f9f9;
-  color: #2c5282;
-  border: 1px solid #ddd;
+/* ========================================
+   CBL Modal Styles (Moved from inline)
+   ======================================== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding-top: 60px;
 }
 
-#add-element-btn:hover,
-a.button[href*="org_profile"]:hover {
-  background-color: #e0e0e0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+.modal-content {
+  background-color: #fefefe;
+  font-family: inherit;
+  margin: 5% auto;
+  padding: 25px 30px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* --- Responsive Design --- */
-@media (max-width: 768px) {
-  /* Match mobile padding from .gmc-form */
-  .maincontain {
-    padding: 1.5rem;
-  }
+.close-btn {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
 
-  .f1 {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
 
-  .logoimg {
-    max-height: 100px;
-  }
+/* ========================================
+   Adviser Modal Styles (Moved from inline)
+   ======================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: none; /* Hidden by default */
+}
 
-  /* Allow tabs to scroll horizontally */
-  .tabs {
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  font-family: inherit;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 900px;
+  height: 90vh;
+  z-index: 1001;
+  display: flex; /* Changed to 'flex' by your JS */
+  flex-direction: column;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
 
-  .tab {
-    padding: 0.75rem;
-  }
+.modal-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--main-blue);
+}
+
+.modal-close-btn {
+  font-size: 24px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.modal-close-btn:hover {
+  color: #000;
+}
+
+.modal-body {
+  flex-grow: 1;
+  padding: 0;
+  overflow-y: hidden;
+}
+
+.modal-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
