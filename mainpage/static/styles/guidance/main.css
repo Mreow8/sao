@@ -211,7 +211,7 @@ a {
 /* --- Profile Wrapper (Desktop: Top Right) --- */
 .account-info-wrapper.fixed-profile {
   position: fixed;
-  top: 20px;
+  top: 10px;
   right: 30px; /* Top Right on Desktop */
   left: auto;
   z-index: 1100;
@@ -249,10 +249,8 @@ a {
 
 /* Dropdown Menu (Desktop: Opens Down) */
 .account-info-wrapper.fixed-profile .profile-popup {
-  top: 120%;
-  right: 0;
   left: auto;
-  width: 280px;
+  width: 180px;
   margin-top: 10px;
   transform-origin: top right;
 
@@ -323,13 +321,6 @@ a {
   /* 2. Show Toggle Button */
   .sidebar-toggle {
     display: flex;
-  }
-
-  /* 3. Move Profile to Left (Below Toggle) */
-  .account-info-wrapper.fixed-profile {
-    top: 80px; /* Position below the 50px toggle + spacing */
-    left: 15px; /* Move to left side */
-    right: auto; /* Reset right alignment */
   }
 
   /* 4. Change Dropdown Direction (Opens Right) */
