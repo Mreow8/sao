@@ -98,3 +98,8 @@
 .disabled {
   background-color: #999999 !important;
 }
+@media (max-width: 768px) {
+  .form_container {
+    width: 90%;
+  }
+}

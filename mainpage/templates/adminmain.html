@@ -49,6 +49,12 @@
                 <strong>{{ user.first_name }} {{ user.last_name }}</strong>
                 <span class="popup-username">{{ user.username }}</span>
             </div>
+            {% if user.role == 'superadmin' or user.role == 'student_life_staff' %}
+<a href="{% url 'upload_files' %}" class="upload-button">
+    <i class="fas fa-upload"></i>
+    <span>Upload Files</span>
+</a>
+{% endif %}
             <div class="popup-divider"></div>
             <a href="{% url 'logout' %}" class="popup-logout-link">
                 <i class="fas fa-sign-out-alt"></i>
@@ -274,14 +280,7 @@
     <div class="right-side">
         <div class="custom-search-wrapper">
             <div class="search-container">
-                <div class="right-controls" style="margin-left: auto;">
-                  {% if user.role == 'superadmin' or user.role == 'student_life_staff' %}
-                   <a href="{% url 'upload_files' %}" class="upload-button">
-                        <i class="fas fa-upload"></i>
-                        <span>Upload</span>
-                    </a>
-                    {% endif %}
-                    </div>
+              
             </div>
         </div>
         {% block extra_css %}{% endblock %}

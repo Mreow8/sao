@@ -257,3 +257,84 @@ table {
   padding: 3px 5px;
   border-radius: 4px;
 }
+/* =========================================
+   --- RESPONSIVE OVERRIDES (Mobile & Tablet) ---
+   (Place this at the bottom of the file)
+   ========================================= */
+
+/* --- 1. TABLET VIEW (iPad / Tablets: 769px - 1024px) --- */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .fc {
+    /* Increase width for tablets */
+    max-width: 95% !important;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.1rem; /* Slightly smaller title */
+  }
+
+  .fc .fc-button {
+    padding: 0.4em 0.65em; /* Slightly smaller buttons */
+    font-size: 0.9rem;
+  }
+
+  /* Ensure row height is decent for touch */
+  .fc .fc-daygrid-day-frame {
+    min-height: 80px !important;
+  }
+}
+
+/* --- 2. MOBILE VIEW (Phones: < 768px) --- */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem !important; /* Reduce container padding */
+  }
+
+  .fc {
+    /* KEY FIX: Force full width on mobile */
+    max-width: 100% !important;
+    width: 100% !important;
+
+    /* Reduce padding inside the white box */
+    padding: 0.5rem !important;
+
+    /* Optional: Remove rounded corners on very small screens to save space */
+    border-radius: 8px;
+  }
+
+  /* Adjust Title Size */
+  .fc .fc-toolbar-title {
+    font-size: 1rem !important;
+  }
+
+  /* Make header stack vertically (Title top, buttons bottom) */
+  .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Adjust button group to fit better */
+  .fc .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Force day cells to be tall enough to tap */
+  .fc .fc-daygrid-day-frame {
+    min-height: 70px !important;
+  }
+
+  /* Make text inside events smaller so more fits */
+  .fc .fc-event {
+    font-size: 0.7rem !important;
+    padding: 1px 3px !important;
+  }
+}

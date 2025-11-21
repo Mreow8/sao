@@ -283,7 +283,7 @@ body {
 @media screen and (max-width: 768px) {
   /* 1. Reduce Container Padding */
   .container {
-    padding: 10px;
+    padding: 0;
   }
 
   /* 2. Reduce Card Padding */

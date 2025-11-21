@@ -202,6 +202,7 @@ a {
   color: #2c5282;
 }
 
+/* Default active state (overridden later for correct positioning) */
 .sidebar-toggle.active {
   background: #1a365d;
   color: #ffffff;
@@ -269,6 +270,7 @@ a {
 .account-info-wrapper.fixed-profile .profile-popup.active {
   display: block;
   opacity: 1;
+  right: 0;
   transform: translateY(0);
 }
 
@@ -323,12 +325,22 @@ a {
     display: flex;
   }
 
-  /* 4. Change Dropdown Direction (Opens Right) */
+  /* 3. Change Dropdown Direction (Opens Right) */
   .account-info-wrapper.fixed-profile .profile-popup {
-    top: 0;
-    left: 60px; /* To the right of the button */
-    right: auto;
+    right: 0;
     transform-origin: top left;
+  }
+
+  /* 4. Move Toggle Outside Sidebar when Active */
+  /* When sidebar is open (active), move button to the right */
+  .sidebar-toggle.active {
+    left: 275px !important; /* 260px (Sidebar Width) + 15px (Gap) */
+
+    /* Update colors since it's now on the white background */
+    background-color: #ffffff !important;
+    color: #1a365d !important; /* Dark Blue Icon */
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1) !important;
   }
 }
 
@@ -396,70 +408,111 @@ html {
   width: 100%;
   color: #1e293b;
 }
+
 /* =========================
-   UPLOAD BUTTON STYLES
+   UPLOAD BUTTON STYLES 
+   (Matched to Logout Link)
    ========================= */
 
-/* The Button Container */
 .upload-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px; /* Space between Icon and Text */
-
-  background-color: #2c5282; /* Primary Brand Blue */
-  color: #ffffff; /* White Text */
-
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-
-  padding: 10px 20px;
-  border-radius: 8px; /* Smooth rounded corners */
-  border: 1px solid transparent;
-
-  text-decoration: none; /* Removes underline from links */
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-
-  /* Ensure it doesn't shrink if screen gets small */
-  white-space: nowrap;
+  gap: 10px;
+  padding: 12px 16px; /* Exact padding as Logout */
+  color: #334155; /* Dark Gray text */
+  font-weight: 500;
+  width: 100%; /* Takes full width of dropdown */
+  text-decoration: none;
+  transition: background-color 0.2s ease;
 }
 
-/* Hover Effect (Lift & Shadow) */
 .upload-button:hover {
-  background-color: #1a365d; /* Darker Blue */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
+  background-color: #f8fafc; /* Light gray hover, same as Logout */
+  color: #1e293b;
+  transform: none; /* Removed the lift effect */
+  box-shadow: none; /* Removed the shadow */
 }
 
-/* Active/Click Effect */
-.upload-button:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-/* Icon Styling */
+/* Icon Alignment */
 .upload-button i {
-  font-size: 1.1rem; /* Slightly larger icon */
+  font-size: 1rem;
+  color: inherit; /* Uses text color */
+  width: 20px; /* Ensures text aligns with logout text */
+  text-align: center;
 }
 
-/* --- Mobile Responsiveness --- */
+/* --- Mobile Responsiveness for Upload Button --- */
 @media (max-width: 768px) {
   .upload-button {
     /* On mobile, you might want it smaller or icon-only */
     padding: 8px 12px;
     font-size: 0.8rem;
   }
-
-  /* Optional: Hide text on very small screens, show only icon */
-  /* .upload-button span {
-    display: none;
-  } 
-  */
 }
+
 .custom-search-wrapper {
   margin-right: 100px;
   margin-top: 25px;
+}
+
+/* =========================================
+   NOTIFICATION (SWEETALERT) OVERRIDES
+   ========================================= */
+/* =========================================
+   NOTIFICATION (SWEETALERT) OVERRIDES
+   ========================================= */
+
+.swal2-container {
+  z-index: 99999 !important;
+}
+
+@media (max-width: 768px) {
+  .swal2-popup.swal2-toast {
+    position: fixed !important;
+    top: 15px !important;
+    right: 15px !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: 260px !important;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: hidden !important; /* Keeps things tidy */
+  }
+
+  /* --- FIXED ICON STYLES --- */
+  .swal2-popup.swal2-toast .swal2-icon {
+    /* 1. Remove the explicit width constraints that crop the icon */
+    width: 40px !important; /* Standard size base */
+    height: 40px !important; /* Standard size base */
+    min-width: 40px !important;
+
+    /* 2. Use SCALE to shrink the whole icon (border + checkmark) evenly */
+    transform: scale(0.5) !important;
+    transform-origin: center left !important; /* Anchor it to the left */
+
+    /* 3. Remove spacing issues caused by scaling */
+    margin: 0 -10px 0 -5px !important; /* Negative margins pull text closer */
+    border: none !important; /* Optional: Removes the outer ring if you want just the check */
+  }
+
+  /* --- TITLE TEXT --- */
+  .swal2-popup.swal2-toast .swal2-title {
+    font-size: 0.85rem !important;
+    margin: 0 !important;
+    font-weight: 500 !important;
+    flex-grow: 1;
+  }
+}
+/* =========================================
+   INSTANT BUTTON RESPONSE (NO ANIMATION)
+   ========================================= */
+
+.sidebar-toggle,
+.sidebar-toggle:hover,
+.sidebar-toggle.active {
+  transition: none !important;
+  animation: none !important;
 }

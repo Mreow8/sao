@@ -3,17 +3,62 @@
 {% block title %}HealthHub Connect | Medical Requirements Upload{% endblock %}
 {% block extra_css %}
 {% tailwind_css %}
-
 {% endblock %}
 
 {% block bodycontent %}
 
 <style>
     /* Disable textarea resizing */
-    textarea {
-        resize: none;
+    textarea { resize: none; }
+
+    /* --- RESPONSIVE TABLE STYLES --- */
+    @media (max-width: 768px) {
+        /* Hide the table header on mobile */
+        .responsive-table thead {
+            display: none;
+        }
+        /* Turn rows into cards */
+        .responsive-table tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        /* Make cells display as flex rows */
+        .responsive-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            min-height: 50px;
+        }
+        .responsive-table td:last-child {
+            border-bottom: none;
+            justify-content: center; /* Center the upload button */
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            background-color: #f8fafc;
+        }
+        /* Use data-label to show the header text */
+        .responsive-table td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #475569;
+            text-align: left;
+            margin-right: 1rem;
+            flex-shrink: 0; /* Prevent label from squishing */
+        }
+        /* Hide the label for the file input row to center the button */
+        .responsive-table td:last-child::before {
+            display: none;
+        }
     }
-    /* Modal styles */
+
+    /* --- MODAL STYLES --- */
     .modal {
         display: none;
         position: fixed;
@@ -23,88 +68,97 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0,0,0,0.5);
-        overflow: auto; /* Allow scrolling for modal itself if content is large */
-        padding: 20px; /* Adjust padding for better spacing */
-        box-sizing: border-box; /* Include padding in element's total width and height */
+        overflow: hidden; /* Prevent background scroll */
+        padding: 10px; /* Reduced padding for mobile */
     }
     .modal-content {
         background-color: #fefefe;
-        margin: 20px auto; /* Adjust margin for centering and spacing */
-        padding: 20px;
+        margin: 10px auto;
+        padding: 15px;
         border: 1px solid #888;
-        width: 95%; /* Increase width slightly */
-        max-width: 1000px; /* Increase max-width */
+        width: 100%;
+        max-width: 1000px;
         border-radius: 8px;
         position: relative;
         display: flex;
         flex-direction: column;
-        max-height: calc(100vh - 40px); /* Limit modal content height, considering modal padding */
-        box-sizing: border-box; /* Include padding in element's total width and height */
+        height: calc(100vh - 40px); /* Full height minus margins */
     }
     .modal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
-        padding-bottom: 10px; /* Add padding below header */
-        border-bottom: 1px solid #eee; /* Add a subtle separator */
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        flex-shrink: 0;
     }
     .modal-title {
-        font-size: 1.5rem; /* Larger title font size */
+        font-size: 1.25rem;
         font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 10px;
+        color: #2c5282; /* Main Color */
     }
     .close-modal {
         font-size: 28px;
         font-weight: bold;
         cursor: pointer;
+        line-height: 1;
+        padding: 0 10px;
     }
     #previewContainer {
         flex-grow: 1;
         width: 100%;
-        overflow: auto; /* Allow scrolling within preview area */
+        overflow: auto;
         text-align: center;
-        /* Max height relative to the modal content height, considering header/footer */
-        max-height: calc(100% - 70px); /* Approximation based on header+footer height */
-        padding-top: 10px; /* Add some space above preview content */
+        background-color: #f3f4f6; /* Light gray background for contrast */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
     }
-    #previewContainer img,
-    #previewContainer object {
-        display: block; /* Prevent extra space below inline elements */
+    #previewContainer img {
         max-width: 100%;
-        height: auto; /* Maintain aspect ratio */
-        margin: auto; /* Center image/object */
-        transform-origin: top left; /* Set transform origin for zooming */
+        max-height: 100%;
+        object-fit: contain;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-     #previewContainer object {
-        width: 100%; /* Allow object to take full width of container if needed */
-        height: 100%; /* Allow object to take full height of container if needed */
-     }
     .zoom-controls {
-        margin-top: 10px;
-        padding-top: 10px; /* Add padding above controls */
-        border-top: 1px solid #eee; /* Add a subtle separator */
+        padding-top: 10px;
+        border-top: 1px solid #eee;
         text-align: center;
-        flex-shrink: 0; /* Prevent controls from shrinking */
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
     }
     .zoom-controls button {
-        padding: 8px 16px;
-        margin: 0 5px;
+        padding: 10px 20px; /* Larger touch targets */
         cursor: pointer;
-        background-color: #3b82f6; /* Blue background */
-        color: white; /* White text */
+        background-color: #2c5282; /* Main Color */
+        color: white;
         border: none;
-        border-radius: 4px; /* Rounded corners */
-        font-size: 1rem; /* Readable font size */
-        transition: background-color 0.3s ease; /* Smooth hover effect */
+        border-radius: 6px;
+        font-size: 1.1rem;
+        touch-action: manipulation;
+        transition: background-color 0.2s;
     }
     .zoom-controls button:hover {
-        background-color: #2563eb; /* Darker blue on hover */
+        background-color: #1a365d; /* Darker shade */
     }
 </style>
-<div class="bg-white xs:h-fit md:h-full xs:p-4 lg:p-8 flex flex-col gap-6 rounded-[18px] xs:w-full md:w-auto shadow-lg">
-    <h2 class="font-bold text-[1.5rem] text-black tracking-tight text-center mb-2">Upload Medical Requirements</h2>
+<div class="sub-title">
+  <h4>MEDICAL</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+  <p class="certxt">&gt; Upload Medical Requirements</p>
+</div>
+<hr>
+
+<div class="bg-white w-full max-w-6xl mx-auto h-full p-4 md:p-8 flex flex-col gap-6 rounded-xl shadow-lg">
+    <h2 class="font-bold text-2xl md:text-3xl text-[#1e293b] tracking-tight text-center mb-2"></h2>
     
-    <!-- Section for Mental Health Service -->
     <form method="POST" id="mental-health-form" class="flex flex-col gap-4 w-full">
         {% csrf_token %}
         {% if is_faculty %}
@@ -112,24 +166,31 @@
         {% else %}
             <input type="hidden" name="student_id" value="{{ student.student_id|default:user.username }}">
         {% endif %}
-        <div class="bg-[#f8fafc] rounded-lg p-4 mb-6 border border-gray-200 w-full">
-            <h3 class="font-semibold text-blue-700 mb-2">Mental health</h3>
+        <div class="bg-slate-50 rounded-lg p-4 md:p-6 border border-gray-200 w-full">
+            <h3 class="font-semibold text-lg mb-3" style="color: #2c5282;">Mental Health</h3>
             <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
-                <p class="text-sm text-blue-800">Do you have any history regarding Mental Health or taking any prescriptions?</p>
+                <p class="text-sm" style="color: #2c5282;">Do you have any history regarding Mental Health or taking any prescriptions?</p>
             </div>
-            <div class="flex items-center space-x-4">
-                <input type="radio" id="avail_mh_yes" name="avail_mental_health" value="yes" class="form-radio text-blue-600" {% if mental_health_record and mental_health_record.is_availing_mental_health %}checked{% endif %}>
-                <label for="avail_mh_yes" class="text-gray-700">Yes</label>
-                <input type="radio" id="avail_mh_no" name="avail_mental_health" value="no" class="form-radio text-red-600" {% if mental_health_record and not mental_health_record.is_availing_mental_health %}checked{% endif %}>
-                <label for="avail_mh_no" class="text-gray-700">No</label>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <input type="radio" id="avail_mh_yes" name="avail_mental_health" value="yes" class="w-5 h-5 text-blue-800 focus:ring-blue-800" {% if mental_health_record and mental_health_record.is_availing_mental_health %}checked{% endif %}>
+                    <label for="avail_mh_yes" class="text-gray-700 text-lg">Yes</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="radio" id="avail_mh_no" name="avail_mental_health" value="no" class="w-5 h-5 text-red-600 focus:ring-red-600" {% if mental_health_record and not mental_health_record.is_availing_mental_health %}checked{% endif %}>
+                    <label for="avail_mh_no" class="text-gray-700 text-lg">No</label>
+                </div>
             </div>
-             <div class="mt-4 flex justify-center">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">Save Choice</button>
+             <div class="mt-6 flex justify-center sm:justify-start">
+                <button type="submit" 
+                        style="background-color: #2c5282;" 
+                        class="w-full sm:w-auto text-white px-6 py-2.5 rounded-md hover:opacity-90 transition-colors font-medium shadow-sm">
+                    Save Choice
+                </button>
             </div>
         </div>
     </form>
 
-    <!-- Single form for all uploads -->
     <form method="POST" enctype="multipart/form-data" id="upload-all-form" class="flex flex-col gap-4 w-full">
         {% csrf_token %}
         {% if is_faculty %}
@@ -138,187 +199,203 @@
             <input type="hidden" name="student_id" value="{{ student.student_id|default:user.username }}">
         {% endif %}
         
-        <!-- Required Medical Documents Section (with table) -->
-        <div class="bg-[#f8fafc] rounded-lg p-4 mb-2 border border-gray-200 w-full">
-            <h3 class="font-semibold text-blue-700 mb-2">Required Medical Documents</h3>
-            <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
-                <p class="text-sm text-blue-800">Please submit all required medical documents. These are essential for ensuring the health and safety of all {{ is_faculty|yesno:'faculty,students' }}.</p>
+        <div class="bg-slate-50 rounded-lg p-4 md:p-6 border border-gray-200 w-full">
+            <h3 class="font-semibold text-lg mb-3" style="color: #2c5282;">Required Medical Documents</h3>
+            <div class="mb-6 p-3 bg-blue-50 rounded-md border border-blue-100">
+                <p class="text-sm" style="color: #2c5282;">Please submit all required medical documents. These are essential for ensuring the health and safety of all {{ is_faculty|yesno:'faculty,students' }}.</p>
             </div>
-            <div class="mb-4">
-                <label class="font-semibold">ID Number:</label>
-                <input type="text" class="w-full p-2 border rounded-md" value="{{ id_number }}" readonly>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">ID Number:</label>
+                    <input type="text" class="w-full p-2.5 border border-gray-300 rounded-md bg-gray-100 text-gray-600" value="{{ id_number }}" readonly>
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Name:</label>
+                    {% if is_faculty %}
+                        <input type="text" class="w-full p-2.5 border border-gray-300 rounded-md bg-gray-100 text-gray-600" value="{{ faculty.user.get_full_name }}" readonly>
+                    {% else %}
+                        <input type="text" class="w-full p-2.5 border border-gray-300 rounded-md bg-gray-100 text-gray-600" value="{{ student.firstname }} {{ student.lastname }}" readonly>
+                    {% endif %}
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="font-semibold">Name:</label>
-                {% if is_faculty %}
-                    <input type="text" class="w-full p-2 border rounded-md" value="{{ faculty.user.get_full_name }}" readonly>
-                {% else %}
-                    <input type="text" class="w-full p-2 border rounded-md" value="{{ student.firstname }} {{ student.lastname }}" readonly>
-                {% endif %}
-            </div>
-            <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow">
-                <thead class="bg-[#e6e6e6]">
+
+            <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-sm responsive-table">
+                <thead class="bg-gray-200">
                     <tr>
-                        <th class="p-2 text-center">Remarks</th>
-                        <th class="p-2 text-center">Requirement Type</th>
-                        <th class="p-2 text-center">File</th>
-                        <th class="p-2 text-center">Status</th>
-                        <th class="p-2 text-center">Choose File</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">Remarks</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">Requirement Type</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">File</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">Status</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for req in requirements %}
-                    <tr class="bg-white border-b hover:bg-gray-50">
-                        <td class="p-2 text-center">
-                            {% if md %}
-                                {% if req.slug == 'chest_xray' %}{{ md.x_ray_remarks|default:'None' }}
-                                {% elif req.slug == 'cbc' %}{{ md.cbc_remarks|default:'None' }}
-                                {% elif req.slug == 'drug_test' %}{{ md.drug_test_remarks|default:'None' }}
-                                {% elif req.slug == 'stool_examination' %}{{ md.stool_examination_remarks|default:'None' }}
-                                {% elif req.slug == 'pwd_card' %}{{ md.pwd_card_remarks|default:'None' }}
+                    <tr class="bg-white border-b hover:bg-gray-50 transition-colors">
+                        <td class="p-3 text-center" data-label="Remarks">
+                            <span class="text-sm">
+                                {% if md %}
+                                    {% if req.slug == 'chest_xray' %}{{ md.x_ray_remarks|default:'None' }}
+                                    {% elif req.slug == 'cbc' %}{{ md.cbc_remarks|default:'None' }}
+                                    {% elif req.slug == 'drug_test' %}{{ md.drug_test_remarks|default:'None' }}
+                                    {% elif req.slug == 'stool_examination' %}{{ md.stool_examination_remarks|default:'None' }}
+                                    {% elif req.slug == 'pwd_card' %}{{ md.pwd_card_remarks|default:'None' }}
+                                    {% else %}None{% endif %}
                                 {% else %}None{% endif %}
-                            {% else %}None{% endif %}
+                            </span>
                         </td>
-                        <td class="p-2 font-medium text-center">{{ req.name }}</td>
-                        <td class="p-2 text-center">
+                        <td class="p-3 font-medium text-center text-gray-800" data-label="Requirement Type">{{ req.name }}</td>
+                        <td class="p-3 text-center" data-label="File">
                             {% if md %}
                                 {% if req.slug == 'chest_xray' and md.chest_xray %}
-                                    <button type="button" onclick="previewFile('{{ md.chest_xray.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                    <button type="button" onclick="previewFile('{{ md.chest_xray.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" style="color: #2c5282;" class="hover:underline font-medium">Preview</button>
                                 {% elif req.slug == 'cbc' and md.cbc %}
-                                    <button type="button" onclick="previewFile('{{ md.cbc.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                    <button type="button" onclick="previewFile('{{ md.cbc.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" style="color: #2c5282;" class="hover:underline font-medium">Preview</button>
                                 {% elif req.slug == 'drug_test' and md.drug_test %}
-                                    <button type="button" onclick="previewFile('{{ md.drug_test.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                    <button type="button" onclick="previewFile('{{ md.drug_test.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" style="color: #2c5282;" class="hover:underline font-medium">Preview</button>
                                 {% elif req.slug == 'stool_examination' and md.stool_examination %}
-                                    <button type="button" onclick="previewFile('{{ md.stool_examination.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                    <button type="button" onclick="previewFile('{{ md.stool_examination.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" style="color: #2c5282;" class="hover:underline font-medium">Preview</button>
                                 {% elif req.slug == 'pwd_card' and md.pwd_card %}
-                                    <button type="button" onclick="previewFile('{{ md.pwd_card.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" class="text-blue-600 hover:underline">Preview</button>
+                                    <button type="button" onclick="previewFile('{{ md.pwd_card.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', '{{ req.name }}')" style="color: #2c5282;" class="hover:underline font-medium">Preview</button>
                                 {% else %}
-                                    <span class="text-gray-400">None</span>
+                                    <span class="text-gray-400 italic">None</span>
                                 {% endif %}
                             {% else %}
-                                <span class="text-gray-400">None</span>
+                                <span class="text-gray-400 italic">None</span>
                             {% endif %}
                         </td>
-                        <td class="p-2 text-center">
-        {% if md %}
+                        <td class="p-3 text-center" data-label="Status">
+                            {% if md %}
                                 {% if req.slug == 'chest_xray' and md.chest_xray %}
-                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                    <span class="text-green-600 text-xl font-bold">&#10003;</span>
                                 {% elif req.slug == 'cbc' and md.cbc %}
-                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                    <span class="text-green-600 text-xl font-bold">&#10003;</span>
                                 {% elif req.slug == 'drug_test' and md.drug_test %}
-                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                    <span class="text-green-600 text-xl font-bold">&#10003;</span>
                                 {% elif req.slug == 'stool_examination' and md.stool_examination %}
-                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                    <span class="text-green-600 text-xl font-bold">&#10003;</span>
                                 {% elif req.slug == 'pwd_card' and md.pwd_card %}
-                                    <span class="text-green-600 text-xl">&#10003;</span>
+                                    <span class="text-green-600 text-xl font-bold">&#10003;</span>
                                 {% else %}
-                                    <span class="text-red-500 text-xl">&#10007;</span>
-            {% endif %}
+                                    <span class="text-red-500 text-xl font-bold">&#10007;</span>
+                                {% endif %}
                             {% else %}
-                                <span class="text-gray-400">None</span>
-        {% endif %}
+                                <span class="text-gray-400 italic">None</span>
+                            {% endif %}
                         </td>
-                        <td class="p-2 text-center">
-                            <input type="file" name="file_{{ req.slug }}" id="file_{{ req.slug }}" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
-                            <label for="file_{{ req.slug }}" class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold">Choose File</label>
-                            <span id="file_{{ req.slug }}_filename" class="ml-2 text-gray-600">No file chosen</span>
+                        <td class="p-3 text-center" data-label="Action">
+                            <div class="flex flex-col items-center justify-center w-full">
+                                <input type="file" name="file_{{ req.slug }}" id="file_{{ req.slug }}" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+                                <label for="file_{{ req.slug }}" class="cursor-pointer w-full md:w-auto bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold text-sm border border-gray-300">
+                                    Choose File
+                                </label>
+                                <span id="file_{{ req.slug }}_filename" class="mt-1 text-xs text-gray-500 truncate w-32 text-center">No file chosen</span>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            </div>
+        </div>
             
-            <!-- Mental Health Documents Section (Integrated) -->
-            <div class="bg-[#f8fafc] rounded-lg p-4 mt-6 mb-2 border border-gray-200 w-full hidden" id="mental-health-docs-section">
-                <h3 class="font-semibold text-blue-700 mb-2">Required Documents for Mental Health</h3>
-                <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
-                    <p class="text-sm text-blue-800">Please upload your mental health prescription and certification documents here.</p>
-                </div>
-                <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow">
-                    <thead class="bg-[#e6e6e6]">
-                        <tr>
-                            <th class="p-2 text-center">Remarks</th>
-                            <th class="p-2 text-center">Document Type</th>
-                            <th class="p-2 text-center">File</th>
-                            <th class="p-2 text-center">Status</th>
-                            <th class="p-2 text-center">Choose File</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-white border-b hover:bg-gray-50">
-                            <td class="p-2 text-center">
-                                {% if mental_health_record %}
-                                    {{ mental_health_record.prescription_remarks|default:'None' }}
-                                {% else %}None{% endif %}
-                            </td>
-                            <td class="p-2 font-medium text-center">Prescription</td>
-                            <td class="p-2 text-center">
-                                {% if mental_health_record and mental_health_record.prescription %}
-                                    <button type="button" onclick="previewFile('{{ mental_health_record.prescription.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', 'Mental Health Prescription')" class="text-blue-600 hover:underline">Preview</button>
-                                {% else %}
-                                    <span class="text-gray-400">None</span>
-                                {% endif %}
-                            </td>
-                            <td class="p-2 text-center">
-                                {% if mental_health_record and mental_health_record.prescription %}
-                                    <span class="text-green-600 text-xl">&#10003;</span>
-                                {% else %}
-                                    <span class="text-red-500 text-xl">&#10007;</span>
-                                {% endif %}
-                            </td>
-                            <td class="p-2 text-center">
+        <div class="bg-slate-50 rounded-lg p-4 md:p-6 mt-4 mb-2 border border-gray-200 w-full hidden" id="mental-health-docs-section">
+            <h3 class="font-semibold text-lg mb-3" style="color: #2c5282;">Required Documents for Mental Health</h3>
+            <div class="mb-4 p-3 bg-blue-50 rounded-md border border-blue-100">
+                <p class="text-sm" style="color: #2c5282;">Please upload your mental health prescription and certification documents here.</p>
+            </div>
+            <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-sm responsive-table">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-3 text-center font-semibold text-gray-700">Remarks</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">Document Type</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">File</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">Status</th>
+                        <th class="p-3 text-center font-semibold text-gray-700">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td class="p-3 text-center" data-label="Remarks">
+                            <span class="text-sm">
+                            {% if mental_health_record %}
+                                {{ mental_health_record.prescription_remarks|default:'None' }}
+                            {% else %}None{% endif %}
+                            </span>
+                        </td>
+                        <td class="p-3 font-medium text-center text-gray-800" data-label="Document Type">Prescription</td>
+                        <td class="p-3 text-center" data-label="File">
+                            {% if mental_health_record and mental_health_record.prescription %}
+                                <button type="button" onclick="previewFile('{{ mental_health_record.prescription.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', 'Mental Health Prescription')" style="color: #2c5282;" class="hover:underline font-medium">Preview</button>
+                            {% else %}
+                                <span class="text-gray-400 italic">None</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 text-center" data-label="Status">
+                            {% if mental_health_record and mental_health_record.prescription %}
+                                <span class="text-green-600 text-xl font-bold">&#10003;</span>
+                            {% else %}
+                                <span class="text-red-500 text-xl font-bold">&#10007;</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 text-center" data-label="Action">
+                            <div class="flex flex-col items-center justify-center w-full">
                                 <input type="file" name="file_prescription" id="file_prescription" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
-                                <label for="file_prescription" class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold">Choose File</label>
-                                <span id="file_prescription_filename" class="ml-2 text-gray-600">No file chosen</span>
-                            </td>
-                        </tr>
-                        <tr class="bg-white hover:bg-gray-50">
-                            <td class="p-2 text-center">
-                                {% if mental_health_record %}
-                                    {{ mental_health_record.certification_remarks|default:'None' }}
-                                {% else %}None{% endif %}
-                            </td>
-                            <td class="p-2 font-medium text-center">Certification</td>
-                            <td class="p-2 text-center">
-                                {% if mental_health_record and mental_health_record.certification %}
-                                    <button type="button" onclick="previewFile('{{ mental_health_record.certification.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', 'Mental Health Certification')" class="text-blue-600 hover:underline">Preview</button>
-                                {% else %}
-                                    <span class="text-gray-400">None</span>
-                                {% endif %}
-                            </td>
-                            <td class="p-2 text-center">
-                                {% if mental_health_record and mental_health_record.certification %}
-                                    <span class="text-green-600 text-xl">&#10003;</span>
-                                {% else %}
-                                    <span class="text-red-500 text-xl">&#10007;</span>
-                                {% endif %}
-                            </td>
-                            <td class="p-2 text-center">
+                                <label for="file_prescription" class="cursor-pointer w-full md:w-auto bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold text-sm border border-gray-300">Choose File</label>
+                                <span id="file_prescription_filename" class="mt-1 text-xs text-gray-500 truncate w-32 text-center">No file chosen</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="bg-white hover:bg-gray-50">
+                        <td class="p-3 text-center" data-label="Remarks">
+                            <span class="text-sm">
+                            {% if mental_health_record %}
+                                {{ mental_health_record.certification_remarks|default:'None' }}
+                            {% else %}None{% endif %}
+                            </span>
+                        </td>
+                        <td class="p-3 font-medium text-center text-gray-800" data-label="Document Type">Certification</td>
+                        <td class="p-3 text-center" data-label="File">
+                            {% if mental_health_record and mental_health_record.certification %}
+                                <button type="button" onclick="previewFile('{{ mental_health_record.certification.url }}', '{% if is_faculty %}{{ faculty.user.get_full_name }}{% else %}{{ student.firstname }} {{ student.lastname }}{% endif %}', 'Mental Health Certification')" style="color: #2c5282;" class="hover:underline font-medium">Preview</button>
+                            {% else %}
+                                <span class="text-gray-400 italic">None</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 text-center" data-label="Status">
+                            {% if mental_health_record and mental_health_record.certification %}
+                                <span class="text-green-600 text-xl font-bold">&#10003;</span>
+                            {% else %}
+                                <span class="text-red-500 text-xl font-bold">&#10007;</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 text-center" data-label="Action">
+                            <div class="flex flex-col items-center justify-center w-full">
                                 <input type="file" name="file_certification" id="file_certification" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
-                                <label for="file_certification" class="cursor-pointer bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold">Choose File</label>
-                                <span id="file_certification_filename" class="ml-2 text-gray-600">No file chosen</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <label for="file_certification" class="cursor-pointer w-full md:w-auto bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold text-sm border border-gray-300">Choose File</label>
+                                <span id="file_certification_filename" class="mt-1 text-xs text-gray-500 truncate w-32 text-center">No file chosen</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-6 p-6 bg-slate-50 rounded-lg border border-gray-200 w-full">
+            <h3 class="font-semibold text-lg mb-2" style="color: #2c5282;">Upload Documents</h3>
+            <p class="text-sm mb-6" style="color: #2c5282;">Select 'Choose File' for each document type you wish to upload, then click the button below to submit all selected files.</p>
+            <div class="flex justify-center">
+                <button type="submit" 
+                        style="background-color: #2c5282;" 
+                        class="w-full md:w-auto text-white px-8 py-3 rounded-md font-bold hover:opacity-90 transition-colors shadow-md text-lg">
+                    Upload All Documents
+                </button>
             </div>
-            
-            <!-- Upload Documents Section (with single button) -->
-            <div class="mt-6 p-4 bg-[#f8fafc] rounded-lg border border-gray-200 w-full">
-                <h3 class="font-semibold text-blue-700 mb-2">Upload Documents</h3>
-                <p class="text-sm text-blue-800 mb-4">Select 'Choose File' for each document type you wish to upload, then click the button below to submit all selected files.</p>
-                <div class="flex justify-center">
-                    <button type="submit" class="bg-[#3b82f6] text-white px-6 py-2 rounded-md font-semibold hover:bg-[#2563eb] transition-colors">
-                        Upload Documents
-                    </button>
-                </div>
-            </div>
+        </div>
 
     </form>
 </div>
 
-<!-- Add Modal for File Preview -->
 <div id="previewModal" class="modal">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -327,8 +404,8 @@
         </div>
         <div id="previewContainer"></div>
         <div class="zoom-controls">
-            <button onclick="zoomOut()">-</button>
-            <button onclick="zoomIn()">+</button>
+            <button onclick="zoomOut()"><i class="fas fa-minus"></i></button>
+            <button onclick="zoomIn()"><i class="fas fa-plus"></i></button>
         </div>
     </div>
 </div>
@@ -355,7 +432,7 @@
         // Clear previous content
         previewContainer.innerHTML = '';
         
-        modalTitle.textContent = `Preview: ${studentName} - ${requirementName}`;
+        modalTitle.textContent = `Preview: ${requirementName}`;
 
         const isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileUrl);
         const isPDF = /\.pdf$/i.test(fileUrl);
@@ -364,32 +441,25 @@
             const img = document.createElement('img');
             img.id = 'imagePreview';
             img.src = fileUrl;
-            img.style.maxWidth = '100%'; // Ensure image doesn't overflow initially
-            img.style.height = 'auto';
+            img.style.transform = `scale(${currentZoom})`;
             previewContainer.appendChild(img);
-             currentZoom = 1.0; // Reset zoom for new image
-             img.style.transform = `scale(${currentZoom})`;
+             currentZoom = 1.0; 
 
         } else if (isPDF) {
             const obj = document.createElement('object');
             obj.id = 'filePreview';
             obj.data = fileUrl;
             obj.type = 'application/pdf';
-            obj.style.width = '100%'; // PDF object can take full width
-            obj.style.height = '100%'; // PDF object can take full height
-             // For PDFs, embedding might not support direct CSS zoom. Fallback to link or iframe.
-             // For simplicity and consistency with admin, let's use an iframe if object fails or for better control
-             // Or keep object and note zoom might not work depending on browser/PDF viewer
+            obj.style.width = '100%';
+            obj.style.height = '100%';
+            
             const fallbackLink = document.createElement('p');
-            fallbackLink.innerHTML = `Unable to display PDF file. <a href="${fileUrl}" target="_blank">Download</a> instead.`;
+            fallbackLink.innerHTML = `Unable to display PDF file. <a href="${fileUrl}" target="_blank" style="color: #2c5282;" class="underline">Download</a> instead.`;
             obj.appendChild(fallbackLink);
 
              previewContainer.appendChild(obj);
-            currentZoom = 1.0; // Reset zoom for new PDF
-            // Note: CSS transform might not work reliably on <object> or <iframe> for PDFs
-            // If true PDF zoom is needed, consider a library or server-side rendering approach.
-            // For now, the zoom buttons will be added but might not affect the PDF object depending on the browser.
-             obj.style.transform = `scale(${currentZoom})`; // Apply transform, but manage expectations for PDFs
+            currentZoom = 1.0; 
+             obj.style.transform = `scale(${currentZoom})`; 
         }
         
         modal.style.display = 'block';
@@ -408,7 +478,6 @@
     // Close modal when clicking outside the modal-content
     window.onclick = function(event) {
         const modal = document.getElementById('previewModal');
-        const modalContent = document.querySelector('.modal-content');
         // Check if the clicked area is outside the modal-content but inside the modal
         if (event.target === modal) {
             closeModal();
@@ -431,14 +500,9 @@
 
         if (imageElement) {
             imageElement.style.transform = `scale(${currentZoom})`;
-             // Adjust transform origin if needed, currently set to top left in CSS
         } else if (objectElement) {
-            // Applying transform to object element (for PDFs) - behavior may vary across browsers
-             // Consider alternative PDF viewers for reliable zoom
             objectElement.style.transform = `scale(${currentZoom})`;
-             // You might need to adjust the container's overflow and dimensions if zooming causes content to exceed boundaries
         }
-         // You might also want to update a visual indicator of the current zoom level
     }
 
     // JavaScript for showing/hiding Mental Health Documents section and SweetAlert
@@ -448,27 +512,22 @@
         const mentalHealthForm = document.getElementById('mental-health-form');
 
         function toggleMentalHealthDocsSection() {
-            const selectedValue = document.querySelector('input[name="avail_mental_health"]:checked').value;
-            if (selectedValue === 'yes') {
+            const selectedRadio = document.querySelector('input[name="avail_mental_health"]:checked');
+            if (selectedRadio && selectedRadio.value === 'yes') {
                 mentalHealthDocsSection.classList.remove('hidden');
             } else {
                 mentalHealthDocsSection.classList.add('hidden');
             }
         }
 
-        // Removed: Add event listeners to radio buttons to prevent automatic display on change
-        // availMentalHealthRadios.forEach(radio => {
-        //     radio.addEventListener('change', toggleMentalHealthDocsSection);
-        // });
-
-        // Set initial visibility on page load
-        // toggleMentalHealthDocsSection(); // This line is intentionally commented out to prevent automatic display
+        // Set initial visibility on page load if logic dictates (commented out in original, kept consistent)
+        toggleMentalHealthDocsSection();
 
         // Handle mental health form submission
         mentalHealthForm.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault(); 
 
-            const formData = new FormData(this); // 'this' refers to the form
+            const formData = new FormData(this); 
             
             try {
                 const response = await fetch('/med/update_mental_health_choice/', {
@@ -488,10 +547,8 @@
                         icon: 'success',
                         confirmButtonText: 'OK'
                     });
-                    // Re-evaluate visibility immediately after saving
                     toggleMentalHealthDocsSection();
-                    // Hide the mental health choice section itself after saving
-                    mentalHealthForm.classList.add('hidden'); // ADDED THIS LINE
+                    // mentalHealthForm.classList.add('hidden'); // Optional: Hide form after choice
                 } else {
                     Swal.fire({
                         title: 'Error!',
@@ -512,16 +569,5 @@
         });
 
     });
-
-     // Event listeners for file input change to display filename
-     document.addEventListener('change', function(event) {
-         if (event.target.type === 'file') {
-             const fileNameSpan = document.getElementById(event.target.id + '_filename');
-             if (fileNameSpan) {
-                 fileNameSpan.textContent = event.target.files.length > 0 ? event.target.files[0].name : 'No file chosen';
-             }
-         }
-     });
-
 </script>
 {% endblock %}

@@ -16,6 +16,7 @@
             padding: 1rem 1.25rem;
             border-bottom: 3px solid transparent;
             transition: all 0.2s;
+            white-space: nowrap; /* Prevents text wrapping on mobile tabs */
         }
         .tab-button:hover {
             color: #2a4365;
@@ -39,6 +40,10 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
         
+        /* Hide scrollbar for tabs on mobile */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
         /* Modal Transition */
         .modal-overlay { transition: opacity 0.3s ease; }
     </style>
@@ -48,7 +53,7 @@
 {% block bodycontent %}
 
 <div id="adviser-modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all m-4">
         <div class="flex justify-between items-center p-4 border-b">
             <h3 class="text-lg font-bold text-gray-800">Register New Adviser</h3>
             <button onclick="closeAdviserModal()" class="text-gray-500 hover:text-red-500 text-xl">&times;</button>
@@ -76,7 +81,7 @@
     </div>
 </div>
 
-<div class="sub-title mb-6">
+<div class="sub-title mb-6 px-4 lg:px-0">
     <h4 class="text-xl font-bold text-gray-800">STUDENT ORGANIZATION</h4>
     <div class="flex items-center gap-2 text-sm text-gray-500">
         <a href="{% url 'homepage' %}" class="hover:text-blue-600">Home</a>
@@ -84,15 +89,15 @@
         <span class="text-blue-600 font-medium">{{ org.name|default:"Organization Name" }}</span>
     </div>
 </div>
-<hr class="mb-6 border-gray-200">
+<hr class="mb-6 border-gray-200 mx-4 lg:mx-0">
 
-<div class="w-full flex justify-start">
-    <div class="w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex ml-4 min-h-[600px]">
+<div class="w-full flex justify-center px-4 lg:px-0 mb-10">
+    <div class="w-full lg:max-w-[1300px] bg-white rounded-[24px] shadow-lg overflow-hidden flex flex-col lg:flex-row min-h-[600px]">
         
-        <div class="flex-1 h-full flex flex-col p-8 border-r border-gray-100">
+        <div class="flex-1 h-full flex flex-col p-4 lg:p-8 border-r-0 lg:border-r border-gray-100">
             
             <div class="border-b sticky top-0 bg-white z-10 mb-6">
-                <div class="flex gap-4">
+                <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
                     <button class="tab-button active" data-tab="about">About Organization</button>
                     <button class="tab-button" data-tab="symbolism">Logo & Symbolism</button>
                     {% if is_edit %}
@@ -132,9 +137,9 @@
                                 </button>
                             </div>
 
-                            <div class="flex gap-3 pt-4">
-                                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md">Save Changes</button>
-                                <a href="{% url 'org_profile' slug=org.slug %}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Cancel</a>
+                            <div class="flex gap-3 pt-4 flex-wrap">
+                                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md w-full sm:w-auto">Save Changes</button>
+                                <a href="{% url 'org_profile' slug=org.slug %}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition w-full sm:w-auto text-center">Cancel</a>
                             </div>
                         </form>
                     </div>
@@ -143,26 +148,26 @@
 
                 <div class="tab-content active" id="about-tab">
                     <div class="flex flex-col items-center mb-8">
-                        <div class="w-48 h-48 rounded-full shadow-lg overflow-hidden border-4 border-white mb-4 bg-gray-50 flex items-center justify-center">
+                        <div class="w-32 h-32 lg:w-48 lg:h-48 rounded-full shadow-lg overflow-hidden border-4 border-white mb-4 bg-gray-50 flex items-center justify-center">
                             {% if org.logo %}
                                 <img src="{{ org.logo.url }}" alt="{{ org.name }}" class="w-full h-full object-cover">
                             {% else %}
-                                <i class="fas fa-users text-6xl text-gray-300"></i>
+                                <i class="fas fa-users text-5xl lg:text-6xl text-gray-300"></i>
                             {% endif %}
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-800 text-center">{{ org.name }}</h2>
+                        <h2 class="text-xl lg:text-2xl font-bold text-gray-800 text-center px-2">{{ org.name }}</h2>
                     </div>
                     
-                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                    <div class="bg-gray-50 p-4 lg:p-6 rounded-xl border border-gray-100">
                         <h3 class="text-lg font-semibold text-gray-700 mb-3">About Us</h3>
-                        <p class="text-gray-600 leading-relaxed whitespace-pre-line text-justify">
+                        <p class="text-gray-600 leading-relaxed whitespace-pre-line text-justify text-sm lg:text-base">
                             {{ org.description|default:"No description provided yet." }}
                         </p>
                     </div>
                 </div>
 
                 <div class="tab-content" id="symbolism-tab">
-                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 mb-4">
+                    <div class="bg-blue-50 p-4 lg:p-6 rounded-xl border border-blue-100 mb-4">
                         <h3 class="text-lg font-bold text-blue-800 mb-4">Logo Symbolism & Key Elements</h3>
                         {% if key_elements %}
                         <div class="grid gap-4">
@@ -172,9 +177,9 @@
                                 <div>
                                     {% if item.title %}
                                         <span class="font-bold text-gray-800">{{ item.title }}:</span> 
-                                        <span class="text-gray-600">{{ item.description }}</span>
+                                        <span class="text-gray-600 text-sm lg:text-base">{{ item.description }}</span>
                                     {% else %}
-                                        <span class="text-gray-600">{{ item.description }}</span>
+                                        <span class="text-gray-600 text-sm lg:text-base">{{ item.description }}</span>
                                     {% endif %}
                                 </div>
                             </div>
@@ -188,7 +193,7 @@
                 {% endif %} </div>
         </div>
 
-        <div class="w-[350px] bg-gray-50 p-6 flex flex-col gap-6">
+        <div class="w-full lg:w-[350px] bg-gray-50 p-6 flex flex-col gap-6 border-t lg:border-t-0 border-gray-200">
             
             <div>
                 <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Organization Menu</h2>
@@ -278,8 +283,6 @@
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // If in edit mode, prevent switching if unsaved? (Optional logic)
-                
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
 
