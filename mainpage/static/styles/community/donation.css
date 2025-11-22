@@ -1,401 +1,292 @@
 /* =========================================
-   1. Global Variables & Reset
+   1. Global & Container Styles
    ========================================= */
 :root {
-  --primary-color: #2c5282; /* Deep Blue */
-  --primary-hover: #1a365d; /* Darker Blue */
-  --secondary-color: #3182ce; /* Brighter Blue for links */
-  --success-color: #10b981; /* Green */
-  --warning-color: #f59e0b; /* Orange/Amber */
-  --danger-color: #ef4444; /* Red */
-  --text-dark: #1f2937; /* Dark Gray */
-  --text-light: #6b7280; /* Medium Gray */
-  --bg-light: #f3f4f6; /* Light Gray Background */
-  --white: #ffffff;
-  --border-color: #e5e7eb;
-  --radius: 8px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-body {
-  font-family: "Rubik", sans-serif;
-  background-color: var(--bg-light);
-  color: var(--text-dark);
-  margin: 0;
-  padding: 0;
+  --primary-blue: #2c5282;
+  --primary-blue-hover: #1a365d;
+  --bg-light: #f9f9f9;
+  --text-dark: #333;
+  --border-color: #e0e0e0;
+  --success-bg: #c6f6d5;
+  --success-text: #0b552a;
+  --danger-bg: #fed7d7;
+  --danger-text: #9b2c2c;
+  --warning-bg: #fef3c7;
+  --warning-text: #92400e;
 }
 
 .body-content {
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 12px 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* =========================================
-   2. Header & Breadcrumbs
+   2. Filter Bar Section
    ========================================= */
-.sub-title {
-  margin-bottom: 10px;
-}
-
-.sub-title h4 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin-bottom: 5px;
-}
-
-.hometext,
-.certxt {
-  display: inline-block;
-  font-size: 0.9rem;
-  color: var(--text-light);
-}
-
-.hometext a {
-  text-decoration: none;
-  color: var(--secondary-color);
-  font-weight: 500;
-}
-
-.hometext::after {
-  content: "/";
-  margin: 0 8px;
-  color: var(--text-light);
-}
-
-/* =========================================
-   3. Filter Bar
-   ========================================= */
-.data {
-  background-color: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 20px;
-}
-
 .filter-bar {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  align-items: center;
   flex-wrap: wrap;
-}
-
-.filter-bar select {
-  padding: 10px 15px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  font-family: "Rubik", sans-serif;
-  font-size: 0.95rem;
-  color: var(--text-dark);
+  gap: 15px;
+  align-items: center;
+  padding: 1.5rem;
   background-color: var(--bg-light);
-  outline: none;
-  min-width: 150px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 2rem;
 }
 
+/* Custom Dropdown (Matches your admin style) */
+.filter-bar select {
+  flex-grow: 1;
+  max-width: 300px;
+  padding: 0.65rem 2.5rem 0.65rem 1rem;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background-color: #fff;
+  color: var(--primary-blue);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  /* Custom SVG Arrow */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232C5282%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-13%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2013l128%20128c3.6%203.6%207.8%205.4%2013%205.4s9.4-1.8%2013-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-13%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.65em auto;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-bar select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  outline: 0;
+}
+
+/* Filter Buttons */
 .btn-filter-submit,
 .btn-filter-clear {
-  padding: 10px 20px;
-  border-radius: var(--radius);
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
+  padding: 0.65rem 1.25rem;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
   cursor: pointer;
-  border: none;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  transition: background 0.3s ease;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border: none;
 }
 
 .btn-filter-submit {
-  background-color: var(--primary-color);
-  color: var(--white);
+  background-color: var(--primary-blue);
+  color: white;
 }
 
 .btn-filter-submit:hover {
-  background-color: var(--primary-hover);
+  background-color: var(--primary-blue-hover);
+  transform: translateY(-1px);
 }
 
 .btn-filter-clear {
-  background-color: #e5e7eb;
-  color: var(--text-dark);
+  background-color: #e2e8f0;
+  color: #4a5568;
 }
 
 .btn-filter-clear:hover {
-  background-color: #d1d5db;
+  background-color: #cbd5e0;
+  color: #2d3748;
 }
 
 /* =========================================
-   4. Data Table
+   3. Table Styles
    ========================================= */
 .donation-table-wrapper {
-  overflow-x: auto;
-  border-radius: var(--radius);
   width: 100%;
-  background: #fff;
+  overflow-x: auto;
+  border-radius: 8px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* FIX: Prevents table from expanding infinitely */
-  min-width: 1000px;
+  min-width: 1000px; /* Ensures table doesn't squash on small screens */
 }
 
-thead {
-  background-color: #f9fafb;
-}
-
-th {
-  text-align: left;
-  font-size: 0.85rem;
+thead th {
+  background-color: var(--bg-light);
+  color: var(--primary-blue);
   font-weight: 600;
   text-transform: uppercase;
-  color: var(--text-light);
-  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 15px;
   border-bottom: 2px solid var(--border-color);
-  padding: 12px 10px;
+  text-align: left;
 }
 
-td {
-  padding: 10px;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.95rem;
+tbody td {
+  padding: 15px;
   vertical-align: middle;
-
-  /* FIX: Forces text to wrap within the column width */
-  white-space: normal;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
 }
 
-tr:last-child td {
-  border-bottom: none;
+tbody tr:hover {
+  background-color: #f8fafc;
 }
 
-tr:hover {
-  background-color: #f9fafb;
-}
-
-/* Clickable Row Styling */
+/* Clickable Event Name */
 .view-details-link {
+  color: var(--primary-blue);
+  font-weight: 600;
   cursor: pointer;
-  color: var(--primary-color);
-  font-weight: 500;
-  text-decoration: underline;
+  transition: color 0.2s;
 }
 
 .view-details-link:hover {
-  color: var(--secondary-color);
+  color: var(--primary-blue-hover);
+  text-decoration: underline;
 }
 
-/* --- COLUMN WIDTHS --- */
-th:nth-child(1),
-td:nth-child(1) {
-  width: 20%;
-} /* Event */
-th:nth-child(2),
-td:nth-child(2) {
-  width: 15%;
-} /* Name */
-th:nth-child(3),
-td:nth-child(3) {
-  width: 8%;
-} /* Mode */
-th:nth-child(4),
-td:nth-child(4) {
-  width: 10%;
-} /* Amount */
-th:nth-child(5),
-td:nth-child(5) {
-  width: 10%;
-} /* Date */
-th:nth-child(6),
-td:nth-child(6) {
-  width: 10%;
-} /* Status */
-th:nth-child(7),
-td:nth-child(7) {
-  width: 10%;
-} /* Processed By */
-th:nth-child(8),
-td:nth-child(8) {
-  width: 7%;
-  text-align: center;
-} /* Receipt (Icon) */
-th:nth-child(9),
-td:nth-child(9) {
-  width: 10%;
-} /* Options */
-
 /* =========================================
-   5. Status Badges
+   4. Status Badges
    ========================================= */
 .status-badge {
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: inline-block;
-
-  /* THIS PREVENTS THE TEXT FROM BREAKING */
-  white-space: nowrap;
 }
 
 .status-pending {
-  background-color: #fffbeb;
-  color: #d97706;
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
 }
 
 .status-accepted {
-  background-color: #ecfdf5;
-  color: #059669;
+  background-color: var(--success-bg);
+  color: var(--success-text);
 }
 
 .status-declined {
-  background-color: #fef2f2;
-  color: #dc2626;
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
 }
 
 /* =========================================
-   6. Action Buttons (Icons)
+   5. Action Buttons (Icons)
    ========================================= */
-.options {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-}
-
 .btn-icon {
   display: inline-flex;
-  align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 32px;
+  align-items: center;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   text-decoration: none;
   font-size: 1rem;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  margin: 0 2px;
 }
 
-/* Accept Button (Green) */
+.btn-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Accept (Check) */
 .btn-icon.accept {
-  background-color: #d1fae5;
-  color: #059669;
-  border: 1px solid #a7f3d0;
+  color: #2f855a;
+  background-color: rgba(47, 133, 90, 0.1);
 }
-
 .btn-icon.accept:hover {
-  background-color: #059669;
-  color: #ffffff;
-  transform: translateY(-2px);
+  background-color: #2f855a;
+  color: white;
 }
 
-/* Decline Button (Red) */
+/* Decline (X) */
 .btn-icon.decline {
-  background-color: #fee2e2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+  color: #c53030;
+  background-color: rgba(197, 48, 48, 0.1);
 }
-
 .btn-icon.decline:hover {
-  background-color: #dc2626;
-  color: #ffffff;
-  transform: translateY(-2px);
+  background-color: #c53030;
+  color: white;
 }
 
-/* View Receipt Button (Blue) */
+/* View (Eye) */
 .btn-icon.view {
-  background-color: #e0f2fe; /* Light Blue */
-  color: #0284c7; /* Deep Blue */
-  border: 1px solid #bae6fd;
+  color: var(--primary-blue);
 }
-
 .btn-icon.view:hover {
-  background-color: #0284c7;
-  color: #ffffff;
-  transform: translateY(-2px);
+  background-color: #ebf8ff;
 }
 
 /* =========================================
-   7. Modal Styling
+   6. Modals
    ========================================= */
 .modal-backdrop {
-  display: none;
+  display: none; /* Hidden by default */
   position: fixed;
   z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
   background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(2px);
-  align-items: center;
+  backdrop-filter: blur(3px);
   justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-/* Active class to show modal flex */
 .modal-open {
   display: flex !important;
+  animation: fadeIn 0.3s ease;
 }
 
+/* General Modal Content */
 .modal-content {
-  background-color: var(--white);
-  margin: auto;
-  padding: 25px;
+  background-color: #fff;
   border-radius: 12px;
-  width: 90%;
+  width: 100%;
   max-width: 500px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 30px;
   position: relative;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Close Button */
 .modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.8rem;
   color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
   cursor: pointer;
   line-height: 1;
-  position: absolute;
-  right: 20px;
-  top: 15px;
+  transition: color 0.2s;
 }
 
-.modal-close-btn:hover,
-.modal-close-btn:focus {
+.modal-close-btn:hover {
   color: var(--text-dark);
-  text-decoration: none;
 }
 
-/* Details Content */
+/* Modal Typography */
 #modalBody h4 {
-  color: var(--primary-color);
   margin-top: 0;
-  border-bottom: 2px solid var(--border-color);
+  color: var(--primary-blue);
+  border-bottom: 1px solid #eee;
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
@@ -407,121 +298,100 @@ td:nth-child(9) {
 }
 
 #modalBody strong {
-  color: var(--text-dark);
+  color: #555;
   min-width: 120px;
   display: inline-block;
 }
 
 .modal-hr {
   margin: 15px 0;
-  border-top: 1px dashed var(--border-color);
+  border-color: #f0f0f0;
 }
 
-.modal-receipt-thumb {
-  max-width: 100px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 5px;
-  transition: transform 0.2s;
-}
-
-.modal-receipt-thumb:hover {
-  transform: scale(1.05);
-  border-color: var(--secondary-color);
+/* Event Details inside Modal */
+.modal-event-details {
+  background-color: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border: 1px solid #eef2f6;
 }
 
 .modal-event-details img {
   width: 100%;
-  height: 150px;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 10px;
   object-fit: cover;
-  border-radius: var(--radius);
-  margin: 10px 0;
 }
 
-/* Image Modal Specifics */
+/* Receipt Thumbnail in Details Modal */
+.modal-receipt-thumb {
+  max-width: 100px;
+  border: 2px solid #eee;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.modal-receipt-thumb:hover {
+  transform: scale(1.05);
+  border-color: var(--primary-blue);
+}
+
+/* --- Full Image Receipt Modal --- */
 .modal-content-image {
+  background-color: transparent;
+  padding: 0;
   position: relative;
-  margin: auto;
-  padding: 10px;
-  background-color: #fff;
-  border-radius: 8px;
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: 90%;
+  max-height: 90%;
   display: flex;
-  flex-direction: column;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
-#receiptModalImage {
+.modal-content-image img {
   max-width: 100%;
   max-height: 85vh;
-  object-fit: contain;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-#receiptModalCloseBtn {
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  background: white;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  line-height: 30px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  opacity: 1;
-  color: #333;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-/* =========================================
-   8. Pagination
-   ========================================= */
-.pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.pagination {
-  list-style: none;
-  display: flex;
-  gap: 5px;
-  padding: 0;
-}
-
-.pagination li a,
-.pagination li span {
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  text-decoration: none;
-  color: var(--primary-color);
-  font-size: 0.9rem;
-}
-
-.pagination li.active span {
-  background-color: var(--primary-color);
+.modal-content-image .modal-close-btn {
+  top: -30px;
+  right: 0;
   color: white;
-  border-color: var(--primary-color);
+  font-size: 2rem;
 }
 
-.pagination li a:hover {
-  background-color: #e2e8f0;
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =========================================
-   9. Responsive Design
+   7. Responsive Design (Mobile)
    ========================================= */
 @media (max-width: 768px) {
+  .body-content {
+    padding: 1rem;
+    margin: 10px;
+  }
+
   .filter-bar {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .filter-bar select {
+    max-width: 100%;
   }
 
   .btn-filter-submit,
@@ -529,72 +399,56 @@ td:nth-child(9) {
     justify-content: center;
   }
 
-  th,
-  td {
-    padding: 10px;
+  /* Hide standard headers on mobile */
+  table thead {
+    display: none;
   }
-}
-/* =========================================
-   Action Toggle (Subtle Gray)
-   ========================================= */
-.options-cell {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 80px; /* Ensure enough space for toggle */
-}
 
-/* The Container for the actual icons (Hidden by default) */
-.action-icons-wrapper {
-  display: none; /* Hidden initially */
-  gap: 8px;
-  align-items: center;
-  animation: fadeIn 0.2s ease-in-out;
-}
-
-/* Class added via JS to show icons */
-.action-icons-wrapper.show {
-  display: flex;
-}
-
-/* The Toggle Button (Three Dots) */
-.btn-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #9ca3af;
-  font-size: 1rem;
-  padding: 5px;
-  border-radius: 50%;
-  transition: color 0.2s ease, background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-}
-
-.btn-toggle:hover {
-  color: #ffffff;
-  background-color: #4b5563;
-}
-
-/* Rotate the toggle when active */
-.btn-toggle.active {
-  background-color: #4b5563;
-  color: #ffffff;
-  transform: rotate(90deg);
-}
-
-/* Animation for revealing icons */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(5px);
+  table,
+  table tbody,
+  table tr,
+  table td {
+    display: block;
+    width: 100%;
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+
+  table tr {
+    margin-bottom: 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  table td:last-child {
+    border-bottom: none;
+    justify-content: center;
+    padding-top: 15px;
+  }
+
+  /* Add labels via CSS content for context */
+  table td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 700;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+
+  /* Fix for the options column on mobile */
+  .options {
+    justify-content: flex-end;
+    gap: 10px;
   }
 }

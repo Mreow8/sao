@@ -1,122 +1,102 @@
-/* --- Search Bar --- */
-#search_id {
-  display: flex;
-  flex-wrap: wrap;
-}
-table {
-  font-size: 12px;
-}
-/* Add this to your main CSS file */
-#info_table_head th {
-  cursor: pointer;
-  position: relative;
-  padding-right: 20px; /* Make space for the arrow */
-}
-
-/* Style for the sort arrows */
-#info_table_head th::before,
-#info_table_head th::after {
-  content: "";
-  position: absolute;
-  right: 8px;
-  border: 4px solid transparent;
-  opacity: 0.3;
+/* =========================================
+   1. General Layout & Typography
+   ========================================= */
+:root {
+  --primary-orange: #2c5282; /* Adjust to your brand orange */
+  --primary-orange-hover: #3567a3;
+  --text-dark: #333;
+  --text-light: #666;
+  --bg-light: #f9f9f9;
+  --border-color: #ddd;
+  --success-green: #d4edda;
+  --success-text: #155724;
+  --danger-red: #f8d7da;
+  --danger-text: #721c24;
+  --warning-yellow: #fff3cd;
+  --warning-text: #856404;
+  --gray-badge: #e2e3e5;
+  --gray-text: #383d41;
 }
 
-#info_table_head th::before {
-  bottom: 50%; /* Arrow up */
-  border-bottom-color: #333;
-}
-
-#info_table_head th::after {
-  top: 50%; /* Arrow down */
-  border-top-color: #333;
-}
-
-/* Show active sort direction */
-#info_table_head th.sort-asc::before {
-  opacity: 1;
-}
-
-#info_table_head th.sort-desc::after {
-  opacity: 1;
-}
-#studentIDBox {
+body {
   font-family: "Rubik", sans-serif;
-  font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  color: #333;
-  flex-grow: 1;
-  min-width: 250px;
-}
-#studentIDBox:focus {
-  outline: none;
-  border-color: #2c5282;
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
-  background-color: #fff;
-}
-#searchButton {
-  font-family: "Rubik", sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  padding: 10px 24px;
-  background-color: #2c5282; /* Primary Blue */
-  color: white;
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
-  height: 44px;
-}
-#searchButton:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
+  background-color: #f4f6f9;
 }
 
-/* Messages */
-.messages {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-.messages li {
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 8px;
-  background-color: #fef3c7;
-  color: #92400e;
-  border: 1px solid #fde68a;
-  width: 100%;
-}
-.search_id_container {
-  display: flex;
-  flex-wrap: wrap; /* Stack on mobile */
-  align-items: center;
-  gap: 15px;
-  padding: 1.5rem;
-  background-color: #f9f9f9;
+.gmc-form {
+  background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 0 0 12px 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
 }
 
-/* --- Table --- */
-.admin-table-wrapper {
-  width: 100%;
-  overflow-x: auto;
+/* =========================================
+   2. Search Bar Section
+   ========================================= */
+.search_id_container {
+  display: flex;
+  margin-bottom: 1.5rem;
 }
+
+.search_id_container form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+#studentIDBox {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 250px;
+  font-family: "Rubik", sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+#studentIDBox:focus {
+  border-color: var(--primary-orange);
+}
+
+.OrangeButton {
+  background-color: var(--primary-orange);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.OrangeButton:hover {
+  background-color: var(--primary-orange-hover);
+}
+
+/* =========================================
+   3. Table Styles
+   ========================================= */
+.admin-table-wrapper {
+  overflow-x: auto; /* Allows scrolling on small screens */
+  border-radius: 8px;
+  font-size: 12px;
+}
+
 #info_table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1000px;
+  min-width: 800px; /* Ensures table doesn't squash too much */
 }
+
+#info_table thead {
+  background-color: #2c3e50; /* Dark header */
+  color: white;
+}
+
 #info_table th,
 #info_table td {
   padding: 12px 15px;
@@ -136,205 +116,176 @@ table {
   text-decoration: none;
   color: inherit;
 }
-#info_table th a:hover {
-  text-decoration: underline;
+
+#info_table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
 }
+
 #info_table tbody tr:hover {
-  background-color: #f5f5f5;
-}
-#info_table tbody tr:last-child td {
-  border-bottom: none;
-}
-.no-items-found {
-  text-align: center;
-  padding: 3rem;
-  font-size: 1rem;
-  color: #777;
-  font-style: italic;
+  background-color: #f8f9fa;
 }
 
-/* --- Status Badges --- */
+#info_table td {
+  padding: 15px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+/* =========================================
+   4. Status Badges
+   ========================================= */
 .status-badge {
-  padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-transform: uppercase;
+  display: inline-block;
+  text-align: center;
+  min-width: 80px;
 }
-.accepted {
-  color: #0b552a;
-  background-color: #c6f6d5;
-} /* Green */
-.declined {
-  color: #9b2c2c;
-  background-color: #fed7d7;
-} /* Red */
-.pending {
-  color: #92400e;
-  background-color: #fef3c7;
-} /* Orange/Yellow */
-.expired {
-  color: #4a5568;
-  background-color: #e2e8f0;
-} /* Gray */
 
-/* --- Action Buttons --- */
-.horizontal {
+.status-badge.accepted {
+  background-color: var(--success-green);
+  color: var(--success-text);
+}
+
+.status-badge.declined {
+  background-color: var(--danger-red);
+  color: var(--danger-text);
+}
+
+.status-badge.pending {
+  background-color: var(--warning-yellow);
+  color: var(--warning-text);
+}
+
+.status-badge.expired {
+  background-color: var(--gray-badge);
+  color: var(--gray-text);
+}
+
+/* =========================================
+   5. Action Buttons
+   ========================================= */
+.action-buttons {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap; /* Allow buttons to wrap on mobile */
-} /* Remove default button borders and backgrounds */
-.icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem; /* Adjust icon size */
-  padding: 5px 8px;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-/* Add hover effect */
-.icon-btn:hover {
-  transform: scale(1.2);
-}
-
-/* Green for Accept */
-.accept {
-  color: #28a745;
-}
-.accept:hover {
-  color: #218838;
-}
-
-/* Red for Decline */
-.decline {
-  color: #dc3545;
-}
-.decline:hover {
-  color: #c82333;
-}
-
-/* Darker Red or Gray for Delete */
-.delete {
-  color: #6c757d; /* Or use #dc3545 for red */
-}
-.delete:hover {
-  color: #343a40; /* Darker on hover */
-}
-
-.horizontal {
-  display: flex;
-  gap: 10px; /* Space between icons */
   align-items: center;
 }
 
-/* --- Form Button --- */
-.showformButton {
-  display: inline-block;
-  padding: 6px 12px;
+.icon-btn {
+  width: 32px;
+  height: 32px;
   border-radius: 6px;
-  background-color: #2c5282;
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  transition: background-color 0.2s;
-}
-.showformButton:hover {
-  background-color: #2a4365;
-}
-.showformButton.hidden {
-  background-color: #e2e8f0;
-  color: #a0aec0;
-  pointer-events: none;
-  cursor: not-allowed;
-}
-
-/* --- Pagination --- */
-.pagination {
-  margin: 2rem 0 1rem;
-  text-align: center;
-}
-.step-links a,
-.step-links .current {
-  display: inline-block;
-  padding: 8px 14px;
-  margin: 0 4px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-}
-.step-links a {
-  background-color: #f0f0f0;
-  color: #333;
-}
-.step-links a:hover {
-  background-color: #e0e0e0;
-}
-.step-links .current {
-  background-color: #2c5282; /* Theme Blue */
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
   color: white;
-  border-color: #2c5282;
+  font-size: 14px;
 }
 
-/* --- Responsive Table (Card Stacking) --- */
-@media (max-width: 768px) {
-  .admin-table-wrapper {
-    border: none;
-    box-shadow: none;
-    overflow: visible;
+.icon-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.icon-btn.accept {
+  background-color: #28a745; /* Green */
+}
+
+.icon-btn.decline {
+  background-color: #dc3545; /* Red */
+}
+
+.icon-btn.delete {
+  background-color: #6c757d; /* Grey */
+}
+
+/* Show Form Link */
+.showformButton {
+  color: var(--primary-orange);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.85rem;
+  border: 1px solid var(--primary-orange);
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.showformButton:hover {
+  background-color: var(--primary-orange);
+  color: white;
+}
+
+.showformButton.hidden {
+  display: none;
+}
+
+.no-items-found {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* =========================================
+   6. Responsive (Mobile Card View)
+   ========================================= */
+@media screen and (max-width: 768px) {
+  .search_id_container {
+    justify-content: center;
   }
+
   #info_table {
-    min-width: 100%;
+    border: 0;
   }
+
   #info_table thead {
-    display: none; /* Hide table headers */
+    display: none; /* Hide headers on mobile */
   }
-  #info_table tbody,
-  #info_table tr,
-  #info_table td {
-    display: block;
-    width: 100%;
-  }
+
   #info_table tr {
-    margin-bottom: 20px;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   }
+
   #info_table td {
-    position: relative;
-    padding-left: 50%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
-    color: #2c2c2c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
     text-align: right;
+    padding: 12px 15px;
+    font-size: 0.9rem;
   }
+
   #info_table td:last-child {
-    border-bottom: none;
+    border-bottom: 0;
   }
-  #info_table td[data-label] {
-    text-align: right;
-  }
-  #info_table td[data-label]::before {
+
+  /* Adds labels before content using the data-label attribute */
+  #info_table td::before {
     content: attr(data-label);
-    position: absolute;
-    left: 16px;
-    top: 12px;
-    font-weight: bold;
-    color: #2c5282; /* Primary Blue */
-    white-space: nowrap;
-    text-align: left;
+    float: left;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #777;
+    font-size: 0.75rem;
   }
-  .horizontal {
-    justify-content: flex-end; /* Align buttons to the right on mobile */
+
+  .action-buttons {
+    justify-content: flex-end;
   }
 }

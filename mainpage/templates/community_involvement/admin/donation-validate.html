@@ -12,13 +12,14 @@
 {% endblock headcontent %}
 
 {% block bodycontent %}
-<div class="body-content"> 
-    <div class="sub-title">
+ <div class="sub-title">
         <h4>COMMUNITY INVOLVEMENT</h4>
         <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
         <p class="certxt">Donation Validate</p>
     </div>
     <hr>
+<div class="body-content"> 
+   
 
     <div class="data">
             <form class="filter-bar" action="{% url 'donation-validate' %}" method="GET">

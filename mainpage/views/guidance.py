@@ -9,6 +9,8 @@ from django.db import IntegrityError
 import csv
 import io
 import json
+from django.contrib.auth.decorators import login_required
+from ..decorators import guidance_admin_required  # 👈 Import this
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from ..forms import CounselingSchedulerForm, IndividualProfileForm, FileUpload, UploadFileForm, ExitInterviewForm, OjtAssessmentForm, StaffForm
@@ -20,33 +22,7 @@ from django.template.defaulttags import register
 from django.core.mail import send_mail
 from django.http import HttpResponse
 
-# def upload_files(request):
-#     if request.method == 'POST':
-#         form = UploadFileForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             csv_file = request.FILES['file']
-#             decoded_file = csv_file.read().decode('utf-8').splitlines()
-#             reader = csv.DictReader(decoded_file)
-            
-#             for row in reader:
-#                 studentInfo.objects.create(
-#                     studID=row['studID'],
-#                     lrn=row['lrn'],
-#                     lastname=row['lastname'],
-#                     firstname=row['firstname'],
-#                     middlename=row['middlename'],
-#                     degree=row['degree'],
-#                     yearlvl=row['yearlvl'],
-#                     sex=row['sex'],
-#                     emailadd=row['emailadd'],
-#                     contact=row['contact']
-#                 )
-            
-#             messages.success(request, 'File uploaded and data imported successfully')
-#             return redirect('upload_file')
-#     else:
-#         form = UploadFileForm()
-#     return render(request, 'upload.html', {'form': form})
+
 def upload_files(request):
     # Initialize forms with None so they aren't bound unless it's a POST
     student_form = UploadFileForm(prefix='student')
@@ -227,6 +203,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 # Assuming necessary models are imported:
 # from .models import IndividualProfileBasicInfo, IntakeInterview, studentInfo 
 # from django.contrib import messages # Import if using messages
+@guidance_admin_required
 
 def intake_interview_view(request):
     # 1. FIX: Fetch students before the POST check so it's available 
@@ -450,7 +427,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, F, Value, CharField, DateField
 # Make sure to import all 3 models
 from ..models import counseling_schedule, CaseProfile, studentInfo 
-
+@guidance_admin_required
 def counseling_app_admin_view(request):
     
     # 1. Get parameters from URL
@@ -657,6 +634,7 @@ def print_exit_interview(request, request_id): # <-- 1. Accept the 'request_id' 
 
 
 # In guidance.py
+@guidance_admin_required
 
 def exit_interview_admin_view(request):
     
@@ -731,6 +709,8 @@ def exit_interview_admin_view(request):
     }
     
     return render(request, 'guidance/exit_interview_admin.html', context)
+@guidance_admin_required
+
 def print_ojt_assessment(request, request_id): 
     
     # 1. FIX: Fetch from OjtAssessment, not exit_interview_db
@@ -799,6 +779,8 @@ def ojt_assessment(request):
         'ongoing_request': ongoing_request   # <-- Pass the pending request to the template
     }
     return render(request, 'guidance/ojt_assessment.html', context)
+@guidance_admin_required
+
 def ojt_assessment_admin_view(request):
     
     # --- GET Logic (To display the data) ---

@@ -1,0 +1,231 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+:root {
+  --primary-blue: #2c5282;
+  --light-blue-bg: #ebf8ff;
+  --hover-blue: #f0f5fa;
+  --text-dark: #374151;
+  --text-gray: #6b7280;
+  --border-color: #e5e7eb;
+  --white: #ffffff;
+}
+
+/* --- 1. Main Container (Matches Student Dashboard) --- */
+.dashboard-container {
+  font-family: "Rubik", sans-serif;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f9fafb; /* Light gray background for page */
+}
+
+.dashboard-card {
+  width: 100%;
+  max-width: 1300px; /* Matches student_dashboard width */
+  background-color: var(--white);
+  border-radius: 24px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+}
+
+/* --- 2. Tab Navigation --- */
+.tab-header {
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--white);
+  padding: 1.5rem 2rem 0 2rem;
+  display: flex;
+  gap: 0.5rem;
+  position: sticky; /* Keep tabs visible if scrolling */
+  top: 0;
+  z-index: 10;
+}
+
+.tab-button {
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--text-gray);
+  padding: 1rem 1.5rem;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px 8px 0 0;
+}
+
+.tab-button:hover {
+  color: var(--primary-blue);
+  background-color: var(--hover-blue);
+}
+
+.tab-button.active {
+  color: var(--primary-blue);
+  border-bottom-color: var(--primary-blue);
+  background-color: var(--light-blue-bg);
+}
+
+/* --- 3. Content Area --- */
+.tab-content {
+  display: none;
+  padding: 2.5rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- 4. Form Styles (For Donation.html) --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.form-section h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: "Rubik", sans-serif;
+  transition: border-color 0.2s;
+  outline: none;
+  background-color: #f9fafb;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--primary-blue);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
+}
+
+.btn-submit {
+  background-color: var(--primary-blue);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.btn-submit:hover {
+  background-color: #1a365d;
+}
+
+/* --- 5. Table Styles (For Volunteer/Bank Dashboards) --- */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+thead th {
+  background-color: #f3f4f6;
+  color: var(--text-gray);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 2px solid var(--border-color);
+}
+
+tbody td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  color: var(--text-dark);
+  font-size: 0.925rem;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* --- 6. Helpers --- */
+.qr-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9fafb;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.qr-preview img {
+  max-width: 200px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.error-msg {
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: none;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .tab-header {
+    overflow-x: auto;
+    padding-bottom: 0;
+  }
+  .dashboard-container {
+    padding: 1rem;
+  }
+}

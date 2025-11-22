@@ -62,3 +62,48 @@ hr {
   font-size: 0.9rem;
   display: inline;
 }
+/* Base Status Style - Soft Pill Shape */
+.pending,
+.accepted,
+.declined,
+.expired {
+  display: inline-block !important;
+  padding: 6px 12px !important;
+  border-radius: 50px !important; /* Fully rounded pill */
+  font-size: 0.75rem !important; /* Approx 12px */
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  text-align: center !important;
+  min-width: 80px !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+}
+
+/* Pending - Soft Yellow/Gold */
+.pending {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+  border: 1px solid #ffeeba !important;
+}
+
+/* Accepted - Soft Green */
+.accepted {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+  border: 1px solid #c3e6cb !important;
+}
+
+/* Declined - Soft Red */
+.declined {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  border: 1px solid #f5c6cb !important;
+}
+
+/* Expired - Soft Grey */
+.expired {
+  background-color: #e2e3e5 !important;
+  color: #383d41 !important;
+  border: 1px solid #d6d8db !important;
+}

@@ -1,8 +1,82 @@
 {% extends 'adminmain.html' %} {% load static %} 
 
 {% block headcontent %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'styles/alumni/admin_id_request.css' %}"> 
+<style>
+    /* --- ICON BUTTON STYLES --- */
+    .btn-icon {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 1.1rem;
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Approve Button (Blue) */
+    .btn-approve {
+        color: #2c5282;
+        background-color: #ebf8ff;
+    }
+    .btn-approve:hover {
+        background-color: #2c5282;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Claim Button (Green/Teal) */
+    .btn-claim {
+        color: #047857; /* Emerald 700 */
+        background-color: #d1fae5; /* Emerald 100 */
+    }
+    .btn-claim:hover {
+        background-color: #047857;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Static Status: Claimed */
+    .status-badge-icon {
+        color: #059669;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Tooltip helper */
+    .btn-icon[title]:hover::after {
+        content: attr(title);
+        position: absolute;
+        font-size: 0.75rem;
+        background: #333;
+        color: #fff;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin-top: -40px;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+    
+    /* Align content in the Confirmation column */
+    td[data-label="Confirmation"] {
+        text-align: center; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* If you ever have multiple buttons */
+    }
+    
+    /* Remove default form margin to keep icons centered */
+    td[data-label="Confirmation"] form {
+        margin: 0;
+    }
+</style>
 {% endblock %}
 
 {% block bodycontent %}
@@ -73,48 +147,47 @@
                 <a href="?sort=claimed_date&order=asc{{ search_params }}">Date Released</a>
               {% endif %}
             </th>
-            <th>Confirmation</th>
-          </tr>
+            <th>Action</th> </tr>
         </thead>
         <tbody>
           {% for alumni_request in page_obj %}
           <tr>
             <td data-label="Alumni ID">{{ alumni_request.alumniID }}</td>
             <td data-label="Student ID">{{ alumni_request.student.studID }}</td>
-            <td data-label="First Name">
-              {{ alumni_request.student.firstname }}
-            </td>
+            <td data-label="First Name">{{ alumni_request.student.firstname }}</td>
             <td data-label="Last Name">{{ alumni_request.student.lastname }}</td>
             <td data-label="Date Requested">{{ alumni_request.alumnidate }}</td>
 
             <td data-label="Date Released">
               {% if alumni_request.claimed_date %}
-              {{ alumni_request.claimed_date|date:"Y-m-d" }}
+                {{ alumni_request.claimed_date|date:"Y-m-d" }}
               {% else %}
-              --
+                <span style="color: #aaa;">--</span>
               {% endif %}
             </td>
 
             <td data-label="Confirmation">
               {% if alumni_request.claimed_date %}
-              <span class="success-message">Claimed</span>
-              {% else %} {% if alumni_request.approved %}
-              <form
-                action="{% url 'claim_alumni_id' alumni_request.alumniID %}"
-                method="post"
-              >
-                {% csrf_token %}
-                <button type="submit" class="requestBtn">Mark as Claimed</button>
-              </form>
-              {% else %}
-              <form
-                action="{% url 'approve_alumni_request' alumni_request.alumniID %}"
-                method="post"
-              >
-                {% csrf_token %}
-                <button type="submit" class="requestBtn">Approve</button>
-              </form>
-              {% endif %} {% endif %}
+                <span class="status-badge-icon" title="ID Claimed">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+              {% else %} 
+                {% if alumni_request.approved %}
+                    <form action="{% url 'claim_alumni_id' alumni_request.alumniID %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-icon btn-claim" title="Release ID / Mark as Claimed">
+                            <i class="fas fa-clipboard-check"></i>
+                        </button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'approve_alumni_request' alumni_request.alumniID %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-icon btn-approve" title="Approve Request">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </form>
+                {% endif %} 
+              {% endif %}
             </td>
           </tr>
           {% empty %}

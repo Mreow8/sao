@@ -101,7 +101,8 @@ def serviceTracker(request, student_id):
         'total_minutes': total_minutes,
     }
     return render(request, 'discipline/comm_service.html', context)
-@require_POST  # Make sure @require_POST is imported
+
+@require_POST
 @login_required
 def update_case_status(request, case_id):
     try:
@@ -117,6 +118,42 @@ def update_case_status(request, case_id):
         if new_status in valid_statuses:
             case.status = new_status
             case.save()
+
+            # --- NEW LOGIC: SEND EMAIL IF RESOLVED ---
+            if new_status == 'Resolved':
+                try:
+                    # Check if student has an email address
+                    # Adjust 'email' below if your model uses a different field name (e.g., 'email_address')
+                    student_email = getattr(case.student, 'email', None) 
+                    
+                    if student_email:
+                        subject = f"Case Resolved: {case.offense_type}"
+                        message = (
+                            f"Dear {case.student.firstname},\n\n"
+                            f"This email is to inform you that your case regarding '{case.offense_type}' "
+                            f"reported on {case.date_reported} has been officially marked as RESOLVED.\n\n"
+                            f"If you have any questions, please contact the Student Affairs Office.\n\n"
+                            "Best regards,\n"
+                            "Student Affairs Office"
+                        )
+                        
+                        send_mail(
+                            subject,
+                            message,
+                            settings.EMAIL_HOST_USER, # From email
+                            [student_email],          # To email
+                            fail_silently=False,
+                        )
+                        logger.info(f"Resolution email sent to {student_email}")
+                    else:
+                        logger.warning(f"Case {case_id} resolved, but student {case.student.studID} has no email address.")
+
+                except Exception as email_error:
+                    # We log the error but DO NOT stop the function. 
+                    # The status update was successful, even if the email failed.
+                    logger.error(f"Failed to send resolution email: {email_error}")
+            # --- END NEW LOGIC ---
+
             return JsonResponse({"success": True, "new_status": new_status})
         else:
             return JsonResponse({"success": False, "error": "Invalid status value"}, status=400)

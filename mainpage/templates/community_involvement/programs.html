@@ -8,6 +8,7 @@
   />
   
   <style>
+    /* --- Grid Layout --- */
     .program-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -15,6 +16,7 @@
       margin-top: 20px;
     }
     
+    /* --- Existing Delete/Edit Button Styles --- */
     .delete-button-subtle {
       display: flex;
       align-items: center;
@@ -23,20 +25,20 @@
       text-align: left;
       padding: 8px 12px;
       font-size: 14px;
-      color: #dc2626; /* Red-600 */
+      color: #dc2626;
       border-radius: 6px;
       transition: background-color 0.2s ease-in-out;
+      background: none;
+      border: none;
+      cursor: pointer;
     }
-
     .delete-button-subtle:hover {
-      background-color: #fef2f2; /* Red-50 */
+      background-color: #fef2f2;
     }
-
     .delete-button-subtle .delete-icon {
       width: 16px;
       height: 16px;
     }
-    
     .desc {
       font-size: 1rem;
       color: #4a5568;
@@ -44,7 +46,6 @@
       line-height: 1.6;
       text-align: center; 
     }
-
     .sort-link {
       color: #3182ce;
       text-decoration: none;
@@ -53,6 +54,161 @@
       font-weight: bold;
       color: #2c5282;
       text-decoration: underline;
+    }
+
+    /* --- NEW: Add Event Modal & Button Styles --- */
+    .add-event-trigger {
+      width: 100%;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      padding: 15px 20px;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 16px;
+      color: #65676b;
+      cursor: pointer;
+      transition: background-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .add-event-trigger:hover {
+      background-color: #f0f2f5;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .add-event-trigger:before {
+      content: "+";
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1;
+      color: #1877f2;
+    }
+
+    /* Form Modal Overlay */
+    .form-modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Form Modal Content Box */
+    .form-modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 25px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+      animation: fadeIn 0.3s;
+    }
+
+    /* Inputs inside modal */
+    .form-modal-content input[type="text"], 
+    .form-modal-content input[type="datetime-local"],
+    .form-modal-content textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-modal-content textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .form-modal-header h3 {
+      margin: 0;
+      font-size: 20px;
+      color: #1c1e21;
+    }
+
+    .close-form-modal {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .close-form-modal:hover {
+      color: black;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .photo-btn {
+      cursor: pointer;
+      color: #1877f2;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+    }
+    
+    .submit-btn {
+      background-color: #1877f2;
+      color: white;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .submit-btn:hover {
+      background-color: #166fe5;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    
+    /* Preview Images in Modal */
+    #preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .preview-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #ddd;
     }
   </style>
 {% endblock %}
@@ -70,66 +226,84 @@
 <div class="container">
 
 <div class="page-controls">
+  
   {% if user.is_staff %}
-  <div class="post-box">
-    <div class="collapsed" id="collapsedBox">Add Events...</div>
-   
-   <form
-      method="post"
-      action="{% url 'add_program' %}" 
-      id="expandedBox"
-      class="expanded"
-      enctype="multipart/form-data"
-    >
-      {% csrf_token %}
-      <input
-        type="text"
-        name="caption"
-        placeholder="Caption (e.g., Auto-caption, Event Highlight)"
-        required
-      />
-      <textarea
-        id="postText"
-        name="description"
-        rows="3"
-        placeholder="Add Events Description..."
-      ></textarea>
-      
-      <label for="event_date_input" style="font-size: 0.9rem; color: #555; margin-bottom: -0.5rem; margin-top: 0.5rem;">Event Date & Time:</label>
-      <input
-        type="datetime-local"
-        id="event_date_input"
-        name="event_date"
-        style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit;"
-      />
-      
-      <input
-        type="text"
-        name="venue"
-        placeholder="Venue (e.g., CTU Main Gymnasium)"
-      />
-      
-      <input type="hidden" name="title" value="Community Event" />
-      <div class="actions">
-        <label class="action-btn" for="imageUpload">📷 Photo/Video</label>
-        <input
-          type="file"
-          id="imageUpload"
-          name="images"
-          accept="image/*,video/*"
-          multiple
-          style="display: none"
-        />
-      </div>
-      <div id="preview"></div>
-      <button type="submit" class="submit" id="submitBtn">Post</button> 
-    </form>
-  </div>
-  {% else %}
-    <div></div> 
+  <button id="openFormModalBtn" class="add-event-trigger">
+    Add New Event...
+  </button>
   {% endif %}
 
-  <div class="sort-controls">
+  {% if user.is_staff %}
+  <div id="addEventModal" class="form-modal">
+    <div class="form-modal-content">
+      
+      <div class="form-modal-header">
+        <h3>Create Community Event</h3>
+        <span class="close-form-modal">&times;</span>
+      </div>
+
+      <form
+          method="post"
+          action="{% url 'add_program' %}" 
+          enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+        
+        <input
+          type="text"
+          name="caption"
+          placeholder="Caption (e.g., Event Highlight)"
+          required
+          autofocus
+        />
+        
+        <textarea
+          name="description"
+          rows="3"
+          placeholder="Description..."
+        ></textarea>
+        
+        <label for="event_date_input" style="font-size: 0.85rem; color: #666; display:block; margin-top: 5px;">Event Date & Time:</label>
+        <input
+          type="datetime-local"
+          id="event_date_input"
+          name="event_date"
+        />
+        
+        <input
+          type="text"
+          name="venue"
+          placeholder="Venue (e.g., CTU Main Gymnasium)"
+        />
+        
+        <input type="hidden" name="title" value="Community Event" />
+
+        <div id="preview"></div>
+
+        <div class="form-actions">
+            <div>
+                <label class="photo-btn" for="imageUpload">
+                   📷 Photo/Video
+                </label>
+                <input
+                  type="file"
+                  id="imageUpload"
+                  name="images"
+                  accept="image/*,video/*"
+                  multiple
+                  style="display: none"
+                />
+            </div>
+
+            <button type="submit" class="submit-btn">Post</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="sort-controls" style="margin-top: 10px; margin-bottom: 10px; display: flex; justify-content: flex-end;">
     <span style="margin-right: 0.5rem; color: #4a5568;">Sort by:</span>
     <a href="?sort=newest" class="sort-link {% if current_sort == 'newest' %}active{% endif %}" style="margin-right: 0.5rem;">Newest</a>
     <a href="?sort=oldest" class="sort-link {% if current_sort == 'oldest' %}active{% endif %}">Oldest</a>
@@ -160,7 +334,7 @@
           >
             <button
               type="button"
-              class="edit-program-btn menu-item"
+              class="edit-program-btn menu-item w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               data-url="{% url 'edit_program' program.id %}"
             >
               <i class="fa fa-pen" style="width: 16px; margin-right: 8px;"></i> Edit
@@ -169,19 +343,19 @@
             <form
               method="post"
               action="{% url 'delete_program' program.id %}"
-              class="delete-program-form"
+              class="delete-program-form px-4 py-2 hover:bg-gray-100"
             >
               {% csrf_token %}
               <button type="submit" class="delete-button-subtle">
                 <svg
                   class="delete-icon"
-                  xmlns="http://www.2000/svg"
+                  xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
                   <path
                     fill-rule="evenodd"
-                    d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 10.23-1.482A41.13 41.13 0 0014 4.193v-.443A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75a1.25 1.25 0 00-1.25-1.25h-2.5A1.25 1.25 0 007.5 3.75v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                    d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 10.23 1.482A41.13 41.13 0 0014 4.193v-.443A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75a1.25 1.25 0 00-1.25-1.25h-2.5A1.25 1.25 0 007.5 3.75v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
                     clip-rule="evenodd"
                   />
                 </svg>
@@ -243,41 +417,52 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     
-    // --- Logic for the "Add Event" form ---
-    const collapsedBox = document.getElementById("collapsedBox");
-    const expandedBox = document.getElementById("expandedBox");
-    if (collapsedBox && expandedBox) {
-      const postText = expandedBox.querySelector('input[name="caption"]');
-      const imageUpload = document.getElementById("imageUpload");
-      const preview = document.getElementById("preview");
+    // --- [UPDATED] Add Event Modal Logic ---
+    const openFormBtn = document.getElementById("openFormModalBtn");
+    const formModal = document.getElementById("addEventModal");
+    const closeFormBtn = document.querySelector(".close-form-modal");
 
-      collapsedBox.addEventListener("click", () => {
-        collapsedBox.style.display = "none";
-        expandedBox.style.display = "flex";
-        if (postText) {
-          postText.focus();
-        }
-      });
-
-      if (imageUpload) {
-        imageUpload.addEventListener("change", () => {
-          preview.innerHTML = "";
-          // Handle multiple files
-          if (imageUpload.files.length > 0) {
-            Array.from(imageUpload.files).forEach(file => {
-              const wrapper = document.createElement("div");
-              wrapper.classList.add("preview-item");
-              const img = document.createElement("img");
-              img.src = URL.createObjectURL(file);
-              wrapper.appendChild(img);
-              preview.appendChild(wrapper);
-            });
-          }
+    if (openFormBtn && formModal && closeFormBtn) {
+        // Open Modal
+        openFormBtn.addEventListener("click", () => {
+            formModal.style.display = "flex"; // Uses flex to center
         });
-      }
+
+        // Close Modal (X button)
+        closeFormBtn.addEventListener("click", () => {
+            formModal.style.display = "none";
+        });
+
+        // Close Modal (Click Outside)
+        window.addEventListener("click", (event) => {
+            if (event.target == formModal) {
+                formModal.style.display = "none";
+            }
+        });
+
+        // Image Preview Logic inside Modal
+        const imageUpload = document.getElementById("imageUpload");
+        const preview = document.getElementById("preview");
+
+        if (imageUpload && preview) {
+            imageUpload.addEventListener("change", () => {
+                preview.innerHTML = "";
+                // Handle multiple files
+                if (imageUpload.files.length > 0) {
+                    Array.from(imageUpload.files).forEach(file => {
+                        const wrapper = document.createElement("div");
+                        wrapper.classList.add("preview-item");
+                        const img = document.createElement("img");
+                        img.src = URL.createObjectURL(file);
+                        wrapper.appendChild(img);
+                        preview.appendChild(wrapper);
+                    });
+                }
+            });
+        }
     }
 
-    // --- Get modal elements ---
+    // --- Get modal elements for Image Viewing ---
     const imageModal = document.getElementById("imageModal");
     const modalImg = document.getElementById("modalImageContent");
     const closeModalBtn = document.getElementById("closeImageModal");

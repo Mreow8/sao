@@ -220,18 +220,20 @@ def delete_project(request, pk):
         project.delete()
         return redirect("crowdfunding_list")
     return render(request, "community_involvement/confirm_delete.html", {"project": project})
-
 @login_required
 def add_event(request):
-    if request.method == "POST" and request.headers.get("x-requested-with") == "XMLHttpRequest":
+    if request.method == "POST":
+        # 1. Extract Data
         title = request.POST.get("title", "Community Event")
         description = request.POST.get("description", "")
 
+        # 2. Create the Project
         project = CrowdfundingProject.objects.create(
             title=title,
             description=description,
         )
 
+        # 3. Handle Images
         images_urls = []
         if request.FILES.getlist("images"):
             for f in request.FILES.getlist("images"):
@@ -241,22 +243,27 @@ def add_event(request):
                 )
                 images_urls.append(channel.imageCrowdfunding.url)
 
-        return JsonResponse({
-            "success": True,
-            "project": {
-                "id": project.id,
-                "title": project.title,
-                "description": project.description,
-                "images": images_urls,
-                # --- FIX --- Added created_at so JS can display it
-                "created_at": project.created_at.strftime("%b. %d, %Y, %I:%M %p")
-            }
-        })
+        # 4. Conditional Response
+        # If it's an AJAX request (from JavaScript), return JSON
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({
+                "success": True,
+                "project": {
+                    "id": project.id,
+                    "title": project.title,
+                    "description": project.description,
+                    "images": images_urls,
+                    "created_at": project.created_at.strftime("%b. %d, %Y, %I:%M %p")
+                }
+            })
+        
+        # If it's a Standard Request (Normal Submit), REDIRECT back to the list
+        # This fixes the "Student View" issue by letting the list view handle the template
+        messages.success(request, "Crowdfunding project created successfully!")
+        return redirect("crowdfunding_list")
 
-    # GET request
-    projects = CrowdfundingProject.objects.all().order_by("-created_at")
-    return render(request, "community_involvement/crowdfunding_list.html", {"projects": projects})
-
+    # Fallback for GET requests
+    return redirect("crowdfunding_list")
 @login_required
 def add_programs(request):
     if request.method == "POST":
@@ -657,9 +664,9 @@ def reports_find(request):
 
 @login_required
 def archive_project(request, id):
-    Program.objects.filter(id=id).update(archive=True)
-    return redirect("project") # This URL name might be wrong
-
+    # FIX: Use CrowdfundingProject model, set active to False, and correct redirect
+    CrowdfundingProject.objects.filter(id=id).update(active=False)
+    return redirect("crowdfunding_list")
 @login_required
 def archive_program(request, id):
     Program.objects.filter(id=id).update(archive=True)
@@ -724,24 +731,19 @@ def gcash_dashboard(request):
         context,
     )
 # ... (other functions) ...
-
 @login_required
 def banks_dashboard(request):
-    # 1. This is your original query, WITH SORTING ADDED
     loadBanksDonations = MOD.objects.filter(donation_type="Bank", status="Accepted").order_by('-date')
 
-    # 2. Add pagination based on that sorted list
     page_number = request.GET.get('page')
-    paginator = Paginator(loadBanksDonations, 15) # Use the sorted list
+    paginator = Paginator(loadBanksDonations, 15)
+    
+    # This usage is correct (using get_page handles errors automatically)
     page_obj = paginator.get_page(page_number)
 
-    # 3. Create the context
     context = {
-        # This is for the 'donation.html' include
-        "loadBanksDonations": loadBanksDonations, 
-        
-        # This is for the standalone 'banks-dashboard.html' page
-        "page_obj": page_obj 
+        "loadBanksDonations": loadBanksDonations, # Warning: This contains ALL items.
+        "page_obj": page_obj # Ensure your HTML loops over THIS variable.
     }
     
     return render(
@@ -751,20 +753,18 @@ def banks_dashboard(request):
     )
 @login_required
 def volunteer_dashboard(request):
-    # 1. This is your original query, with sorting added
+    # 1. Sort by date
     loadVolunteer = MOD.objects.filter(donation_type="Volunteer", status="Accepted").order_by('-date')
 
-    # 2. Add pagination based on that sorted list
+    # 2. Pagination
     page_number = request.GET.get('page')
-    paginator = Paginator(loadVolunteer, 15) # Use the sorted list
-    page_obj = paginator.get_page(page_obj)
+    paginator = Paginator(loadVolunteer, 15) 
+    
+    # FIX: Changed 'page_obj' to 'page_number' inside the function call
+    page_obj = paginator.get_page(page_number) 
 
-    # 3. Create the context
     context = {
-        # This is for the 'donation.html' include
         "loadVolunteer": loadVolunteer, 
-        
-        # This is for the standalone 'volunteer-dashboard.html' page
         "page_obj": page_obj 
     }
     

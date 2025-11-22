@@ -385,7 +385,7 @@ background-color: #ffffff;
         <td data-label="First Name">{{ graduate_request.student.firstname }}</td>
         <td data-label="Last Name">{{ graduate_request.student.lastname }}</td>
         <td data-label="Date Graduate">{{ graduate_request.dategraduated|date:"F d, Y" }}</td>
-        <td data-label="Email">{{ graduate_request.email_add }}</td>
+        <td data-label="Email">{{ graduate_request.student.user.email }}</td>
         
         <td data-label="Status">
           {% if graduate_request.approval_status == 'Accepted' %}

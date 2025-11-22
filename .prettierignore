@@ -41,6 +41,7 @@ mainpage/templates/medical/email/medical_requirements_status.html
 mainpage/templates/medical/students/requestform.html
 mainpage/templates/officeOfStudentL/adminUser/adminRequestedGmc.html
 mainpage/templates/community_involvement/admin/volunteer-dashboard.html
+mainpage/templates/community_involvement/admin/gcash-dashboard.html
 mainpage/templates/community_involvement/admin/donation.html
 mainpage/templates/_pagination.html
 mainpage/templates/medical/admin/mental_health.html

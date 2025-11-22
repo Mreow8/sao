@@ -1,101 +1,28 @@
-{% block bodycontent %}
+{% load static %}
+
 <style>
-  /* === Page Container === */
-  .data {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    font-family: "Rubik", sans-serif;
+  /* ... Same styles as before ... */
+  .volunteer-table-wrapper { width: 100%; overflow-x: auto; border-radius: 12px; margin-top: 1rem; background: #fff; }
+  .volunteer-table { width: 100%; border-collapse: collapse; min-width: 1100px; font-family: "Rubik", sans-serif; }
+  .volunteer-table th, .volunteer-table td { border-bottom: 1px solid #ddd; padding: 12px 15px; text-align: left; font-size: 14px; vertical-align: middle; }
+  .volunteer-table thead th { background-color: #f9f9f9; color: #2c5282; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .volunteer-table tbody tr:last-child td { border-bottom: none; }
+  .volunteer-table tbody tr:hover { background-color: #f9fafb; transition: background-color 0.2s ease; }
+  
+  .view-btn {
+    padding: 6px 16px; background-color: #ebf8ff; color: #2c5282; font-weight: 500; border: none; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease; font-family: "Rubik", sans-serif; text-decoration: none; display: inline-block;
   }
-
-  /* === Table Styling === */
-  .table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    background-color: #ffffff;
-  }
-
-  .table-wrapper table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 900px; /* Added min-width for more columns */
-  }
-
-  .table-wrapper th,
-  .table-wrapper td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #f0f0f0;
-    text-align: left;
-    font-size: 0.95rem;
-    color: #333;
-    vertical-align: middle;
-  }
-
-  .table-wrapper th {
-    background-color: #f9f9f9;
-    
-    color: #2c5282;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .table-wrapper tbody tr:hover {
-    background-color: #f5f5f5;
-  }
-
-  /* Styling for the "View" link cell */
-  .table-wrapper td.view a {
-    color: #2c5282;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .table-wrapper td.view a:hover {
-    text-decoration: underline;
-  }
-
-
-  .step-links {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .step-links a,
-  .step-links .current {
-    display: inline-block;
-    padding: 8px 14px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
-    border: 1px solid #ccc;
-    transition: background-color 0.2s;
-  }
-
-  .step-links a {
-    background-color: #f0f0f0;
-    color: #333;
-  }
-
-  .step-links a:hover {
-    background-color: #e0e0e0;
-  }
-
-  .step-links .current {
-    background-color: #2c5282;
-    color: white;
-    border-color: #2c5282;
-    cursor: default;
-  }
+  .view-btn:hover { background-color: #2c5282; color: #ffffff; }
+  .empty-state { text-align: center; color: #6b7280; padding: 3rem 1rem !important; font-style: italic; }
 </style>
-<div class="data">
-  <div class="table-wrapper">
-    <table>
+
+<div>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">Volunteer History</h2>
+  </div>
+
+  <div class="volunteer-table-wrapper">
+    <table class="volunteer-table">
       <thead>
         <tr>
           <th>Donated By</th>
@@ -117,53 +44,40 @@
           <td>{{ donates.name }}</td>
           <td>{{ donates.contact_number }}</td>
           <td>{{ donates.what_kind }}</td>
-
-          <td>{% if donates.what_kind == "SERVICE" %}{{ donates.date_sched }}{% endif %}</td>
-          
+          <td>{% if donates.what_kind == "SERVICE" %}{{ donates.date_sched }}{% else %}<span style="color:#ccc">-</span>{% endif %}</td>
           <td>
-            {% if donates.what_kind == "MONEY" %}
-              {{ donates.recepient }}
-            {% elif donates.what_kind != "SERVICE" %}
-              {{ donates.recepient_things}}
-            {% endif %}
+            {% if donates.what_kind == "MONEY" %}{{ donates.recepient }}{% elif donates.what_kind != "SERVICE" %}{{ donates.recepient_things}}{% else %}<span style="color:#ccc">-</span>{% endif %}
           </td>
-          
           <td>
-            {% if donates.what_kind == "MONEY" %}
-              {{ donates.amount|floatformat:2 }}
-            {% endif %}
+            {% if donates.what_kind == "MONEY" %}₱ {{ donates.amount|floatformat:2 }}{% else %}<span style="color:#ccc">-</span>{% endif %}
           </td>
-
           <td>{{ donates.date }}</td>
-          
           <td class="view">
             {% if donates.what_kind != "SERVICE" and donates.image_details %}
-              <a target="_blank" href="/media/{{ donates.image_details }}">View</a>
+              <button type="button" class="view-btn" onclick="openImageModal('/media/{{ donates.image_details }}')">
+                View
+              </button>
+            {% else %}
+              <span style="color: #9ca3af;">-</span>
             {% endif %}
           </td>
         </tr>
         {% empty %}
         <tr>
-          <td
-            colspan="9"
-            style="text-align: center; color: #777; padding: 20px"
-          >
-            No accepted Volunteer donations found.
-          </td>
+          <td colspan="9" class="empty-state">No accepted Volunteer donations found.</td>
         </tr>
         {% endfor %}
         {% endwith %}
       </tbody>
     </table>
   </div>
+  <!-- prettier-ignore -->
 
   {% if page_obj and page_obj.has_other_pages %}
-  {% if page_obj %}
-    {% with query_params="&sort="|add:current_sort %}
-        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    {% endwith %}
-{% endif %}
-  {% endif %} {# END PAGINATION BLOCK #}
-
+    {% if page_obj %}
+      {% with query_params="&sort="|add:current_sort %}
+          {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+      {% endwith %}
+    {% endif %}
+  {% endif %}
 </div>
-{% endblock %}

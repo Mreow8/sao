@@ -7,11 +7,11 @@ from django.db.models import Avg
 import socket
 from mainpage.models import studentInfo
 from mainpage.models.alumni import Alumni, graduateForm, Event, JobFair, Yearbook
-from ..decorators import sao_admin_required, tracer_gatekeeper_required
+from ..decorators import sao_admin_required, tracer_gatekeeper_required, alumni_admin_required
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-
+@alumni_admin_required
 @login_required
 def admin_id_request(request):
     
@@ -64,19 +64,17 @@ def admin_id_request(request):
     }
     
     return render(request, 'alumni/users/admin_idRequest.html', context)
+@alumni_admin_required
 @login_required
 def admin_tracer_list(request):
-    """
-    Shows the page with the table.
-    The 'selected_form' variable is no longer needed.
-    """
+    
     all_forms = graduateForm.objects.all().order_by('approval_status', 'dategraduated')
     context = {
         'graduate_requests': all_forms,
     }
     return render(request, 'alumni/users/admin_gradTracer.html', context)
 
-
+@alumni_admin_required
 @login_required
 def update_form_status(request, pk):
     """
@@ -414,7 +412,8 @@ def graduateTracer_submit(request):
 @login_required
 def alumni_events(request):
     events = Event.objects.all()    
-    return render(request, 'alumni/users/alumni_events.html', {'events': events})    
+    return render(request, 'alumni/users/alumni_events.html', {'events': events}) 
+@alumni_admin_required   
 @login_required
 def alumni_events_admin(request):
     events = Event.objects.all()    
@@ -540,7 +539,7 @@ def transac_search(request):
 
 # admin alumni
 # @sao_admin_required
-
+@alumni_admin_required
 @login_required
 def approve_alumni_request(request, alumni_id):
     if request.method == 'POST':
@@ -574,15 +573,16 @@ def claim_alumni_id(request, alumni_id):
         return redirect('admin_idRequest')
 
     return redirect('admin_idRequest')
-# @sao_admin_required
+
+@alumni_admin_required
 @login_required
 def admin_gradTracer(request):
     graduate_requests = graduateForm.objects.select_related('student').all()
     return render(request, 'alumni/users/admin_gradTracer.html', {'graduate_requests': graduate_requests})
-# @sao_admin_required
+
 from ..forms import EventForm
 from ..forms import EventForm
-# @sao_admin_required
+@alumni_admin_required
 @login_required
 def admin_events(request):
     if request.method == 'POST':
@@ -605,7 +605,7 @@ def admin_events(request):
     # 5. Pass the form (either new or with errors) to the template
     context = {'form': form}
     return render(request, 'alumni/users/admin_events.html', context)
-# @sao_admin_required
+@alumni_admin_required
 @login_required
 def admin_jobfairs(request):
     if request.method == "POST":

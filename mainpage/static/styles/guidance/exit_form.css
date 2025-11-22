@@ -297,34 +297,6 @@ table {
   font-size: 0.8em;
 }
 
-.pending,
-.accepted,
-.declined,
-.expired {
-  padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 12px;
-  font-weight: 700;
-  color: white;
-  text-transform: uppercase;
-}
-.pending {
-  color: #92400e;
-  background-color: #fef3c7;
-}
-.accepted {
-  background-color: #8ccfa8;
-  color: #0b552a;
-}
-.declined {
-  background-color: #fca5a5;
-  color: #7f1d1d;
-}
-.expired {
-  background-color: #e0e0e0;
-  color: #555;
-}
-
 .no-items-found {
   text-align: center;
   color: #777;

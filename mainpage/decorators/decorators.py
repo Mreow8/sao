@@ -1,6 +1,7 @@
 from functools import wraps
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from mainpage.models import studentInfo
 from mainpage.models.alumni import graduateForm # <-- Import graduateForm
 
@@ -99,14 +100,22 @@ def sao_admin_required(view_func):
         else:
             return HttpResponse('Permission denied: SAO admin access required.', status=403)
     return _wrapped_view
+from django.contrib.auth.decorators import user_passes_test
 
-def medical_admin_required(view_func):
-    def _wrapped_view(request, *args, **kwargs):
-        if request.user.user_type == 'medical admin':
-            return view_func(request, *args, **kwargs)
-        else:
-            return HttpResponse('Permission denied: Medical admin access required.', status=403)
-    return _wrapped_view
+def is_medical_admin(user):
+    if not user.is_authenticated:
+        return False
+    
+    if user.is_superuser:
+        return True
+
+    if getattr(user, 'role', '').lower() == 'clinic_admin': 
+        return True
+    
+    return False
+
+medical_admin_required = user_passes_test(is_medical_admin, login_url='login', redirect_field_name=None)
+
 from django.shortcuts import redirect
 from django.contrib import messages
 from functools import wraps
@@ -192,3 +201,52 @@ def alumni_required(view_func):
 def staff_role(user):
   
     return user.role != 'student'
+from django.contrib import messages
+from django.shortcuts import redirect
+from functools import wraps
+
+def alumni_admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        
+        # 1. Check if user is authenticated
+        if not user.is_authenticated:
+            return redirect('login')
+        
+        # 2. Check Permissions: Superuser OR 'alumni' role
+        # Note: Ensure 'role' matches your User model field
+        user_role = getattr(user, 'role', '').lower()
+        
+        if user.is_superuser or user_role == 'alumni':
+            # Permission Granted: Run the view
+            return view_func(request, *args, **kwargs)
+        
+        messages.error(request, "You are not allowed to access this page.")
+        
+        return redirect('homepage') 
+        
+    return _wrapped_view
+
+def guidance_admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        
+        # 1. Check if user is authenticated
+        if not user.is_authenticated:
+            return redirect('login')
+        
+        # 2. Check Permissions: Superuser OR 'alumni' role
+        # Note: Ensure 'role' matches your User model field
+        user_role = getattr(user, 'role', '').lower()
+        
+        if user.is_superuser or user_role == 'guidance':
+            # Permission Granted: Run the view
+            return view_func(request, *args, **kwargs)
+        
+        messages.error(request, "You are not allowed to access this page.")
+        
+        return redirect('homepage') 
+        
+    return _wrapped_view

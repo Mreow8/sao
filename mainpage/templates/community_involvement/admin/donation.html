@@ -1,110 +1,261 @@
-{% extends 'adminmain.html' %} {% block css %} {% load static %}
-{% endblock %} {% block bodycontent %}
+{% extends 'adminmain.html' %} 
+{% block css %} 
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+{% endblock %} 
+
+{% block bodycontent %}
 
 <style>
-  /* --- Global & Fonts --- */
-  body,
-  .sub-title {
-    font-family: "Rubik", sans-serif;
-  }
+    @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
 
-  /* --- Container --- */
-  .container {
-    padding: 0 1.5rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+    :root {
+        --primary-blue: #2c5282;
+        --light-blue-bg: #ebf8ff;
+        --hover-blue: #f0f5fa;
+        --text-dark: #374151;
+        --text-gray: #6b7280;
+        --border-color: #e5e7eb;
+        --white: #ffffff;
+    }
 
- 
-  /* --- NEW TAB CSS (FROM YOU) --- */
-  .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 2rem; /* Added margin from old style */
-  }
-  .tab {
-    font-family: "Rubik", sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    color: #2c5282; /* Theme Blue */
-    text-decoration: none;
-    padding: 1rem 1.25rem;
-    border: none;
-    border-bottom: 3px solid transparent;
-    border-radius: 8px 8px 0 0;
-    cursor: pointer;
-    background-color: transparent;
-    transition: color 0.2s, background-color 0.2s;
-  }
-  .tab:hover {
-    color: #2a4365;
-    background-color: #f0f5fa; /* Light blue hover */
-  }
-  .tab.active {
-    color: #ffffff;
-    
-    background-color: #2c5282; /* Active tab has blue background */
-    border-bottom-color: #2c5282;
-  }
-  /* --- END NEW TAB CSS --- */
+    /* --- Main Container --- */
+    .dashboard-container {
+        font-family: "Rubik", sans-serif;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+        background-color: #f9fafb;
+    }
 
+    .dashboard-card {
+        width: 100%;
+        max-width: 1300px;
+        background-color: var(--white);
+        border-radius: 24px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 80vh;
+    }
 
-  /* --- Sections (From Old Style) --- */
-  .section {
-    display: none; /* Hide sections by default */
-    background-color: #ffffff; /* Give sections a white card background */
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
+    /* --- Tab Navigation --- */
+    .tab-header {
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--white);
+        padding: 1.5rem 2rem 0 2rem;
+        display: flex;
+        gap: 0.5rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
 
-  .section.active {
-    display: block; /* Show the active section */
-  }
+    .tab-button {
+        font-family: "Rubik", sans-serif;
+        font-weight: 500;
+        font-size: 1rem;
+        color: var(--text-gray);
+        padding: 1rem 1.5rem;
+        border: none;
+        border-bottom: 3px solid transparent;
+        background-color: transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .tab-button:hover {
+        color: var(--primary-blue);
+        background-color: var(--hover-blue);
+    }
+
+    .tab-button.active {
+        color: var(--primary-blue);
+        border-bottom-color: var(--primary-blue);
+        background-color: var(--light-blue-bg);
+    }
+
+    /* --- Content Area --- */
+    .tab-content {
+        display: none;
+        padding: 2rem;
+        animation: fadeIn 0.3s ease-in-out;
+        width: 100%;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab-content .data {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin-top: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .sub-title {
+        font-family: "Rubik", sans-serif;
+        padding: 1rem 2rem;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- MODAL CSS (NEW) --- */
+    .modal-overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+        backdrop-filter: blur(4px);
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        padding: 1rem;
+        border-radius: 16px;
+        max-width: 90%;
+        max-height: 90vh;
+        position: relative;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-content img {
+        max-width: 100%;
+        max-height: 80vh;
+        border-radius: 8px;
+        object-fit: contain;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 35px;
+        height: 35px;
+        background-color: #fff;
+        color: #333;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+        background-color: #ef4444;
+        color: white;
+    }
 </style>
+
 <div class="sub-title">
-  <h4>COMMUNITY INVOLVEMENT</h4>
-  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt; Donation History</p>
+    <h4>COMMUNITY INVOLVEMENT</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+    <p class="certxt">&gt; Donation History</p>
 </div>
 <hr />
 
-<div class="tabs">
-  <button class="tab active" onclick="showSection('gcash', this)">GCash</button>
-  <button class="tab" onclick="showSection('banks', this)">Banks</button>
-  <button class="tab" onclick="showSection('volunteer', this)">Volunteer</button>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        
+        <div class="tab-header">
+            <button class="tab-button active" onclick="openTab(event, 'gcash')">
+                <i class="fa-solid fa-mobile-screen"></i> GCash
+            </button>
+            <button class="tab-button" onclick="openTab(event, 'banks')">
+                <i class="fa-solid fa-building-columns"></i> Banks
+            </button>
+            <button class="tab-button" onclick="openTab(event, 'volunteer')">
+                <i class="fa-solid fa-hand-holding-heart"></i> Volunteer
+            </button>
+        </div>
+
+        <div id="gcash" class="tab-content active">
+            {% include "community_involvement/admin/gcash-dashboard.html" with loadGcashDonations=loadGcashDonations %}
+        </div>
+        
+        <div id="banks" class="tab-content">
+            {% include "community_involvement/admin/banks-dashboard.html" with loadBankDonations=loadBankDonations %}
+        </div>
+        
+        <div id="volunteer" class="tab-content">
+            {% include "community_involvement/admin/volunteer-dashboard.html" with loadVolunteer=loadVolunteer %}
+        </div>
+
+    </div>
 </div>
 
-<div id="gcash" class="section active">
-  {% include "community_involvement/admin/gcash-dashboard.html" with loadGcashDonations=loadGcashDonations %}
-</div>
-<div id="banks" class="section">
-  {% include "community_involvement/admin/banks-dashboard.html" with loadBankDonations=loadBankDonations %}
-</div>
-<div id="volunteer" class="section">
-  {% include "community_involvement/admin/volunteer-dashboard.html" with loadVolunteer=loadVolunteer %}
+<div id="receiptModal" class="modal-overlay" onclick="closeModalOnOutsideClick(event)">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeImageModal()">&times;</span>
+        <img id="modalImageDisplay" src="" alt="Receipt Image">
+        <p style="margin-top: 10px; font-weight: 500; color: #555;">Donation Receipt</p>
+    </div>
 </div>
 
 <script>
-  function showSection(id, clickedTab) {
-    // 1. Hide all sections
-    document.querySelectorAll(".section").forEach((s) => {
-      s.classList.remove("active");
-    });
-    
-    // 2. Show the selected section
-    document.getElementById(id).classList.add("active");
-    
-    // 3. Remove 'active' class from all tabs
-    document.querySelectorAll(".tab").forEach((t) => {
-      t.classList.remove("active");
-    });
-    
-    // 4. Add 'active' class to the clicked tab
-    clickedTab.classList.add("active");
-  }
+    // --- Tab Logic ---
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("tab-button");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        setTimeout(() => {
+            document.getElementById(tabName).classList.add("active");
+        }, 10);
+        evt.currentTarget.className += " active";
+    }
+
+    // --- Modal Logic ---
+    function openImageModal(url) {
+        const modal = document.getElementById('receiptModal');
+        const img = document.getElementById('modalImageDisplay');
+        if(url && url !== '') {
+            img.src = url;
+            modal.style.display = 'flex';
+        } else {
+            alert("No receipt image available.");
+        }
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('receiptModal');
+        modal.style.display = 'none';
+        document.getElementById('modalImageDisplay').src = '';
+    }
+
+    function closeModalOnOutsideClick(event) {
+        const modal = document.getElementById('receiptModal');
+        if (event.target === modal) {
+            closeImageModal();
+        }
+    }
 </script>
 {% endblock %}
