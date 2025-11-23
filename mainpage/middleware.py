@@ -1,111 +1,147 @@
-
 import logging
 from .models import studentInfo
 from .models.alumni import Alumni, graduateForm
-
-logger = logging.getLogger(__name__)
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, NoReverseMatch
 from django.contrib import messages
 
-
+logger = logging.getLogger(__name__)
 
 class RoleRestrictionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        # 1. Check if user is logged in
         if request.user.is_authenticated and hasattr(request.user, 'role'):
             
-            # 2. Logic specifically for CLINIC ADMIN
-            if request.user.role == 'clinic_admin':
-                
-                # --- THE LOOP BREAKER (Crucial Fix) ---
-                try:
-                    dashboard_url = reverse('clinic_dashboard') # Must match name in urls.py
-                except:
-                    # Fallback if URL name is wrong, prevents crash but might loop if paths don't match
-                    dashboard_url = '/main/dashboard/clinic/' 
+            # 0. Superusers bypass everything
+            if request.user.is_superuser:
+                return self.get_response(request)
 
-                # If the user is ALREADY at the dashboard, stop checking and let them in.
-                # We strip '/' to ensure /clinic and /clinic/ are treated the same.
+            ROLE_CONFIG = {
+                # --- MEDICAL / CLINIC ---
+                'clinic_admin': { 
+                    'dashboard_name': 'admin_dashboard', 
+                    'allowed_prefixes': ['/med/', '/medical/', '/clinic/', '/media/', '/static/'] 
+                },
+
+                # --- GUIDANCE ---
+                'guidance': { 
+                    'dashboard_name': 'guidance_dashboard', 
+                    'allowed_prefixes': ['/guidance/', '/media/', '/static/'] 
+                },
+
+                # --- SCHOLARSHIP ---
+                'scholarship_admin': { 
+                    'dashboard_name': 'scholarship_dashboard', 
+                    'allowed_prefixes': ['/scholarship/', '/media/', '/static/'] 
+                },
+
+                # --- JOB PLACEMENT ---
+                'placement_officer': { 
+                    'dashboard_name': 'placement_dashboard', 
+                    'allowed_prefixes': ['/jobplacement/', '/media/', '/static/'] 
+                },
+
+                # --- ALUMNI ---
+                'alumni_officer': { 
+                    'dashboard_name': 'alumni_dashboard', # Check if this URL name exists in alum_url
+                    'allowed_prefixes': ['/alum/', '/media/', '/static/'] 
+                },
+
+                # --- COMMUNITY INVOLVEMENT ---
+                'community_admin': { 
+                    'dashboard_name': 'community_dashboard', # Check URL name in com_url
+                    'allowed_prefixes': ['/community/', '/media/', '/static/'] 
+                },
+
+                # --- ORGANIZATION ---
+                'org_admin': { 
+                    'dashboard_name': 'org_dashboard', 
+                    'allowed_prefixes': ['/org/', '/organizations/', '/media/', '/static/'] 
+                },
+
+                # --- DISCIPLINE ---
+                'discipline_officer': { 
+                    'dashboard_name': 'discipline_dashboard', # Check URL name in disc_url
+                    'allowed_prefixes': ['/discipline/', '/media/', '/static/'] 
+                },
+
+                # --- STUDENT LIFE (MAIN) ---
+                'student_life_admin': {
+                    'dashboard_name': 'student_life_dashboard',
+                    'allowed_prefixes': ['/main/', '/student-life/', '/media/', '/static/']
+                }
+            }
+
+            user_role = request.user.role
+
+            # 2. Check if the user's role is in our restricted list
+            if user_role in ROLE_CONFIG:
+                config = ROLE_CONFIG[user_role]
+                
+                # Resolve Dashboard URL
+                try:
+                    dashboard_url = reverse(config['dashboard_name'])
+                except (NoReverseMatch, Exception):
+                    # Fallback to root if dashboard URL fails
+                    # logger.warning(f"Dashboard '{config['dashboard_name']}' not found for {user_role}")
+                    dashboard_url = '/' 
+
+                # ALLOW: If user is already at their dashboard
                 if request.path.rstrip('/') == dashboard_url.rstrip('/'):
                     return self.get_response(request)
 
-                # --- Allowed Paths Configuration ---
-                allowed_prefixes = [
-                    '/clinic/',       
-                    '/medical/',      
-                    '/media/',        
-                    '/static/',
-                    '/med/',
-                    '/admin/', # Usually needed for logout or internal tools
-                ]
-                
-                allowed_exact_paths = [
-                    reverse('homepage'),        
-                    '/logout/',
-                    dashboard_url, # Explicitly allow the dashboard
-                ]
-
                 current_path = request.path
                 is_allowed = False
-                
-                # Check exact matches
-                if current_path in allowed_exact_paths:
-                    is_allowed = True
-                
-                # Check prefixes
+
+                # ALLOW: Global whitelist (Logout, Home, etc.)
+                # Add any shared pages here that ALL admins need access to
+                global_allowed = ['/logout/', '/login/', '/admin/', '/change-password/']
+                for path in global_allowed:
+                    if current_path.startswith(path):
+                        is_allowed = True
+                        break
+
+                # ALLOW: Role-specific prefixes
                 if not is_allowed:
-                    for prefix in allowed_prefixes:
+                    for prefix in config['allowed_prefixes']:
                         if current_path.startswith(prefix):
                             is_allowed = True
                             break
 
-                # If they are trying to access a restricted page
+                # BLOCK: If path is not allowed, redirect to dashboard
                 if not is_allowed:
-                    # Only show message if it's not an automated request (optional)
+                    # Don't spam messages on AJAX requests
                     if not request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                        messages.error(request, "Access Denied: Restricted to Medical Personnel only.")
+                        messages.error(request, f"Access Denied: You are not authorized to access this area.")
                     
-                    return redirect('homepage')
+                    return redirect(dashboard_url)
 
         response = self.get_response(request)
         return response
+
+
 class AlumniStatusMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        # Set default values for all users
         request.is_alumni_approved = False
         request.has_filled_tracer = False
 
-        logger.debug("AlumniStatusMiddleware START path=%s user=%s authenticated=%s",
-                     request.path,
-                     getattr(request, 'user', None),
-                     getattr(request.user, 'is_authenticated', False))
-
-        # Check only if the user is logged in
         if getattr(request.user, 'is_authenticated', False):
             try:
-                # 1. Find the student record
-                student = studentInfo.objects.get(studID=int(request.user.username))
+                if str(request.user.username).isdigit():
+                    student = studentInfo.objects.get(studID=int(request.user.username))
+                    alumni = Alumni.objects.filter(student=student, approved=True).first()
+                    
+                    if alumni:
+                        request.is_alumni_approved = True
+                        request.has_filled_tracer = graduateForm.objects.filter(student=student).exists()
 
-                # 2. Check if they are an APPROVED alumnus
-                alumni = Alumni.objects.get(student=student, approved=True)
-                request.is_alumni_approved = True
-
-                # 3. If they are, check if they have filled the tracer form
-                request.has_filled_tracer = graduateForm.objects.filter(student=student).exists()
-
-            except (studentInfo.DoesNotExist, Alumni.DoesNotExist, ValueError, TypeError) as e:
-                logger.debug("AlumniStatusMiddleware lookup failed: %s", e)
-
-        logger.debug("AlumniStatusMiddleware END path=%s is_alumni_approved=%s has_filled_tracer=%s",
-                     request.path, request.is_alumni_approved, request.has_filled_tracer)
+            except Exception:
+                pass 
 
         response = self.get_response(request)
         return response
-# ...existing code...

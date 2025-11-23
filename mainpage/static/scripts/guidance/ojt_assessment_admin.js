@@ -98,7 +98,7 @@ $(document).ready(function () {
     }).then((result) => {
       if (result.isConfirmed) {
         $.post({
-          url: "/main/delete_ojt_assessment/", // CHECK YOURS URL
+          url: "{% url 'delete_ojt_assessment' %}", // CHECK YOURS URL
           data: { OjRequestID: OjtRequestID },
           headers: { "X-CSRFToken": csrftoken },
           success: function (response) {

@@ -384,20 +384,45 @@ def signinuser(request):
             return render(request, 'login.html', context)
 
     return render(request, 'login.html')
-
-# mainpage/views.py
 def get_base_template(user):
-   
     if not user.is_authenticated:
-        return 'main.html' # or login.html
+        return 'main.html' 
         
-    # 1. Strict check for Clinic Admin
-    if hasattr(user, 'role') and user.role == 'clinic_admin':
-        return 'clinic_admin.html'
+    if hasattr(user, 'role'):
+        # --- 1. Specific Role Checks ---
         
+        if user.role == 'clinic_admin':
+            return 'clinic_admin.html'
+            
+        elif user.role == 'guidance':
+            return 'guidance_admin.html' # Make sure this file exists
+            
+        elif user.role == 'scholarship_admin':
+            return 'scholarship_admin.html' # Make sure this file exists
+            
+        elif user.role == 'placement_officer':
+            return 'placement_admin.html' # Make sure this file exists
+            
+        elif user.role == 'alumni_officer':
+            return 'alumni_admin.html' # Make sure this file exists
+            
+        elif user.role == 'community_admin':
+            return 'community_admin.html' # Make sure this file exists
+            
+        elif user.role == 'org_admin':
+            return 'org_admin.html' # Make sure this file exists
+            
+        elif user.role == 'discipline_officer':
+            return 'discipline_admin.html' # Make sure this file exists
+            
+        elif user.role == 'student_life_admin':
+            return 'adminmain.html' # Main admin usually gets the default
+
+    # --- 2. Fallback for Superusers/Staff without specific role ---
     if user.is_staff or user.is_superuser:
         return 'adminmain.html'
         
+    # --- 3. Default for Students/Faculty ---
     return 'main.html'
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -719,7 +744,7 @@ def scholarship_dashboard(request):
     return render(request, 'scholarship_officer.html')
 
 def guidance_dashboard(request):
-    return render(request, 'guidance_officer.html')
+    return render(request, 'guidance_admin.html')
 
 def clinic_dashboard(request):
     return render(request, 'clinic_admin.html')
@@ -731,7 +756,7 @@ def discipline_dashboard(request):
     return render(request, 'discipline_officer.html')
 
 def alumni_dashboard(request):
-    return render(request, 'alumni_officer.html')
+    return render(request, 'alumni_admin.html')
 
 def org_dashboard(request):
     return render(request, 'org_admin.html')

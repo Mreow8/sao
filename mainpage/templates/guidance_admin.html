@@ -48,45 +48,37 @@
 
       {% with current_url=request.resolver_match.url_name %}
       <nav class="side-nav flex flex-col h-screen">
-        <ul>
+        <ul class="guide-show active">
           <li>
             <a
-              class="guide-btn active"
-              style="pointer-events: none; cursor: default"
-              >GUIDANCE</a
+              href="{% url 'Counseling App With Scheduler Admin View' %}"
+              class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}"
+              >Counseling App with Scheduler</a
             >
-            <ul class="guide-show active">
-              <li>
-                <a
-                  href="{% url 'Counseling App With Scheduler Admin View' %}"
-                  class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}"
-                  >Counseling App with Scheduler</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'Intake Interview' %}"
-                  class="{% if current_url == 'Intake Interview' %}active-link{% endif %}"
-                  >Intake Interview</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'Exit Interview Admin View' %}"
-                  class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}"
-                  >Exit Interview</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'OJT Assessment Admin View' %}"
-                  class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}"
-                  >OJT Assessments/Psychological Issuance</a
-                >
-              </li>
-            </ul>
+          </li>
+          <li>
+            <a
+              href="{% url 'Intake Interview' %}"
+              class="{% if current_url == 'Intake Interview' %}active-link{% endif %}"
+              >Intake Interview</a
+            >
+          </li>
+          <li>
+            <a
+              href="{% url 'Exit Interview Admin View' %}"
+              class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}"
+              >Exit Interview</a
+            >
+          </li>
+          <li>
+            <a
+              href="{% url 'OJT Assessment Admin View' %}"
+              class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}"
+              >OJT Assessments/Psychological Issuance</a
+            >
           </li>
         </ul>
+
         <div class="mt-auto mb-4">
           <a
             href="{% url 'transaction_report_view' %}"
