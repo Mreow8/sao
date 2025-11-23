@@ -4,7 +4,7 @@ from ..import views
 
 urlpatterns = [
     path('medical/user-suggestions/', views.user_suggestions, name='user_suggestions'),
-    path('patientbasicinfo/<str:student_id>/', views.patient_basic_info, name='patient_basicinfo'),
+    path('patient_basicinfo/<str:student_id>/', views.patient_basic_info, name='patient_basicinfo'),
     path('medicalclearance/<str:student_id>/', views.medicalclearance_view, name='medicalclearance'),
     path('eligibilityform/<str:student_id>/', views.eligibilty_form, name='eligibility_form'),
     path('medicalcertificate/<str:student_id>/', views.med_cert, name='med_cert_for_intrams'),
@@ -49,7 +49,7 @@ urlpatterns = [
     path('medical_views/', views.main_view, name='medical_views'),
     # path('medical/', include('medical.urls', namespace='medical')),
     path('patient-form/', views.patient_form, name='patient_form'),
-    path('admin-dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
+    path('dashboard/clinic/', views.admin_dashboard_view, name='admin_dashboard'),
     path('student-dashboard/', views.dashboard_view, name='student_dashboard'),
     
     # REMOVED DUPLICATE 'mental-health/' PATH HERE

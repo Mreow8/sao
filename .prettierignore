@@ -37,6 +37,8 @@ mainpage/templates/scholarship/scholarsprofilestudent.html
 mainpage/templates/medical/medicalrequirements.html
 mainpage/templates/reports/transaction_report.html
 mainpage/templates/medical/admin/viewrequest.html
+mainpage/templates/medical/admin/dentalschedule.html
+mainpage/templates/medical/admin/dentalrequest.html
 mainpage/templates/medical/email/medical_requirements_status.html
 mainpage/templates/medical/students/requestform.html
 mainpage/templates/officeOfStudentL/adminUser/adminRequestedGmc.html

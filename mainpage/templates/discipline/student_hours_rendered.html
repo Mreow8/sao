@@ -87,6 +87,96 @@
     </div>
 
   </div>
-</div>
+</div><script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sessionSelect = document.getElementById('id_session');
+    const timeIn = document.getElementById('id_time_in');
+    const timeOut = document.getElementById('id_time_out');
 
+    // Helper to convert "HH:MM" string to minutes for easy comparison
+    function toMinutes(timeStr) {
+        const [h, m] = timeStr.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    function validateTimeInput(inputElement) {
+        const session = sessionSelect.value;
+        const val = inputElement.value;
+        if (!val) return; // Empty is fine (handled by 'required')
+
+        let minTime, maxTime, label;
+
+        if (session === 'Morning') {
+            minTime = "07:00";
+            maxTime = "12:05";
+            label = "Morning session is 7:00 AM - 12:05 PM.";
+        } else if (session === 'Afternoon') {
+            minTime = "12:30";
+            maxTime = "18:00";
+            label = "Afternoon session is 12:30 PM - 6:00 PM.";
+        } else {
+            return; // No session selected
+        }
+
+        // Compare values
+        if (toMinutes(val) < toMinutes(minTime) || toMinutes(val) > toMinutes(maxTime)) {
+            alert(`Invalid Time! ${label}`);
+            inputElement.value = ""; // Clear the bad input
+        }
+        
+        // Check logical order (Out must be > In)
+        if (timeIn.value && timeOut.value) {
+            if (toMinutes(timeOut.value) <= toMinutes(timeIn.value)) {
+                 // Only alert if we are currently editing the Time Out field
+                 if (inputElement === timeOut) {
+                    alert("Time Out must be later than Time In.");
+                    timeOut.value = "";
+                 }
+            }
+        }
+    }
+
+    function updateTimeAttributes() {
+        const session = sessionSelect.value;
+        if (session === 'morning') {
+            setTimeLimits("07:00", "12:05");
+        } else if (session === 'afternoon') {
+            setTimeLimits("12:30", "18:00");
+        }
+        // Clear existing values when session changes to avoid confusion
+        timeIn.value = "";
+        timeOut.value = "";
+    }
+
+    function setTimeLimits(min, max) {
+        timeIn.min = min;
+        timeIn.max = max;
+        timeOut.min = min;
+        timeOut.max = max;
+    }
+
+    // --- Event Listeners ---
+
+    // 1. When Session Changes: Update limits and clear old times
+    if (sessionSelect) {
+        sessionSelect.addEventListener('change', updateTimeAttributes);
+        // Run once on load
+        if (sessionSelect.value) updateTimeAttributes();
+    }
+
+    // 2. When Time In Changes: Validate range
+    if (timeIn) {
+        timeIn.addEventListener('change', function() {
+            validateTimeInput(this);
+        });
+    }
+
+    // 3. When Time Out Changes: Validate range AND check against Time In
+    if (timeOut) {
+        timeOut.addEventListener('change', function() {
+            validateTimeInput(this);
+        });
+    }
+});
+</script>
 {% endblock %}

@@ -105,71 +105,108 @@ def get_faculty_by_user(user):
 
 # Add this function at the top of the file
 def is_admin(user):
-    return user.is_superuser or user.is_staff
+    return can_access_medical_admin(user)
+# In medical.py
 
-# Patient's basic information
 def patient_basic_info(request, student_id):
-    base_template = "adminmain.html" if (request.user.role != 'student' or request.user.is_superuser or getattr(request.user, 'role', None) == 'guard') else "main.html"    # --- Access control ---
+    # Determine base template safely
+    base_template = "main.html"
+    if request.user.is_authenticated:
+        role = getattr(request.user, 'role', '')
+        if request.user.is_superuser or role in ['staff', 'clinic_admin', 'guard', 'superadmin']:
+            base_template = "adminmain.html"
 
-    student = studentInfo.objects.get(studID=student_id)
-    user = User.objects.get(username=student.studID)
+    try:
+        # 1. Try to get the Student Info
+        student = studentInfo.objects.get(studID=student_id)
+        
+        # 2. Try to get the User Account (This is where it was crashing)
+        user = User.objects.get(username=student.studID)
+
+    except studentInfo.DoesNotExist:
+        messages.error(request, f"Student record with ID {student_id} not found.")
+        # If admin, go back to profile list. If student, go home.
+        return redirect('patient_profile') if base_template == "adminmain.html" else redirect('homepage')
+
+    except User.DoesNotExist:
+        # --- THE FIX ---
+        # This handles the "CustomUser matching query does not exist" error.
+        messages.error(request, f"CRITICAL ERROR: Student {student.firstname} {student.lastname} ({student_id}) exists in records but has NO User Account. They must register/sign up first.")
+        return redirect('patient_profile')
+
+    # 3. Check if Patient record already exists
     if Patient.objects.filter(user=user).exists():
         patient = Patient.objects.get(user=user)
-        return render(request, "medical/students/basicinfo.html", {"student": student, "patient": patient})
+        return render(request, "medical/students/basicinfo.html", {
+            "student": student, 
+            "patient": patient,
+            "base_template": base_template
+        })
+
+    # 4. Handle Form Submission (Create New Patient Profile)
     if request.method == "POST":
-        birth_date = request.POST.get("birth_date")
-        age = request.POST.get("age")
-        weight = request.POST.get("weight")
-        height = request.POST.get("height")
-        bloodtype = request.POST.get("bloodtype")
-        allergies = request.POST.get("allergies")
-        medications = request.POST.get("medications")
-        home_address = request.POST.get("home_address")
-        city = request.POST.get("city")
-        state_province = request.POST.get("state-province")
-        postal_zipcode = request.POST.get("postal-zip-code")
-        country = request.POST.get("country")
-        nationality = request.POST.get("nationality")
-        religion = request.POST.get("religion")
-        civil_status = request.POST.get("civil_status")
-        number_of_children = request.POST.get("number_of_children")
-        academic_year = request.POST.get("academic_year")
-        section = request.POST.get("section")
-        parent_guardian = request.POST.get("parent_guardian")
-        parent_guardian_contact_number = request.POST.get("parent_guardian_contact_number")
+        try:
+            birth_date = request.POST.get("birth_date")
+            age = request.POST.get("age")
+            weight = request.POST.get("weight")
+            height = request.POST.get("height")
+            bloodtype = request.POST.get("bloodtype")
+            allergies = request.POST.get("allergies")
+            medications = request.POST.get("medications")
+            home_address = request.POST.get("home_address")
+            city = request.POST.get("city")
+            state_province = request.POST.get("state-province")
+            postal_zipcode = request.POST.get("postal-zip-code")
+            country = request.POST.get("country")
+            nationality = request.POST.get("nationality")
+            religion = request.POST.get("religion")
+            civil_status = request.POST.get("civil_status")
+            number_of_children = request.POST.get("number_of_children")
+            academic_year = request.POST.get("academic_year")
+            section = request.POST.get("section")
+            parent_guardian = request.POST.get("parent_guardian")
+            parent_guardian_contact_number = request.POST.get("parent_guardian_contact_number")
 
-        Patient.objects.create(
-            user = user,
-            birth_date = birth_date,
-            age = age,
-            weight = weight,
-            height = height,
-            bloodtype = bloodtype,
-            allergies = allergies,
-            medications = medications,
-            home_address = home_address,
-            city = city,
-            state_province = state_province,
-            postal_zipcode = postal_zipcode,
-            country = country,
-            nationality = nationality,
-            religion = religion,
-            civil_status = civil_status,
-            number_of_children = number_of_children,
-            academic_year = academic_year,
-            section = section,
-            parent_guardian = parent_guardian,
-            parent_guardian_contact_number = parent_guardian_contact_number
-        )
+            Patient.objects.create(
+                user = user,
+                birth_date = birth_date,
+                age = age,
+                weight = weight,
+                height = height,
+                bloodtype = bloodtype,
+                allergies = allergies,
+                medications = medications,
+                home_address = home_address,
+                city = city,
+                state_province = state_province,
+                postal_zipcode = postal_zipcode,
+                country = country,
+                nationality = nationality,
+                religion = religion,
+                civil_status = civil_status,
+                number_of_children = number_of_children,
+                academic_year = academic_year,
+                section = section,
+                parent_guardian = parent_guardian,
+                parent_guardian_contact_number = parent_guardian_contact_number
+            )
 
-        messages.success(request, "You may now do your transactions")
-        return redirect("request")
-    context ={"student": student, 'base_template': base_template,
-}
+            messages.success(request, "Patient profile created successfully.")
+            
+            # Redirect based on role
+            if base_template == "adminmain.html":
+                return redirect('patient_profile')
+            return redirect("request")
+            
+        except Exception as e:
+            messages.error(request, f"Error creating profile: {e}")
+
+    # 5. Render the Empty Form
+    context = {
+        "student": student, 
+        "base_template": base_template,
+    }
     return render(request, "medical/students/basicinfo.html", context)
-
-# view for handling clearance form submission
-
 def medicalclearance_view(request, student_id):
     try:
         student = studentInfo.objects.get(studID=student_id)
@@ -1518,7 +1555,7 @@ def submit_request(request):
 
     return redirect('student_dashboard')
 def student_medical_requirements_tracker(request):
-    if not (request.user.is_superuser or request.user.is_staff):
+    if not can_access_medical_admin(request.user):
         return redirect('upload_requirements')
     
     student = None
@@ -1921,7 +1958,7 @@ def dental_services(request):
     faculty = None
 
     # Handle staff/superuser differently - they manage the system
-    if request.user.is_superuser or request.user.is_staff:
+    if can_access_medical_admin(request.user):
         if request.method == "POST":
             service_type = request.POST.get("service_type")
             student_id = request.POST.get("student_id")  # Get the student ID for whom the request is being made
@@ -2135,7 +2172,7 @@ def dental_request(request):
     return render(request, "medical/admin/dentalrequest.html", {"service_request": service_request})
 # View dental schedules
 def dental_schedule(request):
-    if request.user.is_superuser or request.user.is_staff:
+    if can_access_medical_admin(request.user):
         schedules = DentalRecords.objects.filter(appointed=True).select_related('patient__user')
         
         # Attach ID and name to each schedule for either student or faculty
@@ -2316,7 +2353,7 @@ def pwd_list(request):
     
     return render(request, "medical/admin/pwdlist.html", {"pwds": pwd_patients})
 def pwd_detail(request, id):
-    if not request.user.is_superuser and not request.user.is_staff:
+    if not can_access_medical_admin(request.user):
         return HttpResponseForbidden("You don't have permission to access this page.")
 
     student = None
@@ -2502,7 +2539,7 @@ def unverify_pwd(request, id):
         return redirect('pwdlist')
 
 def view_prescription_records(request):
-    if not request.user.is_superuser and not request.user.is_staff:
+    if not can_access_medical_admin(request.user):
         return HttpResponseForbidden("You don't have permission to access this page.")
 
     # MODIFIED QUERY: Pre-fetch the related patient, student, and staff info
@@ -2532,7 +2569,7 @@ def view_prescription_records(request):
     return render(request, "medical/admin/prescriptionrecords.html", {"prescription_records": presc_record})
 # List all record of emergency health assistance
 def view_emergency_health_records(request):
-    if not request.user.is_superuser and not request.user.is_staff:
+    if not can_access_medical_admin(request.user):
         return HttpResponseForbidden("You don't have permission to access this page.")
     emrgncy_records = EmergencyHealthAssistanceRecord.objects.all().select_related('patient__user')
 
@@ -2779,7 +2816,7 @@ def daily_transactions_view(request):
 #         return HttpResponseForbidden("You don't have permission to access this page.")
 
 def med_cert(request, student_id):
-    if not request.user.is_superuser and not request.user.is_staff:
+    if not can_access_medical_admin(request.user):
         return HttpResponseForbidden("You don't have permission to access this page.")
     student = studentInfo.objects.get(studID=student_id)
     user = User.objects.get(username=student.studID)

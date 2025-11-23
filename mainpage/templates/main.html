@@ -22,6 +22,134 @@
     <link rel="stylesheet" href="{% static 'styles/guidance/main.css'%}">
     <link rel="stylesheet" href="{% static 'styles/sub-title.css'%}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* --- Clickable Username in Dropdown --- */
+        .clickable-username {
+            display: block;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 2px;
+            transition: color 0.2s;
+        }
+        .clickable-username:hover {
+            color: #2a4365;
+            text-decoration: underline;
+        }
+
+        /* --- Modal Overlay --- */
+        .custom-modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; /* Higher than sidebar */
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(2px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Modal Content --- */
+        .custom-modal-content {
+            background-color: #fefefe;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%; 
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* --- Modal Header & Close --- */
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2a4365;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+        .close-modal:hover {
+            color: #000;
+        }
+
+        /* --- Form Elements --- */
+        .profile-section {
+            margin-bottom: 15px;
+        }
+        .profile-section label {
+            display: block;
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .profile-section input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #f9fafb;
+        }
+        .profile-section input[readonly] {
+            background-color: #e9ecef;
+            cursor: default;
+        }
+
+        /* --- Password Section --- */
+        .modal-divider {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 20px 0;
+        }
+        .toggle-password-btn {
+            background: none;
+            border: 1px solid #2a4365;
+            color: #2a4365;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .toggle-password-btn:hover {
+            background-color: #2a4365;
+            color: white;
+        }
+        .save-password-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .save-password-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+
     {% block headcontent %}
     {% endblock headcontent %}
   </head>
@@ -33,19 +161,78 @@
 
     <div class="account-info-wrapper fixed-profile">
         <div id="profile-trigger" class="profile-summary">
-          <i class="fas fa-user-circle profile-icon"></i>
+            <i class="fas fa-user-circle profile-icon"></i>
         </div>
 
         <div id="profile-dropdown" class="profile-popup">
-          <div class="popup-header">
-            <strong>{{ user.first_name }} {{ user.last_name }}</strong>
-            <span class="popup-username">{{ user.username }}</span>
-          </div>
-          <div class="popup-divider"></div>
-          <a href="{% url 'logout' %}" class="popup-logout-link">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-          </a>
+            <div class="popup-header">
+                <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                <a href="#" id="view-profile-btn" class="popup-username clickable-username" title="View Profile">
+                    {{ user.username }} <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 5px;"></i>
+                </a>
+            </div>
+            <div class="popup-divider"></div>
+            <a href="{% url 'logout' %}" class="popup-logout-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="userProfileModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-id-card"></i> User Profile
+            </div>
+            
+            <div class="modal-body">
+                <div class="profile-section">
+                    <label>Full Name</label>
+                    <input type="text" value="{{ user.first_name }} {{ user.last_name }}" readonly>
+                </div>
+                
+                <div class="profile-section">
+                    <label>Username / ID</label>
+                    <input type="text" value="{{ user.username }}" readonly>
+                </div>
+
+                <div class="profile-section">
+                    <label>Email Address</label>
+                    <input type="text" value="{{ user.email|default:'No email linked' }}" readonly>
+                </div>
+
+                <hr class="modal-divider">
+                
+                <button id="togglePasswordBtn" class="toggle-password-btn">
+                    <i class="fas fa-lock"></i> Change Password
+                </button>
+
+                <div id="passwordChangeSection" class="password-section" style="display: none;">
+                    <form method="POST" action="{% url 'password_change' %}" id="passwordForm">
+                        {% csrf_token %}
+                        <div class="profile-section">
+                            <label>Current Password</label>
+                            <input type="password" name="old_password" placeholder="Enter current password" required>
+                        </div>
+                        <div class="profile-section">
+                            <label>New Password</label>
+                            <input type="password" name="new_password1" placeholder="Enter new password" required>
+                        </div>
+                        <div class="profile-section">
+                            <label>Confirm New Password</label>
+                            <input type="password" name="new_password2" placeholder="Confirm new password" required>
+                        </div>
+                        <button type="submit" class="save-password-btn">Update Password</button>
+                    </form>
+                    
+                    <div style="margin-top: 10px; font-size: 0.9em;">
+                        <a href="#" style="color: #2a4365; text-decoration: underline;">
+                            I forgot my current password
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -63,7 +250,6 @@
         {% with current_url=request.resolver_match.url_name %}
         <nav class="side-nav">
           <ul>
-      
             {% with section_urls='requestgmc,equipmentTracker,monthlyCalendarAdmin' %}
             <li>
               <a
@@ -212,7 +398,7 @@
               <ul class="guide-show {% if current_url in section_urls %}active{% endif %}">
                 <li>
                   <a
-                    href="{% url 'Individual Profile' %}"
+                    href="{% url 'Individual Profile' %}" 
                     class="{% if current_url == 'Individual Profile' %}active-link{% endif %}"
                     >Individual Profile with Guidance Concern</a
                   >
@@ -384,128 +570,6 @@
    </div>
 
     <script src="{% static 'scripts/main.js'%}"></script>
-   <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          
-          // Elements
-          const sidebarToggle = document.getElementById('sidebar-toggle');
-          const leftSide = document.querySelector('.left-side');
-          const toggleIcon = document.getElementById('toggle-icon');
-          
-          // Select the Profile Wrapper (The parent div we want to hide)
-          const profileWrapper = document.querySelector('.account-info-wrapper');
-          const profileTrigger = document.getElementById('profile-trigger');
-          const profileDropdown = document.getElementById('profile-dropdown');
-
-          // --- Helper Functions ---
-          
-          function closeProfile() {
-              if (profileDropdown && profileDropdown.classList.contains('active')) {
-                  profileDropdown.classList.remove('active');
-                  if(profileTrigger) profileTrigger.classList.remove('active');
-              }
-          }
-
-          function closeSidebar() {
-              if (leftSide && leftSide.classList.contains('active')) {
-                  leftSide.classList.remove('active');
-                  if(sidebarToggle) sidebarToggle.classList.toggle('active'); // Toggle back the button animation
-                  
-                  // SHOW Profile again
-                  if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
-
-                  // Reset Icon
-                  if(toggleIcon) {
-                      toggleIcon.classList.remove('fa-times');
-                      toggleIcon.classList.add('fa-bars');
-                  }
-              }
-          }
-
-          // --- Event Listeners ---
-
-          // 1. Sidebar Toggle Click
-          if (sidebarToggle && leftSide) {
-              sidebarToggle.addEventListener('click', function(e) {
-                  e.stopPropagation();
-                  
-                  // Force Close Profile dropdown if open
-                  closeProfile();
-
-                  // Toggle Sidebar
-                  leftSide.classList.toggle('active');
-                  sidebarToggle.classList.toggle('active');
-
-                  // Toggle Profile Visibility
-                  // If sidebar is now active -> Hide profile. Else -> Show profile.
-                  if (leftSide.classList.contains('active')) {
-                      if(profileWrapper) profileWrapper.classList.add('hidden-profile');
-                  } else {
-                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
-                  }
-
-                  // Icon Logic (Bars vs X)
-                  if (sidebarToggle.classList.contains('active')) {
-                      toggleIcon.classList.remove('fa-bars');
-                      toggleIcon.classList.add('fa-times');
-                  } else {
-                      toggleIcon.classList.remove('fa-times');
-                      toggleIcon.classList.add('fa-bars');
-                  }
-              });
-          }
-
-          // 2. Profile Trigger Click
-          if (profileTrigger && profileDropdown) {
-              profileTrigger.addEventListener('click', function(event) {
-                  event.stopPropagation(); 
-                  profileDropdown.classList.toggle('active');
-                  profileTrigger.classList.toggle('active');
-              });
-
-              // Prevent closing when clicking inside the dropdown
-              profileDropdown.addEventListener('click', function(event) {
-                  event.stopPropagation();
-              });
-          }
-
-          // 3. Window Click (Close everything)
-          document.addEventListener('click', function(e) {
-              // Close Sidebar if clicking outside on mobile
-              if (
-                  window.innerWidth <= 900 &&
-                  leftSide.classList.contains('active') &&
-                  !leftSide.contains(e.target) &&
-                  !sidebarToggle.contains(e.target)
-              ) {
-                  closeSidebar();
-              }
-
-              // Close Profile if clicking outside
-              if (profileDropdown.classList.contains('active')) {
-                  closeProfile();
-              }
-          });
-
-          // 4. Resize Reset
-          window.addEventListener('resize', function() {
-              if (window.innerWidth > 900) {
-                  // On desktop, ensure sidebar logic resets
-                  if (leftSide.classList.contains('active')) {
-                      leftSide.classList.remove('active');
-                      sidebarToggle.classList.remove('active');
-                      
-                      // Ensure profile is visible again on resize
-                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
-
-                      toggleIcon.classList.remove('fa-times');
-                      toggleIcon.classList.add('fa-bars');
-                  }
-                  leftSide.style.transform = '';
-              }
-          });
-      });
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% if messages %}
     <script>
@@ -531,5 +595,161 @@
       });
     </script>
     {% endif %}
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          
+          // --- Variables ---
+          const sidebarToggle = document.getElementById('sidebar-toggle');
+          const leftSide = document.querySelector('.left-side');
+          const toggleIcon = document.getElementById('toggle-icon');
+          const profileWrapper = document.querySelector('.account-info-wrapper');
+          const profileTrigger = document.getElementById('profile-trigger');
+          const profileDropdown = document.getElementById('profile-dropdown');
+
+          // --- Modal Variables ---
+          const userModal = document.getElementById('userProfileModal');
+          const viewProfileBtn = document.getElementById('view-profile-btn');
+          const closeModalSpan = document.querySelector('.close-modal');
+          const togglePassBtn = document.getElementById('togglePasswordBtn');
+          const passSection = document.getElementById('passwordChangeSection');
+
+          // --- Helper Functions ---
+          function closeProfile() {
+              if (profileDropdown && profileDropdown.classList.contains('active')) {
+                  profileDropdown.classList.remove('active');
+                  if(profileTrigger) profileTrigger.classList.remove('active');
+              }
+          }
+
+          function closeSidebar() {
+              if (leftSide && leftSide.classList.contains('active')) {
+                  leftSide.classList.remove('active');
+                  if(sidebarToggle) sidebarToggle.classList.toggle('active'); 
+                  if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                  if(toggleIcon) {
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+              }
+          }
+
+          // --- Modal Logic ---
+
+          // 1. Open Modal when Username is clicked
+          if(viewProfileBtn) {
+              viewProfileBtn.addEventListener('click', function(e) {
+                  e.preventDefault(); // Stop link navigation
+                  e.stopPropagation();
+                  closeProfile(); // Close the small dropdown
+                  userModal.style.display = "flex"; // Show modal
+              });
+          }
+
+          // 2. Close Modal on 'X' click
+          if(closeModalSpan) {
+              closeModalSpan.addEventListener('click', function() {
+                  userModal.style.display = "none";
+                  // Reset password section visibility when closing
+                  if(passSection) passSection.style.display = 'none';
+              });
+          }
+
+          // 3. Close Modal when clicking outside content
+          window.addEventListener('click', function(e) {
+              if (e.target == userModal) {
+                  userModal.style.display = "none";
+                  if(passSection) passSection.style.display = 'none';
+              }
+          });
+
+          // 4. Toggle Password Change Form
+          if(togglePassBtn && passSection) {
+              togglePassBtn.addEventListener('click', function() {
+                  if(passSection.style.display === 'none') {
+                      passSection.style.display = 'block';
+                      togglePassBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+                      togglePassBtn.style.borderColor = '#dc3545';
+                      togglePassBtn.style.color = '#dc3545';
+                  } else {
+                      passSection.style.display = 'none';
+                      togglePassBtn.innerHTML = '<i class="fas fa-lock"></i> Change Password';
+                      togglePassBtn.style.borderColor = '#2a4365';
+                      togglePassBtn.style.color = '#2a4365';
+                  }
+              });
+          }
+
+          // --- Sidebar & Profile Logic ---
+          
+          if (sidebarToggle && leftSide) {
+              sidebarToggle.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  closeProfile();
+                  leftSide.classList.toggle('active');
+                  sidebarToggle.classList.toggle('active');
+
+                  if (leftSide.classList.contains('active')) {
+                      if(profileWrapper) profileWrapper.classList.add('hidden-profile');
+                  } else {
+                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                  }
+
+                  if (sidebarToggle.classList.contains('active')) {
+                      toggleIcon.classList.remove('fa-bars');
+                      toggleIcon.classList.add('fa-times');
+                  } else {
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+              });
+          }
+
+          if (profileTrigger && profileDropdown) {
+              profileTrigger.addEventListener('click', function(event) {
+                  event.stopPropagation(); 
+                  profileDropdown.classList.toggle('active');
+                  profileTrigger.classList.toggle('active');
+              });
+              profileDropdown.addEventListener('click', function(event) {
+                  event.stopPropagation();
+              });
+          }
+
+          // Global Click Handler
+          document.addEventListener('click', function(e) {
+              // Close Sidebar if clicking outside on mobile
+              if (
+                  window.innerWidth <= 900 &&
+                  leftSide.classList.contains('active') &&
+                  !leftSide.contains(e.target) &&
+                  !sidebarToggle.contains(e.target)
+              ) {
+                  closeSidebar();
+              }
+              // Close Profile if clicking outside
+              if (profileDropdown && profileDropdown.classList.contains('active')) {
+                   // Ensure we aren't clicking the modal trigger
+                  if(e.target !== viewProfileBtn) {
+                      closeProfile();
+                  }
+              }
+          });
+
+          // Resize Reset
+          window.addEventListener('resize', function() {
+              if (window.innerWidth > 900) {
+                  if (leftSide.classList.contains('active')) {
+                      leftSide.classList.remove('active');
+                      sidebarToggle.classList.remove('active');
+                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+                  leftSide.style.transform = '';
+              }
+          });
+      });
+    </script>
   </body>
 </html>

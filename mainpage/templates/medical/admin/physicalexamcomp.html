@@ -1,335 +1,921 @@
-{% extends 'mainv2.html' %}
-{% load static tailwind_tags %}
-
-{% block title %}Medical{% endblock %}
-
-{% block extra_css %}
-    <link rel="stylesheet" media="print" href="{% static 'styles/print.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="w-full h-fit rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-2">
-    {% if messages %}
-    <script>
-        {% for message in messages %}
-        Swal.fire({
-            icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% elif "warning" in message.tags %}warning{% elif "info" in message.tags %}info{% else %}info{% endif %}',
-            title: '',
-            text: "{{ message|escapejs }}",
-            timer: 2500,
-            showConfirmButton: false
-        });
-        {% endfor %}
-    </script>
-    {% endif %}
-    <form class="flex flex-col gap-4" method="POST" enctype="multipart/form-data" id="physical-exam-form">
-        {% csrf_token %}
-        <input type="hidden" name="birth_date" value="{{ patient.birth_date }}">
-        <div class="flex items-center self-center gap-4">
-            <img class="size-[8rem]" src="{% static 'images/CTU_logo.png' %}" alt="CTU_logo">
-            <div class="flex flex-col items-center">
-                <div class="content1">REPUBLIC OF THE PHILIPPINES</div>
-                <div class="content2">CEBU TECHNOLOGICAL UNIVERSITY</div>
-                <div class="content3">ARGAO CAMPUS</div>
-                <div class="content4">Ed Kintanar Street, Lamacan, Argao, Cebu</div>
-                <div class="content4">Website: https://www.argao.ctu.edu.ph E-mail: cdargao@ctu.edu.ph</div>
-                <div class="content4">Phone No.:(032) 401-0737 local 1700</div>
-            </div>
-            <img class="size-[8rem]" src="{% static 'images/BP_logo.png' %}" alt="BP_logo">
-        </div>
-        <h1 class="font-bold self-center text-[1.3rem]">PHYSICAL EXAMINATION</h1>
-        <fieldset class="flex flex-col py-4">
-            <legend><strong>I. Information</strong></legend>
-            <div class="flex gap-2">
-                <div class="flex flex-col w-full">
-                    <label class="surname">Surname:</label>
-                    <input type="text" value="{{ patient.user.last_name|title }}" name="lastname" disabled>
-                </div>
-                <div class="flex flex-col w-full">
-                    <label class="fName">First Name:</label>
-                    <input type="text" value="{{ patient.user.first_name|title }}" name="firstname" disabled>
-                </div>
-                <div class="flex flex-col w-full">
-                    <label class="mName">Middle Name:</label>
-                    {% if student %}
-                    <input type="text" value="{{ student.middlename|title }}" name="middlename" disabled>
-                    {% elif faculty %}
-                    <input type="text" value="{{ faculty.middlename|title }}" name="middlename" disabled>
-                    {% else %}
-                    <input type="text" value="N/A" name="middlename" disabled>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <div class="flex flex-col w-full">
-                    <label for="birthDate">Birth Date:</label>
-                    <input type="text" value="{{ patient.birth_date }}" disabled>
-                </div>
-                <div class="flex flex-col w-full">
-                    <label for="address">Home Address:</label>
-                    <input type="text" value="{{ patient.home_address|title }}" name="home_address">
-                </div>
-                <div class="flex flex-col w-full">
-                    <label for="contact">Contact Number:</label>
-                    {% if patient and patient.parent_guardian_contact_number %}
-                    <input type="text" value="{{ patient.parent_guardian_contact_number }}" name="parent_guardian_contact_number">
-                    {% elif student and student.contact_number %}
-                    <input type="text" value="{{ student.contact_number }}" name="contact_number" disabled>
-                    {% else %}
-                    <input type="text" value="N/A" name="contact_number" disabled>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <div class="flex flex-col w-full">
-                    <label for="age">Age:</label>
-                    <input type="number" value="{{ patient.age|default:'0' }}" name="age" min="0" required>
-                </div>
-                <div class="flex flex-col w-full">
-                    <label for="nationality">Nationality:</label>
-                    <input type="text" value="{{ patient.nationality|title }}" name="nationality">
-                </div>
-                <div class="flex flex-col w-full">
-                    <label for="status">Civil Status:</label>
-                    <input type="text" value="{{ patient.civil_status }}" name="civil_status">
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <div class="flex flex-col w-full">
-                    <label for="children">Number of Children:</label>
-                    <input type="number" value="{{ patient.number_of_children|default:'0' }}" name="number_of_children" min="0" required>
-                </div>
-                <div class="flex flex-col w-full">
-                    {% if student %}
-                    <label for="course">Course:</label>
-                    <input type="text" value="{{ student.degree|title }}" name="degree" disabled>
-                    {% elif faculty %}
-                    <label for="department">Department:</label>
-                    <input type="text" value="{{ faculty.department|title }}" name="department" disabled>
-                    {% else %}
-                    <label for="course">Course/Department:</label>
-                    <input type="text" value="N/A" name="course_department" disabled>
-                    {% endif %}
-                </div>
-                <div class="flex flex-col w-full">
-                     {% if student %}
-                    <label for="section">Section:</label>
-                    <input type="text" value="{{ patient.section }}" name="section">
-                    {% elif faculty %}
-                     <label for="position">Position:</label>
-                    <input type="text" value="{{ faculty.position|title }}" name="position" disabled>
-                    {% else %}
-                    <label for="section">Section/Position:</label>
-                    <input type="text" value="N/A" name="section_position" disabled>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <div class="flex flex-col w-full">
-                    <label for="parent/guardian">Parent/Guardian:</label>
-                    <input type="text" value="{{ patient.parent_guardian }}" name="parent_guardian">
-                </div>
-                <div class="flex flex-col w-full">
-                    <label for="contact">Contact Number:</label>
-                    <input type="text" value="{{ patient.parent_guardian_contact_number }}" name="parent_guardian_contact_number">
-                </div>
-            </div>
-        </fieldset>
-        <div class="flex flex-col">
-            <label for="dateOfExam">Date of Examination:</label>
-            <input type="text" name="date" value="{{ examination.date_of_physical_examination }}" required>
-        </div>
-        <fieldset class="flex flex-col py-4">
-            <legend><strong>II. Medical History</strong></legend>
-            <div class="flex justify-between">
-                <div class="flex flex-col gap-2 w-1/2">
-                    <h3 class="font-medium">Past Illnesses</h4>
-                    <div class="checkbox-group">
-                        <label>Past Illnesses (check if history is positive)</label>
-                        <div>
-                            <input type="checkbox" id="tuberculosis" name="tuberculosis" {% if examination.medicalhistory.tuberculosis %}checked{% endif %}>
-                            <label for="tuberculosis">Tuberculosis</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="peptic_ulcer" name="peptic_ulcer" {% if examination.medicalhistory.peptic_ulcer %}checked{% endif %}>
-                            <label for="peptic_ulcer">Peptic Ulcer</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="venereal_disease" name="venereal_disease" {% if examination.medicalhistory.venereal_disease %}checked{% endif %}>
-                            <label for="venereal_disease">Venereal Disease</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="hypertension" name="hypertension" {% if examination.medicalhistory.hypertension %}checked{% endif %}>
-                            <label for="hypertension">Hypertension</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="kidney_disease" name="kidney_disease" {% if examination.medicalhistory.kidney_disease %}checked{% endif %}>
-                            <label for="kidney_disease">Kidney Disease</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="allergic_reaction" name="allergic_reaction" {% if examination.medicalhistory.allergic_reaction %}checked{% endif %}>
-                            <label for="allergic_reaction">Allergic Reaction</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="heart_disease" name="heart_disease" {% if examination.medicalhistory.heart_disease %}checked{% endif %}>
-                            <label for="heart_disease">Heart Diseases</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="asthma" name="asthma" {% if examination.medicalhistory.asthma %}checked{% endif %}>
-                            <label for="asthma">Asthma</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="nervous_breakdown" name="nervous_breakdown" {% if examination.medicalhistory.nervous_breakdown %}checked{% endif %}>
-                            <label for="nervous_breakdown">Nervous Breakdown</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="hernia" name="hernia" {% if examination.medicalhistory.hernia %}checked{% endif %}>
-                            <label for="hernia">Hernia</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="insomnia" name="insomnia" {% if examination.medicalhistory.insomnia %}checked{% endif %}>
-                            <label for="insomnia">Insomnia</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="jaundice" name="jaundice" {% if examination.medicalhistory.jaundice %}checked{% endif %}>
-                            <label for="jaundice">Jaundice</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="epilepsy" name="epilepsy" {% if examination.medicalhistory.epilepsy %}checked{% endif %}>
-                            <label for="epilepsy">Epilepsy</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="malaria" name="malaria" {% if examination.medicalhistory.malaria %}checked{% endif %}>
-                            <label for="malaria">Malaria</label>
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="others">Others</label>
-                            <input type="text" id="others" name="others" value="{{ examination.medicalhistory.others }}">
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="none" name="none" {% if examination.medicalhistory.no_history %}checked{% endif %}>
-                            <label for="none">None</label>
-                        </div>
-                    </div>  
-                    <div class="flex flex-col">
-                        <label for="operations"><b>Operations, Injuries, Accidents, Hospital Admissions (date and circumstances)</b></label>
-                        <textarea id="operations" name="operations">{{ examination.medicalhistory.hospital_admission }}</textarea>
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="medications"><b>Medications taken at present</b></label>
-                        <textarea id="medications" name="medications">{{ examination.medicalhistory.medications }}</textarea>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-2 w-1/2">
-                    <h3 class="font-medium">Family History</h4>
-                    <div class="checkbox-group">
-                        <label for="illnesses">Past Illnesses of your family (check if history is positive)</label>
-                        <div>
-                            <input type="checkbox" id="hypertension_family" name="hypertension_family" {% if examination.familymedicalhistory.hypertension %}checked{% endif %}>
-                            <label for="hypertension_family">Hypertension</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="tuberculosis_family" name="tuberculosis_family" {% if examination.familymedicalhistory.tuberculosis %}checked{% endif %}>
-                            <label for="tuberculosis_family">Tuberculosis</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="asthma_family" name="asthma_family" {% if examination.familymedicalhistory.asthma %}checked{% endif %}>
-                            <label for="asthma_family">Asthma</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="diabetes" name="diabetes" {% if examination.familymedicalhistory.diabetes %}checked{% endif %}>
-                            <label for="diabetes">Diabetes</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="cancer" name="cancer" {% if examination.familymedicalhistory.cancer %}checked{% endif %}>
-                            <label for="cancer">Cancer</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="bleeding_disorder" name="bleeding_disorder" {% if examination.familymedicalhistory.bleeding_disorder %}checked{% endif %}>
-                            <label for="bleeding_disorder">Bleeding Disorder</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="epilepsy_family" name="epilepsy_family" {% if examination.familymedicalhistory.epilepsy %}checked{% endif %}>
-                            <label for="epilepsy_family">Epilepsy</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="mental_disorder" name="mental_disorder" {% if examination.familymedicalhistory.mental_disorder %}checked{% endif %}>
-                            <label for="mental_disorder">Mental Disorders</label>
-                        </div>
-                        <div class="flex flex-col">
-                            <label>Others</label>
-                            <input type="text" id="family_others" name="family_others" value="{{ examination.familymedicalhistory.other_medical_history }}">
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="no_history" name="no_history" {% if examination.familymedicalhistory.no_history %}checked{% endif %}>
-                            <label for="no_history">None</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-8">
-                <h3 class="font-medium">OB-GYNE History</h4>
-               <div class="flex gap-2">
-                    <div class="flex flex-col w-full">
-                        <label class="details" for="menarche">Menarche:</label>
-                        <input type="text" id="menarche" name="menarche" value="{{ examination.obgynehistory.menarche }}">
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <label class="details" for="lmp">LMP:</label>
-                        <input type="text" id="lmp" name="lmp" value="{{ examination.obgynehistory.lmp }}">
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <label class="details" for="gravida">Gravida:</label>
-                        <input type="text" id="gravida" name="gravida" value="{{ examination.obgynehistory.gravida }}">
-                    </div>
-               </div>
-                <div class="flex gap-2">
-                    <div class="flex flex-col w-full">
-                        <label class="details" for="para">Para:</label>
-                        <input type="text" id="para" name="para" value="{{ examination.obgynehistory.para }}">
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <label class="details" for="menopause">Menopause:</label>
-                        <input type="text" id="menopause" name="menopause" value="{{ examination.obgynehistory.menopause }}">
-                    </div>
-                </div>
-                <div class="flex flex-col w-1/2">
-                    <label class="details" for="additional_history">Additional History</label>
-                    <textarea id="additional_history" name="additional_history">{{ examination.obgynehistory.additional_history }}</textarea>
-                </div>
-            </div>
-        </fieldset>
-        <fieldset class="flex flex-col py-4">
-            <legend><strong>III. Declaration</strong></legend>
-            <p>
-                I declare that the answers above are all correct. I understand that any falsification of answer will be considered 
-                sufficient reason for my dismissal from employment/school and disqualification for whatever purpose this may serve.
-            </p>
-        </fieldset>
-        <div class="footer"><img src="{% static 'images/footer.png' %}" alt=""></div>
-        <div class="flex justify-between w-full">
-            <div class="flex">
-                <a class="border border-yellow-400 rounded-md p-2" href="{% patient_profile' %}">Back</a>
-            </div>
-            <div class="flex gap-1">
-                <input class="bg-blue-500 rounded-md p-2" type="submit" value="Save" id="save-btn">
-                <input class="bg-yellow-400 rounded-md p-2" type="button" value="Print" id="print-btn" onclick="printSpecificContent()">
-            </div>
-        </div>
-    </form>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    function printSpecificContent() {
-        const printContent = document.getElementById('physical-exam-form').innerHTML;
-        const originalContent = document.body.innerHTML;
-
-        document.body.innerHTML = printContent;
-        window.print();
-        document.body.innerHTML = originalContent;
-        location.reload(true);
+{% extends base_template %} {% load static tailwind_tags %}
+<!-- prettier-ignore -->
+{% block title%}Medical - Physical Examination Report{% endblock %} {% block extra_css %}
+<!-- <link
+  rel="stylesheet"
+  media="print"
+  href="{% static 'styles/medical/print.css' %}"
+/> -->
+<style>
+  /* Custom styles to match the paper form */
+  .medical-form-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 40px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: "Times New Roman", serif;
+    color: #000;
+  }
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .header-logo {
+    width: 100px;
+    height: auto;
+  }
+  .header-text {
+    flex-grow: 1;
+  }
+  .header-text h2 {
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+  .header-text p {
+    margin: 2px 0;
+    font-size: 0.9rem;
+  }
+  .form-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.3rem;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+  }
+  .form-group {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+  }
+  .form-label {
+    font-weight: bold;
+    margin-right: 10px;
+    min-width: 120px;
+  }
+  .form-input-line {
+    flex-grow: 1;
+    border-bottom: 1px solid #000;
+    padding: 2px 5px;
+    font-family: inherit;
+  }
+  .form-input-line:focus {
+    outline: none;
+    border-bottom: 2px solid #000;
+  }
+  .two-column-row {
+    display: flex;
+    justify-content: space-between;
+  }
+  .column-half {
+    width: 48%;
+  }
+  .section-title {
+    font-weight: bold;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+  .checkbox-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  .checkbox-list li {
+    margin-bottom: 5px;
+  }
+  .checkbox-list label {
+    display: flex;
+    align-items: center;
+  }
+  .checkbox-list input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  .textarea-line {
+    width: 100%;
+    border-bottom: 1px solid #000;
+    padding: 5px;
+    margin-top: 5px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 40px;
+  }
+  .declaration-text {
+    margin-top: 30px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .signature-section {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .signature-line {
+    width: 300px;
+    border-top: 1px solid #000;
+    text-align: center;
+    padding-top: 5px;
+    font-size: 0.9rem;
+  }
+  @media print {
+    .medical-form-container {
+      box-shadow: none;
+      margin: 0;
+      padding: 20px;
     }
-</script>
+    .no-print {
+      display: none;
+    }
+    .section-title,
+    .two-column-row,
+    .form-group,
+    .checkbox-list {
+      page-break-inside: avoid;
+      /* Also helps prevent widows/orphans on older browsers */
+    }
+
+    /* Ensure the declaration text and signature stay together */
+    .declaration-text,
+    .signature-section {
+      page-break-inside: avoid;
+    }
+    .section-title:nth-of-type(3) {
+      /* Targeting the third H3, adjust as needed */
+      page-break-before: auto; /* Tries to fit */
+      /* page-break-before: always; <-- Use this to force a new page */
+    }
+  }
+</style>
+{% endblock %} {% block bodycontent %}
+<div class="medical-form-container" id="physical-exam-form-container">
+  <div class="header-section">
+    <img
+      class="header-logo"
+      src="{% static 'images/CTU_logo.png' %}"
+      alt="CTU Logo"
+    />
+    <div class="header-text">
+      <p>Republic of the Philippines</p>
+      <h2>CEBU TECHNOLOGICAL UNIVERSITY</h2>
+      <p>ARGAO CAMPUS</p>
+      <p>Ed Kintanar Street, Lamacan, Argao, Cebu</p>
+      <p>Website: https://www.argao.ctu.edu.ph E-mail: cdargao@ctu.edu.ph</p>
+      <p>Phone No.: (032) 401-0737 local 1700</p>
+    </div>
+    <img
+      class="header-logo"
+      src="{% static 'studentorg/css/BagongPilipinaslogo.png' %}"
+      alt="BP Logo"
+    />
+  </div>
+  <h1 class="form-title">PHYSICAL EXAMINATION REPORT</h1>
+
+  <form method="POST" enctype="multipart/form-data" id="physical-exam-form">
+    {% csrf_token %}
+    <input type="hidden" name="birth_date" value="{{ patient.birth_date }}" />
+
+    <div class="form-group">
+      <label class="form-label">DATE:</label>
+      <input
+        type="text"
+        class="form-input-line"
+        name="date"
+        value="{{ examination.date_of_physical_examination }}"
+        required
+      />
+    </div>
+
+    <div class="two-column-row">
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Name:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ patient.user.student.last_name|title }}, {{ patient.student.user.first_name|title }} {{ patient.middlename|default:''|title }}"
+            disabled
+          />
+        </div>
+      </div>
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Birth Date:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ patient.birth_date }}"
+            disabled
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Home Address:</label>
+      <input
+        type="text"
+        class="form-input-line"
+        value="{{ patient.home_address|title }}"
+        name="home_address"
+      />
+    </div>
+
+    <div class="two-column-row">
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Age:</label>
+          <input
+            type="number"
+            class="form-input-line"
+            value="{{ patient.age|default:'0' }}"
+            name="age"
+            min="0"
+            required
+          />
+        </div>
+      </div>
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Gender:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ patient.gender|title }}"
+            disabled
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="two-column-row">
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Civil Status:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ patient.civil_status }}"
+            name="civil_status"
+          />
+        </div>
+      </div>
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Nationality:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ patient.nationality|title }}"
+            name="nationality"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="two-column-row">
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Course:</label>
+          {% if student %}
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ student.degree|title }}"
+            name="degree"
+            disabled
+          />
+          {% else %}
+          <input type="text" class="form-input-line" value="N/A" disabled />
+          {% endif %}
+        </div>
+      </div>
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Academic Year:</label>
+          <input type="text" class="form-input-line" name="academic_year" />
+        </div>
+      </div>
+    </div>
+
+    <div class="two-column-row">
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Section:</label>
+          {% if student %}
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ patient.section }}"
+            name="section"
+          />
+          {% else %}
+          <input type="text" class="form-input-line" value="N/A" disabled />
+          {% endif %}
+        </div>
+      </div>
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Number of Children:</label>
+          <input
+            type="number"
+            class="form-input-line"
+            value="{{ patient.number_of_children|default:'0' }}"
+            name="number_of_children"
+            min="0"
+            required
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="two-column-row">
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Parent/Guardian:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ patient.parent_guardian }}"
+            name="parent_guardian"
+          />
+        </div>
+      </div>
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Contact #:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            value="{{ patient.parent_guardian_contact_number }}"
+            name="parent_guardian_contact_number"
+          />
+        </div>
+      </div>
+    </div>
+
+    <h3 class="section-title">PAST MEDICAL HISTORY</h3>
+
+    <div class="two-column-row">
+      <div class="column-half">
+        <strong>1. Past Illnesses (mark X if history is positive)</strong>
+        <ul class="checkbox-list">
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="tuberculosis"
+                {%
+                if
+                examination.medicalhistory.tuberculosis
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Tuberculosis</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="hypertension"
+                {%
+                if
+                examination.medicalhistory.hypertension
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Hypertension</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="heart_disease"
+                {%
+                if
+                examination.medicalhistory.heart_disease
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Heart Diseases</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="hernia"
+                {%
+                if
+                examination.medicalhistory.hernia
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Hernia</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="epilepsy"
+                {%
+                if
+                examination.medicalhistory.epilepsy
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Epilepsy</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="none"
+                {%
+                if
+                examination.medicalhistory.no_history
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) None</label
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="column-half">
+        <ul class="checkbox-list" style="margin-top: 20px">
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="peptic_ulcer"
+                {%
+                if
+                examination.medicalhistory.peptic_ulcer
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Peptic Ulcer</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="kidney_disease"
+                {%
+                if
+                examination.medicalhistory.kidney_disease
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Kidney Diseases</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="asthma"
+                {%
+                if
+                examination.medicalhistory.asthma
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Asthma</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="insomnia"
+                {%
+                if
+                examination.medicalhistory.insomnia
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Insomnia</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="malaria"
+                {%
+                if
+                examination.medicalhistory.malaria
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Malaria</label
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="column-half">
+        <ul class="checkbox-list" style="margin-top: 20px">
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="venereal_disease"
+                {%
+                if
+                examination.medicalhistory.venereal_disease
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Venereal Disease</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="allergic_reaction"
+                {%
+                if
+                examination.medicalhistory.allergic_reaction
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Allergic Reaction</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="nervous_breakdown"
+                {%
+                if
+                examination.medicalhistory.nervous_breakdown
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Nervous Breakdown</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="jaundice"
+                {%
+                if
+                examination.medicalhistory.jaundice
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Jaundice</label
+            >
+          </li>
+          <li>
+            <label
+              >( ) Others:
+              <input
+                type="text"
+                class="form-input-line"
+                name="others"
+                value="{{ examination.medicalhistory.others }}"
+                style="width: 150px"
+            /></label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <strong
+        >2. Operations, Injuries, accidents, hospital admissions (date and
+        circumstance)</strong
+      >
+    </div>
+    <textarea class="textarea-line" name="operations">
+{{ examination.medicalhistory.hospital_admission }}</textarea
+    >
+
+    <div class="form-group">
+      <strong>3. Medications taken at present:</strong>
+    </div>
+    <textarea class="textarea-line" name="medications">
+{{ examination.medicalhistory.medications }}</textarea
+    >
+
+    <div class="two-column-row">
+      <div class="column-half">
+        <strong>4. Family History (mark X if present)</strong>
+        <ul class="checkbox-list">
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="hypertension_family"
+                {%
+                if
+                examination.familymedicalhistory.hypertension
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Hypertension</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="asthma_family"
+                {%
+                if
+                examination.familymedicalhistory.asthma
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Asthma</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="cancer"
+                {%
+                if
+                examination.familymedicalhistory.cancer
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Cancer</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="no_history_family"
+                {%
+                if
+                examination.familymedicalhistory.no_history
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) None</label
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="column-half" style="margin-top: 20px">
+        <ul class="checkbox-list">
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="tuberculosis_family"
+                {%
+                if
+                examination.familymedicalhistory.tuberculosis
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Tuberculosis</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="diabetes"
+                {%
+                if
+                examination.familymedicalhistory.diabetes
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Diabetes</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="bleeding_disorder"
+                {%
+                if
+                examination.familymedicalhistory.bleeding_disorder
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Bleeding Disorder</label
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="column-half" style="margin-top: 20px">
+        <ul class="checkbox-list">
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="epilepsy_family"
+                {%
+                if
+                examination.familymedicalhistory.epilepsy
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Epilepsy</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                name="mental_disorder"
+                {%
+                if
+                examination.familymedicalhistory.mental_disorder
+                %}checked{%
+                endif
+                %}
+              />
+              ( ) Mental Disorders</label
+            >
+          </li>
+          <li>
+            <label
+              >( ) Others:
+              <input
+                type="text"
+                class="form-input-line"
+                name="family_others"
+                value="{{ examination.familymedicalhistory.other_medical_history }}"
+                style="width: 150px"
+            /></label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section-title">OB-GYNE History</h3>
+    <div class="two-column-row">
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">Menarche:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            name="menarche"
+            value="{{ examination.obgynehistory.menarche }}"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Menopause:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            name="menopause"
+            value="{{ examination.obgynehistory.menopause }}"
+          />
+        </div>
+      </div>
+      <div class="column-half">
+        <div class="form-group">
+          <label class="form-label">LMP:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            name="lmp"
+            value="{{ examination.obgynehistory.lmp }}"
+            style="margin-right: 20px"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="min-width: auto">Gravida:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            name="gravida"
+            value="{{ examination.obgynehistory.gravida }}"
+            style="margin-right: 20px"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="min-width: auto">Para:</label>
+          <input
+            type="text"
+            class="form-input-line"
+            name="para"
+            value="{{ examination.obgynehistory.para }}"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pap smear (date and result):</label>
+          <input type="text" class="form-input-line" name="pap_smear" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <strong>6. Additional History:</strong>
+    </div>
+    <textarea class="textarea-line" name="additional_history">
+{{ examination.obgynehistory.additional_history }}</textarea
+    >
+
+    <p class="declaration-text">
+      I declare that the answers above are all correct. I understand that any
+      falsification of answer will be considered sufficient reason for my
+      dismissal from employment/school and disqualification for whatever purpose
+      this may serve.
+    </p>
+
+    <div class="signature-section">
+      <div class="signature-line">Signature over Printed Name</div>
+    </div>
+  </form>
+  <div class="footer" style="text-align: center; margin-top: 20px">
+    <img
+      src="{% static 'studentorg/css/footer.png' %}"
+      alt="Footer"
+      style="max-width: 100%"
+    />
+  </div>
+</div>
+
+<div
+  class="flex justify-between w-full no-print"
+  style="max-width: 900px; margin: 20px auto"
+>
+  <div class="flex">
+    <a
+      class="border border-yellow-400 rounded-md p-2"
+      href="{% url 'patient_profile' %}"
+      >Back</a
+    >
+  </div>
+  <div class="flex gap-1">
+    <input
+      class="bg-blue-500 rounded-md p-2"
+      type="submit"
+      value="Save"
+      id="save-btn"
+      form="physical-exam-form"
+    />
+    <input
+      class="bg-yellow-400 rounded-md p-2"
+      type="button"
+      value="Print"
+      id="print-btn"
+      onclick="window.print()"
+    />
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<!-- <script>
+  function printSpecificContent() {
+    const printContent = document.getElementById(
+      "physical-exam-form-container"
+    ).innerHTML;
+    const originalContent = document.body.innerHTML;
+
+    document.body.innerHTML = printContent;
+    window.print();
+    document.body.innerHTML = originalContent;
+    location.reload(true);
+  }
+</script> -->
 {% endblock %}

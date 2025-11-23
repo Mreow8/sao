@@ -1,222 +1,695 @@
-{% extends 'mainv2.html' %}
-{% load static tailwind_tags %}
-{% block title %}HealthHub Connect | Patient Profile{% endblock %}
-{% block extra_css %}
-{% tailwind_css %}
+{% extends base_template %} {% load static tailwind_tags %}
+<!-- prettier-ignore -->
+{% block title%}HealthHub Connect | Patient Profile{% endblock %} {% block extra_css %}
+ {%tailwind_css %}
 <style>
-    .tab-button.active {
-        background-color: #3b82f6;
-        color: white;
-        border-color: #3b82f6;
-    }
-    .tab-button {
-        transition: all 0.2s ease-in-out;
-    }
-    .tab-content {
-        display: none;
-    }
-    .tab-content.active {
-        display: block;
-    }
-    .filter-input {
-        width: 100%;
-        padding: 0.25rem;
-        border: 1px solid #d1d5db;
-        border-radius: 0.25rem;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
+  /* Import Rubik font from requestgmc.css */
+  @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
+
+  /* Apply Rubik to all relevant elements */
+  .gmc-style,
+  .requestBtn,
+  .printBtn,
+  .table-header-text,
+  .filter-input {
+    font-family: "Rubik", sans-serif !important;
+  }
+
+  /* --- SHARED TABLE STYLES (From requestgmc.css) --- */
+  .gmc-table-wrapper {
+    border-radius: 8px;
+    overflow: hidden; /* Clips the table corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .gmc-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+  }
+
+  .gmc-table th,
+  .gmc-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  .gmc-table th {
+    background-color: #f9f9f9;
+    color: #2c5282; /* Primary Blue */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500; /* Use medium weight for headers */
+  }
+
+  /* Remove bottom border from last row */
+  .gmc-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .gmc-table tbody tr.bg-gray-100 td {
+    background-color: #fcfcfc; /* Lighter alternating row for better look with gmc styles */
+  }
+  .gmc-table tbody tr.bg-white td {
+    background-color: #ffffff;
+  }
+  .gmc-table tbody tr:hover td {
+    background-color: #f0f8ff; /* Light blue hover */
+  }
+
+  /* --- Status Badges (From requestgmc.css) --- */
+  .status-badge {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    color: white;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .status-no {
+    color: #92400e;
+    background-color: #fef3c7;
+  } /* Orange/Yellow for 'No' */
+  .status-yes {
+    background-color: #8ccfa8;
+    color: #0b552a;
+  } /* Green for 'Yes' */
+
+  /* --- Tab Buttons --- */
+  .tab-button {
+    transition: all 0.2s ease-in-out;
+    border: 1px solid #ccc;
+    color: #333;
+  }
+  .tab-button:hover {
+    background-color: #f0f0f0;
+  }
+  .tab-button.active {
+    background-color: #2c5282; /* Primary Blue */
+    color: white;
+    border-color: #2c5282;
+  }
+  .tab-content {
+    display: none;
+  }
+  .tab-content.active {
+    display: block;
+  }
+
+  /* --- Filter Input Styling (Derived from #comboBox) --- */
+  .filter-input {
+    width: 90%;
+    padding: 5px 8px; /* Reduced padding */
+    border: 1px solid #ccc;
+    border-radius: 6px; /* Slightly smaller radius */
+    font-size: 0.75rem;
+    margin: 0.25rem auto 0;
+    display: block;
+    text-align: center;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .filter-input:focus {
+    outline: none;
+    border-color: #2c5282; /* Primary Blue */
+    box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.2); /* Blue focus ring */
+    background-color: #fff;
+  }
+
+  /* Search Input Styling (Derived from #comboBox) */
+  .search-input {
+    font-family: "Rubik", sans-serif;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%; /* Ensure it spans the full width of its container */
+    box-sizing: border-box; /* Include padding/border in the element's total width */
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: #2c5282; /* Primary Blue */
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
+    background-color: #fff;
+  }
+
+  /* Table Header Text Alignment - kept for structure */
+  .table-header-text {
+    display: block;
+    padding-bottom: 0.25rem;
+    font-size: 0.875rem; /* Smaller font size */
+    font-weight: 600;
+  }
+
+  /* NEW: Sortable Header Style */
+  .sortable-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0;
+    line-height: 1.2;
+  }
+  .sort-icon {
+    width: 12px;
+    height: 12px;
+    fill: #374151;
+    transition: transform 0.2s;
+  }
+
+  /* --- Request Button (Used for Search) (From requestgmc.css) --- */
+  .requestBtn {
+    background-color: #2c5282; /* Primary Blue */
+    color: white;
+    font-size: 1rem;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  .requestBtn:hover {
+    background-color: #2a4365; /* Darker Blue */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .requestBtn:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  /* --- Print Button (Used for Create Profile) (From requestgmc.css) --- */
+  .printBtn {
+    font-family: "Rubik", sans-serif;
+    background-color: #2c5282; /* Primary Blue */
+    color: white;
+    font-size: 0.875rem;
+
+    /* Increased vertical padding to accommodate two lines */
+    padding: 10px 10px;
+
+    /* Set a fixed or max-width to force wrapping within the padding limits */
+    max-width: 80px; /* Adjust this value if needed */
+    height: auto;
+    display: inline-block;
+
+    /* Ensure wrapping is allowed */
+    white-space: normal;
+    text-align: center;
+
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .printBtn:hover {
+    background-color: #2a4365; /* Darker Blue */
+  }
 </style>
-{% endblock %}
-
-{% block content %}
-<div class="w-full h-screen rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-4">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b pb-4">
-        <div>
-            <h2 class="font-bold text-2xl text-gray-800">Patient Profile</h2>
-            <p class="text-gray-500 text-sm">Search and view registered students and faculty with patient records</p>
-        </div>
-        <div class="flex gap-2">
-            <button type="button" class="tab-button border border-[#cccccc] p-2 xs:w-full md:w-[10rem] rounded-md active text-sm md:text-base" onclick="showTab('students')">Students</button>
-            <button type="button" class="tab-button border border-[#cccccc] p-2 xs:w-full md:w-[10rem] rounded-md text-sm md:text-base" onclick="showTab('faculty')">Faculty</button>
-        </div>
+{% endblock %} {% block bodycontent %}
+<div
+  class="w-full min-h-screen rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-4 gmc-style"
+>
+  <div
+    class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b pb-4"
+  >
+    <div>
+      <h2 class="font-bold text-2xl text-gray-800">Patient Profile</h2>
+      <p class="text-gray-500 text-sm">
+        Search and view registered students and faculty with patient records
+      </p>
     </div>
+    <div class="flex gap-2">
+      <button
+        type="button"
+        class="tab-button p-2 xs:w-full md:w-[10rem] rounded-md active text-sm md:text-base"
+        onclick="showTab('students')"
+      >
+        Students
+      </button>
+      <button
+        type="button"
+        class="tab-button p-2 xs:w-full md:w-[10rem] rounded-md text-sm md:text-base"
+        onclick="showTab('faculty')"
+      >
+        Faculty
+      </button>
+    </div>
+  </div>
 
-    {% if messages %}
-        <div class="mb-4">
-            {% for message in messages %}
-                <div class="p-4 rounded {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
-                    {{ message }}
+  {% if messages %}
+  <div class="mb-4">
+    {% for message in messages %}
+    <div
+      class="p-4 rounded {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}"
+    >
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <form method="POST" class="flex items-center gap-2 w-full md:w-auto mb-4">
+    {% csrf_token %}
+    <input
+      class="search-input w-full md:w-64"
+      type="text"
+      name="search_id"
+      placeholder="Enter ID to search"
+    />
+    <button class="requestBtn" type="submit">Search</button>
+  </form>
+
+  <div class="h-full w-full overflow-auto">
+    <div class="h-fit max-h-full w-full tab-content active" id="students">
+      <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">
+        Registered Students
+      </h3>
+      <div class="overflow-x-auto gmc-table-wrapper">
+        <table class="w-full table-auto gmc-table" id="student-table">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="text-center">
+                <span class="table-header-text">Student ID</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="0"
+                  placeholder="Filter ID"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Lastname</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="1"
+                  placeholder="Filter Lastname"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Firstname</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="2"
+                  placeholder="Filter Firstname"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Degree</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="3"
+                  placeholder="Filter Degree"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Year Level</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="4"
+                  placeholder="Filter Year"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Sex</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="5"
+                  placeholder="Filter Sex"
+                />
+              </th>
+              <th class="text-center">
+                <div
+                  class="sortable-header"
+                  onclick="sortTable('student-table', 6)"
+                >
+                  Patient<br />Profile<br />Complete
+                  <svg
+                    class="sort-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    id="sort-icon-student"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.769a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.5 7.5a.75.75 0 011.02-.12l2.48 2.158 2.48-2.158a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.24-.55z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
                 </div>
+              </th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in students %}
+            <tr
+              class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors"
+            >
+              <td class="text-center">{{ item.student.studID }}</td>
+              <td class="text-center">{{ item.student.lastname|title }}</td>
+              <td class="text-center">{{ item.student.firstname|title }}</td>
+              <td class="text-center">{{ item.student.degree }}</td>
+              <td class="text-center">{{ item.student.year_level }}</td>
+              <td class="text-center">{{ item.student.sex }}</td>
+              <td
+                class="text-center"
+                data-complete="{% if item.patient and item.patient.examination %}1{% else %}0{% endif %}"
+              >
+                {% if item.patient and item.patient.examination %}
+                <span class="status-badge status-yes">Yes</span>
+                {% else %}
+                <span class="status-badge status-no">No</span>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% if item.patient %}
+                <a
+                  href="{% url 'physical_exam' item.student.studID %}"
+                  class="printBtn"
+                  >View Profile</a
+                >
+                {% else %}
+                <a
+                  href="{% url 'patient_basicinfo' item.student.studID %}"
+                  class="printBtn"
+                >
+                  Create Profile
+                </a>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr class="no-data">
+              <td colspan="8" class="text-center p-4 text-gray-500">
+                No students found
+              </td>
+            </tr>
             {% endfor %}
-        </div>
-    {% endif %}
-
-    <form method="POST" class="flex items-center gap-2 w-full md:w-auto mb-4">
-        {% csrf_token %}
-        <input class="p-2 border border-gray-300 rounded-md w-full md:w-64 text-base focus:ring-2 focus:ring-blue-200" type="text" name="search_id" placeholder="Enter ID to search" />
-        <button class="bg-blue-500 hover:bg-blue-600 text-white text-base px-4 py-2 rounded-md transition-colors" type="submit">Search</button>
-    </form>
-
-    <div class="h-full w-full overflow-auto">
-        <!-- Students Tab -->
-        <div class="h-fit max-h-full w-full tab-content active" id="students">
-            <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Registered Students</h4>
-            <div class="overflow-x-auto">
-                <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Student ID <br><input type="text" class="filter-input" data-col-index="0" placeholder="Filter ID"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Lastname <br><input type="text" class="filter-input" data-col-index="1" placeholder="Filter Lastname"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Firstname <br><input type="text" class="filter-input" data-col-index="2" placeholder="Filter Firstname"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Degree <br><input type="text" class="filter-input" data-col-index="3" placeholder="Filter Degree"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Year Level <br><input type="text" class="filter-input" data-col-index="4" placeholder="Filter Year"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Sex <br><input type="text" class="filter-input" data-col-index="5" placeholder="Filter Sex"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Patient Profile Complete</th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in students %}
-                        <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
-                            <td class="text-center p-4">{{ item.student.student_id }}</td>
-                            <td class="text-center p-4">{{ item.student.lastname|title }}</td>
-                            <td class="text-center p-4">{{ item.student.firstname|title }}</td>
-                            <td class="text-center p-4">{{ item.student.degree }}</td>
-                            <td class="text-center p-4">{{ item.student.year_level }}</td>
-                            <td class="text-center p-4">{{ item.student.sex }}</td>
-                            <td class="text-center p-4">
-                                {% if item.patient and item.patient.examination %}
-                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Yes</span>
-                                {% else %}
-                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">No</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-center p-4">
-                                {% if item.patient %}
-                                    <a href="{% url 'physical_exam' item.student.student_id %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">View Profile</a>
-                                {% else %}
-                                    <a href="{% url 'patient_basic_info' item.student.student_id %}" class="inline-block bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">Create Profile</a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center p-4 text-gray-500">No students found</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Faculty Tab -->
-        <div class="h-fit max-h-full w-full tab-content" id="faculty" style="display:none;">
-            <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">Registered Faculty</h4>
-            <div class="overflow-x-auto">
-                <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-lg text-lg">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Faculty ID <br><input type="text" class="filter-input" data-col-index="0" placeholder="Filter ID"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Lastname <br><input type="text" class="filter-input" data-col-index="1" placeholder="Filter Lastname"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Firstname <br><input type="text" class="filter-input" data-col-index="2" placeholder="Filter Firstname"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Department <br><input type="text" class="filter-input" data-col-index="3" placeholder="Filter Department"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Position <br><input type="text" class="filter-input" data-col-index="4" placeholder="Filter Position"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Sex <br><input type="text" class="filter-input" data-col-index="5" placeholder="Filter Sex"></th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Patient Profile Complete</th>
-                            <th class="text-center p-4 text-lg font-semibold text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in faculty %}
-                        <tr class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors">
-                            <td class="text-center p-4">{{ item.faculty.faculty_id }}</td>
-                            <td class="text-center p-4">{{ item.faculty.user.last_name|title }}</td>
-                            <td class="text-center p-4">{{ item.faculty.user.first_name|title }}</td>
-                            <td class="text-center p-4">{{ item.faculty.department }}</td>
-                            <td class="text-center p-4">{{ item.faculty.position }}</td>
-                            <td class="text-center p-4">{{ item.faculty.sex }}</td>
-                            <td class="text-center p-4">
-                                {% if item.patient and item.patient.examination %}
-                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Yes</span>
-                                {% else %}
-                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">No</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-center p-4">
-                                {% if item.patient %}
-                                    <a href="{% url 'physical_exam' item.faculty.faculty_id %}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded shadow transition-colors text-sm">View Profile</a>
-                                {% else %}
-                                    <span class="text-gray-500 text-sm">N/A</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center p-4 text-gray-500">No faculty found</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+          </tbody>
+        </table>
+      </div>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
+    <div
+      class="h-fit max-h-full w-full tab-content"
+      id="faculty"
+      style="display: none"
+    >
+      <h3 class="font-medium xs:text-base sm:text-[1.3rem] mb-2">
+        Registered Faculty
+      </h3>
+      <div class="overflow-x-auto gmc-table-wrapper">
+        <table class="w-full table-auto gmc-table" id="faculty-table">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="text-center">
+                <span class="table-header-text">Faculty ID</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="0"
+                  placeholder="Filter ID"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Lastname</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="1"
+                  placeholder="Filter Lastname"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Firstname</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="2"
+                  placeholder="Filter Firstname"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Department</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="3"
+                  placeholder="Filter Department"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Position</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="4"
+                  placeholder="Filter Position"
+                />
+              </th>
+              <th class="text-center">
+                <span class="table-header-text">Sex</span>
+                <input
+                  type="text"
+                  class="filter-input"
+                  data-col-index="5"
+                  placeholder="Filter Sex"
+                />
+              </th>
+              <th class="text-center">
+                <div
+                  class="sortable-header"
+                  onclick="sortTable('faculty-table', 6)"
+                >
+                  Patient Profile Complete
+                  <svg
+                    class="sort-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    id="sort-icon-faculty"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.769a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.5 7.5a.75.75 0 011.02-.12l2.48 2.158 2.48-2.158a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.24-.55z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in faculty %}
+            <tr
+              class="{% if forloop.counter0|divisibleby:2 %}bg-gray-100{% else %}bg-white{% endif %} hover:bg-blue-50 transition-colors"
+            >
+              <td class="text-center">{{ item.faculty.staffID }}</td>
+              <td class="text-center">
+                {{ item.faculty.user.last_name|title }}
+              </td>
+              <td class="text-center">
+                {{ item.faculty.user.first_name|title }}
+              </td>
+              <td class="text-center">{{ item.faculty.department }}</td>
+              <td class="text-center">{{ item.faculty.position }}</td>
+              <td class="text-center">{{ item.faculty.sex }}</td>
+              <td
+                class="text-center"
+                data-complete="{% if item.patient and item.patient.examination %}1{% else %}0{% endif %}"
+              >
+                {% if item.patient and item.patient.examination %}
+                <span class="status-badge status-yes">Yes</span>
+                {% else %}
+                <span class="status-badge status-no">No</span>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {% if item.patient %}
+                <a
+                  href="{% url 'physical_exam' item.faculty.staffID %}"
+                  class="printBtn"
+                  >View Profile</a
+                >
+                {% else %}
+                <span class="text-gray-500 text-sm">N/A</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr class="no-data">
+              <td colspan="8" class="text-center p-4 text-gray-500">
+                No faculty found
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
 <script>
-    function showTab(tabId) {
-        var tabs = document.querySelectorAll('.tab-button');
-        var contents = document.querySelectorAll('.tab-content');
-        tabs.forEach(function(tab) {
-            tab.classList.remove('active');
-        });
-        contents.forEach(function(content) {
-            content.classList.remove('active');
-            content.style.display = 'none';
-        });
-        document.getElementById(tabId).classList.add('active');
-        document.getElementById(tabId).style.display = 'block';
-        document.querySelector('.tab-button[onclick="showTab(\'' + tabId + '\')"]').classList.add('active');
+  // State to track sort direction for each table
+  let studentSortDir = "asc";
+  let facultySortDir = "asc";
+
+  function showTab(tabId) {
+    var tabs = document.querySelectorAll(".tab-button");
+    var contents = document.querySelectorAll(".tab-content");
+    tabs.forEach(function (tab) {
+      tab.classList.remove("active");
+    });
+    contents.forEach(function (content) {
+      content.classList.remove("active");
+      content.style.display = "none";
+    });
+    document.getElementById(tabId).classList.add("active");
+    document.getElementById(tabId).style.display = "block";
+    document
+      .querySelector(".tab-button[onclick=\"showTab('" + tabId + "')\"]")
+      .classList.add("active");
+  }
+
+  function sortTable(tableId, columnIndex) {
+    const table = document.getElementById(tableId);
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr:not(.no-data)"));
+    const isStudentTable = tableId === "student-table";
+
+    let sortDir = isStudentTable ? studentSortDir : facultySortDir;
+    const iconId = isStudentTable ? "sort-icon-student" : "sort-icon-faculty";
+    const icon = document.getElementById(iconId);
+
+    // Determine direction and update state
+    const direction = sortDir === "asc" ? 1 : -1;
+
+    // Reverse the direction for the next click
+    sortDir = sortDir === "asc" ? "desc" : "asc";
+    if (isStudentTable) {
+      studentSortDir = sortDir;
+    } else {
+      facultySortDir = sortDir;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize based on hash or default to 'students'
-        const urlParams = new URLSearchParams(window.location.search);
-        const initialTab = urlParams.get('tab') || 'students';
-        showTab(initialTab);
+    // Update icon visual
+    if (sortDir === "asc") {
+      icon.style.transform = "rotate(180deg)"; // Arrow points down (A-Z or 0-1)
+    } else {
+      icon.style.transform = "rotate(0deg)"; // Arrow points up (Z-A or 1-0)
+    }
 
-        // Filter functionality
-        function attachFilterListeners(tableId) {
-            const table = document.getElementById(tableId);
-            if (!table) return;
+    rows.sort((rowA, rowB) => {
+      // We use the data-complete attribute for reliable numeric sorting (1 for Yes, 0 for No)
+      const cellA = rowA
+        .querySelector(`td:nth-child(${columnIndex + 1})`)
+        .getAttribute("data-complete");
+      const cellB = rowB
+        .querySelector(`td:nth-child(${columnIndex + 1})`)
+        .getAttribute("data-complete");
 
-            const filterInputs = table.querySelectorAll('.filter-input');
+      // Numeric comparison for "1" (Yes) and "0" (No)
+      const valA = parseInt(cellA, 10);
+      const valB = parseInt(cellB, 10);
 
-            filterInputs.forEach(input => {
-                input.addEventListener('keyup', function() {
-                    const filterValue = this.value.toLowerCase();
-                    const colIndex = parseInt(this.dataset.colIndex);
-                    const rows = table.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const cell = row.querySelectorAll('td')[colIndex];
-                        if (cell) {
-                            const cellText = cell.textContent.toLowerCase();
-                            if (cellText.includes(filterValue)) {
-                                row.style.display = '';
-                            } else {
-                                row.style.display = 'none';
-                            }
-                        }
-                    });
-                });
-            });
-        }
-
-        attachFilterListeners('students');
-        attachFilterListeners('faculty');
+      if (valA < valB) {
+        return -1 * direction;
+      }
+      if (valA > valB) {
+        return 1 * direction;
+      }
+      return 0;
     });
+
+    // Re-append sorted rows to the tbody
+    rows.forEach((row) => tbody.appendChild(row));
+
+    // Re-apply alternating row colors (since rows were reordered)
+    recolorRows(tbody);
+  }
+
+  function recolorRows(tbody) {
+    const rows = tbody.querySelectorAll("tr:not(.no-data)");
+    rows.forEach((row, index) => {
+      row.classList.remove("bg-gray-100", "bg-white");
+      if (index % 2 === 0) {
+        row.classList.add("bg-gray-100");
+      } else {
+        row.classList.add("bg-white");
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize based on hash or default to 'students'
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTab = urlParams.get("tab") || "students";
+    showTab(initialTab);
+
+    // Filter functionality
+    function attachFilterListeners(tableId) {
+      const table = document.getElementById(tableId);
+      if (!table) return;
+
+      const filterInputs = table.querySelectorAll(".filter-input");
+
+      filterInputs.forEach((input) => {
+        input.addEventListener("keyup", function () {
+          const filterValue = this.value.toLowerCase();
+          const colIndex = parseInt(this.dataset.colIndex);
+          const rows = table.querySelectorAll("tbody tr:not(.no-data)");
+          const noDataRow = table.querySelector(".no-data");
+          let foundResults = false;
+
+          rows.forEach((row) => {
+            const cell = row.querySelectorAll("td")[colIndex];
+            if (cell) {
+              const cellText = cell.textContent.toLowerCase();
+              if (cellText.includes(filterValue)) {
+                row.style.display = "";
+                foundResults = true;
+              } else {
+                row.style.display = "none";
+              }
+            }
+          });
+
+          // Handle "No data" message visibility
+          if (noDataRow) {
+            // Ensure it is displayed as a table-row if no results
+            noDataRow.style.display = foundResults ? "none" : "table-row";
+          }
+        });
+      });
+    }
+
+    // Changed ID selectors to match the added IDs on the tables
+    attachFilterListeners("student-table");
+    attachFilterListeners("faculty-table");
+  });
 </script>
 {% endblock %}

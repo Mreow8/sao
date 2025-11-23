@@ -585,224 +585,202 @@ def process_checkboxes(checkbox_list, other_value):
     if other_value:
         result = f"{result}, {other_value}" if result else other_value
     return result or 'None'
+# In medical2.py
+
+# ... (Ensure all necessary imports like datetime, date, timedelta, Q are present) ...
+
+# ----------------- START OF REVISED ADMIN DASHBOARD LOGIC -----------------
+
+# --- Helper Functions for Dashboard (placed outside the main view for clarity) ---
+
+def get_user_info_for_dashboard(req_data, patient=None):
+    """Helper to get ID and Name from Patient/User object for dashboard display."""
+    user_info = {'id': 'N/A', 'name': 'Unknown User'}
+    
+    # Determine the Patient object
+    if patient is None and 'request' in req_data and req_data['request'].patient:
+        patient = req_data['request'].patient
+    elif patient is None and 'request' in req_data and hasattr(req_data['request'], 'faculty') and req_data['request'].faculty:
+         # Try to find patient associated with faculty
+         patient = Patient.objects.filter(faculty=req_data['request'].faculty).first()
+    
+    if patient and patient.user:
+        try:
+            # Try Student
+            student = studentInfo.objects.filter(studID=patient.user.username).first()
+            if student:
+                user_info['id'] = student.studID
+                user_info['name'] = f"{student.lastname}, {student.firstname}"
+                return user_info
+            
+            # Try Faculty (Staff)
+            faculty = staffInfo.objects.filter(user=patient.user).first()
+            if faculty:
+                # Use staffID or faculty_id if available, fall back to username
+                user_info['id'] = getattr(faculty, 'staffID', patient.user.username) 
+                user_info['name'] = f"{patient.user.last_name}, {patient.user.first_name}"
+                return user_info
+
+        except Exception:
+            # Fallback to User data if linkage fails
+            user_info['name'] = patient.user.get_full_name() or patient.user.username
+    
+    return user_info
+    
+def get_sort_date(req_data):
+    """
+    Gets the most relevant scheduling date for sorting, prioritizing appointed/responded dates.
+    """
+    req = req_data['request']
+    date_val = (
+        getattr(req, 'date_appointed', None) or # Dental appointment date
+        getattr(req, 'date_responded', None) or # Accepted doc/faculty date
+        getattr(req, 'date_requested', None) or
+        getattr(req, 'date_assisted', None) or
+        getattr(req, 'date_submitted', None)
+    )
+    
+    if isinstance(date_val, datetime):
+        return date_val.date()
+    if isinstance(date_val, date):
+        return date_val
+    
+    # Return date.min to push un-dated items to the end when reverse=True
+    return date.min
+    
+def sort_time_key(req_data):
+    """Helper to sort appointments by time if a datetime object is available."""
+    req = req_data['request']
+    if hasattr(req, 'date_appointed') and isinstance(req.date_appointed, datetime):
+        return req.date_appointed
+    if hasattr(req, 'date_responded') and isinstance(req.date_responded, datetime):
+        return req.date_responded
+    return datetime.min
+
+# --- Main Dashboard View ---
 
 @user_passes_test(can_access_medical_admin)
 def admin_dashboard_view(request):
     
-    # --- START OF FIX ---
-    def get_sort_date(req_data):
-        """
-        Gets the first available date and ensures it's a 'date' object.
-        """
-        date_val = (
-            getattr(req_data['request'], 'date_requested', None) or
-            getattr(req_data['request'], 'date_assisted', None) or
-            getattr(req_data['request'], 'date_submitted', None)
-        )
-        
-        # If it's a full datetime object, get just the .date() part
-        if isinstance(date_val, datetime):
-            return date_val.date()
-        
-        # If it's already a date object, just return it
-        if isinstance(date_val, date):
-            return date_val
-        
-        # If it's None, return the minimum possible date
-        # (this will sort it to the end since reverse=True)
-        return date.min
-    # --- END OF FIX ---
-
     # Get total patients count (both students and faculty)
     total_patients = Patient.objects.count()
     
-    # Get total medical records
+    # Get total medical records (using physical exams as proxy)
     total_records = PhysicalExamination.objects.count()
     
-    # Get all requests that are not completed or rejected
-    upcoming_patient_requests = PatientRequest.objects.select_related(
-        'patient__user'
-    ).exclude(status__in=['completed', 'rejected']).order_by('date_requested')
-
-    upcoming_faculty_requests = FacultyRequest.objects.select_related(
-        'faculty__user'
-    ).exclude(status__in=['completed', 'rejected']).order_by('date_requested')
-
-    # Get dental service requests
-    dental_requests = DentalRecords.objects.select_related(
-        'patient__user'
-    ).filter(appointed=False).order_by('date_requested')
-
-    # Get emergency health assistance records - no status filter needed
-    emergency_requests = EmergencyHealthAssistanceRecord.objects.select_related(
-        'patient__user'
-    ).order_by('-date_assisted')
+    # Fetch relevant requests/records
+    upcoming_patient_requests = PatientRequest.objects.select_related('patient__user').exclude(status__in=['completed', 'rejected'])
+    upcoming_faculty_requests = FacultyRequest.objects.select_related('faculty__user').exclude(status__in=['completed', 'rejected'])
+    dental_requests = DentalRecords.objects.select_related('patient__user')
+    emergency_requests = EmergencyHealthAssistanceRecord.objects.select_related('patient__user').filter(date_assisted__gte=timezone.now().date() - timedelta(days=30)) # Last 30 days
 
     # Process all requests into a unified format
     all_requests = []
     
-    # Process patient requests
+    # Process requests, attaching user info via the helper
     for req in upcoming_patient_requests:
-        request_data = {
-            'request': req,
-            'user_info': {
-                'id': 'N/A',
-                'name': 'Unknown User'
-            },
-            'type': 'documentary'
-            }
-        if req.patient and req.patient.user:
-            try:
-                student = studentInfo.objects.filter(studID=req.patient.user.username).first()
-                print(f"Processing patient request {req.request_id} for user {req.patient.user.username}")
-                if student:
-                    request_data['user_info'] = {
-                        'id': student.studID,
-                        'name': f"{student.lastname}, {student.firstname}"
-                    }
-                else:
-                    faculty = Faculty.objects.filter(user=req.patient.user).first()
-                    if faculty:
-                        request_data['user_info'] = {
-                            'id': faculty.faculty_id,
-                            'name': f"{faculty.user.last_name}, {faculty.user.first_name}"
-                        }
-            except Exception as e:
-                print(f"Error processing patient request {req.request_id}: {str(e)}")
-        all_requests.append(request_data)
+        req_data = {'request': req, 'type': 'documentary'}
+        req_data['user_info'] = get_user_info_for_dashboard(req_data)
+        all_requests.append(req_data)
     
-    # Process faculty requests
     for req in upcoming_faculty_requests:
-        request_data = {
-            'request': req,
-            'user_info': {
-                'id': 'N/A',
-                'name': 'Unknown User'
-            },
-            'type': 'documentary'
-            }
-        if req.faculty and req.faculty.user:
-            request_data['user_info'] = {
-                'id': req.faculty.faculty_id,
-                'name': f"{req.faculty.user.last_name}, {req.faculty.user.first_name}"
-            }
-        all_requests.append(request_data)
+        req_data = {'request': req, 'type': 'documentary'}
+        req_data['user_info'] = get_user_info_for_dashboard(req_data)
+        all_requests.append(req_data)
 
-    # Process dental requests
     for req in dental_requests:
-        request_data = {
-            'request': req,
-            'user_info': {
-                'id': 'N/A',
-                'name': 'Unknown User'
-            },
-            'type': 'dental'
-        }
-        if req.patient and req.patient.user:
-            try:
-                student = studentInfo.objects.filter(studID=req.patient.user.username).first()
-                print(f"Processing dental request {req.id} for user {req.patient.user.username}")
-                if student:
-                    request_data['user_info'] = {
-                        'id': student.studID,
-                        'name': f"{student.lastname}, {student.firstname}"
-                    }
-                else:
-                    faculty = Faculty.objects.filter(user=req.patient.user).first()
-                    if faculty:
-                        request_data['user_info'] = {
-                            'id': faculty.faculty_id,
-                            'name': f"{faculty.user.last_name}, {faculty.user.first_name}"
-                        }
-            except Exception as e:
-                print(f"Error processing dental request {req.id}: {str(e)}")
-        all_requests.append(request_data)
+        req_data = {'request': req, 'type': 'dental'}
+        req_data['user_info'] = get_user_info_for_dashboard(req_data)
+        all_requests.append(req_data)
 
-    # Process emergency requests
     for req in emergency_requests:
-        request_data = {
-            'request': req,
-            'user_info': {
-                'id': 'N/A',
-                'name': 'Unknown User'
-            },
-            'type': 'emergency'
-            }
-        if req.patient and req.patient.user:
-            try:
-                student = studentInfo.objects.filter(studID=req.patient.user.username).first()
-                if student:
-                    request_data['user_info'] = {
-                        'id': student.studID,
-                        'name': f"{student.lastname}, {student.firstname}"
-                    }
-                else:
-                    faculty = Faculty.objects.filter(user=req.patient.user).first()
-                    if faculty:
-                        request_data['user_info'] = {
-                            'id': faculty.faculty_id,
-                            'name': f"{faculty.user.last_name}, {faculty.user.first_name}"
-                        }
-            except Exception as e:
-                print(f"Error processing emergency request {req.id}: {str(e)}")
-        all_requests.append(request_data)
+        req_data = {'request': req, 'type': 'emergency'}
+        req_data['user_info'] = get_user_info_for_dashboard(req_data)
+        all_requests.append(req_data)
 
-    # --- START OF FIX 2 ---
-    # Sort all requests by date using the helper function
+    # Sort all requests by date
     all_requests.sort(key=get_sort_date, reverse=True)
-    # --- END OF FIX 2 ---
 
-    # Get counts for dashboard cards
-    pending_requests_total = len([r for r in all_requests 
-                                if hasattr(r['request'], 'status') 
-                                and getattr(r['request'], 'status', None) == 'pending'])
-    
-    # Get today's schedule count
+    # --- TODAY'S SCHEDULE & PENDING COUNT LOGIC ---
     today = timezone.now().date()
-    todays_schedule_total = len([r for r in all_requests 
-                               if hasattr(r['request'], 'date_responded') 
-                               and getattr(r['request'], 'date_responded', None)
-                               and getattr(r['request'], 'date_responded').date() == today])
+    todays_appointments = []
+    pending_requests_total = 0
+    
+    for req_data in all_requests:
+        req = req_data['request']
+        is_scheduled_today = False
+        
+        # 1. Check for Dental Appointments scheduled for today (if appointed is True)
+        if req_data['type'] == 'dental' and getattr(req, 'appointed', False) and getattr(req, 'date_appointed', None):
+            if isinstance(req.date_appointed, datetime) and req.date_appointed.date() == today:
+                is_scheduled_today = True
+                
+        # 2. Check for Accepted Documentary/Faculty Requests scheduled today (using date_responded as proxy for appointment)
+        elif req_data['type'] == 'documentary' and getattr(req, 'status', None) == 'accepted' and getattr(req, 'date_responded', None):
+            if isinstance(req.date_responded, datetime) and req.date_responded.date() == today:
+                 is_scheduled_today = True
+                 
+        # 3. Check for Pending Requests (for the card count)
+        req_status = getattr(req, 'status', None)
+        if req_status == 'pending' or (req_data['type'] == 'dental' and not getattr(req, 'appointed', False)):
+            pending_requests_total += 1
+            
+        # 4. Add to today's appointments list
+        if is_scheduled_today:
+            todays_appointments.append(req_data)
 
-    # Get urgent cases count (faculty requests with high priority)
-    urgent_cases = len([r for r in all_requests 
-                       if hasattr(r['request'], 'priority_level') 
-                       and getattr(r['request'], 'priority_level', None) == 'high'])
+    # Calculate final totals for the cards
+    todays_schedule_total = len(todays_appointments)
+    
+    # Get urgent cases count (assuming 'emergency' type is urgent)
+    urgent_cases = len([r for r in all_requests if r['type'] == 'emergency'])
 
-    # Get active tab from URL parameter
-    active_tab = request.GET.get('tab', 'all')
+    # Sort today's appointments by time
+    todays_appointments.sort(key=sort_time_key)
 
-    # Prepare events for the calendar
+    # --- CALENDAR EVENTS PREPARATION ---
     calendar_events = []
+    status_order = {'emergency': 5, 'pending': 4, 'accepted': 3, 'completed': 1} 
+    calendar_date_map = {}
+    
     for req_data in all_requests:
         date_field = None
         status_field = None
+        req = req_data['request']
 
         if req_data['type'] == 'emergency':
-            date_field = getattr(req_data['request'], 'date_assisted', None)
-            status_field = 'emergency' # Custom status for emergency
+            date_field = getattr(req, 'date_assisted', None)
+            status_field = 'emergency'
         elif req_data['type'] == 'dental':
-            date_field = getattr(req_data['request'], 'date_requested', None)
-            status_field = 'completed' if getattr(req_data['request'], 'appointed', False) else 'pending'
-        else: # documentary requests (patient and faculty requests)
-            date_field = getattr(req_data['request'], 'date_requested', None)
-            status_field = getattr(req_data['request'], 'status', None)
+            # Use date_appointed if scheduled, otherwise use date_requested
+            if getattr(req, 'appointed', False) and getattr(req, 'date_appointed', None):
+                 date_field = req.date_appointed
+                 status_field = 'completed'
+            else:
+                 date_field = getattr(req, 'date_requested', None)
+                 status_field = 'pending'
+        else: # documentary requests
+            # Use date_responded if accepted/scheduled, otherwise date_requested
+            status = getattr(req, 'status', None)
+            if status == 'accepted' and getattr(req, 'date_responded', None):
+                 date_field = req.date_responded
+                 status_field = status
+            else:
+                 date_field = getattr(req, 'date_requested', None)
+                 status_field = status
         
         if date_field and status_field:
-            # Ensure date is a date object for formatting
-            if isinstance(date_field, datetime):
-                date_str = date_field.strftime('%Y-%m-%d')
-            elif isinstance(date_field, date):
-                date_str = date_field.strftime('%Y-%m-%d')
-            else:
-                date_str = None # Handle cases where date_field is not a date/datetime object
+            date_str = date_field.strftime('%Y-%m-%d')
+            current_score = status_order.get(status_field, 0)
+            
+            if date_str not in calendar_date_map or current_score > calendar_date_map[date_str]['score']:
+                 calendar_date_map[date_str] = {'status': status_field, 'score': current_score}
+                 
+    for date_str, data in calendar_date_map.items():
+        calendar_events.append({'date': date_str, 'status': data['status']})
 
-            if date_str:
-                calendar_events.append({
-                    'date': date_str,
-                    'status': status_field
-            })
-    
+
+    # --- FINAL CONTEXT ---
     context = {
         'total_patients': total_patients,
         'total_records': total_records,
@@ -810,11 +788,14 @@ def admin_dashboard_view(request):
         'todays_schedule': todays_schedule_total,
         'urgent_cases': urgent_cases,
         'all_upcoming_requests': all_requests,
-        'active_tab': active_tab,
-        'events': calendar_events, # Pass events to the template
+        'active_tab': request.GET.get('tab', 'all'),
+        'events': calendar_events,
+        'todays_appointments': todays_appointments, # The new list
     }
     
     return render(request, "medical/medicalv2/admin_dashboard.html", context)
+
+# ----------------- END OF REVISED ADMIN DASHBOARD LOGIC -----------------
 @profile_complete_required
 @login_required
 def dashboard_view(request):

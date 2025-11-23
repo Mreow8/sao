@@ -1,4 +1,5 @@
-{% extends 'adminmain.html' %}
+{% extends base_template %}
+
 {% load static tailwind_tags %}
 {% block title %}HealthHub Connect | Medical Requirements Tracker{% endblock %}
 {% block extra_css %}
@@ -24,7 +25,7 @@
 <div class="w-full h-full rounded-[14px] bg-white xs:p-4 md:p-8 flex flex-col gap-2">
   
     
-    {% if user.is_superuser or user.is_staff %}
+    {% if user.is_superuser or user.is_staff or user.role == 'clinic_admin' %} 
         <form method="GET" class="flex gap-4 mb-4">
             <input type="text" name="id_number" placeholder="Search by ID Number" class="w-full p-2 border rounded-md" value="{{ id_number|default:'' }}">
             <button type="submit" name="search" class="bg-[#3b82f6] text-white py-2 px-8 rounded-md hover:bg-[#2563eb] transition-colors">
@@ -83,7 +84,7 @@
                             
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="p-2">
-                                    {% if user.is_superuser or user.is_staff %}
+                                    {% if user.is_superuser or user.is_staff or user.role == 'clinic_admin' %} 
                                         <textarea name="x-ray-remark" class="w-full p-2 border rounded-md text-base h-20" placeholder="Enter remarks here...">{{ med_requirements.x_ray_remarks|default:'' }}</textarea>
                                     {% else %}
                                         <span>{{ med_requirements.x_ray_remarks|default:'None' }}</span>
@@ -99,7 +100,7 @@
                             </tr>
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="p-2">
-                                    {% if user.is_superuser or user.is_staff %}
+                                    {% if user.is_superuser or user.is_staff or user.role == 'clinic_admin' %} 
                                         <textarea name="cbc-remark" class="w-full p-2 border rounded-md text-base h-20" placeholder="Enter remarks here...">{{ med_requirements.cbc_remarks|default:'' }}</textarea>
                                     {% else %}
                                         <span>{{ med_requirements.cbc_remarks|default:'None' }}</span>
@@ -115,7 +116,7 @@
                             </tr>
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="p-2">
-                                    {% if user.is_superuser or user.is_staff %}
+                                    {% if user.is_superuser or user.is_staff or user.role == 'clinic_admin' %} 
                                         <textarea name="drug-test-remark" class="w-full p-2 border rounded-md text-base h-20" placeholder="Enter remarks here...">{{ med_requirements.drug_test_remarks|default:'' }}</textarea>
                                     {% else %}
                                         <span>{{ med_requirements.drug_test_remarks|default:'None' }}</span>
@@ -131,7 +132,7 @@
                             </tr>
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="p-2">
-                                    {% if user.is_superuser or user.is_staff %}
+                                    {% if user.is_superuser or user.is_staff or user.role == 'clinic_admin' %} 
                                         <textarea name="stool-examination-remark" class="w-full p-2 border rounded-md text-base h-20" placeholder="Enter remarks here...">{{ med_requirements.stool_examination_remarks|default:'' }}</textarea>
                                     {% else %}
                                         <span>{{ med_requirements.stool_examination_remarks|default:'None' }}</span>
@@ -147,7 +148,7 @@
                             </tr>
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="p-2">
-                                    {% if user.is_superuser or user.is_staff %}
+                                    {% if user.is_superuser or user.is_staff or user.role == 'clinic_admin' %} 
                                         <textarea name="pwd-card-remark" class="w-full p-2 border rounded-md text-base h-20" placeholder="Enter remarks here...">{{ med_requirements.pwd_card_remarks|default:'' }}</textarea>
                                     {% else %}
                                         <span>{{ med_requirements.pwd_card_remarks|default:'None' }}</span>

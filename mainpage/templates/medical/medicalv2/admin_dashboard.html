@@ -1,8 +1,5 @@
-{% extends 'adminmain.html' %} {% load static tailwind_tags %}
-<!-- prettier-ignore -->
+{% extends base_template %} {% load static tailwind_tags %}
 {% block bodycontent %}
-<!-- prettier-ignore -->
-{% block title %}HealthHub Connect | Admin Dashboard{% endblock %} 
 {% block extra_css %}
 <style>
   html,
@@ -25,12 +22,20 @@
   }
   .dashboard-main-grid {
     display: grid;
-    grid-template-columns: 1fr; /* Changed to a single column */
+    grid-template-columns: 1fr; /* Default to single column for mobile */
     gap: 2rem;
     flex: 1;
     height: 100%;
-    align-items: stretch;
+    align-items: flex-start; /* Ensures columns align at the top */
   }
+
+  /* NEW: Two-column layout for Requests (3fr) and Appointments (1fr) */
+  @media (min-width: 1024px) { 
+    .dashboard-main-grid {
+      grid-template-columns: 3fr 1fr; /* Requests 75%, Appointments 25% */
+    }
+  }
+
   .dashboard-card {
     background: #fff;
     border-radius: 12px;
@@ -304,6 +309,12 @@
   }
 </style>
 {% endblock %} {% block content %}
+<div class="sub-title">
+  <h4>KAHIMSUG CLINIC</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+  <p class="certxt">&gt; Admin Dashboard</p>
+</div>
+<hr />
 <div class="flex flex-col bg-white rounded-[14px] h-min w-full p-4">
   <div class="flex flex-col gap-4 h-auto">
     <div class="flex flex-row gap-4 w-full items-stretch">
@@ -346,27 +357,14 @@
         <div id="calendarDaysAdmin" class="flex-1"></div>
       </div>
       <div class="flex flex-col flex-1 h-full">
-        <span class="font-bold text-gray-700 mr-4"> Additional Actions:</span>
-        <div class="grid grid-cols-2 gap-2">
-          <a
-            href="#"
-            onclick="addPatientPrompt(event)"
-            class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition text-center"
-            >Onsite Registration</a
-          >
-          <a
-            href="#"
-            onclick="sendFacultyRegistrationLinkPrompt(event)"
-            class="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition text-center"
-            >Online Faculty Registration</a
-          >
-        </div>
+        
         <div
           class="flex flex-col justify-center items-center bg-white rounded-xl shadow border border-blue-100 p-4 w-full text-center flex-1"
         >
+          <span class="font-bold text-gray-700 mb-2"> Current Time & Date:</span>
           <div
             id="adminLiveTime"
-            class="text-5xl font-extrabold text-blue-700 mb-2"
+            class="text-4xl font-extrabold text-blue-700 mb-1"
           ></div>
           <div
             id="adminLiveDate"
@@ -374,7 +372,7 @@
           ></div>
         </div>
       </div>
-    </div>
+      </div>
     <div
       class="flex gap-4 bg-gray-50 rounded-xl border border-gray-200 items-stretch"
     >
@@ -405,9 +403,26 @@
           >{{ pending_requests|default:0 }}</span
         >
       </div>
+      <div
+        class="flex-1 dashboard-card flex flex-col items-center justify-center text-center shadow-none border-none bg-transparent hover:shadow-none"
+      >
+        <i class="fas fa-calendar-check text-indigo-500 text-xl mb-1"></i>
+        <span class="text-xs text-gray-500 mb-1">Today's Schedule</span>
+        <span class="text-2xl font-bold text-indigo-600"
+          >{{ todays_schedule|default:0 }}</span
+        >
+      </div>
+      <div
+        class="flex-1 dashboard-card flex flex-col items-center justify-center text-center shadow-none border-none bg-transparent hover:shadow-none"
+      >
+        <i class="fas fa-exclamation-triangle text-red-500 text-xl mb-1"></i>
+        <span class="text-xs text-gray-500 mb-1">Urgent Cases</span>
+        <span class="text-2xl font-bold text-red-600"
+          >{{ urgent_cases|default:0 }}</span
+        >
+      </div>
     </div>
     <div class="dashboard-main-grid">
-      <!-- Left Column: Requests Card with Tabs -->
       <div
         class="dashboard-card border border-gray-200 flex-1 flex flex-col mb-2 w-full"
       >
@@ -456,8 +471,7 @@
                 <th class="px-4 py-2">Request Type</th>
                 <th class="px-4 py-2">Date</th>
                 <th class="px-4 py-2">Status</th>
-                <!-- Removed Actions Header -->
-              </tr>
+                </tr>
             </thead>
             <tbody>
               {% for request_data in all_upcoming_requests %}
@@ -467,14 +481,12 @@
                 </td>
                 <td class="px-4 py-2">{{ request_data.user_info.name }}</td>
                 <td class="px-4 py-2">
-                  <!-- prettier-ignore -->
                   {% if request_data.type == 'documentary' %} 
                   {{ request_data.request.request_type }} 
                   {% elif request_data.type == 'dental' %} {{ request_data.request.service_type }} 
                   {% elif request_data.type == 'emergency' %} Emergency Assistance 
                   {%   else %} {{ request_data.request.status|title }} {% endif %}
                 </td>
-                <!-- prettier-ignore -->
                 <td class="px-4 py-2">
                   {% if request_data.type == 'emergency' %} 
                   {{  request_data.request.date_assisted }} {% else %}
@@ -489,8 +501,6 @@
                     class="status-badge {% if request_data.request.appointed %}completed{% else %}pending{% endif %}"
                   >
                     {% if request_data.request.appointed %}Completed
-                    <!-- prettier-ignore -->
-
                     {% else %}Pending{% endif %}
                   </span>
                   {% else %}
@@ -511,11 +521,56 @@
           </table>
         </div>
       </div>
+      <div class="flex flex-col gap-4">
+          <div class="dashboard-card border border-gray-200 p-4 w-full overflow-hidden">
+              <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <i class="fas fa-calendar-check text-green-500"></i> Today's Appointments ({{ todays_schedule }})
+              </h3>
+              
+              <div class="overflow-y-auto max-h-[calc(100vh - 450px)]"> 
+                  {% if todays_appointments %}
+                      <ul class="space-y-3">
+                          {% for appt in todays_appointments %}
+                              {% with request_obj=appt.request user_info=appt.user_info %}
+                                  <li class="bg-gray-50 p-3 rounded-lg border-l-4 
+                                      {% if appt.type == 'dental' %}border-purple-500{% elif appt.type == 'emergency' %}border-red-500{% elif request_obj.status == 'accepted' %}border-blue-500{% else %}border-gray-500{% endif %}">
+                                      <p class="text-sm font-semibold text-gray-700 truncate">
+                                          {{ user_info.name }} ({{ user_info.id }})
+                                      </p>
+                                      <p class="text-xs text-gray-500 mt-0.5">
+                                          {% if appt.type == 'dental' %}
+                                              Dental: {{ request_obj.service_type }} 
+                                              {% if request_obj.date_appointed %}
+                                                  <span class="font-medium text-blue-700">@ {{ request_obj.date_appointed|date:"H:i" }}</span>
+                                              {% endif %}
+                                          {% elif appt.type == 'documentary' %}
+                                              Doc: {{ request_obj.request_type }}
+                                              {% if request_obj.date_responded %}
+                                                  <span class="font-medium text-blue-700">@ {{ request_obj.date_responded|date:"H:i" }}</span>
+                                              {% endif %}
+                                          {% elif appt.type == 'emergency' %}
+                                              <span class="text-red-600 font-medium">Emergency: {{ request_obj.reason|default:"Assistance Provided" }}</span>
+                                          {% else %}
+                                              {{ appt.type|title }} Request
+                                          {% endif %}
+                                      </p>
+                                  </li>
+                              {% endwith %}
+                          {% endfor %}
+                      </ul>
+                  {% else %}
+                      <div class="text-center p-4 text-gray-500">
+                          <i class="fas fa-check-circle text-2xl mb-2"></i>
+                          <p class="text-sm font-medium">No appointments scheduled for today. 🎉</p>
+                      </div>
+                  {% endif %}
+              </div>
+          </div>
+          </div>
     </div>
   </div>
 </div>
 
-<!-- Pass Django events to JS safely -->
 {{ events|json_script:"admin-events-data" }}
 
 <script>

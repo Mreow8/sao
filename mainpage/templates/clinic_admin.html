@@ -8,6 +8,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
+    <link rel="stylesheet" href="{% static 'styles/medical_sidebar.css' %}" />
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
@@ -25,6 +26,54 @@
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% block headcontent %}{% endblock %}
+    <style>
+      /* =========================================
+   3. SIDEBAR NAVIGATION DESIGN
+   ========================================= */
+      /* Brand / Logo Area */
+      /* ... (existing styles) ... */
+
+      /* Navigation Links */
+      .side-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        padding-top: 1rem;
+      }
+
+      .side-nav ul li a {
+        display: block;
+        padding: 14px 24px;
+        color: #cbd5e0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .side-nav ul li a:hover {
+        background-color: #2a4365;
+        color: #fff;
+      }
+
+      /* 🟢 ACTIVE LINK INDICATION (NEW STYLES) 🟢 */
+      .side-nav ul li a.active-link {
+        background-color: #1a365d; /* Bright blue background */
+        color: #ffffff; /* White text */
+        font-size: 18px;
+        font-weight: 700;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); /* Subtle lift effect */
+        border-left: 4px solid #ffffff; /* Strong white bar for indication */
+        padding-left: 20px; /* Adjust padding to account for the bar */
+      }
+
+      /* Active Link State */
+      .side-nav > ul > li > a.active {
+        background-color: #2c5282;
+        color: #fff;
+      }
+    </style>
   </head>
   <body>
     <button
@@ -46,75 +95,119 @@
         </div>
       </div>
 
+      <div class="account-info-wrapper fixed-profile">
+        <div id="profile-trigger" class="profile-summary">
+          <i class="fas fa-user-circle profile-icon"></i>
+        </div>
+
+        <div id="profile-dropdown" class="profile-popup">
+          <div class="popup-header">
+            <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+            <a
+              href="#"
+              id="view-profile-btn"
+              class="popup-username clickable-username"
+              title="View Profile"
+            >
+              {{ user.username }}
+              <i
+                class="fas fa-external-link-alt"
+                style="font-size: 0.8em; margin-left: 5px"
+              ></i>
+            </a>
+          </div>
+          <div class="popup-divider"></div>
+          <a href="{% url 'logout' %}" class="popup-logout-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
+
       {% with current_url=request.resolver_match.url_name %}
       <nav class="side-nav flex flex-col h-screen">
-        <ul>
+        <ul class="medical-show active">
           <li>
             <a
-              class="medical-btn active"
-              style="pointer-events: none; cursor: default"
-              >MEDICAL</a
+              href="{% url 'admin_dashboard'%}"
+              class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}"
             >
-            <ul class="medical-show active">
-              <li>
-                <a
-                  href="{% url 'admin_dashboard'%}"
-                  class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}"
-                  >Patient Profile
-                </a>
-              </li>
-              <li>
-                <a
-                  href="{% url 'viewrequest' %}"
-                  class="{% if current_url == 'viewrequest' %}active-link{% endif %}"
-                  >View Requests
-                </a>
-              </li>
-              <li>
-                <a
-                  href="{% url 'medtracker' %}"
-                  class="{% if current_url == 'medtracker' %}active-link{% endif %}"
-                  >Medical Requirements Tracker</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'emergency_asst' %}"
-                  class="{% if current_url == 'emergency_asst' %}active-link{% endif %}"
-                  >Emergency Health Assistance</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'pwdlist' %}"
-                  class="{% if current_url == 'pwdlist' %}active-link{% endif %}"
-                  >PWD Profile</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'dentalrequest' %}"
-                  class="{% if current_url == 'dentalrequest' %}active-link{% endif %}"
-                  >Dental Services</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'prescription' %}"
-                  class="{% if current_url == 'prescription' %}active-link{% endif %}"
-                  >Prescription Issuance</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'mental_health' %}"
-                  class="{% if current_url == 'mental_health' %}active-link{% endif %}"
-                  >Mental Health Services</a
-                >
-              </li>
-            </ul>
+              Admin Dashboard
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'patient_profile'%}"
+              class="{% if current_url == 'patient_profile' %}active-link{% endif %}"
+            >
+              Patient Profile
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="{% url 'viewrequest' %}"
+              class="{% if current_url == 'viewrequest' %}active-link{% endif %}"
+            >
+              View Requests
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="{% url 'medtracker' %}"
+              class="{% if current_url == 'medtracker' %}active-link{% endif %}"
+            >
+              Medical Requirements Tracker
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="{% url 'emergency_asst' %}"
+              class="{% if current_url == 'emergency_asst' %}active-link{% endif %}"
+            >
+              Emergency Health Assistance
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="{% url 'pwdlist' %}"
+              class="{% if current_url == 'pwdlist' %}active-link{% endif %}"
+            >
+              PWD Profile
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="{% url 'dentalrequest' %}"
+              class="{% if current_url == 'dentalrequest' %}active-link{% endif %}"
+            >
+              Dental Services
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="{% url 'prescription' %}"
+              class="{% if current_url == 'prescription' %}active-link{% endif %}"
+            >
+              Prescription Issuance
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="{% url 'mental_health' %}"
+              class="{% if current_url == 'mental_health' %}active-link{% endif %}"
+            >
+              Mental Health Services
+            </a>
           </li>
         </ul>
+
         <div class="mt-auto mb-4">
           <a
             href="{% url 'transaction_report_view' %}"
@@ -129,31 +222,6 @@
     </div>
 
     <div class="right-side">
-      <div class="custom-search-wrapper">
-        <div class="search-container">
-          <div class="right-controls" style="margin-left: auto">
-            <div class="account-info-wrapper">
-              <div id="profile-trigger" class="profile-summary">
-                <i class="fas fa-user-circle profile-icon"></i>
-                <span class="profile-name"
-                  >{{ user.first_name }} {{ user.last_name }}</span
-                >
-                <i class="fas fa-caret-down caret-icon"></i>
-              </div>
-              <div id="profile-dropdown" class="profile-popup">
-                <div class="popup-header">
-                  <span class="popup-username">{{ user.username }}</span>
-                </div>
-                <div class="popup-divider"></div>
-                <a href="{% url 'logout' %}" class="popup-logout-link">
-                  <i class="fas fa-sign-out-alt"></i>
-                  <span>Logout</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       {% block extra_css %}{% endblock %} {% block extra_js %}{% endblock %}
       <main class="main_content">{% block bodycontent %}{% endblock %}</main>
     </div>

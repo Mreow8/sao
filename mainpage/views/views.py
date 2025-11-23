@@ -166,10 +166,10 @@ def verify_otp(request, user_id):
             context['error_message'] = "Invalid verification code. Please try again."
 
     return render(request, 'scholarship/verify_otp.html', context)
-
-@login_required(login_url='signinuser')
+@login_required
 def homepage(request):
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+    # Use the helper to get the right file
+    base_template = get_base_template(request.user)
     
     if request.user.is_authenticated:
         messages.success(request, f'Welcome back, {request.user.username}!')
@@ -177,9 +177,9 @@ def homepage(request):
         messages.info(request, 'Welcome to the homepage!')
 
     return render(request, 'homepage.html', {
-        'base_template': base_template
+        'base_template': base_template 
     })
-@login_required  # 1. Checks if the user is logged in
+@login_required 
 @user_passes_test(is_org_admin_or_super)
 def orgmain(request):
     return render(request, 'orgadmin.html')
@@ -386,7 +386,19 @@ def signinuser(request):
     return render(request, 'login.html')
 
 # mainpage/views.py
-
+def get_base_template(user):
+   
+    if not user.is_authenticated:
+        return 'main.html' # or login.html
+        
+    # 1. Strict check for Clinic Admin
+    if hasattr(user, 'role') and user.role == 'clinic_admin':
+        return 'clinic_admin.html'
+        
+    if user.is_staff or user.is_superuser:
+        return 'adminmain.html'
+        
+    return 'main.html'
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from itertools import chain
@@ -723,3 +735,27 @@ def alumni_dashboard(request):
 
 def org_dashboard(request):
     return render(request, 'org_admin.html')
+
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib import messages
+from django.shortcuts import redirect
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            # update_session_auth_hash keeps the user logged in after password change
+            update_session_auth_hash(request, user) 
+            messages.success(request, 'Your password was successfully updated!')
+            # Redirect back to the page they came from
+            return redirect(request.META.get('HTTP_REFERER', 'homepage'))
+        else:
+            # If there are errors (e.g., password too short), display them
+            for error in form.errors.values():
+                messages.error(request, error)
+            return redirect(request.META.get('HTTP_REFERER', 'homepage'))
+    
+    # If someone tries to access this URL via GET, send them home
+    return redirect('homepage')

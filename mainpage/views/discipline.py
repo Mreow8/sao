@@ -3,6 +3,12 @@
 
 from datetime import datetime
 import json
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from django.contrib.staticfiles import finders
+from xhtml2pdf import pisa
+from io import BytesIO
+import os
 import logging
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
@@ -14,7 +20,8 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from django.core.mail import send_mail
+from django.conf import settings
 # --- Your Models and Forms ---
 from ..models import (
     studentInfo,
@@ -44,6 +51,42 @@ def _format_decimal_hours(decimal_hours):
         minutes = 0
         
     return f"{hours}h {minutes}m"
+def link_callback(uri, rel):
+    """
+    Convert HTML URIs to absolute system paths so xhtml2pdf can access those resources
+    """
+    sUrl = settings.STATIC_URL        # Typically /static/
+    sRoot = settings.STATIC_ROOT      # Typically /home/userX/project/static/
+    mUrl = settings.MEDIA_URL         # Typically /media/
+    mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project/media/
+
+    # convert URIs to absolute system paths
+    if uri.startswith(mUrl):
+        path = os.path.join(mRoot, uri.replace(mUrl, ""))
+    elif uri.startswith(sUrl):
+        # 1. Strip the /static/ prefix to get the relative path (e.g. "imgs/logo.png")
+        # We also strip any leading slashes to prevent os.path.join errors
+        relative_path = uri.replace(sUrl, "").lstrip('/')
+        
+        # 2. Try Django finders first (Best for Dev environment / STATICFILES_DIRS)
+        # This asks Django: "Where is this file really located?"
+        abs_path = finders.find(relative_path)
+        if abs_path:
+            return abs_path
+            
+        # 3. Fallback: Use STATIC_ROOT (Best for Production if collectstatic was run)
+        path = os.path.join(sRoot, relative_path)
+    else:
+        return uri  # Handle absolute paths or other protocols
+
+    # make sure that file exists
+    if not os.path.isfile(path):
+            # Optional: Print error to console to help debug
+            print(f"DEBUG: link_callback could not find file at: {path}")
+            raise Exception(
+                'media URI must start with %s or %s' % (sUrl, mUrl)
+            )
+    return path
 @login_required
 def serviceTracker(request, student_id):
     student = get_object_or_404(studentInfo, studID=student_id)
@@ -101,7 +144,6 @@ def serviceTracker(request, student_id):
         'total_minutes': total_minutes,
     }
     return render(request, 'discipline/comm_service.html', context)
-
 @require_POST
 @login_required
 def update_case_status(request, case_id):
@@ -122,9 +164,11 @@ def update_case_status(request, case_id):
             # --- NEW LOGIC: SEND EMAIL IF RESOLVED ---
             if new_status == 'Resolved':
                 try:
-                    # Check if student has an email address
-                    # Adjust 'email' below if your model uses a different field name (e.g., 'email_address')
-                    student_email = getattr(case.student, 'email', None) 
+                    # UPDATED LINE: Access student -> user -> email
+                    # We check if 'user' exists first to avoid errors
+                    student_email = None
+                    if hasattr(case.student, 'user') and case.student.user:
+                        student_email = case.student.user.email
                     
                     if student_email:
                         subject = f"Case Resolved: {case.offense_type}"
@@ -146,11 +190,10 @@ def update_case_status(request, case_id):
                         )
                         logger.info(f"Resolution email sent to {student_email}")
                     else:
-                        logger.warning(f"Case {case_id} resolved, but student {case.student.studID} has no email address.")
+                        logger.warning(f"Case {case_id} resolved, but student {case.student.studID} has no linked user email.")
 
                 except Exception as email_error:
                     # We log the error but DO NOT stop the function. 
-                    # The status update was successful, even if the email failed.
                     logger.error(f"Failed to send resolution email: {email_error}")
             # --- END NEW LOGIC ---
 
@@ -553,52 +596,36 @@ def counseling_form_view(request, case_id):
     return render(request, "discipline/counseling_form.html", context)
 
 # In 'discipline copy 2.py', replace your old student_hours_view with this:
-
 @login_required
 def student_hours_view(request, case_id):
     case = get_object_or_404(CaseProfile, pk=case_id)
     records = CommunityServiceTracker.objects.filter(case=case).order_by('-service_date')
     
-    # --- NEW CALCULATION LOGIC ---
-    
-    # 1. Get TOTAL REQUIRED hours from the case
-    #    (We use the community_service_hours field from the CaseProfile model)
+    # --- CALCULATE TOTALS (For Display) ---
     total_required_decimal = float(case.community_service_hours or 0.0)
-
-    # 2. Calculate TOTAL RENDERED hours (from all tracker records)
+    
     total_rendered_decimal = 0.0
     for r in records:
         rendered = r.total_hours_decimal()
         if rendered:
             total_rendered_decimal += rendered
 
-    # 3. Calculate REMAINING hours and check completion
     remaining_decimal = max(0.0, total_required_decimal - total_rendered_decimal)
     is_completed = (total_rendered_decimal >= total_required_decimal) and (total_required_decimal > 0)
     
-    # 4. Format all values as strings for the template
-    #    (These variable names match your student_hours_rendered.html template)
+    # Helper to format strings
     total_required_str = _format_decimal_hours(total_required_decimal)
     total_rendered_str = _format_decimal_hours(total_rendered_decimal)
     remaining_str = _format_decimal_hours(remaining_decimal)
 
-    # --- END NEW LOGIC ---
-
     if request.method == 'POST':
-        # This POST logic is from your discipline.py (forms file)
-        # and discipline copy 2.py (views file)
-        
-        # Note: Your template just has fields 'date', 'time_in', 'time_out'.
-        # Your form expects 'session'. This will cause a mismatch.
-        # For now, I am using the form defined in your 'discipline.py' (forms) file.
-        
         form = CommunityServiceForm(request.POST) 
         
         if form.is_valid():
             tracker = form.save(commit=False)
-            tracker.case = case # Link to the current case
+            tracker.case = case 
             
-            # Check for duplicates (from your original code)
+            # Check for duplicates
             exists = CommunityServiceTracker.objects.filter(
                 case=case,
                 service_date=tracker.service_date,
@@ -608,38 +635,97 @@ def student_hours_view(request, case_id):
             if exists:
                 messages.error(request, f"{tracker.session.capitalize()} session already exists for {tracker.service_date}.")
             else:
-                tracker.save()
-                messages.success(request, "Community service record added successfully!")
-                # Redirect to refresh the page and see new totals
+                tracker.save() # Save the new record
+                
+                # --- CHECK COMPLETION & SEND CERTIFICATE ---
+                
+                # 1. Recalculate total including the new record
+                new_total_rendered = total_rendered_decimal + (tracker.total_hours_decimal() or 0.0)
+                
+                # 2. Check if they JUST finished (or exceeded) the requirement
+                if new_total_rendered >= total_required_decimal and total_required_decimal > 0:
+                    
+                    try:
+                        # Get Student Email
+                        student_email = None
+                        if hasattr(case.student, 'user') and case.student.user:
+                            student_email = case.student.user.email
+                        
+                        if student_email:
+                            subject = "Certificate of Completion - Community Service"
+                            body = (
+                                f"Dear {case.student.firstname},\n\n"
+                                f"Congratulations! You have successfully completed your required "
+                                f"{total_required_str} of Community Service.\n\n"
+                                f"Attached is your Certificate of Completion.\n\n"
+                                "Best regards,\n"
+                                "Student Affairs Office"
+                            )
+
+                            email = EmailMessage(
+                                subject,
+                                body,
+                                settings.EMAIL_HOST_USER,
+                                [student_email],
+                            )
+
+                            # --- GENERATE PDF ---
+                            # Ensure you created 'templates/discipline/certificate_pdf.html'
+                            template_path = 'discipline/certificate_pdf.html' 
+                            
+                            context = {
+                                'case': case,
+                                'total_required_str': total_required_str,
+                            }
+                            
+                            html = render_to_string(template_path, context)
+                            buffer = BytesIO()
+                            
+                            # Generate PDF using pisa and link_callback for images
+                            pisa_status = pisa.CreatePDF(
+                                html, 
+                                dest=buffer, 
+                                link_callback=link_callback
+                            )
+
+                            if not pisa_status.err:
+                                # Attach PDF bytes
+                                email.attach('Certificate_of_Completion.pdf', buffer.getvalue(), 'application/pdf')
+                                email.send(fail_silently=False)
+                                messages.success(request, f"Service completed! Certificate sent to {student_email}.")
+                            else:
+                                logger.error(f"PDF Generation Error: {pisa_status.err}")
+                                messages.warning(request, "Service completed, but certificate generation failed.")
+
+                        else:
+                            messages.warning(request, "Service completed, but student has no email address.")
+
+                    except Exception as e:
+                        logger.error(f"Error sending completion email: {e}")
+                        messages.warning(request, "Service completed, but failed to send email.")
+
+                else:
+                    messages.success(request, "Community service record added successfully!")
+                
                 return redirect('student_hours', case_id=case.id)
         else:
             messages.error(request, "Please correct the errors below.")
     else:
-        # Show a blank form on GET request
         form = CommunityServiceForm()
 
-    # This 'existing_sessions' logic was in your view, but your template doesn't use it.
-    # I've left it in case you need it.
     existing_sessions = {}
     for r in records:
         date_str = r.service_date.isoformat()
         existing_sessions.setdefault(date_str, []).append(r.session)
 
-    # This context dictionary now provides ALL variables your template needs
     context = {
         'case': case,
         'form': form,
-        
-        # FIX: Your template loops 'sessions', but your view used 'records'.
-        # We now pass 'sessions' correctly.
         'sessions': records, 
-        
-        # Pass the new calculated values to the template
         'total_required_str': total_required_str,
         'total_rendered_str': total_rendered_str,
         'remaining_str': remaining_str,
         'is_completed': is_completed,
-        
         'existing_sessions': existing_sessions,
     }
     return render(request, 'discipline/student_hours_rendered.html', context)

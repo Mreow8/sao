@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Certificate of Completion</title>
+    <style>
+      @page {
+        size: letter;
+        margin: 1cm;
+      }
+      body {
+        font-family: "Helvetica", "Arial", sans-serif;
+        font-size: 12pt;
+        line-height: 1.5;
+      }
+      /* Header Layout Table */
+      .header-table {
+        width: 100%;
+        border: none;
+        margin-bottom: 10px;
+      }
+      .header-text {
+        text-align: center;
+        font-size: 10pt;
+      }
+      .logo {
+        width: 80px;
+        height: 80px;
+      }
+      .line {
+        border-bottom: 2px solid black;
+        margin-top: 10px;
+        margin-bottom: 30px;
+      }
+      /* Main Content */
+      .main-title {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+      h2 {
+        font-size: 18pt;
+        text-transform: uppercase;
+        margin-bottom: 40px;
+        text-align: center;
+      }
+      p {
+        text-align: justify;
+        margin-bottom: 20px;
+      }
+      .underline {
+        text-decoration: underline;
+        font-weight: bold;
+      }
+      /* Signatories */
+      .signatories {
+        margin-top: 80px;
+        width: 100%;
+      }
+      .signatory-block {
+        margin-top: 30px;
+      }
+      .footer {
+        position: fixed;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        text-align: center;
+        font-size: 9pt;
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <table class="header-table">
+      <tr>
+        <td width="15%" align="center">
+          <img src="{% static 'imgs/CTU_logo.png' %}" class="logo" />
+        </td>
+        <td width="70%" align="center" class="header-text">
+          <div>REPUBLIC OF THE PHILIPPINES</div>
+          <div style="font-weight: bold; font-size: 12pt">
+            CEBU TECHNOLOGICAL UNIVERSITY
+          </div>
+          <div style="font-weight: bold">ARGAO CAMPUS</div>
+          <div>Ed Kintanar Street, Lamacan, Argao, Cebu</div>
+          <div>Website: https://www.argao.ctu.edu.ph</div>
+        </td>
+        <td width="15%" align="center">
+          <img
+            src="{% static 'studentorg/css/BagongPilipinaslogo.png' %}"
+            class="logo"
+          />
+        </td>
+      </tr>
+    </table>
+
+    <div class="line"></div>
+
+    <div class="main-title">
+      <div>STUDENT AFFAIRS OFFICE</div>
+      <div>STUDENT DISCIPLINE UNIT</div>
+    </div>
+
+    <h2>CERTIFICATE OF COMPLETION</h2>
+
+    <p><strong>To Whom It May Concern:</strong></p>
+
+    <p>
+      This is to certify that
+      <span class="underline"
+        >{{ case.student.firstname }} {{ case.student.lastname }}</span
+      >, a student of
+      <strong>Cebu Technological University - Argao Campus</strong> enrolled in
+      the program <span class="underline">{{ case.student.degree }}</span>, has
+      successfully completed the required community service hours.
+    </p>
+
+    <p>
+      The student has satisfactorily rendered a total of
+      <span class="underline">{{ total_required_str }}</span> as part of the
+      requirements for the case regarding
+      <strong>"{{ case.offense_type }}"</strong>
+      reported on {{ case.date_reported|date:"F d, Y" }}.
+    </p>
+
+    <p>
+      This certification is issued on
+      <span class="underline">{% now "F d, Y" %}</span> for record and clearance
+      purposes.
+    </p>
+
+    <div class="signatories">
+      <div class="signatory-block">
+        <strong>EVANGELINE RELLIN</strong><br />
+        Director, Student Life
+      </div>
+    </div>
+
+    <div class="footer">
+      <img src="{% static 'studentorg/css/footer.png' %}" width="100%" />
+    </div>
+  </body>
+</html>

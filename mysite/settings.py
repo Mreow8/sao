@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'mainpage.middleware.AlumniStatusMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'mainpage.middleware.RoleRestrictionMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -66,7 +67,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,6 +77,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'mainpage.context_processors.alumni_status_context',
                 'mainpage.context_processors.scholarship_status',
+                    'mainpage.context_processors.theme_selection',
+
             ],
         },
     },

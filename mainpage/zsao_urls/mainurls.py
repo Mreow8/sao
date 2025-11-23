@@ -8,7 +8,7 @@ urlpatterns = [
     path('captcha/', include('captcha.urls')),
 
            path('assign-role/', views.assign_role, name='assign_role'), 
-           
+           path('change-password/', views.change_password, name='password_change'),
   path("search/students/", views.search_students, name="search_students"),
 path('dashboard/student-life/', views.student_life_dashboard, name='student_life_dashboard'),
     path('dashboard/scholarship/', views.scholarship_dashboard, name='scholarship_dashboard'),

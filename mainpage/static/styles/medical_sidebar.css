@@ -1,0 +1,131 @@
+/* Sub-Menus Container */
+.seperate ul li ul {
+  list-style: none;
+  padding: 0;
+  background-color: #1c2b41; /* Darker background for nested items */
+  /* If you want the menu to always show (no JS toggle), remove 'display: none;' */
+  display: block; /* Force show for your admin dashboard structure */
+}
+
+/* Sub-Menu Links (Patient Profile, etc.) */
+.seperate ul li ul li a {
+  /* Adjusted padding from 48px to 30px for less indentation */
+  padding: 12px 24px 12px 30px;
+  font-size: 0.9rem;
+  color: #cbd5e0;
+  font-weight: 500;
+}
+
+.seperate ul li ul li a:hover {
+  background-color: #2a4365;
+  color: #fff;
+}
+
+/* Active Link State for Nested Items */
+.seperate ul li ul li a.active-link {
+  background-color: #2a4365;
+  color: #fff;
+  border-left: none; /* Removed the strong left border */
+}
+/* =========================================
+   1. LAYOUT (Fixed Sidebar & Content Area)
+   ========================================= */
+.left-side {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 260px; /* Sidebar width */
+  background-color: #1a365d; /* Dark blue theme */
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.right-side {
+  margin-left: 260px; /* Matches sidebar width */
+  width: calc(100% - 260px);
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+  min-height: 100vh;
+}
+
+/* =========================================
+   2. SIDEBAR BRAND & NAVIGATION BASE
+   ========================================= */
+/* Brand / Logo Area */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #2a4365;
+}
+
+.sidebar-brand .logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+}
+
+.sidebar-brand .brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.sidebar-brand .brand-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.sidebar-brand .brand-subtitle {
+  font-size: 0.875rem;
+  color: #a0aec0;
+}
+
+/* Base Navigation Lists */
+.seperate ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-top: 1rem;
+}
+
+/* Base Link Styling (Applies to main categories like "MEDICAL") */
+.seperate ul li a {
+  display: block;
+  padding: 14px 24px;
+  color: #cbd5e0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.seperate ul li a:hover {
+  background-color: #2a4365;
+  color: #fff;
+}
+
+/* Active State for the main category link (e.g., the "MEDICAL" heading) */
+.seperate > ul > li > a.active {
+  background-color: #2c5282;
+  color: #fff;
+}
+
+/* Caret Icon Rotation (for the dropdown arrow) */
+.seperate ul li a .fas {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.seperate ul li a.active .fas.rotate {
+  transform: translateY(-50%) rotate(-90deg);
+}

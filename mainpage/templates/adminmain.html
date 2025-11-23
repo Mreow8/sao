@@ -138,6 +138,8 @@
             </a>
             <ul class="student_disc-show {% if current_url in section_urls %}active{% endif %}">
               <li><a href="{% url 'case_profile' %}" class="{% if current_url == 'case_profile' %}active-link{% endif %}">Case Profile</a></li>
+              <li><a href="{% url 'case_list' %}" class="{% if current_url == 'case_list' %}active-link{% endif %}">Case List</a></li>
+ 
             </ul>
           </li>
           {% endwith %}
@@ -228,44 +230,24 @@
           </li>
           {% endwith %}
           {% endif %}
-
-          {% if user.role == 'clinic_admin' or user.role == 'superadmin' %}
-          {% with section_urls='admin_dashboard,viewrequest,medtracker,emergency_asst,pwdlist,dentalrequest,prescription,mental_health' %}
-            {% if user.role == 'clinic_admin' %}
-            <li>
-              <a class="medical-btn active" style="pointer-events: none; cursor: default;">MEDICAL</a>
-              <ul class="medical-show active">
-                <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
-                <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
-                <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
-                <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
-                <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
-                <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
-                <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
-                <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
-                <br /><br /><br />
-              </ul>
-            </li>
-            {% else %}
-            <li>
-              <a href="#" class="medical-btn {% if current_url in section_urls %}active{% endif %}">MEDICAL
-                <span class="fas fa-caret-down ninth {% if current_url in section_urls %}rotate{% endif %}"></span>
-              </a>
-              <ul class="medical-show {% if current_url in section_urls %}active{% endif %}">
-                <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
-                <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
-                <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
-                <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
-                <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
-                <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
-                <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
-                <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
-                <br /><br /><br />
-              </ul>
-            </li>
-            {% endif %}
+{% with section_urls='admin_dashboard,viewrequest,medtracker,emergency_asst,pwdlist,dentalrequest,prescription,mental_health' %}
+          <li>
+            <a href="#" class="medical-btn {% if current_url in section_urls %}active{% endif %}">MEDICAL
+              <span class="fas fa-caret-down ninth {% if current_url in section_urls %}rotate{% endif %}"></span>
+            </a>
+            <ul class="medical-show {% if current_url in section_urls %}active{% endif %}">
+              <li><a href="{% url 'admin_dashboard'%}" class="{% if current_url == 'admin_dashboard' %}active-link{% endif %}">Patient Profile </a></li>
+              <li><a href="{% url 'viewrequest' %}" class="{% if current_url == 'viewrequest' %}active-link{% endif %}">View Requests </a></li>
+              <li><a href="{% url 'medtracker' %}" class="{% if current_url == 'medtracker' %}active-link{% endif %}">Medical Requirements Tracker</a></li>
+              <li><a href="{% url 'emergency_asst' %}" class="{% if current_url == 'emergency_asst' %}active-link{% endif %}">Emergency Health Assistance</a></li>
+              <li><a href="{% url 'pwdlist' %}" class="{% if current_url == 'pwdlist' %}active-link{% endif %}">PWD Profile</a></li>
+              <li><a href="{% url 'dentalrequest' %}" class="{% if current_url == 'dentalrequest' %}active-link{% endif %}">Dental Services</a></li>
+              <li><a href="{% url 'prescription' %}" class="{% if current_url == 'prescription' %}active-link{% endif %}">Prescription Issuance</a></li>
+              <li><a href="{% url 'mental_health' %}" class="{% if current_url == 'mental_health' %}active-link{% endif %}">Mental Health Services</a></li>
+              <br /><br /><br />
+            </ul>
+          </li>
           {% endwith %}
-          {% endif %}
         </ul>
         <div class="mt-auto mb-4">
             <a href="{% url 'transaction_report_view' %}" class="btn btn-primary w-full text-center flex items-center justify-center gap-2">

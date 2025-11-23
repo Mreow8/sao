@@ -3,67 +3,75 @@
 {% load static %}
 
 {% block bodycontent %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="stylesheet" href="{% static 'styles/discipline/case_list.css' %}" />
 
-<link
-    rel="stylesheet"
-    href="{% static 'styles/discipline/case_list.css' %}"
-/>
 <style>
-    /* --- SweetAlert2 Modal Styling --- */
+    /* --- General Buttons --- */
+    .editBtn {
+        text-decoration: none;
+        color: #2a4365;
+        font-size: 1.3rem;
+        transition: transform 0.2s, color 0.2s;
+        display: inline-block;
+    }
 
-/* Main modal container */
-.swal2-popup {
-  border-radius: 12px;
-  font-family: Arial, sans-serif;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
+    .editBtn:hover {
+        color: #1e3048;
+        transform: scale(1.1);
+    }
 
-/* Title text */
-.swal2-title {
-  color: #2a4365; /* Using your requested color */
-  font-weight: 600;
-  font-size: 1.6em;
-}
+    /* --- SweetAlert2 Custom Styling --- */
+    .swal2-popup {
+        border-radius: 12px;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
 
-/* The <select> dropdown */
-.swal2-select {
-  width: 80%; /* Make it wide, but not 100% */
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding: 12px;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    .swal2-title {
+        color: #2a4365;
+        font-weight: 600;
+        font-size: 1.6em;
+    }
 
-/* "Update" button (Confirm) */
-.swal2-confirm {
-  /* Use !important to override default inline styles from the library */
-  background-color: #2a4365 !important; 
-  border-radius: 5px;
-  font-weight: 600;
-  transition: background-color 0.2s;
-  padding: 10px 24px;
-}
+    /* Merged .swal2-select styles */
+    .swal2-select {
+        display: block !important;
+        width: 80% !important;
+        margin: 20px auto !important;
+        padding: 12px;
+        font-size: 1em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center !important;
+        text-align-last: center !important;
+    }
 
-.swal2-confirm:hover {
-  background-color: #1e3048 !important; /* A darker shade for hover */
-}
+    .swal2-confirm {
+        background-color: #2a4365 !important;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        padding: 10px 24px;
+    }
 
-/* "Cancel" button */
-.swal2-cancel {
-  background-color: #6c757d !important; /* A standard gray */
-  border-radius: 5px;
-  font-weight: 600;
-  transition: background-color 0.2s;
-  padding: 10px 24px;
-}
+    .swal2-confirm:hover {
+        background-color: #1e3048 !important;
+    }
 
-.swal2-cancel:hover {
-  background-color: #5a6268 !important; /* Darker gray for hover */
-}
-    
+    .swal2-cancel {
+        background-color: #6c757d !important;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        padding: 10px 24px;
+    }
+
+    .swal2-cancel:hover {
+        background-color: #5a6268 !important;
+    }
+
     /* --- Sorting --- */
     th.sortable a {
         text-decoration: none;
@@ -82,16 +90,27 @@
     th.sortable a.sorted.desc::after {
         content: ' ▼';
     }
-    
-    /* --- Search Bar --- */
+
+    /* --- Search & Filter Controls --- */
     .filter-controls {
         display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
     }
-    .filter-controls .search { flex-grow: 1; display: flex; }
-    .filter-controls .search input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; }
+    .filter-controls .search {
+        flex-grow: 1;
+        display: flex;
+        min-width: 250px;
+    }
+    .filter-controls .search input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px 0 0 4px;
+    }
     .filter-controls .search button {
         padding: 8px 12px;
         border: none;
@@ -100,25 +119,57 @@
         cursor: pointer;
         border-radius: 0 4px 4px 0;
     }
+    .filter-controls .filter-select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #fff;
+        height: 38px;
+        flex-basis: 180px;
+        flex-grow: 1;
+    }
 
-    /* --- Styles for Edit Modal --- */
+    /* --- Edit Modal Styles --- */
+    #editModal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 700px;
+        border-radius: 8px;
+        position: relative;
+    }
     #editModal h4 {
         margin-top: 0;
         padding-bottom: 10px;
         border-bottom: 1px solid #eee;
     }
     #editFormFields {
-        max-height: 65vh; /* Make form scrollable */
+        max-height: 65vh;
         overflow-y: auto;
         padding: 10px;
     }
     #editFormFields .form-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Two columns */
+        grid-template-columns: 1fr 1fr;
         gap: 15px 20px;
     }
     #editFormFields .form-grid .full-width {
-        grid-column: 1 / -1; /* Span both columns */
+        grid-column: 1 / -1;
     }
     #editFormFields label {
         font-weight: bold;
@@ -143,10 +194,9 @@
         resize: vertical;
     }
     .dynamic-field {
-        display: none; /* JS will change this to 'block' */
+        display: none;
         margin-top: 10px;
     }
-    /* This is the class for error lists in edit_case.html */
     .error-list {
         color: #cc0000;
         font-size: 0.85em;
@@ -161,7 +211,7 @@
         grid-column: 1 / -1;
     }
     #editFormFields .submit-btn {
-        background-color: #28a745;
+        background-color: #2c5282;
         color: white;
         padding: 10px 15px;
         border: none;
@@ -170,37 +220,7 @@
         font-size: 16px;
     }
     #editFormFields .submit-btn:hover {
-        background-color: #218838;
-    }
-    /* --- Search Bar --- */
-    .filter-controls {
-        display: flex;
-        flex-wrap: wrap; /* Allow wrapping on small screens */
-        gap: 10px; /* Add space between filter items */
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .filter-controls .search { flex-grow: 1; display: flex; min-width: 250px; }
-    .filter-controls .search input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; }
-    .filter-controls .search button {
-        padding: 8px 12px;
-        border: none;
-        background-color: #2a4365;
-        color: white;
-        cursor: pointer;
-        border-radius: 0 4px 4px 0;
-    }
-
-    /* --- NEW CSS FOR DROPDOWNS --- */
-    .filter-controls .filter-select {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: #fff;
-        height: 38px; /* Match search bar height */
-        flex-basis: 180px; /* Give a base width */
-        flex-grow: 1; /* Allow to grow */
+        background-color: #4178bd;
     }
 </style>
 
@@ -214,88 +234,66 @@
 
 <div class="container">
 
- <form method="GET" action="{% url 'case_list' %}">
+    <form method="GET" action="{% url 'case_list' %}">
         <div class="filter-controls">
-                        <div class="search">
-                <input
-                    type="text"
-                    name="search"
-                    placeholder="Search by Student Name, ID, or Offense..."
-                    value="{{ search_query }}"
-                />
+            <div class="search">
+                <input type="text" name="search" placeholder="Search by Student Name, ID, or Offense..."
+                    value="{{ search_query }}" />
                 <button type="submit">Search</button>
             </div>
-            
-            <select name="status_filter" class="filter-select" onchange="this.form.submit()">
 
+            <select name="status_filter" class="filter-select" onchange="this.form.submit()">
                 <option value="">All Statuses</option>
                 {% for status in status_choices %}
-                    <option value="{{ status }}" {% if status == current_status_filter %}selected{% endif %}>
-                        {{ status }}
-                    </option>
+                <option value="{{ status }}" {% if status == current_status_filter %}selected{% endif %}>
+                    {{ status }}
+                </option>
                 {% endfor %}
             </select>
 
             <select name="offense_filter" class="filter-select" onchange="this.form.submit()">
                 <option value="">All Offenses</option>
                 {% for offense in offense_choices %}
-                    <option value="{{ offense }}" {% if offense == current_offense_filter %}selected{% endif %}>
-                        {{ offense }}
-                    </option>
+                <option value="{{ offense }}" {% if offense == current_offense_filter %}selected{% endif %}>
+                    {{ offense }}
+                </option>
                 {% endfor %}
             </select>
-
-
         </div>
         <input type="hidden" name="sort" value="{{ current_sort }}">
         <input type="hidden" name="order" value="{{ current_order }}">
     </form>
+
     <div style="overflow-x: auto">
         <table>
             <thead>
                 <tr>
                     {% with sort=current_sort order=current_order params=sort_params %}
                     <th class="sortable">
-                        {% if sort == 'student' %}
-                            <a href="?sort=student&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                               class="sorted {% if order == 'desc' %}desc{% endif %}">
-                                Student
-                            </a>
-                        {% else %}
-                            <a href="?sort=student&order=asc{{ params|safe }}">Student</a>
-                        {% endif %}
+                        <a href="?sort=student&order={% if sort == 'student' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                           class="{% if sort == 'student' %}sorted {{ order }}{% endif %}">
+                            Student
+                        </a>
                     </th>
                     <th class="sortable">
-                        {% if sort == 'offense' %}
-                            <a href="?sort=offense&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                               class="sorted {% if order == 'desc' %}desc{% endif %}">
-                                Offense
-                            </a>
-                        {% else %}
-                            <a href="?sort=offense&order=asc{{ params|safe }}">Offense</a>
-                        {% endif %}
+                        <a href="?sort=offense&order={% if sort == 'offense' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                           class="{% if sort == 'offense' %}sorted {{ order }}{% endif %}">
+                            Offense
+                        </a>
                     </th>
                     <th class="sortable">
-                        {% if sort == 'date' %}
-                            <a href="?sort=date&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                               class="sorted {% if order == 'desc' %}desc{% endif %}">
-                                Date
-                            </a>
-                        {% else %}
-                            <a href="?sort=date&order=asc{{ params|safe }}">Date</a>
-                        {% endif %}
+                        <a href="?sort=date&order={% if sort == 'date' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                           class="{% if sort == 'date' %}sorted {{ order }}{% endif %}">
+                            Date
+                        </a>
                     </th>
                     <th class="sortable">
-                        {% if sort == 'status' %}
-                            <a href="?sort=status&order={% if order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                               class="sorted {% if order == 'desc' %}desc{% endif %}">
-                                Status
-                            </a>
-                        {% else %}
-                            <a href="?sort=status&order=asc{{ params|safe }}">Status</a>
-                        {% endif %}
+                        <a href="?sort=status&order={% if sort == 'status' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
+                           class="{% if sort == 'status' %}sorted {{ order }}{% endif %}">
+                            Status
+                        </a>
                     </th>
-                    <th>Action Taken</th> 
+                    <th>Action Taken</th>
                     <th>Actions</th>
                     {% endwith %}
                 </tr>
@@ -312,62 +310,45 @@
                         {% endif %}
                     </td>
                     <td>{{ case.date_reported|date:"Y-m-d" }}</td>
-                   <td class="status-clickable" data-id="{{ case.id }}" data-status="{{ case.status }}" style="cursor: pointer; min-width: 160px;">
-    {% if case.status == 'Pending' %}
-        <span class="status-badge status-pending">Pending Review</span>
-    {% elif case.status == 'Under Investigation' %}
-        <span class="status-badge status-investigating">Under Investigation</span>
-    {% elif case.status == 'Resolved' %}
-        <span class="status-badge status-resolved">Resolved/Closed</span>
-    {% else %}
-        <span class="status-badge status-default">{{ case.status }}</span>
-    {% endif %}
-</td>
                     
+                    <td class="status-clickable" data-id="{{ case.id }}" data-status="{{ case.status }}"
+                        style="cursor: pointer; min-width: 160px;">
+                        {% if case.status == 'Pending' %}
+                            <span class="status-badge status-pending">Pending Review</span>
+                        {% elif case.status == 'Under Investigation' %}
+                            <span class="status-badge status-investigating">Under Investigation</span>
+                        {% elif case.status == 'Resolved' %}
+                            <span class="status-badge status-resolved">Resolved/Closed</span>
+                        {% else %}
+                            <span class="status-badge status-default">{{ case.status }}</span>
+                        {% endif %}
+                    </td>
+
                     <td>
-                        {% if user.is_authenticated %} 
-                            {% if user.role == 'superadmin' or user.role == 'guard' %} 
+                        {% if user.is_authenticated %}
+                            {% if user.role == 'superadmin' or user.role == 'guard' %}
                                 {% if case.action_taken == 'Counseling' %}
-                                <a href="{% url 'counseling_form' case.id %}"
-                                    >{{ case.action_taken }}</a
-                                >
+                                    <a href="{% url 'counseling_form' case.id %}">{{ case.action_taken }}</a>
                                 {% elif case.action_taken == 'Suspension' %}
-                                <a
-                                    href="#"
-                                    class="suspensionBtn"
-                                    data-id="{{ case.id }}"
-                                    data-duration="{{ case.suspension_duration }}"
-                                >
-                                    Suspension
-                                </a>
+                                    <a href="#" class="suspensionBtn" data-id="{{ case.id }}"
+                                        data-duration="{{ case.suspension_duration|default:'' }}">
+                                        Suspension
+                                    </a>
                                 {% elif case.action_taken == 'Community Service' %}
-                                <a href="{% url 'student_hours' case.id %}"
-                                    >{{ case.action_taken }}</a
-                                >
+                                    <a href="{% url 'student_hours' case.id %}">{{ case.action_taken }}</a>
                                 {% else %}
                                     {{ case.action_taken }}
                                 {% endif %}
-                            {% else %} 
-                                {{ case.action_taken }} 
-                            {% endif %} 
+                            {% else %}
+                                {{ case.action_taken }}
+                            {% endif %}
                         {% endif %}
                     </td>
                     <td>
                         {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
-                        <a
-                            href="#"
-                            class="editBtn"
-                            data-id="{{ case.id }}"
-                            
-                            >Edit</a
-                        >
-                        <!-- <a
-                            href="#"
-                            class="deleteBtn"
-                            data-id="{{ case.id }}"
-                            style="color: red; margin-left: 10px;"
-                            >Delete</a
-                        > -->
+                            <a href="#" class="editBtn" data-id="{{ case.id }}" title="Edit Case">
+                                <i class="fas fa-edit"></i>
+                            </a>
                         {% endif %}
                     </td>
                 </tr>
@@ -379,39 +360,37 @@
             </tbody>
         </table>
     </div>
-  {% if page_obj %}
-    {% with query_params="&sort="|add:current_sort %}
-        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    {% endwith %}
-{% endif %}
+
+    {% if page_obj %}
+        {% with query_params="&sort="|add:current_sort %}
+            {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+        {% endwith %}
+    {% endif %}
 
 </div>
 
-<div id="editModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.4); justify-content:center; align-items:center;">
-    <div style="background-color:#fefefe; margin:auto; padding:20px; border:1px solid #888; width:80%; max-width:700px; border-radius: 8px; position:relative;">
+<div id="editModal">
+    <div class="modal-content">
         <span id="closeEdit" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        
+
         <form id="editForm" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            
             <h4>Edit Case</h4>
             <div id="editFormFields">Loading...</div>
         </form>
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        
+
         // --- Function to handle dynamic field display ---
         function initializeDynamicFields(container) {
             const scope = container || document;
 
             // Offense Type Logic
-            // FIX: Use Django's 'id_...'
             const offenseTypeSelect = scope.querySelector("#id_offense_type");
             const customOffenseContainer = scope.querySelector("#custom_offense_container");
 
@@ -424,14 +403,13 @@
                 offenseTypeSelect.addEventListener("change", toggleCustomOffense);
                 toggleCustomOffense();
             }
-            
+
             // Action Taken Logic
-            // FIX: Use Django's 'id_...'
             const actionTakenSelect = scope.querySelector("#id_action_taken");
             const communityHoursContainer = scope.querySelector("#community_service_hours_container");
             const suspensionDurationContainer = scope.querySelector("#suspension_duration_container");
             const customActionContainer = scope.querySelector("#custom_action_container");
-            
+
             function toggleActionFields() {
                 const value = actionTakenSelect ? actionTakenSelect.value : '';
 
@@ -447,13 +425,13 @@
                     customActionContainer.style.display = "block";
                 }
             }
-            
+
             if (actionTakenSelect) {
                 actionTakenSelect.addEventListener("change", toggleActionFields);
                 toggleActionFields();
             }
         }
-        
+
         // --- Edit Modal Logic ---
         const editModal = document.getElementById("editModal");
         const editForm = document.getElementById("editForm");
@@ -464,17 +442,15 @@
             btn.addEventListener("click", function (e) {
                 e.preventDefault();
                 const caseId = this.dataset.id;
-                
-                // This URL must match your urls.py
-                fetch(`/discipline/cases/edit/${caseId}/`) 
+
+                fetch(`/discipline/cases/edit/${caseId}/`)
                     .then((res) => res.text())
                     .then((html) => {
                         editFormFields.innerHTML = html;
                         editForm.action = `/discipline/cases/edit/${caseId}/`;
-                        editModal.style.display = "flex";
+                        editModal.style.display = "flex"; // Changed from flex to match CSS, but flex centers it
                         
-                        // Initialize dynamic fields *inside the modal*
-                        initializeDynamicFields(editModal); 
+                        initializeDynamicFields(editModal);
                     })
                     .catch((err) => console.error("Error loading edit form:", err));
             });
@@ -493,9 +469,13 @@
 
         // --- Suspension Button Logic ---
         document.querySelectorAll(".suspensionBtn").forEach((btn) => {
-            btn.addEventListener("click", function () {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault(); // Prevent default anchor behavior
                 const caseId = this.dataset.id;
-                const currentDuration = this.dataset.duration || "";
+                const currentDurationString = this.dataset.duration || "";
+                
+                // Extract number from "5 days" or use empty string
+                const currentDurationValue = currentDurationString.split(' ')[0] || '';
 
                 Swal.fire({
                     title: "Set Suspension Duration",
@@ -507,14 +487,14 @@
                         <input type="text" id="suspensionValue" 
                             class="swal2-input" 
                             placeholder="Enter value (e.g., 5)" 
-                            value="${currentDuration.split(' ')[0] || ''}">
+                            value="${currentDurationValue}">
                     `,
                     confirmButtonText: "Save",
                     showCancelButton: true,
                     preConfirm: () => {
                         const type = document.getElementById("suspensionType").value;
                         const value = document.getElementById("suspensionValue").value.trim();
-                        
+
                         if (!value) {
                             Swal.showValidationMessage("Please enter a duration value");
                             return false;
@@ -523,7 +503,6 @@
                     },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // FIX: Corrected URL
                         fetch(`/discipline/update-suspension/${caseId}/`, {
                             method: "POST",
                             headers: {
@@ -534,9 +513,9 @@
                         })
                             .then((res) => res.json())
                             .then((data) => {
-                                if(data.success) {
+                                if (data.success) {
                                     Swal.fire("Updated!", "Suspension updated.", "success")
-                                    .then(() => location.reload());
+                                        .then(() => location.reload());
                                 } else {
                                     Swal.fire("Error", data.error || "Something went wrong", "error");
                                 }
@@ -549,49 +528,12 @@
             });
         });
 
-        // --- Delete Button Logic ---
-        document.querySelectorAll(".deleteBtn").forEach((btn) => {
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                const caseId = this.dataset.id;
-
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "This action cannot be undone.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Yes, delete it!",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // This URL must match your urls.py
-                        fetch(`/discipline/cases/delete/${caseId}/`, {
-                            method: "POST",
-                            headers: {
-                                "X-CSRFToken": "{{ csrf_token }}",
-                            },
-                        }).then((res) => {
-                            if (res.ok) {
-                                Swal.fire(
-                                    "Deleted!",
-                                    "The case has been deleted.",
-                                    "success"
-                                ).then(() => location.reload());
-                            } else {
-                                Swal.fire("Error", "Could not delete case.", "error");
-                            }
-                        });
-                    }
-                });
-            });
-        });
+        // --- Status Update Logic ---
         document.querySelectorAll(".status-clickable").forEach((cell) => {
             cell.addEventListener("click", function () {
                 const caseId = this.dataset.id;
                 const currentStatus = this.dataset.status;
 
-                // These are the values your MODEL uses
                 const statusModelValues = {
                     'Pending': 'Pending Review',
                     'Under Investigation': 'Under Investigation',
@@ -602,10 +544,9 @@
                     title: "Update Case Status",
                     input: "select",
                     inputOptions: statusModelValues,
-                    inputValue: currentStatus, // Pre-selects the current status
+                    inputValue: currentStatus,
                     confirmButtonText: "Update",
                     showCancelButton: true,
-                    
                     preConfirm: (newStatus) => {
                         if (newStatus === currentStatus) {
                             Swal.showValidationMessage('You did not change the status.');
@@ -613,12 +554,10 @@
                         }
                         return newStatus;
                     },
-
                 }).then((result) => {
                     if (result.isConfirmed) {
                         const newStatusValue = result.value;
-                        
-                        // This URL must match your urls.py
+
                         fetch(`/discipline/update-status/${caseId}/`, {
                             method: "POST",
                             headers: {
@@ -627,18 +566,18 @@
                             },
                             body: JSON.stringify({ status: newStatusValue }),
                         })
-                        .then((res) => res.json())
-                        .then((data) => {
-                            if (data.success) {
-                                Swal.fire("Updated!", "Status has been updated.", "success")
-                                .then(() => location.reload()); // Reload to show change
-                            } else {
-                                Swal.fire("Error", data.error || "Something went wrong", "error");
-                            }
-                        })
-                        .catch((err) =>
-                            Swal.fire("Error", "Something went wrong", "error")
-                        );
+                            .then((res) => res.json())
+                            .then((data) => {
+                                if (data.success) {
+                                    Swal.fire("Updated!", "Status has been updated.", "success")
+                                        .then(() => location.reload());
+                                } else {
+                                    Swal.fire("Error", data.error || "Something went wrong", "error");
+                                }
+                            })
+                            .catch((err) =>
+                                Swal.fire("Error", "Something went wrong", "error")
+                            );
                     }
                 });
             });

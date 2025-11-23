@@ -9,7 +9,8 @@
     rel="stylesheet"
     href="{% static 'styles/discipline/case_profile.css' %}"
 />
-<style>.top-button-group {
+<style>
+.top-button-group {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -21,18 +22,15 @@
 
 .top-button-group .button-container {
   margin: 0;
-}</style>
+}
+</style>
 <div class="sub-title">
     <h4>STUDENT DISCIPLINE</h4>
     <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
     <p class="certxt">&gt; Student Case Profile</p>
 </div>
 <hr>
-  <div class="top-button-group">  <a href="{% url 'case_list' %}" 
-   style="display: inline-block; padding: 10px 20px; background-color: #2c5282; color: white; text-decoration: none; border-radius: 8px; ">
-    View Case List
-</a></div>
-<hr>
+ 
 <div class="container">
   
     {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
@@ -119,6 +117,7 @@
                     <option value="{{ value }}">{{ label }}</option>
                 {% endfor %}
             </select>
+
             <input
                 type="number"
                 id="community_service_hours"
@@ -126,13 +125,30 @@
                 placeholder="Number of Hours"
                 style="display: none"
             />
-            <input
-                type="text"
-                id="suspension_duration"
-                name="suspension_duration"
-                placeholder="Number of Days/Semester"
-                style="display: none"
-            />
+
+            <div id="suspension_fields" style="display: none; margin-top: 0.5rem; background-color: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <label style="font-size: 0.8rem; color: #718096; margin-bottom: 5px; display:block;">Suspension Details</label>
+                
+                <input
+                    type="text"
+                    id="suspension_duration"
+                    name="suspension_duration"
+                    placeholder="Duration Description (e.g., 1 Week)"
+                    style="margin-bottom: 10px;"
+                />
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label for="suspension_start_date" style="font-size: 0.75rem; color: #4a5568;">Start Date</label>
+                        <input type="date" id="suspension_start_date" name="suspension_start_date">
+                    </div>
+                    <div>
+                        <label for="suspension_end_date" style="font-size: 0.75rem; color: #4a5568;">End Date</label>
+                        <input type="date" id="suspension_end_date" name="suspension_end_date">
+                    </div>
+                </div>
+            </div>
+
             <input
                 type="text"
                 id="custom_action"
@@ -187,20 +203,24 @@
             // Action Taken Logic (Community Service, Suspension, Custom Action)
             const actionTakenSelect = document.getElementById("id_action_taken");
             const communityHoursInput = document.getElementById("community_service_hours");
-            const suspensionDurationInput = document.getElementById("suspension_duration");
+            
+            // Updated Suspension Logic
+            const suspensionFields = document.getElementById("suspension_fields");
             const customActionInput = document.getElementById("custom_action");
             
             function toggleActionFields() {
                 const value = actionTakenSelect ? actionTakenSelect.value : '';
 
+                // Hide all dynamic sections first
                 if (communityHoursInput) communityHoursInput.style.display = "none";
-                if (suspensionDurationInput) suspensionDurationInput.style.display = "none";
+                if (suspensionFields) suspensionFields.style.display = "none";
                 if (customActionInput) customActionInput.style.display = "none";
 
+                // Show based on selection
                 if (value === "Community Service" && communityHoursInput) {
                     communityHoursInput.style.display = "block";
-                } else if (value === "Suspension" && suspensionDurationInput) {
-                    suspensionDurationInput.style.display = "block";
+                } else if (value === "Suspension" && suspensionFields) {
+                    suspensionFields.style.display = "block";
                 } else if (value === "Others" && customActionInput) {
                     customActionInput.style.display = "block";
                 }

@@ -30,3 +30,14 @@ def scholarship_status(request):
         # If they aren't a student (which they should be if not staff), 
         # they can't be a scholar
         return {'is_scholar': False}
+    
+def theme_selection(request):
+  
+    template = 'adminmain.html'
+    
+    if request.user.is_authenticated and hasattr(request.user, 'role'):
+        # If it is the Clinic Admin, switch to the medical layout
+        if request.user.role == 'clinic_admin':
+            template = 'clinic_admin.html'
+            
+    return {'base_template': template}

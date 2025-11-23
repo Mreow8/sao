@@ -4,6 +4,7 @@ from ..models import CaseProfile
 # mainpage/forms.py
 from django import forms
 from ..models import CustomUser,studentInfo
+from datetime import time
 
 class RoleAssignForm(forms.ModelForm):
     class Meta:
@@ -85,16 +86,68 @@ from django import forms
 from ..models import CommunityServiceTracker
 
 
-
 class CommunityServiceForm(forms.ModelForm):
     class Meta:
         model = CommunityServiceTracker
-        fields = ['session', 'service_date', 'time_in', 'time_out',  'remarks']
+        fields = ['session', 'service_date', 'time_in', 'time_out', 'remarks']
+        
         widgets = {
-            'session': forms.Select(attrs={'class': 'form-control'}),
-            'service_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-         'time_in': forms.TimeInput(attrs={'type':'time','id':'id_time_in','step':900}),
-    'time_out': forms.TimeInput(attrs={'type':'time','id':'id_time_out','step':900}),
-           
+            'session': forms.Select(attrs={
+                'class': 'form-control', 
+                'id': 'id_session' 
+            }),
+            'service_date': forms.DateInput(attrs={
+                'type': 'date', 
+                'class': 'form-control'
+            }),
+            'time_in': forms.TimeInput(attrs={
+                'type': 'time', 
+                'class': 'form-control', 
+                'step': 60,  # Allows any minute
+                'id': 'id_time_in' 
+            }),
+            'time_out': forms.TimeInput(attrs={
+                'type': 'time', 
+                'class': 'form-control', 
+                'step': 60, 
+                'id': 'id_time_out'
+            }),
             'remarks': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        session = cleaned_data.get('session')
+        time_in = cleaned_data.get('time_in')
+        time_out = cleaned_data.get('time_out')
+
+        if not (session and time_in and time_out):
+            return cleaned_data
+
+        # --- Define Time Limits ---
+        morning_start = time(7, 0)    # 7:00 AM
+        morning_end   = time(12, 5)   # 12:05 PM
+        
+        afternoon_start = time(12, 30) # 12:30 PM
+        afternoon_end   = time(18, 0)  # 6:00 PM
+
+        # --- UPDATED LOGIC TO MATCH MODEL (LOWERCASE) ---
+        
+        # Check against 'morning' (lowercase) because that is what is in your SESSION_CHOICES
+        if session == 'morning':
+            if not (morning_start <= time_in <= morning_end):
+                self.add_error('time_in', "Morning inputs must be between 7:00 AM and 12:05 PM.")
+            if not (morning_start <= time_out <= morning_end):
+                self.add_error('time_out', "Morning inputs must be between 7:00 AM and 12:05 PM.")
+
+        # Check against 'afternoon' (lowercase)
+        elif session == 'afternoon':
+            if not (afternoon_start <= time_in <= afternoon_end):
+                self.add_error('time_in', "Afternoon inputs must be between 12:30 PM and 6:00 PM.")
+            if not (afternoon_start <= time_out <= afternoon_end):
+                self.add_error('time_out', "Afternoon inputs must be between 12:30 PM and 6:00 PM.")
+
+        if time_in >= time_out:
+            self.add_error('time_out', "Time Out must be later than Time In.")
+
+        return cleaned_data
