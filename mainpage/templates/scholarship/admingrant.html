@@ -1,69 +1,281 @@
 {% extends base_template %}
 {% load static %} 
+
 {% block bodycontent %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
 <link rel="stylesheet" href="{% static 'styles/scholarship/admingrant.css' %}">
-  <div class="sub-title">
-    <h4>SCHOLARSHIP</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home ></a></p>
-    <p class="certxt" ><a href="{% url 'admin_req' %}">Scholarship Submission Tracker</a></p>
 
+<style>
+    /* --- Modern Dashboard Styling --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #1cc88a;
+        --warning-color: #f6c23e;
+        --danger-color: #e74a3b;
+        --dark-text: #5a5c69;
+        --light-bg: #f8f9fc;
+        --border-color: #e3e6f0;
+    }
+
+    /* Main Container */
+    .body-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+        font-family: 'Rubik', sans-serif;
+    }
+
+    /* Header & Description */
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
+    }
+
+    /* Controls: Search & Filter */
+    .controls-wrapper {
+        background-color: var(--light-bg);
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 25px;
+    }
+
+    .search_id_container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+
+    /* Inputs & Selects */
+    input[type="text"], select {
+        padding: 10px 15px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        color: #6e707e;
+        background-color: #fff;
+        min-width: 250px;
+        flex-grow: 1;
+    }
+
+    input[type="text"]:focus, select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+    }
+
+    /* Buttons */
+    #search-btn {
+        padding: 10px 25px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    #search-btn:hover { background-color: #2e59d9; }
+
+    /* Table Styling */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+
+    thead th {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        padding: 15px;
+        border-bottom: 2px solid var(--border-color);
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    tbody td {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border-color);
+        color: #5a5c69;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    tbody tr:hover {
+        background-color: #fafbfc;
+    }
+
+    /* Table Input (Amount) */
+    .amount {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #d1d3e2;
+        border-radius: 4px;
+        font-weight: 600;
+        color: #2e3a59;
+    }
+
+    /* Action Button */
+    .grant-btn {
+        background-color: var(--success-color);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .grant-btn:hover {
+        background-color: #17a673;
+    }
+
+    /* Error Message */
+    .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #f5c6cb;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Modal */
+    .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1000; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        background-color: rgba(0,0,0,0.8); 
+    }
+    .modal-content {
+        margin: 5% auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+    }
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .close:hover { color: #bbb; }
+</style>
+
+<div class="sub-title">
+    <h4>SCHOLARSHIP (Admin)</h4>
+    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+    <p class="certxt" ><a href="{% url 'admin_req' %}"> &gt; Submission Tracker</a></p>
     <p class="certxt">&gt; Scholars' Allowance</p>
-  </div>
+</div>
 <hr>
-    <div class="descs"><p>Page where you can distribute allowance.</p></div>
 
-    <div class="content">
-        <div class="cont">
+<div class="body-content">
+    
+    <div class="page-header-container">
+        <h2 class="page-title"><i class="fas fa-hand-holding-usd"></i> Scholarship Allowance Granting</h2>
+        <p class="page-description">
+            Review and approve allowance distributions for scholars. Verify the amount based on the scholarship type and grant funds for the current semester.
+        </p>
+    </div>
+
+    <div class="controls-wrapper">
         <form class="form_div" method="GET">
             <div class="search_id_container">
-                <input type="text" id="search-box" name="search" placeholder="Search by ApplicationID">
-                <button id="search-btn" type="submit">Search</button>
+                <input type="text" id="search-box" name="search" placeholder="Search by Application ID..." value="{{ request.GET.search }}">
+                
                 <select id="scholar_type" name="scholar_type">
-                    <option value="">SELECT TYPE OF SCHOLAR</option>
-                    <option value="CHED - Full Merit">CHED FULL MERIT</option>
-                    <option value="CHED - Half Merit">CHED HALF MERIT</option>
-                    <option value="CHED - Tulong Dunong Program">CHED TULONG DUNONG</option>
-                    <option value="CHED - Coscho">DOST UNDERGRAD</option>
-                    <option value="CHED - Tertiary Education Subsidy">CHED TERTIARY EDUCATION SUBSIDY</option>
-                    <option value="LGU - ATEASP">ARGAO TERTIARY EDUCATION ASSISTANCE PROGRAM</option>
-                    <option value="LGU - DOST Undergrad">DOST UNDERGRAD</option>
-                    <option value="LGU - With High Honor">WITH HIGH HONOR</option>
-                    <option value="NGU - Nature's Spring Foundation Inc">NATURE'S SPRING FOUNDATION INC</option>
-                    <option value="NGU - Lifebank Foundation">LIFE BANK FOUNDATION</option>
+                    <option value="">-- Select Scholar Type --</option>
+                    <option value="CHED - Full Merit" {% if request.GET.scholar_type == "CHED - Full Merit" %}selected{% endif %}>CHED FULL MERIT</option>
+                    <option value="CHED - Half Merit" {% if request.GET.scholar_type == "CHED - Half Merit" %}selected{% endif %}>CHED HALF MERIT</option>
+                    <option value="CHED - Tulong Dunong Program" {% if request.GET.scholar_type == "CHED - Tulong Dunong Program" %}selected{% endif %}>CHED TULONG DUNONG</option>
+                    <option value="CHED - Coscho" {% if request.GET.scholar_type == "CHED - Coscho" %}selected{% endif %}>DOST UNDERGRAD</option>
+                    <option value="CHED - Tertiary Education Subsidy" {% if request.GET.scholar_type == "CHED - Tertiary Education Subsidy" %}selected{% endif %}>CHED TERTIARY EDUCATION SUBSIDY</option>
+                    <option value="LGU - ATEASP" {% if request.GET.scholar_type == "LGU - ATEASP" %}selected{% endif %}>ARGAO TERTIARY EDUCATION ASSISTANCE PROGRAM</option>
+                    <option value="LGU - DOST Undergrad" {% if request.GET.scholar_type == "LGU - DOST Undergrad" %}selected{% endif %}>DOST UNDERGRAD</option>
+                    <option value="LGU - With High Honor" {% if request.GET.scholar_type == "LGU - With High Honor" %}selected{% endif %}>WITH HIGH HONOR</option>
+                    <option value="NGU - Nature's Spring Foundation Inc" {% if request.GET.scholar_type == "NGU - Nature's Spring Foundation Inc" %}selected{% endif %}>NATURE'S SPRING FOUNDATION INC</option>
+                    <option value="NGU - Lifebank Foundation" {% if request.GET.scholar_type == "NGU - Lifebank Foundation" %}selected{% endif %}>LIFE BANK FOUNDATION</option>
                 </select>
+
+                <button id="search-btn" type="submit"><i class="fas fa-search"></i> Search</button>
             </div>
         </form>
-        <script>
-            $(document).ready(function() {
-                $('#scholar_type').change(function() {
-                    $(this).closest('form').submit();
-                });
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#scholar_type').change(function() {
+                $(this).closest('form').submit();
             });
-        </script>
-<div class="table-container">
+        });
+    </script>
+
+    <div class="table-container">
         <form method="POST">
             {% csrf_token %}
+            
             {% if error %}
-                <div class="error">{{ error }}</div>
+                <div class="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
             {% endif %}
+            
             <table id="requirements-table">
                 <thead>
                     <tr>
                         <th>Scholar ID</th>
-                        <th>First name</th>
-                        <th>Last name</th>
-                        <th>Scholar type</th>
-                        <th>Amount</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Scholar Type</th>
+                        <th style="width: 120px;">Amount</th>
                         <th>GPA</th>
                         <th>Year</th>
                         <th>Semester</th>
-                        <th>Approval</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for grant in to_be_granted_data %}
                         <tr>
-                            <td>{{ grant.scholar_ID }}</td>
+                            <td style="font-weight: bold; color: #2c5282;">{{ grant.scholar_ID }}</td>
                             <td>{{ grant.studID.firstname }}</td>
                             <td>{{ grant.studID.lastname }}</td>
                             <td class="scholar-type-cell">{{ grant.scholar_type }}</td>
@@ -75,83 +287,83 @@
                             <td>{{ grant.year }}</td>
                             <td>{{ grant.semester }}</td>
                             <td class="action-cell">
-                                <button class="grant-btn" name="action" value="GRANT_{{ forloop.counter }}">GRANT</button>
+                                <button class="grant-btn" name="action" value="GRANT_{{ forloop.counter }}">
+                                    <i class="fas fa-check-circle"></i> GRANT
+                                </button>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 40px; font-style: italic; color: #888;">
+                                <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                No scholars pending allowance grant.
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </form>
+    </div>
 </div>
-      
-    </div>
-    
-    
-    </div>
-    </div>
- <div id="imageModal" class="modal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImage">
-    </div> 
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var scholarTypes = {
-                'CHED - Full Merit': '20000',
-                'CHED - Half Merit': '10000',
-                'CHED - Tulong Dunong Program': '7500',
-                'CHED - Tertiary Education Subsidy': '20000',
-                'CHED - Coscho': '40000',
-                'LGU - ATEASP': '5000',
-                'LGU - DOST Undergrad': '45000',
-                'LGU - With High Honor': '25000',
-                'NGU - Nature\'s Spring Foundation Inc': '3000',
-                'NGU - Lifebank Foundation': '2000'
-            };
-    
-            var amountInputs = document.querySelectorAll('.amount');
+<div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var scholarTypes = {
+            'CHED - Full Merit': '20000',
+            'CHED - Half Merit': '10000',
+            'CHED - Tulong Dunong Program': '7500',
+            'CHED - Tertiary Education Subsidy': '20000',
+            'CHED - Coscho': '40000',
+            'LGU - ATEASP': '5000',
+            'LGU - DOST Undergrad': '45000',
+            'LGU - With High Honor': '25000',
+            'NGU - Nature\'s Spring Foundation Inc': '3000',
+            'NGU - Lifebank Foundation': '2000'
+        };
+
+        var amountInputs = document.querySelectorAll('.amount');
+        
+        amountInputs.forEach(function (input) {
+            var row = input.closest('tr'); // Find the parent row
+            var scholarTypeCell = row.querySelector('.scholar-type-cell'); // Find the cell with the type
             
-            // FIX 7: Made the JavaScript selector more robust
-            amountInputs.forEach(function (input) {
-                var row = input.closest('tr'); // Find the parent row
-                var scholarTypeCell = row.querySelector('.scholar-type-cell'); // Find the cell with the type
-                
-                if (scholarTypeCell) {
-                    var scholarType = scholarTypeCell.textContent.trim();
-                    input.value = scholarTypes[scholarType] || ''; // Set value
-                }
-            });
-        });
-    </script>
-    
-    <script>
-        // Get the modal
-        var modal = document.getElementById("imageModal");
-
-        // Get the image and insert it inside the modal - use its "alt" text as a caption
-        var modalImg = document.getElementById("modalImage");
-
-        document.querySelectorAll('td img').forEach(function(img) {
-            img.onclick = function(){
-                modal.style.display = "block";
-                modalImg.src = this.src;
+            if (scholarTypeCell) {
+                var scholarType = scholarTypeCell.textContent.trim();
+                input.value = scholarTypes[scholarType] || ''; // Set value
             }
         });
+    });
+</script>
 
-        // Get the Span element that closes the modal
-        var span = document.getElementsByClassName("close")[0];
+<script>
+    // Modal Logic
+    var modal = document.getElementById("imageModal");
+    var modalImg = document.getElementById("modalImage");
+    var span = document.getElementsByClassName("close")[0];
 
-        // When the user clicks on <span> (x), close the modal
+    document.querySelectorAll('td img').forEach(function(img) {
+        img.onclick = function(){
+            modal.style.display = "block";
+            modalImg.src = this.src;
+        }
+    });
+
+    if(span) {
         span.onclick = function() { 
             modal.style.display = "none";
         }
+    }
 
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
-    </script>
+    }
+</script>
 
 {% endblock %}

@@ -1,30 +1,310 @@
 {% extends base_template|default:"main.html" %}
-
-    {% load static %}
+{% load static %}
 
 {% block headcontent %}
-    <link rel="stylesheet" href="{% static 'styles/job_placement/ojt_req.css' %}?259">    
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* --- Modern Dashboard Styling --- */
+        :root {
+            --primary-color: #2c5282;
+            --success-color: #2c5282;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-text: #5a5c69;
+            --light-bg: #f8f9fc;
+            --border-color: #e3e6f0;
+        }
+
+        /* Layout */
+        #main_container, .showbox {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin: 20px;
+            font-family: 'Rubik', sans-serif;
+        }
+
+        .page-header-container { margin: 0 20px 20px 20px; }
+        .page-title { font-size: 1.5rem; font-weight: 700; color: #2e3a59; margin-bottom: 0.5rem; }
+        .page-description { color: #858796; font-size: 0.95rem; line-height: 1.5; max-width: 900px; }
+
+        /* --- ADMIN VIEW STYLES --- */
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background-color: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        #search_bar {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 15px;
+            border: 1px solid #d1d3e2;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        select {
+            padding: 10px 15px;
+            border: 1px solid #d1d3e2;
+            border-radius: 5px;
+            background-color: #fff;
+            color: var(--dark-text);
+            cursor: pointer;
+        }
+
+        #attend_student_list {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        #attend_student_list:hover { background-color: #2e59d9; }
+
+        /* Table */
+        .admintable {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1400px;
+        }
+
+        thead th {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            padding: 15px;
+            border-bottom: 2px solid var(--border-color);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--dark-text);
+            vertical-align: middle;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        
+        tbody td:nth-child(1), tbody td:nth-child(2) {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        tbody tr:hover { background-color: #fafbfc; }
+
+        .view-pdf {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: white;
+            background-color: var(--warning-color);
+            font-weight: 600;
+            transition: opacity 0.2s;
+            text-transform: uppercase;
+        }
+        .view-pdf:hover { opacity: 0.8; }
+
+        /* --- STUDENT VIEW STYLES --- */
+        #balo {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #bae6fd;
+            margin: 0 20px 20px 20px;
+            font-size: 0.95rem;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 150px 1fr 100px;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #f1f1f1;
+            padding-bottom: 15px;
+        }
+        .form-group:last-child { border-bottom: none; }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .file-input {
+            padding: 8px;
+            border: 1px solid #d1d3e2;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        /* Status Pills */
+        .pending, .accepted, .declined, .nofile, .no_file {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .pending { background-color: #fff3cd; color: #856404; }
+        .accepted { background-color: #d1fae5; color: #065f46; }
+        .declined { background-color: #f8d7da; color: #721c24; }
+        .nofile, .no_file { background-color: #e9ecef; color: #495057; }
+
+        .file_name {
+            font-family: monospace;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .submit-button {
+            background-color: var(--success-color);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .submit-button:hover { background-color: #17a673; }
+
+        /* --- MODAL STYLES (iframe) --- */
+        .showcontainer {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .showform {
+            background-color: #fff;
+            width: 90%;
+            height: 90%;
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .closeform {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #858796;
+            line-height: 1;
+            z-index: 10;
+        }
+        .closeform:hover { color: var(--danger-color); }
+
+        iframe {
+            flex-grow: 1;
+            border: 1px solid #e3e6f0;
+            background-color: #f8f9fc;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+            border-top: 1px solid #e3e6f0;
+            padding-top: 15px;
+        }
+
+        .accept-button { background-color: var(--success-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .accept-button:hover { background-color: #17a673; }
+
+        .decline-button { background-color: var(--danger-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .decline-button:hover { background-color: #c82333; }
+
+        .close-button { background-color: #858796; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .close-button:hover { background-color: #6e707e; }
+
+        @media (max-width: 768px) {
+            .form-group { grid-template-columns: 1fr; gap: 5px; }
+        }
+    </style>
 {% endblock headcontent %}
 
 {% block bodycontent %}
 <section>
+    
     {% if request.user.is_staff %}
         <div class="sub-title">
-  <h4>JOB PLACEMENT</h4>
-  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt; OJT Requirements/Documents Submission Tracker</p>
-</div>
-<hr>
+            <h4>JOB PLACEMENT (Admin)</h4>
+            <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+            <p class="certxt">&gt; OJT Requirements Tracker</p>
+        </div>
+        <hr>
 
-        <div id="main_container">
+       
+
+        <div id="main_container"> <div class="page-header-container">
+            <h2 class="page-title"><i class="fas fa-tasks"></i> OJT Document Verification</h2>
+            <p class="page-description">
+                Review and verify submitted OJT requirements. Click "Pending" to open the document viewer, then Accept or Decline the submission.
+            </p>
+        </div>
            <div class="gmc-form">
+            
             <form action="{% url 'ojt_requirements_tracker' %}" method="GET" class="filter-form">
                  <input id="search_bar" type="text" name="student_search" placeholder="Search by Student ID or Name" value="{{ search_query }}">
                 
-                <ul id="search_suggestions">
-                </ul>
+                <ul id="search_suggestions" style="display:none;"></ul>
                 
-                <input id="attend_student_list" type="submit" value="Search">
                 <select name="degree_filter" onchange="this.form.submit()">
                     <option value="">All Degrees</option>
                     {% for degree in all_degrees %}
@@ -35,39 +315,34 @@
                 </select>
 
                 <select name="sort_by" onchange="this.form.submit()">
-                    <option value="latest" {% if sort_by == 'latest' %}selected{% endif %}>
-                        Latest to Oldest
-                    </option>
-                    <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>
-                        Oldest to Newest
-                    </option>
+                    <option value="latest" {% if sort_by == 'latest' %}selected{% endif %}>Latest to Oldest</option>
+                    <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest to Newest</option>
                 </select>
                
+                <input id="attend_student_list" type="submit" value="Search">
             </form>
            
-
             <div class="admintable">
                 <table id="trackerTable">
                     <thead>
                         <tr>
-                            <th>Name of Company</th>
-                            <th>Name of Student</th>
+                            <th>Program</th>
+                            <th>Student Name</th>
                             <th>NDA</th>
-                            <th>BIODATA</th>
-                            <th>PARENT'S CONSENT</th>
-                            <th>APPLICATION LETTER</th>
-                            <th>MEDICAL</th>
+                            <th>Biodata</th>
+                            <th>Consent</th>
+                            <th>App Letter</th>
+                            <th>Medical</th>
                             <th>MOA</th>
-                            <th>ENDORSEMENT LETTER</th>
-                            <th>CERTIFICATION</th>
+                            <th>Endorsement</th>
+                            <th>Certification</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for req in req_records %}
                         <tr>
                             <td>{{ req.student_id.degree }}</td>
-
-                                <td>{{ req.student_id.lastname }}, {{ req.student_id.firstname }} </td>
+                            <td style="font-weight: 600; color: #2e3a59;">{{ req.student_id.lastname }}, {{ req.student_id.firstname }} </td>
                             
                             <td>
                                 {% if req.nondis_stat == "Pending" %}
@@ -76,7 +351,7 @@
                                     name="nondis"
                                     data-url="{% url 'view_pdf' req.ojt_requirement_id %}">Pending</button>
                                 {% else %}
-                                    {{ req.nondis_stat }}
+                                    <span class="{{ req.nondis_stat|lower }}">{{ req.nondis_stat }}</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -86,7 +361,7 @@
                                       name="biodata"
                                       data-url="{% url 'view_pdf' req.ojt_requirement_id %}">Pending</button>
                                 {% else %}
-                                    {{ req.biodata_stat }}
+                                    <span class="{{ req.biodata_stat|lower }}">{{ req.biodata_stat }}</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -96,7 +371,7 @@
                                       name="consent"
                                       data-url="{% url 'view_pdf' req.ojt_requirement_id %}">Pending</button>
                                 {% else %}
-                                    {{ req.consent_stat }}
+                                    <span class="{{ req.consent_stat|lower }}">{{ req.consent_stat }}</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -106,7 +381,7 @@
                                       name="apl_letter"
                                       data-url="{% url 'view_pdf' req.ojt_requirement_id %}">Pending</button>
                                 {% else %}
-                                    {{ req.apl_letter_stat }}
+                                    <span class="{{ req.apl_letter_stat|lower }}">{{ req.apl_letter_stat }}</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -116,7 +391,7 @@
                                       name="medical"
                                       data-url="{% url 'view_pdf' req.ojt_requirement_id %}">Pending</button>
                                 {% else %}
-                                    {{ req.medical_stat }}
+                                    <span class="{{ req.medical_stat|lower }}">{{ req.medical_stat }}</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -126,7 +401,7 @@
                                       name="moa"
                                       data-url="{% url 'view_pdf' req.ojt_requirement_id %}">Pending</button>
                                 {% else %}
-                                    {{ req.moa_stat }}
+                                    <span class="{{ req.moa_stat|lower }}">{{ req.moa_stat }}</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -136,7 +411,7 @@
                                       name="endorsement"
                                       data-url="{% url 'view_pdf' req.ojt_requirement_id %}">Pending</button>
                                 {% else %}
-                                    {{ req.endorsement_stat }}
+                                    <span class="{{ req.endorsement_stat|lower }}">{{ req.endorsement_stat }}</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -146,18 +421,19 @@
                                       name="cert"
                                       data-url="{% url 'view_pdf' req.ojt_requirement_id %}">Pending</button>
                                 {% else %}
-                                    {{ req.cert_stat }}
+                                    <span class="{{ req.cert_stat|lower }}">{{ req.cert_stat }}</span>
                                 {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
             </div>
             
             <div class="showcontainer">
                 <div class="showform">
                     <button class="closeform">×</button>
+                    <h3 style="color: var(--primary-color); margin: 0 0 10px 0; font-size: 1.2rem;">Document Review</h3>
                     
                     <iframe id="pdf-iframe" src="" width="100%" height="800" title="PDF Document Viewer"></iframe>
                     
@@ -165,209 +441,223 @@
                         <form action="{% url 'ojt_requirement_update' %}" method="POST">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="accept">
-                            <input type="hidden" name="req_id" value="">
-                            <input type="hidden" name="attr_name" value="">
-                            <input type="submit" value="Accept" class="accept-button">
+                            <input type="hidden" name="req_id" class="modal-req-id" value="">
+                            <input type="hidden" name="attr_name" class="modal-attr-name" value="">
+                            <button type="submit" class="accept-button"><i class="fas fa-check"></i> Accept</button>
                         </form>
                 
                         <form action="{% url 'ojt_requirement_update' %}" method="POST">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="declined">
-                            <input type="hidden" name="req_id" value="">
-                            <input type="hidden" name="attr_name" value="">
-                            <input type="submit" value="Decline" class="decline-button">
+                            <input type="hidden" name="req_id" class="modal-req-id" value="">
+                            <input type="hidden" name="attr_name" class="modal-attr-name" value="">
+                            <button type="submit" class="decline-button"><i class="fas fa-times"></i> Decline</button>
                         </form>
+
+                        <button class="close-button">Close</button>
                     </div>
-                    <button class="button close-button">Close</button>
                 </div>
             </div>
-            </div>
+           </div>
+        </div>
+
     {% else %}
         <div class="sub-title">
-  <h4>JOB PLACEMENT</h4>
-  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt; OJT Requirements/Documents Submission</p>
-</div>
-<hr>
-        <div id="balo">
-            <p>Please double check all documents before submission. </p>
-            <p>Submit requirements in PDF or Image format</p>
+            <h4>JOB PLACEMENT</h4>
+            <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+            <p class="certxt">&gt; OJT Requirements Submission</p>
         </div>
+        <hr>
+
+        <div id="balo">
+            <p><i class="fas fa-info-circle"></i> Please double check all documents before submission.</p>
+            <p><i class="fas fa-file-upload"></i> Submit requirements in PDF or Image format.</p>
+        </div>
+
         <div class="showbox">
             <form action="{% url 'ojt_requirements_submit' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
+                
+                {% with stat_map=existing_form %}
+                
                 <div class="form-group">
-                    <label for="">Non-Disclosure:</label>
+                    <label>Non-Disclosure:</label>
                     {% if form.non_disclosure.value %}
-                        <p class="file_name">{{ form.non_disclosure.value }}</p>
+                        <span class="file_name">{{ form.non_disclosure.value }}</span>
                     {% else %}
                         <input type="file" name="{{ form.non_disclosure.name }}" class="file-input">
                     {% endif %}
-                    {% if existing_form %}
-                        {% if existing_form.nondis_stat == existing_form.PENDING %}  <p class="pending">Pending</p>
-                        {% elif existing_form.nondis_stat == existing_form.ACCEPTED %}
-                            <p class="accepted">Accepted</p>
-                        {% elif existing_form.nondis_stat == existing_form.DECLINED %}
-                            <p class="declined">Declined</p>
-                        {% else %}
-                            <p class="nofile">No File</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="no_file">No File</p>
-                    {% endif %}
+                    
+                    {% if stat_map %}
+                        {% if stat_map.nondis_stat == "Pending" %} <span class="pending">Pending</span>
+                        {% elif stat_map.nondis_stat == "Accepted" %} <span class="accepted">Accepted</span>
+                        {% elif stat_map.nondis_stat == "Declined" %} <span class="declined">Declined</span>
+                        {% else %} <span class="nofile">No File</span> {% endif %}
+                    {% else %} <span class="no_file">No File</span> {% endif %}
                 </div>
-                <hr>
+
                 <div class="form-group">
-                    <label for="">Biodata:</label>
+                    <label>Biodata:</label>
                     {% if form.biodata.value %}
-                        <p class="file_name">{{ form.biodata.value }}</p>
+                        <span class="file_name">{{ form.biodata.value }}</span>
                     {% else %}
                         <input type="file" name="{{ form.biodata.name }}" class="file-input">
                     {% endif %}
-                    {% if existing_form %}
-                        {% if existing_form.biodata_stat == existing_form.PENDING %}  <p class="pending">Pending</p>
-                        {% elif existing_form.biodata_stat == existing_form.ACCEPTED %}
-                            <p class="accepted">Accepted</p>
-                        {% elif existing_form.biodata_stat == existing_form.DECLINED %}
-                            <p class="declined">Declined</p>
-                        {% else %}
-                            <p class="nofile">No File</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="no_file">No File</p>
-                    {% endif %}
+                    
+                    {% if stat_map %}
+                        {% if stat_map.biodata_stat == "Pending" %} <span class="pending">Pending</span>
+                        {% elif stat_map.biodata_stat == "Accepted" %} <span class="accepted">Accepted</span>
+                        {% elif stat_map.biodata_stat == "Declined" %} <span class="declined">Declined</span>
+                        {% else %} <span class="nofile">No File</span> {% endif %}
+                    {% else %} <span class="no_file">No File</span> {% endif %}
                 </div>
-                <hr>
+
                 <div class="form-group">
-                    <label for="">Parents Consent:</label>
+                    <label>Parent's Consent:</label>
                     {% if form.parents_consent.value %}
-                        <p class="file_name">{{ form.parents_consent.value }}</p>
+                        <span class="file_name">{{ form.parents_consent.value }}</span>
                     {% else %}
                         <input type="file" name="{{ form.parents_consent.name }}" class="file-input">
                     {% endif %}
-                    {% if existing_form %}
-                        {% if existing_form.consent_stat == existing_form.PENDING %}  <p class="pending">Pending</p>
-                        {% elif existing_form.consent_stat == existing_form.ACCEPTED %}
-                            <p class="accepted">Accepted</p>
-                        {% elif existing_form.consent_stat == existing_form.DECLINED %}
-                            <p class="declined">Declined</p>
-                        {% else %}
-                            <p class="nofile">No File</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="no_file">No File</p>
-                    {% endif %}
+                    
+                    {% if stat_map %}
+                        {% if stat_map.consent_stat == "Pending" %} <span class="pending">Pending</span>
+                        {% elif stat_map.consent_stat == "Accepted" %} <span class="accepted">Accepted</span>
+                        {% elif stat_map.consent_stat == "Declined" %} <span class="declined">Declined</span>
+                        {% else %} <span class="nofile">No File</span> {% endif %}
+                    {% else %} <span class="no_file">No File</span> {% endif %}
                 </div>
-                <hr>
+
                 <div class="form-group">
-                    <label for="">Application Letter:</label>
-                    {% if form.application_letter.value %} <p class="file_name">{{ form.application_letter.value }}</p>
+                    <label>Application Letter:</label>
+                    {% if form.application_letter.value %}
+                        <span class="file_name">{{ form.application_letter.value }}</span>
                     {% else %}
                         <input type="file" name="{{ form.application_letter.name }}" class="file-input">
                     {% endif %}
-                    {% if existing_form %}
-                        {% if existing_form.apl_letter_stat == existing_form.PENDING %}  <p class="pending">Pending</p>
-                        {% elif existing_form.apl_letter_stat == existing_form.ACCEPTED %}
-                            <p class="accepted">Accepted</p>
-                        {% elif existing_form.apl_letter_stat == existing_form.DECLINED %}
-                            <p class="declined">Declined</p>
-                        {% else %}
-                            <p class="nofile">No File</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="no_file">No File</p>
-                    {% endif %}
-                </div>  
-                <hr>
+                    
+                    {% if stat_map %}
+                        {% if stat_map.apl_letter_stat == "Pending" %} <span class="pending">Pending</span>
+                        {% elif stat_map.apl_letter_stat == "Accepted" %} <span class="accepted">Accepted</span>
+                        {% elif stat_map.apl_letter_stat == "Declined" %} <span class="declined">Declined</span>
+                        {% else %} <span class="nofile">No File</span> {% endif %}
+                    {% else %} <span class="no_file">No File</span> {% endif %}
+                </div>
 
                 <div class="form-group">
-                    <label for="">Medical:</label>
-                    {% if form.medical.value %} <p class="file_name">{{ form.medical.value }}</p>
+                    <label>Medical:</label>
+                    {% if form.medical.value %}
+                        <span class="file_name">{{ form.medical.value }}</span>
                     {% else %}
                         <input type="file" name="{{ form.medical.name }}" class="file-input">
                     {% endif %}
-                    {% if existing_form %}
-                        {% if existing_form.medical_stat == existing_form.PENDING %}  <p class="pending">Pending</p>
-                        {% elif existing_form.medical_stat == existing_form.ACCEPTED %}
-                            <p class="accepted">Accepted</p>
-                        {% elif existing_form.medical_stat == existing_form.DECLINED %}
-                            <p class="declined">Declined</p>
-                        {% else %}
-                            <p class="nofile">No File</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="no_file">No File</p>
-                    {% endif %}
+                    
+                    {% if stat_map %}
+                        {% if stat_map.medical_stat == "Pending" %} <span class="pending">Pending</span>
+                        {% elif stat_map.medical_stat == "Accepted" %} <span class="accepted">Accepted</span>
+                        {% elif stat_map.medical_stat == "Declined" %} <span class="declined">Declined</span>
+                        {% else %} <span class="nofile">No File</span> {% endif %}
+                    {% else %} <span class="no_file">No File</span> {% endif %}
                 </div>
-                <hr>
+
                 <div class="form-group">
-                    <label for="">MOA:</label>
-                    {% if form.moa.value %} <p class="file_name">{{ form.moa.value }}</p>
+                    <label>MOA:</label>
+                    {% if form.moa.value %}
+                        <span class="file_name">{{ form.moa.value }}</span>
                     {% else %}
                         <input type="file" name="{{ form.moa.name }}" class="file-input">
                     {% endif %}
-                    {% if existing_form %}
-                        {% if existing_form.moa_stat == existing_form.PENDING %}  <p class="pending">Pending</p>
-                        {% elif existing_form.moa_stat == existing_form.ACCEPTED %}
-                            <p class="accepted">Accepted</p>
-                        {% elif existing_form.moa_stat == existing_form.DECLINED %}
-                            <p class="declined">Declined</p>
-                        {% else %}
-                            <p class="nofile">No File</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="no_file">No File</p>
-                    {% endif %}
+                    
+                    {% if stat_map %}
+                        {% if stat_map.moa_stat == "Pending" %} <span class="pending">Pending</span>
+                        {% elif stat_map.moa_stat == "Accepted" %} <span class="accepted">Accepted</span>
+                        {% elif stat_map.moa_stat == "Declined" %} <span class="declined">Declined</span>
+                        {% else %} <span class="nofile">No File</span> {% endif %}
+                    {% else %} <span class="no_file">No File</span> {% endif %}
                 </div>
-                <hr>
+
                 <div class="form-group">
-                    <label for="">Endorsement Letter:</label>
-                    {% if form.endorsement.value %} <p class="file_name">{{ form.endorsement.value }}</p>
+                    <label>Endorsement Letter:</label>
+                    {% if form.endorsement.value %}
+                        <span class="file_name">{{ form.endorsement.value }}</span>
                     {% else %}
                         <input type="file" name="{{ form.endorsement.name }}" class="file-input">
                     {% endif %}
-                    {% if existing_form %}
-                        {% if existing_form.endorsement_stat == existing_form.PENDING %}  <p class="pending">Pending</p>
-                        {% elif existing_form.endorsement_stat == existing_form.ACCEPTED %}
-                            <p class="accepted">Accepted</p>
-                        {% elif existing_form.endorsement_stat == existing_form.DECLINED %}
-                            <p class="declined">Declined</p>
-                        {% else %}
-                            <p class="nofile">No File</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="no_file">No File</p>
-                    {% endif %}
+                    
+                    {% if stat_map %}
+                        {% if stat_map.endorsement_stat == "Pending" %} <span class="pending">Pending</span>
+                        {% elif stat_map.endorsement_stat == "Accepted" %} <span class="accepted">Accepted</span>
+                        {% elif stat_map.endorsement_stat == "Declined" %} <span class="declined">Declined</span>
+                        {% else %} <span class="nofile">No File</span> {% endif %}
+                    {% else %} <span class="no_file">No File</span> {% endif %}
                 </div>
-                <hr>
+
                 <div class="form-group">
-                    <label for="">Certification:</label>
-                    {% if form.certification.value %} <p class="file_name">{{ form.certification.value }}</p>
+                    <label>Certification:</label>
+                    {% if form.certification.value %}
+                        <span class="file_name">{{ form.certification.value }}</span>
                     {% else %}
                         <input type="file" name="{{ form.certification.name }}" class="file-input">
                     {% endif %}
-                    {% if existing_form %}
-                        {% if existing_form.cert_stat == existing_form.PENDING %}  <p class="pending">Pending</p>
-                        {% elif existing_form.cert_stat == existing_form.ACCEPTED %}
-                            <p class="accepted">Accepted</p>
-                        {% elif existing_form.cert_stat == existing_form.DECLINED %}
-                            <p class="declined">Declined</p>
-                        {% else %}
-                            <p class="nofile">No File</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="no_file">No File</p>
-                    {% endif %}
+                    
+                    {% if stat_map %}
+                        {% if stat_map.cert_stat == "Pending" %} <span class="pending">Pending</span>
+                        {% elif stat_map.cert_stat == "Accepted" %} <span class="accepted">Accepted</span>
+                        {% elif stat_map.cert_stat == "Declined" %} <span class="declined">Declined</span>
+                        {% else %} <span class="nofile">No File</span> {% endif %}
+                    {% else %} <span class="no_file">No File</span> {% endif %}
                 </div>
-                <hr>
-                <div class="form-group">
-                    <input type="submit" value="Submit" class="submit-button">
+
+                {% endwith %}
+
+                <div style="margin-top: 20px;">
+                    <input type="submit" value="Submit Documents" class="submit-button">
                 </div>
-            </form></div>
+            </form>
         </div>
-        
     {% endif %}
 
 </section>
-<script src="{% static 'scripts/job_placement/ojt_requirements.js' %}?v=1002" ></script>
+
+<script>
+$(document).ready(function() {
+    // --- Modal Logic for Admin ---
+    const modal = $('.showcontainer');
+    const iframe = $('#pdf-iframe');
+    const reqIdInputs = $('.modal-req-id'); // Class for hidden inputs
+    const attrNameInputs = $('.modal-attr-name'); // Class for hidden inputs
+
+    // Open Modal
+    $('.view-pdf').on('click', function() {
+        const url = $(this).data('url');
+        const reqId = $(this).val();
+        const attrName = $(this).attr('name');
+
+        // Set Iframe Source
+        iframe.attr('src', url);
+        
+        // Set Hidden Inputs for Acceptance/Decline forms
+        reqIdInputs.val(reqId);
+        attrNameInputs.val(attrName);
+
+        // Show Modal
+        modal.css('display', 'flex');
+    });
+
+    // Close Modal
+    $('.closeform, .close-button').on('click', function(e) {
+        e.preventDefault(); // Prevent form submission if inside form
+        modal.css('display', 'none');
+        iframe.attr('src', ''); // Clear src to stop loading
+    });
+
+    // Close on Overlay Click
+    $(window).on('click', function(event) {
+        if ($(event.target).is(modal)) {
+            modal.css('display', 'none');
+            iframe.attr('src', '');
+        }
+    });
+});
+</script>
 {% endblock bodycontent %}

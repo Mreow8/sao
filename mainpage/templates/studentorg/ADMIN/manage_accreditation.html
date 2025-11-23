@@ -1,204 +1,389 @@
 {% extends base_template %} {% load static %} {% block bodycontent %}
 <link rel="stylesheet" href="{% static 'studentorg/css/accreditation.css' %}" />
 
+<style>
+    /* --- Modern Dashboard Styling --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #2c5282;
+        --danger-color: #e74a3b;
+        --dark-text: #5a5c69;
+        --light-bg: #f8f9fc;
+        --border-color: #e3e6f0;
+    }
+
+    .container {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+    }
+
+    /* --- Header & Description --- */
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
+    }
+
+    /* --- Tabs --- */
+    .tabs {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+        flex-wrap: wrap;
+    }
+    .tab {
+        padding: 10px 20px;
+        text-decoration: none;
+        color: #5a5c69;
+        font-weight: 600;
+        border-radius: 5px 5px 0 0;
+        transition: all 0.2s;
+    }
+    .tab:hover {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+    }
+    .tab.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    /* --- Review Section --- */
+    h1 {
+        font-size: 1.3rem;
+        color: #2e3a59;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #eaecf4;
+        padding-bottom: 10px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+        background-color: var(--light-bg);
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .status {
+        margin-top: 10px;
+        font-size: 1rem;
+    }
+
+    /* --- Table --- */
+    .subcontain {
+        overflow-x: auto;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+        padding: 12px;
+        text-align: left;
+        border-bottom: 2px solid var(--border-color);
+        font-weight: 700;
+    }
+    td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--dark-text);
+    }
+    td a {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    td a:hover {
+        text-decoration: underline;
+    }
+
+    /* --- Buttons --- */
+    .buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    button[type="submit"], .print {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        color: white;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: opacity 0.2s;
+        font-size: 0.9rem;
+    }
+
+    .approve { background-color: var(--success-color); }
+    .decline { background-color: var(--danger-color); }
+    .print { background-color: var(--primary-color); }
+    
+    .approve:hover, .decline:hover, .print:hover {
+        opacity: 0.9;
+    }
+
+    .no-applications-message {
+        text-align: center;
+        padding: 50px;
+        color: #858796;
+        border: 2px dashed #d1d3e2;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+</style>
+
 <div class="sub-title">
-  <h4>Student Organization(Admin)</h4>
+  <h4>STUDENT ORGANIZATION (Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt; Project Management</p>
+  <p class="certxt">&gt; Accreditation Management</p>
 </div>
 <hr />
 
 <div class="container">
+  
+  <div class="page-header-container">
+      <h2 class="page-title"><i class="fas fa-file-signature"></i> Accreditation Review</h2>
+      <p class="page-description">
+          Review submitted documents for organization accreditation. Verify the Letters of Intent, Officer Lists, Bylaws, and other requirements before approving or declining the application.
+      </p>
+  </div>
+
   <div class="maincontain gmc-form">
+    
     <div class="tabs">
       <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
       <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
       <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
-      <a href="{% url 'admin_managefinancial' %}" class="tab"
-        >Manage Financial</a
-      >
-      <a href="{% url 'admin_manage_accreditations' %}" class="tab active"
-        >Manage Applications</a
-      >
-    </div>
-    {% if accreditations %} {% for accreditation in accreditations %}
-    <h1>Accreditation Review</h1>
-    <div>
-      <strong>Application ID:</strong> {{ accreditation.accreditation_id }}
-    </div>
-    <div><strong>Organization:</strong> {{ accreditation.organization }}</div>
-    <div class="status">
-      <strong>Status:</strong> {{ accreditation.get_status_display }}
+      <a href="{% url 'admin_managefinancial' %}" class="tab">Manage Financial</a>
+      <a href="{% url 'admin_manage_accreditations' %}" class="tab active">Manage Applications</a>
     </div>
 
-    <div class="subcontain">
-      <table>
-        <tr>
-          <th>Document</th>
-          <th>Files</th>
-        </tr>
-        <tr>
-          <td>Letter of Intent</td>
-          <td>
-            {% if accreditation.letter_of_intent %}<a
-              href="{{ accreditation.letter_of_intent.url }}"
-              target="_blank"
-              >View Letter</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>List of Officers</td>
-          <td>
-            {% if accreditation.list_of_officers %}<a
-              href="{{ accreditation.list_of_officers.url }}"
-              target="_blank"
-              >View List</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Certificate of Registration</td>
-          <td>
-            {% if accreditation.certificate_of_registration %}<a
-              href="{{ accreditation.certificate_of_registration.url }}"
-              target="_blank"
-              >View Certificate</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>List of Members</td>
-          <td>
-            {% if accreditation.list_of_members %}<a
-              href="{{ accreditation.list_of_members.url }}"
-              target="_blank"
-              >View Members</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Accomplishment Report</td>
-          <td>
-            {% if accreditation.accomplishment_report %}<a
-              href="{{ accreditation.accomplishment_report.url }}"
-              target="_blank"
-              >View Report</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Calendar of Activities</td>
-          <td>
-            {% if accreditation.calendar_of_activities %}<a
-              href="{{ accreditation.calendar_of_activities.url }}"
-              target="_blank"
-              >View Activities</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Financial Statement</td>
-          <td>
-            {% if accreditation.financial_statement %}<a
-              href="{{ accreditation.financial_statement.url }}"
-              target="_blank"
-              >View Statement</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Bank Passbook</td>
-          <td>
-            {% if accreditation.bank_passbook %}<a
-              href="{{ accreditation.bank_passbook.url }}"
-              target="_blank"
-              >View Passbook</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Inventory of Properties</td>
-          <td>
-            {% if accreditation.inventory_of_properties %}<a
-              href="{{ accreditation.inventory_of_properties.url }}"
-              target="_blank"
-              >View Inventory</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Organization Bylaws</td>
-          <td>
-            {% if accreditation.organization_bylaws %}<a
-              href="{{ accreditation.organization_bylaws.url }}"
-              target="_blank"
-              >View ByLaws</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Faculty Adviser Appointment</td>
-          <td>
-            {% if accreditation.faculty_adviser_appointment %}<a
-              href="{{ accreditation.faculty_adviser_appointment.url }}"
-              target="_blank"
-              >View Appointment</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td>Other Documents</td>
-          <td>
-            {% if accreditation.other_documents %}<a
-              href="{{ accreditation.other_documents.url }}"
-              target="_blank"
-              >View Other Documents</a
-            >{% else %}No file{% endif %}
-          </td>
-        </tr>
-      </table>
-    </div>
-    <form method="POST" action="{% url 'admin_manage_accreditations' %}">
-      {% csrf_token %}
-      <div class="buttons">
-        <input
-          type="hidden"
-          name="accreditation_id"
-          value="{{ accreditation.accreditation_id }}"
-        />
-        {% if accreditation.status == 'pending' %}
-        <button type="submit" name="action" value="approve" class="approve">
-          Approve
-        </button>
-        <button type="submit" name="action" value="decline" class="decline">
-          Decline
-        </button>
-        {% endif %} {% if accreditation.status == 'approved' %}
-        <a
-          href="{% if accreditation.organization == 'FSTLP' %}{% url 'FSTLP_certification' %}
-                    {% elif accreditation.organization == 'SI++' %}{% url 'SI_certification' %}
-                    {% elif accreditation.organization == 'THE EQUATIONERS' %}{% url 'THEEQUATIONERS_certification' %}
-                    {% elif accreditation.organization == 'SSG' %}{% url 'SSG_certification' %}
-                    {% elif accreditation.organization == 'TECHNOCRATS' %}{% url 'TECHNOCRATS_certification' %}
-                    {% endif %}"
-          class="print"
-          >Print Certification</a
-        >
-        {% endif %}
-      </div>
-    </form>
+    {% if accreditations %} 
+        {% for accreditation in accreditations %}
+            
+            <h1>Accreditation Review</h1>
+            
+            <div class="info-grid">
+                <div><strong>Application ID:</strong> {{ accreditation.accreditation_id }}</div>
+                <div><strong>Organization:</strong> {{ accreditation.organization }}</div>
+                <div class="status">
+                  <strong>Status:</strong> 
+                  <span style="color: {% if accreditation.status == 'approved' %}#2c5282{% elif accreditation.status == 'pending' %}#f6c23e{% else %}#e74a3b{% endif %}; font-weight: bold; text-transform: uppercase;">
+                      {{ accreditation.get_status_display }}
+                  </span>
+                </div>
+            </div>
 
-    {% if not forloop.last %}
-    <hr style="border: 0; border-top: 1px solid #ddd; margin: 2rem 0" />
-    {% endif %} {% endfor %} {% else %}
-    <div class="no-applications-message">
-      No Accreditation Applications Available
-      <br />
-      There are currently no pending or approved accreditation documents to
-      display.
-    </div>
+            <div class="subcontain">
+              <table>
+                <thead>
+                    <tr>
+                      <th>Required Document</th>
+                      <th>Submitted File</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td>Letter of Intent</td>
+                      <td>
+                        {% if accreditation.letter_of_intent %}
+                            <a href="{{ accreditation.letter_of_intent.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Letter</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>List of Officers</td>
+                      <td>
+                        {% if accreditation.list_of_officers %}
+                            <a href="{{ accreditation.list_of_officers.url }}" target="_blank"><i class="fas fa-paperclip"></i> View List</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Certificate of Registration</td>
+                      <td>
+                        {% if accreditation.certificate_of_registration %}
+                            <a href="{{ accreditation.certificate_of_registration.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Certificate</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>List of Members</td>
+                      <td>
+                        {% if accreditation.list_of_members %}
+                            <a href="{{ accreditation.list_of_members.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Members</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Accomplishment Report</td>
+                      <td>
+                        {% if accreditation.accomplishment_report %}
+                            <a href="{{ accreditation.accomplishment_report.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Report</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Calendar of Activities</td>
+                      <td>
+                        {% if accreditation.calendar_of_activities %}
+                            <a href="{{ accreditation.calendar_of_activities.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Activities</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Financial Statement</td>
+                      <td>
+                        {% if accreditation.financial_statement %}
+                            <a href="{{ accreditation.financial_statement.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Statement</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Bank Passbook</td>
+                      <td>
+                        {% if accreditation.bank_passbook %}
+                            <a href="{{ accreditation.bank_passbook.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Passbook</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Inventory of Properties</td>
+                      <td>
+                        {% if accreditation.inventory_of_properties %}
+                            <a href="{{ accreditation.inventory_of_properties.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Inventory</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Organization Bylaws</td>
+                      <td>
+                        {% if accreditation.organization_bylaws %}
+                            <a href="{{ accreditation.organization_bylaws.url }}" target="_blank"><i class="fas fa-paperclip"></i> View ByLaws</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Faculty Adviser Appointment</td>
+                      <td>
+                        {% if accreditation.faculty_adviser_appointment %}
+                            <a href="{{ accreditation.faculty_adviser_appointment.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Appointment</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Other Documents</td>
+                      <td>
+                        {% if accreditation.other_documents %}
+                            <a href="{{ accreditation.other_documents.url }}" target="_blank"><i class="fas fa-paperclip"></i> View Other Documents</a>
+                        {% else %}
+                            <span style="color: #ccc;">No file</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
 
+            <form method="POST" action="{% url 'admin_manage_accreditations' %}">
+              {% csrf_token %}
+              <div class="buttons">
+                <input
+                  type="hidden"
+                  name="accreditation_id"
+                  value="{{ accreditation.accreditation_id }}"
+                />
+                {% if accreditation.status == 'pending' %}
+                    <button type="submit" name="action" value="approve" class="approve">
+                      <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button type="submit" name="action" value="decline" class="decline">
+                      <i class="fas fa-times"></i> Decline
+                    </button>
+                {% endif %} 
+                
+                {% if accreditation.status == 'approved' %}
+                    <a href="{% if accreditation.organization == 'FSTLP' %}{% url 'FSTLP_certification' %}
+                            {% elif accreditation.organization == 'SI++' %}{% url 'SI_certification' %}
+                            {% elif accreditation.organization == 'THE EQUATIONERS' %}{% url 'THEEQUATIONERS_certification' %}
+                            {% elif accreditation.organization == 'SSG' %}{% url 'SSG_certification' %}
+                            {% elif accreditation.organization == 'TECHNOCRATS' %}{% url 'TECHNOCRATS_certification' %}
+                            {% endif %}"
+                      class="print">
+                      <i class="fas fa-print"></i> Print Certification
+                    </a>
+                {% endif %}
+              </div>
+            </form>
+
+            {% if not forloop.last %}
+                <hr style="border: 0; border-top: 1px solid #ddd; margin: 3rem 0;" />
+            {% endif %} 
+        {% endfor %} 
+    
+    {% else %}
+        <div class="no-applications-message">
+          <i class="fas fa-folder-open" style="font-size: 3rem; display: block; margin-bottom: 15px; color: #d1d3e2;"></i>
+          <strong>No Accreditation Applications Available</strong>
+          <br />
+          There are currently no pending or approved accreditation documents to display.
+        </div>
     {% endif %}
   </div>
 </div>

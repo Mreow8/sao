@@ -7,58 +7,227 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+<style>
+    /* --- Modern Dashboard Overrides --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #1cc88a;
+        --danger-color: #e74a3b;
+        --light-bg: #f8f9fc;
+        --border-color: #e3e6f0;
+    }
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 50px; /* Pill shape */
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    min-width: 60px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Status Colors (Soft Backgrounds) */
+.status-approved {
+    background-color: rgba(28, 200, 138, 0.15); /* Soft Green */
+    color: #1cc88a;
+}
+
+.status-pending {
+    background-color: rgba(246, 194, 62, 0.15); /* Soft Yellow */
+    color: #f6c23e;
+}
+
+.status-declined {
+    background-color: rgba(231, 74, 59, 0.15); /* Soft Red */
+    color: #e74a3b;
+}
+    .container {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+    }
+
+    /* --- Header --- */
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
+    }
+
+    /* --- Tabs --- */
+    .tabs {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+        flex-wrap: wrap;
+    }
+    .tab {
+        padding: 10px 20px;
+        text-decoration: none;
+        color: #5a5c69;
+        font-weight: 600;
+        border-radius: 5px 5px 0 0;
+        transition: all 0.2s;
+    }
+    .tab:hover {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+    }
+    .tab.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    /* --- Search --- */
+    .search_id_container {
+        background-color: var(--light-bg);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 20px;
+    }
+    .search-form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .search-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+    }
+    .filter-select {
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        min-width: 150px;
+    }
+    .search-btn {
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    /* --- Table & Buttons --- */
+    .subcontain {
+        overflow-x: auto;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+        padding: 12px;
+        text-align: left;
+        border-bottom: 2px solid var(--border-color);
+        font-weight: 700;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+        color: #5a5c69;
+        vertical-align: middle;
+    }
+    
+    /* Actions */
+    button[name="action"] {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        color: white;
+        transition: opacity 0.2s;
+    }
+    button[value="approve"] { background-color: var(--success-color); }
+    button[value="decline"] { background-color: var(--danger-color); }
+    button:hover { opacity: 0.9; }
+
+    .no-applicants {
+        text-align: center;
+        padding: 30px;
+        font-style: italic;
+        color: #858796;
+    }
+</style>
 {% endblock %} 
 
 {% block bodycontent %}
 <div class="sub-title">
-  <h4>Student Organization(Admin)</h4>
+  <h4>STUDENT ORGANIZATION (Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Financial Management</p>
 </div>
 <hr>
 
 <div class="container">
-
+  
+  <div class="page-header-container">
+      <h2 class="page-title"><i class="fas fa-coins"></i> Financial Statements</h2>
+      <p class="page-description">
+          Review and manage financial statements submitted by student organizations. 
+          Check funding sources, amounts, and purposes before approving or declining requests.
+      </p>
+  </div>
 
   <div class="maincontain gmc-form">
+      
       <div class="tabs">
-    <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
-    <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
-    <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
-    <a href="{% url 'admin_managefinancial' %}" class="tab active"
-      >Manage Financial</a
-    >
-    <a href="{% url 'admin_manage_accreditations' %}" class="tab"
-      >Manage Applications</a
-    >
-  </div>
-  <div class="search_id_container">
-  
-    <form class="search-form" method="GET" action="">
-      <input
-        type="text"
-        name="search"
-        class="search-input"
-        placeholder="Search by ID, Purpose, or Organization"
-        value="{{ request.GET.search }}"
-      >
-      <select class="filter-select" name="status" id="status-filter">
-          <option value="">All Statuses</option>
-          <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
-          <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
-          <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
-      </select>
-      <button type="submit" class="search-btn">Search</button>
-    </form>
-    </div>
-    <script>
-        $(document).ready(function() {
-            // Submit form on filter change
-            $('#status-filter').change(function() {
-                $(this).closest('form').submit();
-            });
-        });
-    </script>
+        <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
+        <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
+        <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
+        <a href="{% url 'admin_managefinancial' %}" class="tab active">Manage Financial</a>
+        <a href="{% url 'admin_manage_accreditations' %}" class="tab">Manage Applications</a>
+      </div>
+
+      <div class="search_id_container">
+        <form class="search-form" method="GET" action="">
+          <input
+            type="text"
+            name="search"
+            class="search-input"
+            placeholder="Search by ID, Purpose, or Organization..."
+            value="{{ request.GET.search }}"
+          >
+          <select class="filter-select" name="status" id="status-filter">
+              <option value="">Filter Status</option>
+              <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+              <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+              <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
+          </select>
+          <button type="submit" class="search-btn"><i class="fas fa-search"></i> Search</button>
+        </form>
+      </div>
 
     <div class="subcontain">
       <form method="POST">
@@ -67,7 +236,7 @@
         <thead>
           <tr>
             <th class="sortable">
-              <a href="?sort=financial_id&order={% if current_sort == 'financial_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Financial ID</a>
+              <a href="?sort=financial_id&order={% if current_sort == 'financial_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">ID</a>
             </th>
             <th class="sortable">
               <a href="?sort=date&order={% if current_sort == 'date' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Date</a>
@@ -75,9 +244,9 @@
             <th class="sortable">
               <a href="?sort=purpose&order={% if current_sort == 'purpose' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Purpose</a>
             </th>
-            <th>Source of Funds</th>
+            <th>Source</th>
             <th class="sortable">
-              <a href="?sort=org&order={% if current_sort == 'org' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Organizations</a>
+              <a href="?sort=org&order={% if current_sort == 'org' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Org</a>
             </th>
             <th class="sortable">
               <a href="?sort=amount&order={% if current_sort == 'amount' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Amount</a>
@@ -92,16 +261,24 @@
         <tbody>
           {% for statement in page_obj %}
           <tr>
-            <td>{{ statement.financial_id }}</td>
+            <td style="font-weight: 600; color: #2c5282;">{{ statement.financial_id }}</td>
             <td>{{ statement.date }}</td>
             <td>{{ statement.purpose }}</td>
             <td>{{ statement.source_of_funds }}</td>
             <td>{{ statement.org }}</td>
             <td>{{ statement.amount }}</td>
             <td>{{ statement.remarks }}</td>
-            <td>{{ statement.get_status_display }}</td>
+           <td>
+              {% if statement.status == 'approved' %}
+                  <span class="status-badge status-approved">Approved</span>
+              {% elif statement.status == 'pending' %}
+                  <span class="status-badge status-pending">Pending</span>
+              {% else %}
+                  <span class="status-badge status-declined">Declined</span>
+              {% endif %}
+          </td>
             <td>
-              <form method="post">
+              <form method="post" style="display:flex; gap:5px;">
                 {% csrf_token %}
                 <input
                   type="hidden"
@@ -109,17 +286,14 @@
                   value="{{ statement.financial_id }}"
                 />
                 {% if statement.status == 'pending' %}
-                <button type="submit" name="action" value="approve">
-                  Approve
-                </button>
-                <button
-                  type="submit"
-                  name="action"
-                  value="decline"
-                  class="decline"
-                >
-                  Decline
-                </button>
+                    <button type="submit" name="action" value="approve" title="Approve">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button type="submit" name="action" value="decline" title="Decline">
+                      <i class="fas fa-times"></i>
+                    </button>
+                {% else %}
+                    <span style="color:#ccc;">--</span>
                 {% endif %}
               </form>
             </td>
@@ -134,12 +308,20 @@
       </form>
     </div>
 
-      {% if page_obj %}
-    {% with query_params="&sort="|add:current_sort %}
-        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    {% endwith %}
-{% endif %}
+    {% if page_obj %}
+        {% with query_params="&sort="|add:current_sort %}
+            {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+        {% endwith %}
+    {% endif %}
 
   </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#status-filter').change(function() {
+            $(this).closest('form').submit();
+        });
+    });
+</script>
 {% endblock bodycontent %}

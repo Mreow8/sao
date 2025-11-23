@@ -3,177 +3,384 @@
 
 {% block headcontent %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" href="{% static 'styles/scholarship/admin_req_history.css' %}" />
+
+    <style>
+        /* --- Modern Dashboard Styling --- */
+        :root {
+            --primary-color: #2c5282;
+            --success-color: #1cc88a;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-text: #5a5c69;
+            --light-bg: #f8f9fc;
+            --border-color: #e3e6f0;
+        }
+
+        /* Container */
+        .body-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin: 20px;
+            font-family: 'Rubik', sans-serif;
+        }
+
+        /* Header & Description */
+        .page-header-container {
+            margin-bottom: 2rem;
+        }
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2e3a59;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-description {
+            color: #858796;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            max-width: 900px;
+        }
+
+        /* --- Filter Bar --- */
+        .search_id_container {
+            background-color: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end; /* Align labels and inputs */
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 5px;
+        }
+
+        .filter-group input, 
+        .filter-group select {
+            padding: 10px;
+            border: 1px solid #d1d3e2;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #6e707e;
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group input:focus, 
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+        }
+
+        .filter-group button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            height: 42px; /* Match height of inputs roughly */
+            margin-top: auto;
+        }
+        .filter-group button:hover { background-color: #2e59d9; }
+
+        /* --- Table Styling --- */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        thead th {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 15px;
+            border-bottom: 2px solid var(--border-color);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: #5a5c69;
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        tbody tr:hover {
+            background-color: #fafbfc;
+        }
+
+        /* File Thumbnails */
+        .file-links img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: transform 0.2s;
+        }
+        .file-links img:hover {
+            transform: scale(1.2);
+            border-color: var(--primary-color);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .status-pending { background-color: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+        .status-accepted { background-color: #d1fae5; color: #047857; border: 1px solid #6ee7b7; }
+
+        /* Modal */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.8); 
+        }
+        .modal-content {
+            margin: 5% auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: #bbb; }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+            color: #858796;
+        }
+    </style>
 {% endblock headcontent %} 
 
 {% block bodycontent %}
     <div class="sub-title">
-        <h4>SCHOLARSHIP</h4>
+        <h4>SCHOLARSHIP (Admin)</h4>
         <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-        <p class="certxt">> Scholarship Requirement Submission History</p>
+        <p class="certxt">&gt; Submission History</p>
     </div>
     <hr>
-<div class="body-content">
-    
 
-
-    <div class="form_div">
-<div class="search_id_container"
-        <form method="GET" class="filter-bar">
-            <div class="filter-group">
-                <label for="search_year">Academic Year:</label>
-                <input
-                    type="text"
-                    id="search_year"
-                    name="search_year"
-                    placeholder="e.g., 2023-2024"
-                    value="{{ search_year }}"
-                />
-            </div>
-
-            <div class="filter-group">
-                <label for="search_semester">Semester:</label>
-                <select id="search_semester" name="search_semester">
-                    <option value="">All Semesters</option>
-                    <option value="1st Semester" {% if search_semester == '1st Semester' %}selected{% endif %}>
-                        1st Semester
-                    </option>
-                    <option value="2nd Semester" {% if search_semester == '2nd Semester' %}selected{% endif %}>
-                        2nd Semester
-                    </option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="search_type">Scholarship Type:</label>
-                <select id="search_type" name="search_type">
-                    <option value="">All Types</option>
-                    <option value="CHED - Full Merit" {% if search_type == 'CHED - Full Merit' %}selected{% endif %}>CHED FULL MERIT</option>
-                    <option value="CHED - Half Merit" {% if search_type == 'CHED - Half Merit' %}selected{% endif %}>CHED HALF MERIT</option>
-                    <option value="CHED - Tulong Dunong Program" {% if search_type == 'CHED - Tulong Dunong Program' %}selected{% endif %}>CHED TULONG DUNONG</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="search_status">Status:</label>
-                <select id="search_status" name="search_status">
-                    <option value="">All Statuses</option>
-                    <option value="PENDING" {% if search_status == 'PENDING' %}selected{% endif %}>Pending</option>
-                    <option value="ACCEPTED" {% if search_status == 'ACCEPTED' %}selected{% endif %}>Accepted</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <button type="submit">Filter</button>
-            </div>
-        </form>
-</div>
-        <div class="table-container">
-            <table id="requirements-table">
-                <thead>
-                    <tr>
-                        <th>Scholar ID</th>
-                        <th>Name</th>
-                        <th>Files</th>
-                        <th>GPA</th>
-                        <th>Units</th>
-                        <th>Scholar Type</th>
-                        <th>Year</th>
-                        <th>Semester</th>
-                        <th>Status</th>
-                        <th>Record</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for req in page_obj.object_list %}
-                    <tr>
-                        <td>{{ req.scholar_ID }}</td>
-                        <td>{{ req.studID.lastname }}, {{ req.studID.firstname }} </td>
-                        <td class="file-links">
-                            {% if req.cor_file %}
-                                <img id="cor_pic" src="{{ req.cor_file.url }}" alt="COR">
-                            {% endif %}
-                            {% if req.grade_file %}
-                                <img id="grade_pic" src="{{ req.grade_file.url }}" alt="Grade">
-                            {% endif %}
-                            {% if req.schoolid_file %}
-                                <img id="schoolid_pic" src="{{ req.schoolid_file.url }}" alt="ID">
-                            {% endif %}
-                        </td>
-                        <td>{{ req.gpa }}</td>
-                        <td>{{ req.units }}</td>
-                        <td>{{ req.scholar_type }}</td>
-                        <td>{{ req.year }}</td>
-                        <td>{{ req.semester }}</td>
-                        
-                        <td>
-                            {% if req.status == 'PENDING' %}
-                                <span class="status-badge status-pending">PENDING</span>
-                            {% elif req.status == 'ACCEPTED' %}
-                                <span class="status-badge status-accepted">ACCEPTED</span>
-                            {% else %}
-                                {{ req.status }}
-                            {% endif %}
-                        </td>
-                        
-                        <td>{{ req.record }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="10">
-                            No records found matching your filters.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="body-content">
         
-      
-      {% with query_params="&search_year="|add:search_year|add:"&search_semester="|add:search_semester|add:"&search_type="|add:search_type|add:"&search_status="|add:search_status %}
+        <div class="page-header-container">
+            <h2 class="page-title"><i class="fas fa-history"></i> Requirement Submission History</h2>
+            <p class="page-description">
+                View past scholarship requirement submissions. Filter by academic year, semester, type, or status to track student compliance and records.
+            </p>
+        </div>
 
-    {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    
-{% endwith %}
+            
+            <div class="search_id_container">
+                <form method="GET" class="filter-bar">
+                    <div class="filter-group">
+                        <label for="search_year">Academic Year</label>
+                        <input
+                            type="text"
+                            id="search_year"
+                            name="search_year"
+                            placeholder="e.g., 2023-2024"
+                            value="{{ search_year }}"
+                        />
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="search_semester">Semester</label>
+                        <select id="search_semester" name="search_semester">
+                            <option value="">All Semesters</option>
+                            <option value="1st Semester" {% if search_semester == '1st Semester' %}selected{% endif %}>1st Semester</option>
+                            <option value="2nd Semester" {% if search_semester == '2nd Semester' %}selected{% endif %}>2nd Semester</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="search_type">Scholarship Type</label>
+                        <select id="search_type" name="search_type">
+                            <option value="">All Types</option>
+                            <option value="CHED - Full Merit" {% if search_type == 'CHED - Full Merit' %}selected{% endif %}>CHED FULL MERIT</option>
+                            <option value="CHED - Half Merit" {% if search_type == 'CHED - Half Merit' %}selected{% endif %}>CHED HALF MERIT</option>
+                            <option value="CHED - Tulong Dunong Program" {% if search_type == 'CHED - Tulong Dunong Program' %}selected{% endif %}>CHED TULONG DUNONG</option>
+                            </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="search_status">Status</label>
+                        <select id="search_status" name="search_status">
+                            <option value="">All Statuses</option>
+                            <option value="PENDING" {% if search_status == 'PENDING' %}selected{% endif %}>Pending</option>
+                            <option value="ACCEPTED" {% if search_status == 'ACCEPTED' %}selected{% endif %}>Accepted</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group" style="flex: 0 0 auto;">
+                        <button type="submit"><i class="fas fa-filter"></i> Apply Filter</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <table id="requirements-table">
+                    <thead>
+                        <tr>
+                            <th>Scholar ID</th>
+                            <th>Name</th>
+                            <th>Documents</th>
+                            <th>GPA</th>
+                            <th>Units</th>
+                            <th>Type</th>
+                            <th>Year</th>
+                            <th>Sem</th>
+                            <th>Status</th>
+                            <th>Record</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in page_obj.object_list %}
+                        <tr>
+                            <td style="font-weight: bold; color: #2c5282;">{{ req.scholar_ID }}</td>
+                            <td>{{ req.studID.lastname }}, {{ req.studID.firstname }} </td>
+                            <td class="file-links">
+                                {% if req.cor_file %}
+                                    <img id="cor_pic" src="{{ req.cor_file.url }}" alt="COR" title="COR">
+                                {% endif %}
+                                {% if req.grade_file %}
+                                    <img id="grade_pic" src="{{ req.grade_file.url }}" alt="Grade" title="Grades">
+                                {% endif %}
+                                {% if req.schoolid_file %}
+                                    <img id="schoolid_pic" src="{{ req.schoolid_file.url }}" alt="ID" title="School ID">
+                                {% endif %}
+                            </td>
+                            <td>{{ req.gpa }}</td>
+                            <td>{{ req.units }}</td>
+                            <td>{{ req.scholar_type }}</td>
+                            <td>{{ req.year }}</td>
+                            <td>{{ req.semester }}</td>
+                            
+                            <td>
+                                {% if req.status == 'PENDING' %}
+                                    <span class="status-badge status-pending">PENDING</span>
+                                {% elif req.status == 'ACCEPTED' %}
+                                    <span class="status-badge status-accepted">ACCEPTED</span>
+                                {% else %}
+                                    {{ req.status }}
+                                {% endif %}
+                            </td>
+                            
+                            <td>{{ req.record }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10" class="no-data">
+                                <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                No records found matching your filters.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% with query_params="&search_year="|add:search_year|add:"&search_semester="|add:search_semester|add:"&search_type="|add:search_type|add:"&search_status="|add:search_status %}
+                {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+            {% endwith %}
+        </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage" />
     </div>
-</div>
 
-<div id="imageModal" class="modal">
-    <span class="close">&times;</span>
-    <img class="modal-content" id="modalImage" />
-</div>
+    <script>
+        // Get the modal
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
 
-<script>
-    // Get the modal
-    var modal = document.getElementById("imageModal");
-    var modalImg = document.getElementById("modalImage");
+        // Add click event to all images inside the table
+        document.querySelectorAll("td img").forEach(function (img) {
+            img.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            };
+        });
 
-    // Add click event to all images inside the table
-    document.querySelectorAll("td img").forEach(function (img) {
-        img.onclick = function () {
-            modal.style.display = "block";
-            modalImg.src = this.src;
-        };
-    });
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
 
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
-    };
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+        // When the user clicks on <span> (x), close the modal
+        if (span) {
+            span.onclick = function () {
+                modal.style.display = "none";
+            };
         }
-    };
-</script>
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
 {% endblock %}

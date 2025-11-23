@@ -27,6 +27,7 @@ mainpage/templates/community_involvement/crowdfunding_list.html
 mainpage/templates/community_involvement/programs.html
 mainpage/templates/community_involvement/donate.html
 mainpage/templates/studentorg/Main/register_adviser_new.html
+mainpage/templates/studentorg/ADMIN/manage_accreditation.html
 mainpage/templates/studentorg/Main/view_officer.html
 mainpage/templates/studentorg/Main/view_projects.html
 mainpage/templates/studentorg/Main/view_financial.html

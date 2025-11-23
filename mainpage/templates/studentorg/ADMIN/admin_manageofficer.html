@@ -2,102 +2,17 @@
 
 {% block headcontent %}
 <link rel="stylesheet" href="{% static 'studentorg/css/Manage.css' %}" />
+
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
-<style>
-  /* --- Image Modal Styles --- */
-  .image-modal-overlay {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    align-items: center;
-    justify-content: center;
-  }
-
-  .image-modal-content {
-    display: block;
-    max-width: 80%;
-    max-height: 80%;
-    object-fit: contain;
-  }
-
-  .image-modal-close {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  /* --- Action Button Styles (Matches Manage Adviser) --- */
-  td form {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .approve,
-  .decline {
-    padding: 6px 14px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1.2;
-    color: #ffffff;
-    border: none;
-  }
-
-  /* Green for Approve/Active */
-  .approve {
-    background-color: #28a745; 
-  }
-  .approve:hover {
-    background-color: #218838; 
-  }
-
-  /* Red for End Term/Decline */
-  .decline {
-    background-color: #dc3545; 
-  }
-  .decline:hover {
-    background-color: #c82333; 
-  }
-
-  /* Inactive Label */
-  .status-label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #6c757d;
-    background-color: #f8f9fa;
-    padding: 4px 10px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-  }
-</style>
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 {% endblock %} 
 
 {% block bodycontent %}
 <div class="sub-title">
-  <h4>Student Organization(Admin)</h4>
+  <h4>STUDENT ORGANIZATION (Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Officer Management</p>
 </div>
@@ -105,148 +20,162 @@
 
 <div class="container">
   
+  <div class="page-header-container">
+      <h2 class="page-title"><i class="fas fa-user-tie"></i> Officer Management Dashboard</h2>
+      <p class="page-description">
+          Review and manage student organization officers. Approve pending applications to grant system access, 
+          view profile details, or end the term of active officers. Use the tabs below to navigate other admin functions.
+      </p>
+  </div>
+
   <div class="maincontain gmc-form">
+    
     <div class="tabs">
-    <a href="{% url 'admin_manageofficer' %}" class="tab active"
-      >Manage Officer</a
-    >
-    <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
-    <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
-    <a href="{% url 'admin_managefinancial' %}" class="tab"
-      >Manage Financial</a
-    >
-    <a href="{% url 'admin_manage_accreditations' %}" class="tab"
-      >Manage Applications</a
-    >
+        <a href="{% url 'admin_manageofficer' %}" class="tab active">Manage Officer</a>
+        <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
+        <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
+        <a href="{% url 'admin_managefinancial' %}" class="tab">Manage Financial</a>
+        <a href="{% url 'admin_manage_accreditations' %}" class="tab">Manage Applications</a>
+    </div>
+
+    <div class="search_id_container">
+        <form class="search-form" method="GET" action="">
+          <input
+            type="text"
+            name="search"
+            class="search-input"
+            placeholder="Search by ID, Name, Position..."
+            value="{{ request.GET.search }}"
+          >
+          <select class="filter-select" name="org" id="org-filter">
+             <option value="">Filter by Organization</option>
+            {% for org in all_organizations %}
+            <option value="{{ org.slug }}" {% if request.GET.org == org.slug %}selected{% endif %}>
+            {{ org.name }}
+            </option>
+             {% endfor %}
+          </select>
+          <button type="submit" class="search-btn"><i class="fas fa-search"></i> Search</button>
+        </form>
+    </div>
+
+    <div class="subcontain">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable">
+                <a href="?sort=officer_id&order={% if current_sort == 'officer_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">
+                    ID <i class="fas fa-sort"></i>
+                </a>
+              </th>
+              <th style="text-align: center;">Photo</th>
+              <th class="sortable">
+                <a href="?sort=surname&order={% if current_sort == 'surname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">
+                    Last Name <i class="fas fa-sort"></i>
+                </a>
+              </th>
+              <th class="sortable">
+                <a href="?sort=firstname&order={% if current_sort == 'firstname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">
+                    First Name <i class="fas fa-sort"></i>
+                </a>
+              </th>
+              <th class="sortable">
+                <a href="?sort=position&order={% if current_sort == 'position' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">
+                    Position <i class="fas fa-sort"></i>
+                </a>
+              </th>
+              <th class="sortable">
+                <a href="?sort=organization&order={% if current_sort == 'organization' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">
+                    Organization <i class="fas fa-sort"></i>
+                </a>
+              </th>
+              <th class="sortable">
+                <a href="?sort=status&order={% if current_sort == 'status' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">
+                    Status <i class="fas fa-sort"></i>
+                </a>
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for officer in page_obj %}
+            <tr>
+              <td style="font-weight: 600; color: #4e73df;">{{ officer.officer_id }}</td>
+              <td style="text-align: center;">
+                {% if officer.profile_picture %}
+                  <a href="{{ officer.profile_picture.url }}" class="clickable-profile-pic">
+                    <img 
+                      src="{{ officer.profile_picture.url }}" 
+                      alt="{{ officer.firstname }}"
+                    >
+                  </a>
+                {% else %}
+                  <a href="{% static 'images/default_profile.png' %}" class="clickable-profile-pic">
+                    <img 
+                      src="{% static 'images/default_profile.png' %}" 
+                      alt="Default"
+                    >
+                  </a>
+                {% endif %}
+              </td>
+              <td>{{ officer.surname }}</td>
+              <td>{{ officer.firstname }}</td>
+              <td>{{ officer.position }}</td>
+              <td>{{ officer.organization }}</td>
+             <td>
+                {% if officer.status == 'approved' %}
+                    <span class="status-badge status-approved">Active</span>
+                {% elif officer.status == 'pending' %}
+                    <span class="status-badge status-pending">Pending</span>
+                {% else %}
+                    <span class="status-badge status-inactive">Inactive</span>
+                {% endif %}
+            </td>
+              <td>
+                <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="officer_id" value="{{ officer.officer_id }}" />
+                  
+                  {% if officer.status == 'pending' %}
+                      <button type="submit" name="action" value="approve" class="approve">
+                        <i class="fas fa-check"></i> Approve
+                      </button>
+                      <button type="submit" name="action" value="decline" class="decline">
+                        <i class="fas fa-times"></i> Decline
+                      </button>
+
+                  {% elif officer.status == 'approved' %}
+                      <button type="submit" name="action" value="deactivate" class="decline" style="background-color: #858796;">
+                        <i class="fas fa-ban"></i> End Term
+                      </button>
+
+                  {% else %}
+                      <span class="status-label">Archived</span>
+                  {% endif %}
+
+                </form>
+              </td>
+              </tr>
+            {% empty %}
+            <tr>
+              <td colspan="10" class="no-applicants">
+                  <i class="fas fa-folder-open" style="display: block; font-size: 2rem; margin-bottom: 10px;"></i>
+                  No officers found matching criteria.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+
+    {% if page_obj %}
+        {% with query_params="&sort="|add:current_sort %}
+            {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+        {% endwith %}
+    {% endif %}
+
   </div>
-
-  <div class="search_id_container">
-    <form class="search-form" method="GET" action="">
-      <input
-        type="text"
-        name="search"
-        class="search-input"
-        placeholder="Search by Officer ID, Name, Course, Position, Org..."
-        value="{{ request.GET.search }}"
-      >
-      <select class="filter-select" name="org" id="org-filter">
-         <option value="">All Organizations</option>
-        {% for org in all_organizations %}
-        <option value="{{ org.slug }}" {% if request.GET.org == org.slug %}selected{% endif %}>
-        {{ org.name }}
-        </option>
-         {% endfor %}
-      </select>
-      <button type="submit" class="search-btn">Search</button>
-    </form>
-  </div>
-
-  <div class="subcontain">
-    <table>
-      <thead>
-        <tr>
-          <th class="sortable">
-            <a href="?sort=officer_id&order={% if current_sort == 'officer_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Officer ID</a>
-          </th>
-          <th>Profile Picture</th>
-          <th class="sortable">
-            <a href="?sort=surname&order={% if current_sort == 'surname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Last Name</a>
-          </th>
-          <th class="sortable">
-            <a href="?sort=firstname&order={% if current_sort == 'firstname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">First Name</a>
-          </th>
-          <!-- <th>Middle Name</th> -->
-          <!-- <th class="sortable">
-            <a href="?sort=course&order={% if current_sort == 'course' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Course</a>
-          </th> -->
-          <th class="sortable">
-            <a href="?sort=position&order={% if current_sort == 'position' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Position</a>
-          </th>
-          <th class="sortable">
-            <a href="?sort=organization&order={% if current_sort == 'organization' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Organization</a>
-          </th>
-          <th class="sortable">
-            <a href="?sort=status&order={% if current_sort == 'status' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Status</a>
-          </th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for officer in page_obj %}
-        <tr>
-          <td>{{ officer.officer_id }}</td>
-          <td>
-            {% if officer.profile_picture %}
-              <a href="{{ officer.profile_picture.url }}" class="clickable-profile-pic">
-                <img 
-                  src="{{ officer.profile_picture.url }}" 
-                  alt="{{ officer.firstname }}'s Profile"
-                  style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover; cursor: pointer;"
-                >
-              </a>
-            {% else %}
-              <a href="{% static 'images/default_profile.png' %}" class="clickable-profile-pic">
-                <img 
-                  src="{% static 'images/default_profile.png' %}" 
-                  alt="Default profile"
-                  style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover; cursor: pointer;"
-                >
-              </a>
-            {% endif %}
-          </td>
-          <td>{{ officer.surname }}</td>
-          <td>{{ officer.firstname }}</td>
-          <!-- <td>{{ officer.middlename }}</td> -->
-          <!-- <td>{{ officer.course }}</td> -->
-          <td>{{ officer.position }}</td>
-          <td>{{ officer.organization }}</td>
-          <td>{{ officer.get_status_display }}</td>
-          
-          <td>
-            <form method="post">
-              {% csrf_token %}
-              <input
-                type="hidden"
-                name="officer_id"
-                value="{{ officer.officer_id }}"
-              />
-              
-              {% if officer.status == 'pending' %}
-                  <button type="submit" name="action" value="approve" class="approve">
-                    Approve
-                  </button>
-                  <button type="submit" name="action" value="decline" class="decline">
-                    Decline
-                  </button>
-
-              {% elif officer.status == 'approved' %}
-                  <button type="submit" name="action" value="deactivate" class="decline">
-                    End Term
-                  </button>
-
-              {% else %}
-                  <span class="status-label">Inactive</span>
-              {% endif %}
-
-            </form>
-          </td>
-          </tr>
-        {% empty %}
-        <tr>
-          <td colspan="10" class="no-applicants">No officers found.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  {% if page_obj %}
-    {% with query_params="&sort="|add:current_sort %}
-        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    {% endwith %}
-  {% endif %}
-
-  </div>
+  
   <div id="image-modal" class="image-modal-overlay">
     <span class="image-modal-close">&times;</span>
     <img class="image-modal-content" id="modal-image">

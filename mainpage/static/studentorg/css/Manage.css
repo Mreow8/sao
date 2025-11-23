@@ -1,88 +1,111 @@
-/* =========================================
-   1. Global Variables & Reset
-   ========================================= */
+/* --- Modern Dashboard Styling --- */
 :root {
-  --primary-color: #2c5282; /* Deep Blue */
-  --primary-hover: #2a4365;
-  --accent-color: #3182ce; /* Brighter Blue */
-  --success-color: #10b981; /* Green */
-  --success-hover: #059669;
-  --danger-color: #ef4444; /* Red */
-  --danger-hover: #dc2626;
-  --bg-light: #f3f4f6; /* Light Gray Background */
-  --text-dark: #1f2937; /* Dark Gray Text */
-  --text-muted: #6b7280; /* Muted Text */
-  --border-color: #e5e7eb;
-  --white: #ffffff;
-  --radius: 8px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --primary-color: #2c5282;
+  --success-color: #4e73df;
+  --warning-color: #f6c23e;
+  --danger-color: #e74a3b;
+  --dark-text: #5a5c69;
+  --light-bg: #f8f9fc;
+  --border-color: #e3e6f0;
 }
 
 body {
-  background-color: var(--bg-light);
-  color: var(--text-dark);
   font-family: "Rubik", sans-serif;
 }
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 50px; /* Pill shape */
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  min-width: 60px;
+  display: inline-block;
+  white-space: nowrap;
+}
 
-/* =========================================
-   2. Main Container & Titles
-   ========================================= */
+/* Status Colors (Soft Backgrounds) */
+.status-approved {
+  background-color: rgba(28, 200, 138, 0.15); /* Soft Green */
+  color: #1cc88a;
+}
+
+.status-pending {
+  background-color: rgba(246, 194, 62, 0.15); /* Soft Yellow */
+  color: #f6c23e;
+}
+
+.status-declined {
+  background-color: rgba(231, 74, 59, 0.15); /* Soft Red */
+  color: #e74a3b;
+}
 .container {
-  max-width: 95%;
-  margin: 2rem auto;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 20px;
 }
 
-/* The Main Card */
-.maincontain {
-  background-color: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 20px;
-  overflow: hidden; /* Keeps corners rounded */
+/* --- Header & Description --- */
+.page-header-container {
+  margin-bottom: 2rem;
+}
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2e3a59;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-description {
+  color: #858796;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 900px;
 }
 
-/* =========================================
-   3. Navigation Tabs
-   ========================================= */
+/* --- Tabs --- */
 .tabs {
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 15px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
 }
 
 .tab {
+  padding: 8px 16px;
+  border-radius: 4px;
   text-decoration: none;
-  color: var(--text-muted);
-  font-weight: 500;
-  padding: 10px 16px;
-  border-radius: var(--radius);
-  transition: all 0.2s ease;
-  font-size: 0.95rem;
+  color: var(--dark-text);
+  font-weight: 600;
+  transition: all 0.2s;
+  border: 1px solid transparent;
 }
 
 .tab:hover {
-  background-color: #edf2f7;
+  background-color: var(--light-bg);
   color: var(--primary-color);
 }
 
 .tab.active {
   background-color: var(--primary-color);
-  color: var(--white);
+  color: white;
+  border-color: var(--primary-color);
 }
 
-/* =========================================
-   4. Search & Filter Bar
-   ========================================= */
+/* --- Search & Filter Controls --- */
 .search_id_container {
-  background-color: #f8fafc;
+  background-color: var(--light-bg);
   padding: 15px;
-  border-radius: var(--radius);
-  margin-bottom: 20px;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
+  margin-bottom: 20px;
 }
 
 .search-form {
@@ -93,273 +116,187 @@ body {
 }
 
 .search-input {
-  flex: 1;
-  min-width: 250px;
+  flex-grow: 1;
   padding: 10px 15px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 0.95rem;
+  border: 1px solid #d1d3e2;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  min-width: 250px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
 }
 
 .filter-select {
   padding: 10px 15px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background-color: var(--white);
-  color: var(--text-dark);
+  border: 1px solid #d1d3e2;
+  border-radius: 5px;
+  background-color: #fff;
+  color: var(--dark-text);
   cursor: pointer;
+  min-width: 200px;
 }
 
 .search-btn {
   padding: 10px 20px;
   background-color: var(--primary-color);
-  color: var(--white);
+  color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 }
 
 .search-btn:hover {
-  background-color: var(--primary-hover);
+  background-color: #2e59d9;
 }
 
-/* =========================================
-   5. Data Table Styling
-   ========================================= */
+/* --- Table Styling --- */
 .subcontain {
-  overflow-x: auto; /* Responsive scrolling */
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  margin: 0;
+}
+
+thead th {
+  background-color: var(--light-bg);
+  color: var(--primary-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  padding: 15px;
+  border-bottom: 2px solid var(--border-color);
+  text-align: left;
   white-space: nowrap;
 }
 
-thead {
-  background-color: #f1f5f9;
-  border-bottom: 2px solid var(--border-color);
-}
-
-th {
-  padding: 15px;
-  text-align: left;
-  font-weight: 600;
-  color: var(--text-dark);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Sortable Links in Headers */
-th.sortable a {
-  text-decoration: none;
+thead th a {
   color: inherit;
+  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 5px;
 }
-
-th.sortable a:hover {
-  color: var(--accent-color);
+thead th a:hover {
+  color: #2e59d9;
 }
 
-tbody tr {
+tbody td {
+  padding: 15px;
   border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.2s;
-}
-
-tbody tr:last-child {
-  border-bottom: none;
+  color: var(--dark-text);
+  vertical-align: middle;
+  font-size: 0.9rem;
 }
 
 tbody tr:hover {
-  background-color: #f8fafc;
+  background-color: #fafbfc;
 }
 
-td {
-  padding: 12px 15px;
-  font-size: 0.95rem;
-  vertical-align: middle;
-  color: var(--text-dark);
-}
-
-/* Profile Picture in Table */
-td img {
-  border: 2px solid var(--border-color);
+/* --- Profile Image --- */
+.clickable-profile-pic img {
+  width: 50px !important; /* Override inline style */
+  height: 50px !important;
+  border-radius: 50% !important;
+  border: 2px solid #e3e6f0;
   transition: transform 0.2s;
 }
-
-td img:hover {
+.clickable-profile-pic img:hover {
   transform: scale(1.1);
-  border-color: var(--accent-color);
+  border-color: var(--primary-color);
 }
 
-/* No Applicants Row */
-.no-applicants {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-/* =========================================
-   6. Action Buttons (Approve/Decline)
-   ========================================= */
+/* --- Action Buttons --- */
 td form {
+  margin: 0;
   display: flex;
-  gap: 8px;
+  gap: 5px;
+  flex-wrap: wrap;
 }
 
-.approve,
-.decline {
-  padding: 8px 14px;
-  border-radius: 6px;
+button[type="submit"] {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: none;
   cursor: pointer;
-  color: var(--white);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  text-transform: uppercase;
+  color: white;
+  transition: opacity 0.2s;
 }
 
-/* Approve Button */
+button[type="submit"]:hover {
+  opacity: 0.9;
+}
+
 .approve {
   background-color: var(--success-color);
 }
-.approve:hover {
-  background-color: var(--success-hover);
-  transform: translateY(-1px);
-}
-
-/* Decline / End Term Button */
 .decline {
   background-color: var(--danger-color);
 }
-.decline:hover {
-  background-color: var(--danger-hover);
-  transform: translateY(-1px);
-}
 
-/* Status Label (Inactive) */
 .status-label {
-  display: inline-block;
-  padding: 6px 12px;
-  background-color: #e5e7eb;
-  color: #6b7280;
-  border-radius: 20px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
+  color: #858796;
+  background-color: #eaecf4;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  display: inline-block;
 }
 
-/* =========================================
-   7. Image Modal
-   ========================================= */
+.no-applicants {
+  text-align: center;
+  padding: 40px;
+  font-style: italic;
+  color: #858796;
+}
+
+/* --- Image Modal --- */
 .image-modal-overlay {
   display: none;
   position: fixed;
-  z-index: 2000;
+  z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(3px);
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(4px);
 }
 
 .image-modal-content {
   max-width: 90%;
-  max-height: 90vh;
+  max-height: 90%;
   object-fit: contain;
   border-radius: 8px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  animation: zoomIn 0.2s ease-out;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .image-modal-close {
   position: absolute;
   top: 20px;
   right: 30px;
-  color: var(--white);
-  font-size: 3rem;
-  font-weight: bold;
+  color: #fff;
+  font-size: 40px;
   cursor: pointer;
   transition: color 0.2s;
-  line-height: 1;
 }
-
 .image-modal-close:hover {
   color: var(--danger-color);
-}
-
-@keyframes zoomIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* =========================================
-   8. Pagination Styling (Generic)
-   ========================================= */
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 5px;
-}
-
-.pagination a,
-.pagination span {
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  color: var(--primary-color);
-  text-decoration: none;
-  border-radius: 4px;
-}
-
-.pagination .current {
-  background-color: var(--primary-color);
-  color: var(--white);
-  border-color: var(--primary-color);
-}
-
-/* =========================================
-   9. Responsive Design
-   ========================================= */
-@media (max-width: 768px) {
-  .search-form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .search-input,
-  .filter-select,
-  .search-btn {
-    width: 100%;
-  }
-
-  .tabs {
-    justify-content: center;
-  }
-
-  th,
-  td {
-    padding: 10px;
-  }
 }

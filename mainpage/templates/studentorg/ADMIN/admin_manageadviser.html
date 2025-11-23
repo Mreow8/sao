@@ -7,265 +7,212 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+<style>
+    /* --- Modern Dashboard --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #1cc88a;
+        --danger-color: #e74a3b;
+        --light-bg: #f8f9fc;
+    }
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 50px; /* Pill shape */
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    min-width: 60px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Status Colors (Soft Backgrounds) */
+.status-approved {
+    background-color: rgba(28, 200, 138, 0.15); /* Soft Green */
+    color: #1cc88a;
+}
+
+.status-pending {
+    background-color: rgba(246, 194, 62, 0.15); /* Soft Yellow */
+    color: #f6c23e;
+}
+
+.status-declined {
+    background-color: rgba(231, 74, 59, 0.15); /* Soft Red */
+    color: #e74a3b;
+}
+    .container {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+    }
+
+    .page-header-container { margin-bottom: 2rem; }
+    .page-title { font-size: 1.5rem; font-weight: 700; color: #2e3a59; margin-bottom: 0.5rem; }
+    .page-description { color: #858796; }
+
+    .tabs {
+        display: flex; gap: 5px; border-bottom: 1px solid #e3e6f0; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .tab {
+        padding: 10px 20px; text-decoration: none; color: #5a5c69; font-weight: 600; border-radius: 5px 5px 0 0;
+    }
+    .tab.active { background-color: var(--primary-color); color: white; }
+
+    /* Search */
+    .search_id_container {
+        background-color: var(--light-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e3e6f0;
+    }
+    .search-form { display: flex; gap: 10px; flex-wrap: wrap; }
+    .search-input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #d1d3e2; }
+    .filter-select { padding: 10px; border-radius: 5px; border: 1px solid #d1d3e2; }
+    .search-btn { padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
+
+    /* Table */
+    .subcontain { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background-color: var(--light-bg); color: var(--primary-color); padding: 12px; text-align: left; font-weight: 700; }
+    td { padding: 12px; border-bottom: 1px solid #e3e6f0; color: #5a5c69; vertical-align: middle; }
+
+    /* Actions */
+    .approve, .decline { padding: 6px 12px; border: none; border-radius: 4px; color: white; font-size: 0.8rem; cursor: pointer; }
+    .approve { background-color: var(--success-color); }
+    .decline { background-color: var(--danger-color); }
+    
+    .image-modal-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+    .image-modal-content { max-width: 80%; max-height: 80%; }
+    .image-modal-close { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
+</style>
 {% endblock %} 
 
 {% block bodycontent %}
-<style>
-  /* --- Action Column Layout --- */
-  td form {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  /* --- Base Button Styles --- */
-  .approve,
-  .decline {
-    padding: 8px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    color: #ffffff;
-    letter-spacing: 0.3px;
-  }
-
-  /* --- Approve / Activate (Matte Blue) --- */
-  .approve {
-    background-color: #005a9e; 
-  }
-  .approve:hover {
-    background-color: #004a85; 
-  }
-
-  /* --- Decline / Deactivate (Matte Red) --- */
-  .decline {
-    background-color: #e63946; 
-  }
-  .decline:hover {
-    background-color: #d62839; 
-  }
-
-  /* --- Declined Text Label --- */
-  td span.status-label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #666;
-    background-color: #f0f0f0;
-    padding: 6px 12px;
-    border-radius: 6px;
-  }
-   .image-modal-overlay {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    align-items: center;
-    justify-content: center;
-  }
-
-  .image-modal-content {
-    display: block;
-    max-width: 80%;
-    max-height: 80%;
-    object-fit: contain;
-  }
-
-  .image-modal-close {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-</style>
-
 <div class="sub-title">
-  <h4>Student Organization(Admin)</h4>
+  <h4>STUDENT ORGANIZATION (Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Adviser Management</p>
 </div>
 <hr>
 
 <div class="container">
+  
+  <div class="page-header-container">
+      <h2 class="page-title"><i class="fas fa-chalkboard-teacher"></i> Adviser Management</h2>
+      <p class="page-description">
+          Manage faculty advisers for student organizations. Approve assignments, deactivate former advisers, 
+          or verify their profiles.
+      </p>
+  </div>
 
   <div class="maincontain gmc-form">
 
     <div class="tabs">
-    <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
-    <a href="{% url 'admin_manageadviser' %}" class="tab active"
-      >Manage Adviser</a
-    >
-    <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
-    <a href="{% url 'admin_managefinancial' %}" class="tab"
-      >Manage Financial</a
-    >
-    <a href="{% url 'admin_manage_accreditations' %}" class="tab"
-      >Manage Applications</a
-    >
-    <a href="/admin_transactionreport" class="tab">Manage Transactions </a>
-  </div>
+        <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
+        <a href="{% url 'admin_manageadviser' %}" class="tab active">Manage Adviser</a>
+        <a href="{% url 'admin_manageproject' %}" class="tab">Manage Projects</a>
+        <a href="{% url 'admin_managefinancial' %}" class="tab">Manage Financial</a>
+        <a href="{% url 'admin_manage_accreditations' %}" class="tab">Manage Applications</a>
+    </div>
   
     <div class="search_id_container">
-    <form class="search-form" method="GET" action="">
-      <input
-        type="text"
-        name="search"
-        class="search-input"
-        placeholder="Search by Adviser ID, Name, or Organization"
-        value="{{ request.GET.search }}"
-      >
-      <select class="filter-select" name="status" id="status-filter">
-          <option value="">All Statuses</option>
-          <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
-          <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
-          <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
-      </select>
-      
-      <select class="filter-select" name="active" id="active-filter">
-        <option value="">All Active</option>
-        <option value="true" {% if request.GET.active == 'true' %}selected{% endif %}>Active</option>
-        <option value="false" {% if request.GET.active == 'false' %}selected{% endif %}>Inactive</option>
-      </select>
+        <form class="search-form" method="GET" action="">
+          <input
+            type="text"
+            name="search"
+            class="search-input"
+            placeholder="Search by Adviser ID, Name, or Org..."
+            value="{{ request.GET.search }}"
+          >
+          <select class="filter-select" name="status" id="status-filter">
+              <option value="">Status</option>
+              <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+              <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+              <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
+          </select>
+          
+          <select class="filter-select" name="active" id="active-filter">
+            <option value="">Active State</option>
+            <option value="true" {% if request.GET.active == 'true' %}selected{% endif %}>Active</option>
+            <option value="false" {% if request.GET.active == 'false' %}selected{% endif %}>Inactive</option>
+          </select>
 
-      <select class="filter-select" name="organization" id="org-filter">
-          <option value="">All Organizations</option>
-          {% for org in all_organizations %}
-              <option value="{{ org.org_id }}" {% if request.GET.organization == org.org_id|stringformat:"s" %}selected{% endif %}>
-                  {{ org.name }}
-              </option>
-          {% endfor %}
-      </select>
-      
-      <button type="submit" class="search-btn">Search</button>
-    </form>
+          <button type="submit" class="search-btn"><i class="fas fa-search"></i> Search</button>
+        </form>
     </div>
 
     <div class="subcontain">
       <table>
         <thead>
           <tr>
-            <th class="sortable">
-              <a href="?sort=adviser_id&order={% if current_sort == 'adviser_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Adviser ID</a>
-            </th>
-            <th>Profile Picture</th>
-            <th class="sortable">
-              <a href="?sort=surname&order={% if current_sort == 'surname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Last Name</a>
-            </th>
-            <th class="sortable">
-              <a href="?sort=firstname&order={% if current_sort == 'firstname' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">First Name</a>
-            </th>
-            <th class="sortable">
-              <a href="?sort=organization&order={% if current_sort == 'organization' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Organization</a>
-            </th>
-            <th class="sortable">
-              <a href="?sort=position&order={% if current_sort == 'position' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Position</a>
-            </th>
-            <th class="sortable">
-              <a href="?sort=status&order={% if current_sort == 'status' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Status</a>
-            </th>
-            <th class="sortable">
-              <a href="?sort=is_active&order={% if current_sort == 'is_active' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Active</a>
-            </th>
+            <th class="sortable"><a href="?sort=adviser_id">ID</a></th>
+            <th>Photo</th>
+            <th class="sortable"><a href="?sort=surname">Name</a></th>
+            <th class="sortable"><a href="?sort=organization">Org</a></th>
+            <th class="sortable"><a href="?sort=status">Status</a></th>
+            <th>Active?</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for adviser in page_obj %}
           <tr>
-            <td>{{ adviser.adviser_id }}</td>
+            <td style="font-weight: bold; color: #2c5282;">{{ adviser.adviser_id }}</td>
             <td>
               {% if adviser.profile_picture %}
-                <img 
-                  src="{{ adviser.profile_picture.url }}" 
-                  alt="Profile" 
-                  class="clickable-profile-pic"
-                   style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover; cursor: pointer;"
-                  data-full-img="{{ adviser.profile_picture.url }}"
-                >
+                <img src="{{ adviser.profile_picture.url }}" class="clickable-profile-pic" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; cursor: pointer;" data-full-img="{{ adviser.profile_picture.url }}">
               {% else %}
-                <span style="color: #777;">No Pic</span>
+                <span style="color: #ccc; font-size: 0.8rem;">No Photo</span>
               {% endif %}
             </td>
-
-            <td>{{ adviser.surname }}</td>
-            <td>{{ adviser.firstname }}</td>
+            <td>{{ adviser.surname }}, {{ adviser.firstname }}</td>
             <td>{{ adviser.organization }}</td>
-             <td>{{ adviser.position }}</td>
-            <td>{{ adviser.get_status_display }}</td>
-            
-            <td>
-              {% if adviser.date_deactivated is None %} <span style="color: green; font-weight: bold;">&#10003; Yes</span>
+           <td>
+              {% if adviser.status == 'approved' %}
+                  <span class="status-badge status-approved">Approved</span>
+              {% elif adviser.status == 'pending' %}
+                  <span class="status-badge status-pending">Pending</span>
               {% else %}
-                  <span style="color: red; font-weight: bold;">&#10007; No</span>
+                  <span class="status-badge status-declined">Declined</span>
+              {% endif %}
+          </td>
+            <td>
+              {% if adviser.date_deactivated is None %} 
+                <span style="color: green; font-weight: bold;"><i class="fas fa-check-circle"></i> Yes</span>
+              {% else %}
+                <span style="color: red;"><i class="fas fa-times-circle"></i> No</span>
               {% endif %}
             </td>
-
             <td>
-              <form method="post" style="margin: 0;">
+              <form method="post" style="display:flex; gap:5px;">
                 {% csrf_token %}
-                <input
-                  type="hidden"
-                  name="adviser_id"
-                  value="{{ adviser.adviser_id }}"
-                />
+                <input type="hidden" name="adviser_id" value="{{ adviser.adviser_id }}" />
                 
                 {% if adviser.status == 'pending' %}
-                <button type="submit" name="action" value="approve" class="approve">
-                  Approve
-                </button>
-                <button
-                  type="submit"
-                  name="action"
-                  value="decline"
-                  class="decline"
-                >
-                  Decline
-                </button>
-                
+                    <button type="submit" name="action" value="approve" class="approve"><i class="fas fa-check"></i></button>
+                    <button type="submit" name="action" value="decline" class="decline"><i class="fas fa-times"></i></button>
                 {% elif adviser.status == 'approved' %}
-                  {% if adviser.date_deactivated is None %} <button type="submit" name="action" value="deactivate" class="decline">
-                        Deactivate
-                    </button>
-                  {% else %}
-                    <button type="submit" name="action" value="activate" class="approve">
-                        Activate
-                    </button>
-                  {% endif %}
-                
-                {% else %}
-                    <span class="status-label">Declined</span>
+                    {% if adviser.date_deactivated is None %} 
+                        <button type="submit" name="action" value="deactivate" class="decline">Deactivate</button>
+                    {% else %}
+                        <button type="submit" name="action" value="activate" class="approve">Activate</button>
+                    {% endif %}
                 {% endif %}
               </form>
             </td>
           </tr>
           {% empty %}
-          <tr>
-            <td colspan="10" class="no-applicants">No advisers found.</td>
-          </tr>
+          <tr><td colspan="7" style="text-align: center; padding: 30px; color: #888;">No advisers found.</td></tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
 
     {% if page_obj %}
-    {% with query_params="&sort="|add:current_sort %}
-        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    {% endwith %}
+        {% include "_pagination.html" with page_obj=page_obj %}
     {% endif %}
 
   </div>
@@ -279,30 +226,15 @@
 
 <script>
 $(document).ready(function() {
-    // Filter Logic
-    $('#status-filter, #active-filter, #org-filter').change(function() {
-        $(this).closest('form').submit();
-    });
+    $('#status-filter, #active-filter').change(function() { $(this).closest('form').submit(); });
 
-    // --- Image Modal Logic ---
-    
-    // Open modal on image click
     $('.clickable-profile-pic').on('click', function() {
-        let imageUrl = $(this).data('full-img'); // Get URL from data attribute
-        $('#modal-image').attr('src', imageUrl); // Set modal image source
-        $('#image-modal').css('display', 'flex'); // Show modal
+        $('#modal-image').attr('src', $(this).data('full-img'));
+        $('#image-modal').css('display', 'flex');
     });
 
-    // Close modal on close button click
-    $('.image-modal-close').on('click', function() {
-        $('#image-modal').css('display', 'none'); 
-    });
-    
-    // Close modal on clicking outside the image
-    $('#image-modal').on('click', function(e) {
-        if (e.target.id === 'image-modal') {
-            $('#image-modal').css('display', 'none'); 
-        }
+    $('.image-modal-close, #image-modal').on('click', function(e) {
+        if (e.target === this) $('#image-modal').css('display', 'none');
     });
 });
 </script>

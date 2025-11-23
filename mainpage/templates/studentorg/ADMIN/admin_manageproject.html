@@ -7,115 +7,90 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
 <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+<style>
+    /* --- Modern Dashboard --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #1cc88a;
+        --danger-color: #e74a3b;
+        --light-bg: #f8f9fc;
+    }
+/* --- Status Pill Styles --- */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 50px; /* Pill shape */
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    min-width: 60px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Status Colors (Soft Backgrounds) */
+.status-approved {
+    background-color: rgba(28, 200, 138, 0.15); /* Soft Green */
+    color: #1cc88a;
+}
+
+.status-pending {
+    background-color: rgba(246, 194, 62, 0.15); /* Soft Yellow */
+    color: #f6c23e;
+}
+
+.status-declined {
+    background-color: rgba(231, 74, 59, 0.15); /* Soft Red */
+    color: #e74a3b;
+}
+    .container {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+    }
+
+    .page-header-container { margin-bottom: 2rem; }
+    .page-title { font-size: 1.5rem; font-weight: 700; color: #2e3a59; margin-bottom: 0.5rem; }
+    .page-description { color: #858796; }
+
+    .tabs { display: flex; gap: 5px; border-bottom: 1px solid #e3e6f0; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab { padding: 10px 20px; text-decoration: none; color: #5a5c69; font-weight: 600; border-radius: 5px 5px 0 0; }
+    .tab.active { background-color: var(--primary-color); color: white; }
+
+    /* Search */
+    .search_id_container { background-color: var(--light-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e3e6f0; }
+    .search-form { display: flex; gap: 10px; flex-wrap: wrap; }
+    .search-input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #d1d3e2; }
+    .filter-select { padding: 10px; border-radius: 5px; border: 1px solid #d1d3e2; }
+    .search-btn { padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
+
+    /* Table */
+    .subcontain { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background-color: var(--light-bg); color: var(--primary-color); padding: 12px; text-align: left; font-weight: 700; white-space: nowrap; }
+    td { padding: 12px; border-bottom: 1px solid #e3e6f0; color: #5a5c69; vertical-align: middle; }
+
+    /* Actions */
+    .approve, .decline { padding: 6px 12px; border: none; border-radius: 4px; color: white; font-size: 0.8rem; cursor: pointer; }
+    .approve { background-color: var(--success-color); }
+    .decline { background-color: var(--danger-color); }
+    .view-file-btn { background-color: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+    /* Modal */
+    .file-modal-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); align-items: center; justify-content: center; }
+    .file-modal-content { background-color: #fff; width: 80%; height: 85%; border-radius: 8px; display: flex; flex-direction: column; }
+    .iframe-container { flex-grow: 1; width: 100%; }
+    iframe { width: 100%; height: 100%; border: none; }
+</style>
 {% endblock %} 
 
 {% block bodycontent %}
-<style>
-  /* --- Action Column Buttons (Consistent Theme) --- */
-  td form {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .approve, .decline {
-    padding: 6px 14px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    color: #ffffff;
-    border: none;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .approve { background-color: #005a9e; } /* Blue */
-  .approve:hover { background-color: #004a85; }
-
-  .decline { background-color: #e63946; } /* Red */
-  .decline:hover { background-color: #d62839; }
-
-  /* --- View File Button --- */
-  .view-file-btn {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .view-file-btn:hover {
-    background-color: #5a6268;
-  }
-
-  /* --- File Preview Modal (Iframe) --- */
-  .file-modal-overlay {
-    display: none; 
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    align-items: center;
-    justify-content: center;
-  }
-
-  .file-modal-content {
-    background-color: #fff;
-    width: 80%;
-    height: 85%;
-    border-radius: 8px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  }
-
-  .file-modal-header {
-    padding: 10px 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .file-modal-close {
-    font-size: 28px;
-    font-weight: bold;
-    color: #aaa;
-    cursor: pointer;
-  }
-  .file-modal-close:hover { color: #000; }
-
-  .iframe-container {
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
-    background-color: #f9f9f9;
-  }
-
-  iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-</style>
-
 <div class="sub-title">
-  <h4>Student Organization(Admin)</h4>
+  <h4>STUDENT ORGANIZATION (Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Project Management</p>
 </div>
@@ -123,7 +98,15 @@
 
 <div class="container">
   
+  <div class="page-header-container">
+      <h2 class="page-title"><i class="fas fa-project-diagram"></i> Project Proposals</h2>
+      <p class="page-description">
+          Evaluate and manage student organization projects. Review proposals, check objectives, budgets, and accomplishment reports.
+      </p>
+  </div>
+
   <div class="maincontain gmc-form">
+    
     <div class="tabs">
       <a href="{% url 'admin_manageofficer' %}" class="tab">Manage Officer</a>
       <a href="{% url 'admin_manageadviser' %}" class="tab">Manage Adviser</a>
@@ -134,175 +117,104 @@
 
     <div class="search_id_container">
       <form class="search-form" method="GET" action="">
-        <input
-          type="text"
-          name="search"
-          class="search-input"
-          placeholder="Search by Project ID, Objective, Org, or Officer"
-          value="{{ request.GET.search }}"
-        >
+        <input type="text" name="search" class="search-input" placeholder="Search by Project ID, Objective..." value="{{ request.GET.search }}">
         <select class="filter-select" name="status" id="status-filter">
             <option value="">All Statuses</option>
             <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
             <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
             <option value="declined" {% if request.GET.status == 'declined' %}selected{% endif %}>Declined</option>
         </select>
-        <button type="submit" class="search-btn">Search</button>
+        <button type="submit" class="search-btn"><i class="fas fa-search"></i> Search</button>
       </form>
     </div>
 
     <div class="subcontain">
-      
       <table>
         <thead>
           <tr>
-            <th class="sortable">
-              <a href="?sort=project_id&order={% if current_sort == 'project_id' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Project ID</a>
-            </th>
-            <th class="sortable">
-              <a href="?sort=objective&order={% if current_sort == 'objective' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Objective</a>
-            </th>
-            <th>Program Strategies</th>
-            <th class="sortable">
-              <a href="?sort=org&order={% if current_sort == 'org' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Organizations</a>
-            </th>
-            <th class="sortable">
-              <a href="?sort=target&order={% if current_sort == 'target' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Target</a>
-            </th>
-            <th>Involved Officer</th>
-            <th class="sortable">
-              <a href="?sort=p_budget&order={% if current_sort == 'p_budget' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Proposed Budget</a>
-            </th>
-            <th>Expected Output</th>
-            <th>Actual Accomplishments</th>
-            <th>Remarks</th>
-            <th class="sortable">
-              <a href="?sort=status&order={% if current_sort == 'status' and current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}">Status</a>
-            </th>
+            <th class="sortable"><a href="?sort=project_id">ID</a></th>
+            <th class="sortable"><a href="?sort=objective">Objective</a></th>
+            <th class="sortable"><a href="?sort=org">Org</a></th>
+            <th>Budget</th>
+            <th>Report</th>
+            <th class="sortable"><a href="?sort=status">Status</a></th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for project in page_obj %}
           <tr>
-            <td>{{ project.project_id }}</td>
-            <td>{{ project.objective }}</td>
-            <td>{{ project.activities }}</td>
+            <td style="font-weight:bold; color: #2c5282;">{{ project.project_id }}</td>
+            <td>{{ project.objective|truncatechars:30 }}</td>
             <td>{{ project.org }}</td>
-            <td>{{ project.target }}</td>
-            <td>{{ project.involved_officer }}</td>
             <td>{{ project.p_budget }}</td>
-            <td>{{ project.expected_output }}</td>
-            
             <td>
               {% if project.actual_accomplishment %}
-              <button 
-                type="button" 
-                class="view-file-btn" 
-                data-file-url="{{ project.actual_accomplishment.url }}"
-                data-file-name="Accomplishment Report - {{ project.project_id }}"
-              >
-                <i class="fas fa-eye"></i> View File
+              <button type="button" class="view-file-btn" data-file-url="{{ project.actual_accomplishment.url }}" data-file-name="Report - {{ project.project_id }}">
+                <i class="fas fa-eye"></i> View
               </button>
-              {% else %} 
-                <span style="color: #999;">No file</span> 
-              {% endif %}
+              {% else %} <span style="color: #ccc;">None</span> {% endif %}
             </td>
-
-            <td>{{ project.remarks }}</td>
-            <td>{{ project.get_status_display }}</td>
+         <td>
+            {% if project.status == 'approved' %}
+                <span class="status-badge status-approved">Approved</span>
+            {% elif project.status == 'pending' %}
+                <span class="status-badge status-pending">Pending</span>
+            {% else %}
+                <span class="status-badge status-declined">Declined</span>
+            {% endif %}
+        </td>
             <td>
-              <form method="post">
+              <form method="post" style="display:flex; gap:5px;">
                 {% csrf_token %}
-                <input
-                  type="hidden"
-                  name="project_id"
-                  value="{{ project.project_id }}"
-                />
+                <input type="hidden" name="project_id" value="{{ project.project_id }}" />
                 {% if project.status == 'pending' %}
-                <button type="submit" name="action" value="approve" class="approve">
-                  Approve
-                </button>
-                <button
-                  type="submit"
-                  name="action"
-                  value="decline"
-                  class="decline"
-                >
-                  Decline
-                </button>
-                {% elif project.status == 'approved' %}
-                   <span style="color: green; font-weight: bold;">Approved</span>
-                {% else %}
-                   <span style="color: red;">Declined</span>
-                {% endif %}
+                <button type="submit" name="action" value="approve" class="approve"><i class="fas fa-check"></i></button>
+                <button type="submit" name="action" value="decline" class="decline"><i class="fas fa-times"></i></button>
+                {% else %} <span style="color:#ccc;">--</span> {% endif %}
               </form>
             </td>
           </tr>
           {% empty %}
-          <tr>
-            <td colspan="12" class="no-applicants">No projects found.</td>
-          </tr>
+          <tr><td colspan="7" style="text-align: center; padding: 30px; color: #888;">No projects found.</td></tr>
           {% endfor %}
         </tbody>
       </table>
-      
     </div>
   
     {% if page_obj %}
-      {% with query_params="&sort="|add:current_sort %}
-          {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-      {% endwith %}
+        {% include "_pagination.html" with page_obj=page_obj %}
     {% endif %}
 
   </div>
 
   <div id="file-modal" class="file-modal-overlay">
     <div class="file-modal-content">
-      <div class="file-modal-header">
-        <h3 id="file-modal-title" style="margin:0; font-size:1.1rem;">File Preview</h3>
-        <span class="file-modal-close">&times;</span>
+      <div style="padding:10px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+        <h3 id="file-modal-title" style="margin:0;">Preview</h3>
+        <span class="file-modal-close" style="font-size:28px; cursor:pointer;">&times;</span>
       </div>
       <div class="iframe-container">
         <iframe id="preview-iframe" src=""></iframe>
       </div>
     </div>
   </div>
-  </div>
+</div>
 
 <script>
 $(document).ready(function() {
-    // Filter Logic
-    $('#status-filter').change(function() {
-        $(this).closest('form').submit();
-    });
+    $('#status-filter').change(function() { $(this).closest('form').submit(); });
 
-    // --- Modal Logic ---
-    const modal = $('#file-modal');
-    const iframe = $('#preview-iframe');
-    const modalTitle = $('#file-modal-title');
-
-    // 1. Open Modal
     $('.view-file-btn').on('click', function() {
-        const url = $(this).data('file-url');
-        const name = $(this).data('file-name');
-
-        iframe.attr('src', url); // Set iframe source
-        modalTitle.text(name);   // Set title
-        modal.css('display', 'flex'); // Show modal
+        $('#preview-iframe').attr('src', $(this).data('file-url'));
+        $('#file-modal-title').text($(this).data('file-name'));
+        $('#file-modal').css('display', 'flex');
     });
 
-    // 2. Close Modal
-    $('.file-modal-close').on('click', function() {
-        modal.css('display', 'none');
-        iframe.attr('src', ''); // Clear src to stop playing media/loading
-    });
-
-    // 3. Close on Overlay Click
-    $(window).on('click', function(event) {
-        if ($(event.target).is(modal)) {
-            modal.css('display', 'none');
-            iframe.attr('src', '');
+    $('.file-modal-close, #file-modal').on('click', function(e) {
+        if (e.target === this) {
+            $('#file-modal').css('display', 'none');
+            $('#preview-iframe').attr('src', '');
         }
     });
 });

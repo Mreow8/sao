@@ -1,228 +1,382 @@
-{% extends base_template %} {% load static %} {% block bodycontent %}
+{% extends base_template %} 
+{% load static %} 
 
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="{% static 'styles/scholarship/scholarsprofileadmin.css' %}"
-/>
-<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+{% block title %}Scholar Validation & Profile{% endblock %}
+
+{% block headcontent %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+
+    <style>
+        /* --- Modern Dashboard Styling (Matching Counseling App) --- */
+        :root {
+            --primary-color: #2c5282;
+            --success-color: #2c5282;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-text: #5a5c69;
+            --light-bg: #f8f9fc;
+        }
+
+        /* Main Container */
+        .body-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin: 20px;
+        }
+
+        /* Header & Description */
+        .page-header-container {
+            margin-bottom: 2rem;
+        }
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2e3a59;
+            margin-bottom: 0.5rem;
+        }
+        .page-description {
+            color: #858796;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            max-width: 900px;
+        }
+
+        /* Controls: Search & Filter (Matching Counseling Layout) */
+        .controls-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            background-color: #f8f9fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e3e6f0;
+        }
+
+        .search-group {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #d1d3e2;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 0.9rem;
+            color: #6e707e;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+        }
+
+        .filter-dropdown select {
+            padding: 10px 15px;
+            border: 1px solid #d1d3e2;
+            border-radius: 5px;
+            background-color: white;
+            color: var(--dark-text);
+            cursor: pointer;
+            font-size: 0.9rem;
+            min-width: 220px;
+        }
+
+        /* Buttons */
+        .OrangeButton {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .OrangeButton:hover { background-color: #2e59d9; }
+
+        .btn-update {
+            background-color: var(--warning-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .btn-update:hover { background-color: #dda20a; }
+
+        /* Table Styling */
+        .table-responsive-wrapper {
+            overflow-x: auto;
+        }
+        
+        #info_table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            min-width: 1000px;
+        }
+
+        #info_table thead th {
+            background-color: #f8f9fc;
+            color: #2c5282;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 15px;
+            border-bottom: 2px solid #e3e6f0;
+            text-align: left;
+            white-space: nowrap;
+        }
+        
+        #info_table tbody td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e3e6f0;
+            color: #5a5c69;
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        #info_table tbody tr:hover {
+            background-color: #fafbfc;
+        }
+
+        /* Input fields inside table */
+        .table-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d3e2;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #6e707e;
+        }
+        .table-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        /* Action Button inside Table */
+        .btn-add {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-add:hover { background-color: #17a673; }
+
+        .no-items-found {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+            color: #858796;
+        }
+    </style>
+{% endblock %} 
+
+{% block bodycontent %}
+
 <div class="sub-title">
-  <h4>Scholarship</h4>
+  <h4>SCHOLARSHIP (Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt; Scholar's profile and Validation</p>
+  <p class="certxt">&gt; Scholar's Profile and Validation</p>
 </div>
 <hr />
 
-<div class="container">
-  <div class="profile">
-    <div class="search_form_container">
-      <form class="form_div" method="GET">
-        <div class="search-row">
-          <input
-            type="text"
-            id="search-box"
-            name="search"
-            placeholder="Search by ApplicationID"
-            value="{{ request.GET.search }}"
-          />
-
-          <button type="submit" id="search-btn">Search</button>
-        </div>
-        <div class="search-row">
-          <select style="color: black" id="scholar_type" name="scholar_type">
-            <option style="color: black" value="">
-              SELECT TYPE OF SCHOLAR
-            </option>
-            <option style="color: black" value="CHED - Full Merit">
-              CHED FULL MERIT
-            </option>
-            <option style="color: black" value="CHED - Half Merit">
-              CHED HALF MERIT
-            </option>
-            <option style="color: black" value="CHED - Tulong Dunong Program">
-              CHED TULONG DUNONG
-            </option>
-            <option style="color: black" value="CHED - Coscho">
-              DOST UNDERGRAD
-            </option>
-            <option
-              style="color: black"
-              value="CHED - Tertiary Education Subsidy"
-            >
-              CHED TERTIARY EDUCATION SUBSIDY
-            </option>
-            <option style="color: black" value="LGU - ATEASP">
-              ARGAO TERTIARY EDUCATION ASSISTANCE PROGRAM
-            </option>
-            <option style="color: black" value="LGU - DOST Undergrad">
-              DOST UNDERGRAD
-            </option>
-            <option style="color: black" value="LGU - With High Honor">
-              WITH HIGH HONOR
-            </option>
-            <option
-              style="color: black"
-              value="NGU - Nature's Spring Foundation Inc"
-            >
-              NATURE'S SPRING FOUNDATION INC
-            </option>
-            <option style="color: black" value="NGU - Lifebank Foundation">
-              LIFE BANK FOUNDATION
-            </option>
-          </select>
-          <a href="{% url 'scholarupdate' %}"
-            ><div id="search-btn">UPDATE</div></a
-          >
-        </div>
-      </form>
+<div class="body-content">
+    
+    <div class="page-header-container">
+        <h2 class="page-title"><i class="fas fa-user-graduate"></i> Scholar Validation & Profile</h2>
+        <p class="page-description">
+            Search for scholarship applicants, review their details, and validate their profiles. 
+            Enter the Scholar ID, Amount, GPA, and Year to officially add them to the scholarship roster.
+        </p>
     </div>
-    <script>
-      $(document).ready(function () {
+
+    <div class="controls-wrapper">
+        
+        <form method="GET" class="search-group">
+            <input
+                type="text"
+                name="search"
+                class="search-box"
+                placeholder="Search by Application ID..."
+                value="{{ request.GET.search }}"
+            />
+            <button type="submit" class="OrangeButton">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
+        
+        <div class="filter-dropdown">
+            <form method="GET" id="filterForm" style="display: flex; gap: 10px; align-items: center;">
+                <input type="hidden" name="search" value="{{ request.GET.search }}">
+                
+                <select id="scholar_type" name="scholar_type">
+                    <option value="">-- Select Scholar Type --</option>
+                    <option value="CHED - Full Merit" {% if request.GET.scholar_type == "CHED - Full Merit" %}selected{% endif %}>CHED FULL MERIT</option>
+                    <option value="CHED - Half Merit" {% if request.GET.scholar_type == "CHED - Half Merit" %}selected{% endif %}>CHED HALF MERIT</option>
+                    <option value="CHED - Tulong Dunong Program" {% if request.GET.scholar_type == "CHED - Tulong Dunong Program" %}selected{% endif %}>CHED TULONG DUNONG</option>
+                    <option value="CHED - Coscho" {% if request.GET.scholar_type == "CHED - Coscho" %}selected{% endif %}>DOST UNDERGRAD</option>
+                    <option value="CHED - Tertiary Education Subsidy" {% if request.GET.scholar_type == "CHED - Tertiary Education Subsidy" %}selected{% endif %}>CHED TERTIARY EDUCATION SUBSIDY</option>
+                    <option value="LGU - ATEASP" {% if request.GET.scholar_type == "LGU - ATEASP" %}selected{% endif %}>ARGAO TERTIARY EDUCATION ASSISTANCE PROGRAM</option>
+                    <option value="LGU - DOST Undergrad" {% if request.GET.scholar_type == "LGU - DOST Undergrad" %}selected{% endif %}>DOST UNDERGRAD</option>
+                    <option value="LGU - With High Honor" {% if request.GET.scholar_type == "LGU - With High Honor" %}selected{% endif %}>WITH HIGH HONOR</option>
+                    <option value="NGU - Nature's Spring Foundation Inc" {% if request.GET.scholar_type == "NGU - Nature's Spring Foundation Inc" %}selected{% endif %}>NATURE'S SPRING FOUNDATION INC</option>
+                    <option value="NGU - Lifebank Foundation" {% if request.GET.scholar_type == "NGU - Lifebank Foundation" %}selected{% endif %}>LIFE BANK FOUNDATION</option>
+                </select>
+
+                <a href="{% url 'scholarupdate' %}" class="btn-update">
+                    <i class="fas fa-sync-alt"></i> Update
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive-wrapper">
+        <form method="POST">
+            {% csrf_token %}
+            
+            {% if applicant_data %}
+            <table id="info_table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Scholar ID (Assign)</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Scholar Type</th>
+                        <th style="width: 130px;">Amount</th>
+                        <th style="width: 90px;">GPA</th>
+                        <th style="width: 90px;">Year</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for applicant in applicant_data %}
+                    <tr>
+                        <td style="font-weight: 600; color: #2c5282;">
+                            {{ applicant.studID.studID }}
+                        </td>
+                        <td>
+                            <input
+                                id="scholarid_{{ forloop.counter }}"
+                                type="text"
+                                class="table-input"
+                                name="scholar_id_{{ forloop.counter }}"
+                                placeholder="Enter ID"
+                            />
+                        </td>
+                        <td>{{ applicant.studID.firstname }}</td>
+                        <td>{{ applicant.studID.lastname }}</td>
+                        <td>{{ applicant.scholar_type }}</td>
+                        <td>
+                            <input
+                                id="amount_{{ forloop.counter }}"
+                                class="table-input amount"
+                                type="text"
+                                name="amount_{{ forloop.counter }}"
+                                value=""
+                                placeholder="0.00"
+                            />
+                            <input
+                                type="hidden"
+                                name="applicant_id_{{ forloop.counter }}"
+                                value="{{ applicant.application_id }}"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                id="gpa_{{ forloop.counter }}"
+                                type="text"
+                                class="table-input"
+                                name="gpa_{{ forloop.counter }}"
+                                value="{{ applicant.gpa }}"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                id="year_{{ forloop.counter }}"
+                                type="text"
+                                class="table-input"
+                                name="year_{{ forloop.counter }}"
+                                placeholder="Year"
+                            />
+                        </td>
+                        <td style="text-align: center;">
+                            <button name="action_{{ forloop.counter }}" value="ADD" class="btn-add">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-items-found">
+                <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                No applicants found matching your search criteria.
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Auto-submit on dropdown change
         $("#scholar_type").change(function () {
-          $(this).closest("form").submit();
+            $(this).closest("#filterForm").submit();
         });
-      });
-    </script>
-    <div class="table-container">
-      <form method="POST">
-        {% csrf_token %} {% if applicant_data %}
-        <div class="table-container">
-          <table id="requirements-table">
-            <thead>
-              <tr>
-                <th>Student ID</th>
-                <th>Scholar ID</th>
-                <th>First name</th>
-                <th>Last name</th>
-                <th>Scholar type</th>
-                <th>Amount</th>
-                <th>GPA</th>
-                <th>Year</th>
-                <th>Approval</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for applicant in applicant_data %}
-              <tr>
-                <td>{{ applicant.studID.studID }}</td>
-                <td>
-                  <input
-                    id="scholarid_{{ forloop.counter }}"
-                    type="text"
-                    name="scholar_id_{{ forloop.counter }}"
-                  />
-                </td>
-                <td>{{ applicant.studID.firstname }}</td>
-                <td>{{ applicant.studID.lastname }}</td>
-                <td>{{ applicant.scholar_type }}</td>
-                <td>
-                  <input
-                    id="amount_{{ forloop.counter }}"
-                    class="amount"
-                    type="text"
-                    name="amount_{{ forloop.counter }}"
-                    value=""
-                  />
-                  <input
-                    type="hidden"
-                    name="applicant_id_{{ forloop.counter }}"
-                    value="{{ applicant.application_id }}"
-                  />
-                </td>
-                <td>
-                  <input
-                    id="gpa_{{ forloop.counter }}"
-                    type="text"
-                    name="gpa_{{ forloop.counter }}"
-                    value="{{ applicant.gpa }}"
-                  />
-                </td>
-                <td>
-                  <input
-                    id="year_{{ forloop.counter }}"
-                    type="text"
-                    name="year_{{ forloop.counter }}"
-                  />
-                </td>
-                <td id="btnsss">
-                  <button name="action_{{ forloop.counter }}" value="ADD">
-                    ADD
-                  </button>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        {% else %}
-        <div style="text-align: center; color: gray; font-style: italic">
-          No applicants found.
-        </div>
-        {% endif %}
-      </form>
-    </div>
-  </div>
-</div>
-{% comment %}
-<div id="imageModal" class="modal">
-  <span class="close">&times;</span>
-  <img class="modal-content" id="modalImage" />
-</div>
-{% endcomment %}
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var scholarTypes = {
-      "CHED - Full Merit": "20000",
-      "CHED - Half Merit": "10000",
-      "CHED - Tulong Dunong Program": "7500",
-      "CHED - Tertiary Education Subsidy": "20000",
-      "CHED - Coscho": "40000",
-      "LGU - ATEASP": "5000",
-      "LGU - DOST Undergrad": "45000",
-      "LGU - With High Honor": "25000",
-      "NGU - Nature's Spring Foundation Inc": "3000",
-      "NGU - Lifebank Foundation": "2000",
-    };
 
-    var amountInputs = document.querySelectorAll(".amount");
-    amountInputs.forEach(function (input) {
-      var scholarType =
-        input.parentElement.previousElementSibling.textContent.trim();
-      input.value = scholarTypes[scholarType] || "";
+        // Auto-fill Amounts based on Type
+        var scholarTypes = {
+            "CHED - Full Merit": "20000",
+            "CHED - Half Merit": "10000",
+            "CHED - Tulong Dunong Program": "7500",
+            "CHED - Tertiary Education Subsidy": "20000",
+            "CHED - Coscho": "40000",
+            "LGU - ATEASP": "5000",
+            "LGU - DOST Undergrad": "45000",
+            "LGU - With High Honor": "25000",
+            "NGU - Nature's Spring Foundation Inc": "3000",
+            "NGU - Lifebank Foundation": "2000",
+        };
+
+        $(".amount").each(function () {
+            var row = $(this).closest("tr");
+            // Find the cell that contains the type (5th column, index 4)
+            var scholarType = row.find("td:eq(4)").text().trim();
+            if (scholarTypes[scholarType]) {
+                $(this).val(scholarTypes[scholarType]);
+            }
+        });
     });
-  });
 </script>
-<script>
-  // Get the modal
-  var modal = document.getElementById("imageModal");
 
-  // Get the image and insert it inside the modal - use its "alt" text as a caption
-  var modalImg = document.getElementById("modalImage");
-
-  document.querySelectorAll("td img").forEach(function (img) {
-    img.onclick = function () {
-      modal.style.display = "block";
-      modalImg.src = this.src;
-    };
-  });
-
-  // Get the <span> element that closes the modal
-  var span = document.getElementsByClassName("close")[0];
-
-  // When the user clicks on <span> (x), close the modal
-  span.onclick = function () {
-    modal.style.display = "none";
-  };
-
-  // When the user clicks anywhere outside of the modal, close it
-  window.onclick = function (event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  };
-</script>
 <script src="{% static 'js/main.js' %}"></script>
-{% endblock bodycontent %}
+{% endblock %}
