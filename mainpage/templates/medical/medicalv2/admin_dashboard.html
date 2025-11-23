@@ -819,7 +819,7 @@
   // Request status update functions
   function updateRequestStatus(requestId, newStatus) {
     // Implement AJAX call to update request status
-    fetch(`/update-request-status/${requestId}/`, {
+    fetch(`/med/update-request-status/${requestId}/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -839,7 +839,7 @@
 
   function updateDentalAppointment(requestId) {
     // Implement AJAX call to update dental appointment
-    fetch(`/update-dental-appointment/${requestId}/`, {
+    fetch(`/med/update-dental-appointment/${requestId}/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -858,7 +858,7 @@
 
   function updateMentalHealthStatus(requestId, newStatus) {
     // Implement AJAX call to update mental health status
-    fetch(`/update-mental-health-status/${requestId}/`, {
+    fetch(`/med/update-mental-health-status/${requestId}/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -61,4 +61,40 @@ urlpatterns = [
     # path('upload-profile-picture/', views.upload_profile_picture_view, name='upload_profile_picture'),
     # path('faculty/dashboard/', views.faculty_dashboard_view, name='faculty_dashboard'),
     path('send-faculty-registration-link/', views.send_faculty_registration_link, name='send_faculty_registration_link'),
+    path('dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
+    path('student-dashboard/', views.clinic_dashboard, name='clinic_dashboard'),
+
+    # Patient Management
+    path('patient-profile/', views.patient_profile, name='patient_profile'),
+    path('pwd-list/', views.pwd_list, name='pwdlist'),
+    
+    # Requests & Tracker
+    path('requests/', views.view_request, name='viewrequest'),
+    path('tracker/', views.student_medical_requirements_tracker, name='medtracker'),
+    path('emergency-assistance/', views.emergency_asst, name='emergency_asst'),
+    path('upload-requirements/', views.upload_requirements, name='upload_requirements'),
+    path('submit-request/', views.submit_request, name='request'),
+
+    # Dental
+    path('dental-services/', views.dental_services, name='dentalservices'), # Student View
+    path('dental-request/', views.dental_request, name='dentalrequest'), # Admin View
+    path('dental-schedule/', views.dental_schedule, name='dentalschedule'),
+    
+    # Mental Health
+    path('mental-health/', views.mental_health_view, name='mental_health'),
+    path('mental-health/submit/', views.mental_health_submit, name='mental_health_submit'),
+    
+    # Misc
+    path('prescription/', views.prescription, name='prescription'),
+    path('reports/', views.view_transaction_history, name='transaction_report_view'),
+    
+    path('pwd/<str:id>/verify/', views.verify_pwd, name='verify_pwd'),
+    path('pwd/<str:id>/unverify/', views.unverify_pwd, name='unverify_pwd'),
+    path('pwd/<str:id>/', views.pwd_detail, name='pwddetail'),
+
+    # # AJAX / Actions
+    # # path('update-request-status/<int:request_id>/', views.update_request_status, name='update_request_status'),
+    # path('update-dental-appointment/<int:request_id>/', views.update_dental_appointment, name='update_dental_appointment'),
+    # path('update-mental-health-status/<int:request_id>/', views.update_mental_health_status, name='update_mental_health_status'),
+    # path('send-faculty-registration-link/', views.send_faculty_registration_link, name='send_faculty_registration_link'),
 ]
