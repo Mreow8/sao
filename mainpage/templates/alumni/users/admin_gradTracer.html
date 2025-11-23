@@ -1,192 +1,151 @@
 {% extends base_template %} 
 {% block bodycontent %}
 <style>
-/* --- Global & Fonts --- */
-#trackerTable,
-.custom-modal-content {
-  font-family: "Rubik", sans-serif;
+/* --- Modern Dashboard Styling --- */
+:root {
+  --primary-color: #2c5282;
+  --success-color: #1cc88a;
+  --warning-color: #f6c23e;
+  --danger-color: #e74a3b;
+  --dark-text: #5a5c69;
+  --light-bg: #f8f9fc;
 }
 
-
-
-/* --- Admin Table Wrapper (THIS CREATES THE CARD) --- */
-.admin-table-wrapper {
-  width: 100%;
-
-  overflow-x: auto; /* Clips the table corners */
- 
+.body-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin: 20px;
 }
 
-/* --- Search & Filter Bar --- */
-.table-controls {
+/* Header & Description */
+.page-header-container {
+  margin-bottom: 2rem;
+}
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2e3a59;
+  margin-bottom: 0.5rem;
+}
+.page-description {
+  color: #858796;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 900px;
+}
+
+/* --- Controls: Search & Filter --- */
+.controls-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Allows stacking on small screens */
-  padding: 1.5rem 0;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 15px;
+  background-color: #f8f9fc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e3e6f0;
 }
 
 .search-bar {
-  flex-grow: 1; /* Takes up available space */
-  min-width: 300px; /* Prevents it from getting too small */
+  flex-grow: 1;
+  min-width: 300px;
+  position: relative;
 }
 
 .search-bar input {
   width: 100%;
-  padding: 0.65rem 1rem;
+  padding: 10px 15px;
   font-size: 14px;
-  border: 1px solid #ced4da;
-  border-radius: 0.375rem;
+  border: 1px solid #d1d3e2;
+  border-radius: 5px;
 }
 .search-bar input:focus {
-  border-color: #86b7fe;
+  border-color: #2c5282;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
 }
 
-/* --- Custom Filter Buttons --- */
 .filter-buttons {
   display: flex;
   gap: 8px;
+  background: #fff;
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid #d1d3e2;
 }
+
 .filter-btn {
-  font-size: 14px;
-  padding: 0.65rem 1rem;
-  background-color: #fff;
-  border: 1px solid #2c5282;
-  color: #2c5282;
-  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  background-color: transparent;
+  border: none;
+  color: #5a5c69;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-weight: 600;
 }
 .filter-btn:hover {
-  background-color: #f0f6ff;
+  background-color: #eaecf4;
+  color: #2e3a59;
 }
 .filter-btn.active {
-  background-color: #2c5282;
+  background-color: var(--primary-color);
   color: #fff;
 }
-/* --- End of Filter Buttons --- */
-
 
 /* --- Table Styles --- */
+.admin-table-wrapper {
+  overflow-x: auto;
+}
 #trackerTable {
   width: 100%;
   border-collapse: collapse;
-  border: none;
-  min-width: 800px;
+  margin-top: 10px;
 }
-#trackerTable th,
-#trackerTable td {
-  border-bottom: 1px solid #ddd;
-  padding: 12px 15px;
-  text-align: left;
-  font-size: 14px;
-  vertical-align: middle;
-}
-#trackerTable th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue Header */
-  
+#trackerTable thead th {
+  background-color: #f8f9fc;
+  color: #2c5282;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 0.8rem;
+  padding: 15px;
+  border-bottom: 2px solid #e3e6f0;
+  text-align: left;
 }
-#trackerTable th#sortDate {
-  cursor: pointer;
+#trackerTable tbody td {
+  padding: 15px;
+  border-bottom: 1px solid #e3e6f0;
+  color: #5a5c69;
+  vertical-align: middle;
+  font-size: 0.9rem;
 }
-#trackerTable th#sortDate:hover {
-  background-color: #f0f0f0;
+#trackerTable tbody tr:hover {
+  background-color: #fafbfc;
 }
-#trackerTable tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Clickable Row Style */
 .clickable-row {
   cursor: pointer;
 }
-.clickable-row:hover {
-  background-color: #ebf8ff; /* Light blue hover */
-}
 
-/* --- Status Badge Styles --- */
+/* --- Status Badges --- */
 .status-badge {
   padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 12px;
-  
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: white;
   text-transform: uppercase;
+  display: inline-block;
 }
-.status-pending {
-  color: #92400e;
-  background-color: #fef3c7;
-}
-.status-processed {
-   background-color: #8ccfa8;
-  color: #0b552a;
-}
-.status-declined {
-  background-color: #fca5a5; /* Lighter red */
-  color: #7f1d1d; /* Darker red */
-}
+.status-pending { background-color: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+.status-processed { background-color: #d1fae5; color: #047857; border: 1px solid #6ee7b7; }
+.status-declined { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 
-
-/* --- Responsive Table-to-Card --- */
-@media (max-width: 768px) {
-  .admin-table-wrapper {
-    border: none;
-    box-shadow: none;
-    overflow: visible;
-    background-color: transparent;
-  }
-  #trackerTable,
-  #trackerTable thead,
-  #trackerTable tbody,
-  #trackerTable th,
-  #trackerTable td,
-  #trackerTable tr {
-    display: block;
-    width: 100%;
-  }
-  #trackerTable thead {
-    display: none; /* hide table headers */
-  }
-  #trackerTable tbody tr {
-    margin-bottom: 20px;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  #trackerTable tbody td {
-    position: relative;
-    padding-left: 50%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
-    color: #2c2c2c;
-    min-height: 40px;
-  }
-  #trackerTable tbody td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 16px;
-    top: 12px;
-    
-    color: #2c5282; /* Primary Blue */
-    white-space: nowrap;
-  }
-  #trackerTable tbody td:last-child {
-    border-bottom: none;
-  }
-}
-
-/* --- NEW: Custom Modal Styles --- */
+/* --- Custom Modal Styles --- */
 .custom-modal-overlay {
   position: fixed;
   top: 0;
@@ -194,557 +153,339 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  display: none; /* Hidden by default */
+  display: none; 
   z-index: 1000;
   overflow-y: auto;
 }
 .custom-modal-dialog {
   position: relative;
   width: 90%;
-  max-width: 1140px; /* (was modal-xl) */
+  max-width: 900px;
   margin: 50px auto;
 }
 .custom-modal-content {
-  border: 1px solid #e0e0e0;
+  border: none;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  font-family: "Rubik", sans-serif;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  font-family: inherit;
   background: #fff;
 }
 .custom-modal-header {
-  position: relative;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e3e6f0;
   padding: 1.5rem;
-}
-.custom-modal-close {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  font-size: 2rem;
-  line-height: 1;
-  color: #aaa;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  font-weight: bold;
-}
-.custom-modal-close:hover {
-  color: #000;
+  background-color: #f8f9fc;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .modal-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: #2c5282;
+  font-weight: 700;
+  margin: 0;
 }
+.custom-modal-close {
+  font-size: 1.5rem;
+  color: #858796;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.custom-modal-close:hover { color: #5a5c69; }
+
 .custom-modal-body {
-  padding: 1.5rem;
-  max-height: 70vh; /* (was modal-dialog-scrollable) */
+  padding: 2rem;
+  max-height: 70vh;
   overflow-y: auto;
 }
-.custom-modal-footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
-  border-top: 1px solid #e0e0e0;
-  padding: 1rem 1.5rem;
-  background-color: #f9f9f9;
-}
-.footer-status {
-  margin-right: auto; /* Pushes status text to the left */
-}
-
-/* Modal Footer Action Buttons */
-.btn-action {
-  display: inline-block;
-  padding: 10px 16px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
-}
-.btn-action:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.btn-accept { background-color: #28a745; }
-.btn-accept:hover:not(:disabled) { background-color: #218838; }
-
-.btn-decline { background-color: #dc3545; }
-.btn-decline:hover:not(:disabled) { background-color: #c82333; }
-
-.btn-pending { background-color: #ffc107; color: #000; }
-.btn-pending:hover:not(:disabled) { background-color: #e0a800; }
-
-.btn-close-footer { background-color: #6c757d; }
-.btn-close-footer:hover:not(:disabled) { background-color: #5a6268; }
-/* --- End of Custom Modal Styles --- */
-
 
 .modal-section-title {
-  font-size: 1.25rem;
-  color: #333;
-  margin-top: 20px;
+  font-size: 1.1rem;
+  color: #2e3a59;
+  font-weight: 700;
+  margin-top: 25px;
   margin-bottom: 15px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 2px solid #eaecf4;
   padding-bottom: 8px;
 }
+.modal-section-title:first-child { margin-top: 0; }
+
 .modal-details {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 10px 20px;
+  gap: 12px 20px;
   font-size: 0.95rem;
 }
 .modal-details dt {
-  color: #2c5282;
-  text-align: right;
+  color: #858796;
+  font-weight: 600;
 }
 .modal-details dd {
-  margin-bottom: 0;
   color: #333;
-  text-align: left;
-  white-space: pre-wrap;
-}
-@media (max-width: 768px) {
-  .modal-details {
-    grid-template-columns: 1fr;
-  }
-  .modal-details dt {
-    text-align: left;
-  }
-}
-.body-content {
-background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius:0 0 12px 12px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+  margin: 0;
 }
 
-.table-controls {
+.custom-modal-footer {
+  border-top: 1px solid #e3e6f0;
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fc;
+  border-radius: 0 0 12px 12px;
   display: flex;
-  flex-wrap: wrap; /* Stack on mobile */
+  justify-content: flex-end;
+  gap: 10px;
   align-items: center;
-  gap: 15px;
-  padding: 1.5rem;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  margin-bottom: 2rem;
 }
+.footer-status { margin-right: auto; color: #5a5c69; font-size: 0.9rem;}
+
+/* Modal Action Buttons */
+.btn-action {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-accept { background-color: #1cc88a; }
+.btn-accept:hover { background-color: #17a673; }
+.btn-decline { background-color: #e74a3b; }
+.btn-decline:hover { background-color: #be2617; }
+.btn-pending { background-color: #f6c23e; color: #fff; }
+.btn-pending:hover { background-color: #dda20a; }
+.btn-close-footer { background-color: #858796; }
+.btn-close-footer:hover { background-color: #60616f; }
+.btn-action:disabled { opacity: 0.6; cursor: not-allowed; }
 
 </style>
-
-<div class="sub-title">
-  <h4>ALUMNI</h4>
-  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt; Graduate Tracer</p>
-</div>
-<hr>
-
-<div class="container">
-
-  <div class="body-content">
+    <div class="sub-title">
+        <h4>ALUMNI (Admin)</h4>
+        <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+        <p class="certxt">&gt; Graduate Tracer</p>
+    </div>
+    <hr>
+<div class="body-content">
   
-  <div class="table-controls">
+  <div class="page-header-container">
+
+    <h2 class="page-title"><i class="fas fa-user-graduate"></i> Graduate Tracer Tracker</h2>
+    <p class="page-description">
+        Monitor and manage Graduate Tracer Study submissions. Review alumni employment data, approve valid entries, or decline incomplete submissions. 
+        Click on any row to view full details and update the status.
+    </p>
+  </div>
+
+  <div class="controls-wrapper">
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search by Student Name, ID, or Email...">
+      <input type="text" id="searchInput" placeholder="Search by Name, ID, or Email...">
     </div>
     <div class="filter-buttons">
+      <button type="button" class="filter-btn active" data-filter="All">All</button>
       <button type="button" class="filter-btn" data-filter="Pending">Pending</button>
       <button type="button" class="filter-btn" data-filter="Processed">Processed</button>
       <button type="button" class="filter-btn" data-filter="Declined">Declined</button>
-      <button type="button" class="filter-btn active" data-filter="All">All</button>
     </div>
   </div>
 
   <div class="admin-table-wrapper">
-      <table id="trackerTable">
-    <thead>
-      <tr>
-        <th>Alumni ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th id="sortDate" style="cursor: pointer;" data-sort-dir="desc">Date Graduate <span>▼</span></th>
-        <th>Email</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for graduate_request in graduate_requests %}
-      
-      <tr class="clickable-row" 
-          data-modal-target="#modal-{{ graduate_request.graduateID }}"
-          data-date="{{ graduate_request.dategraduated|date:"Y-m-d" }}">
+    <table id="trackerTable">
+      <thead>
+        <tr>
+          <th>Alumni ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th id="sortDate" style="cursor: pointer;" data-sort-dir="desc">
+             Date Graduated <span>▼</span>
+          </th>
+          <th>Email</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for graduate_request in graduate_requests %}
         
-        <td data-label="Alumni ID">{{ graduate_request.student.studID }}</td>
-        <td data-label="First Name">{{ graduate_request.student.firstname }}</td>
-        <td data-label="Last Name">{{ graduate_request.student.lastname }}</td>
-        <td data-label="Date Graduate">{{ graduate_request.dategraduated|date:"F d, Y" }}</td>
-        <td data-label="Email">{{ graduate_request.student.user.email }}</td>
-        
-        <td data-label="Status">
-          {% if graduate_request.approval_status == 'Accepted' %}
-        <span class="status-badge status-processed">Accepted</span>
-          {% elif graduate_request.approval_status == 'Declined' %}
-          <span class="status-badge status-declined">Declined</span>
-          {% else %}
-          <span class="status-badge status-pending">Pending</span>
-          {% endif %}
-        </td>
-      </tr>
+        <tr class="clickable-row" 
+            data-modal-target="#modal-{{ graduate_request.graduateID }}"
+            data-date="{{ graduate_request.dategraduated|date:"Y-m-d" }}">
+          
+          <td style="font-weight: 600; color: #2c5282;">{{ graduate_request.student.studID }}</td>
+          <td>{{ graduate_request.student.firstname }}</td>
+          <td>{{ graduate_request.student.lastname }}</td>
+          <td>{{ graduate_request.dategraduated|date:"M d, Y" }}</td>
+          <td>{{ graduate_request.student.user.email }}</td>
+          
+          <td>
+            {% if graduate_request.approval_status == 'Accepted' %}
+              <span class="status-badge status-processed">Accepted</span>
+            {% elif graduate_request.approval_status == 'Declined' %}
+              <span class="status-badge status-declined">Declined</span>
+            {% else %}
+              <span class="status-badge status-pending">Pending</span>
+            {% endif %}
+          </td>
+        </tr>
 
-      <div class="custom-modal-overlay" id="modal-{{ graduate_request.graduateID }}" tabindex="-1" aria-labelledby="modalLabel-{{ graduate_request.graduateID }}" aria-hidden="true">
-        <div class="custom-modal-dialog">
-          <div class="custom-modal-content">
-            <div class="custom-modal-header">
-              <h5 class="modal-title" id="modalLabel-{{ graduate_request.graduateID }}">
-                Tracer Form Details: {{ graduate_request.student.firstname }} {{ graduate_request.student.lastname }}
-              </h5>
-              <button type="button" class="custom-modal-close" aria-label="Close">&times;</button>
-            </div>
-            
-            <div class="custom-modal-body">
-              <h4 class="modal-section-title">Personal Information</h4>
-              <dl class="modal-details">
-            
-                <dt>Student ID</dt>
-                <dd>{{ graduate_request.student.studID|default:"N/A" }}</dd>
-                <dt>First Name</dt>
-                <dd>{{ graduate_request.student.firstname }}</dd>
-                <dt>Last Name</dt>
-                <dd>{{ graduate_request.student.lastname }}</dd>
-                <dt>Sex</dt>
-                <dd>{{ graduate_request.student.sex|default:"N/A" }}</dd>
-                <dt>Email</dt>
-                <dd>{{ graduate_request.email_add|default:"N/A" }}</dd>
-                <dt>Contact Number</dt>
-                <dd>{{ graduate_request.contactnum|default:"N/A" }}</dd>
-                <dt>Address</dt>
-                <dd>{{ graduate_request.alumniaddress|default:"N/A" }}</dd>
-              </dl>
-
-              <h4 class="modal-section-title">Education</h4>
-              <dl class="modal-details">
-                <dt>Degree</dt>
-                <dd>{{ graduate_request.student.degree|default:"N/A" }}</dd>
-                <dt>Date Graduated</dt>
-                <dd>{{ graduate_request.dategraduated|date:"F d, Y" }}</dd>
-              </dl>
+        <div class="custom-modal-overlay" id="modal-{{ graduate_request.graduateID }}" tabindex="-1">
+          <div class="custom-modal-dialog">
+            <div class="custom-modal-content">
+              <div class="custom-modal-header">
+                <h5 class="modal-title">
+                   <i class="fas fa-file-alt"></i> Tracer Details: {{ graduate_request.student.firstname }} {{ graduate_request.student.lastname }}
+                </h5>
+                <button type="button" class="custom-modal-close">&times;</button>
+              </div>
               
-              <h4 class="modal-section-title">Current Employment</h4>
-              <dl class="modal-details">
-                <dt>Employment Type</dt>
-                <dd>{{ graduate_request.employmenttype|default:"N/A" }}</dd>
-                <dt>Name of Organization</dt>
-                <dd>{{ graduate_request.nameoforganization|default:"N/A" }}</dd>
-                <dt>Organization Type</dt>
-                <dd>{{ graduate_request.organizationType|default:"N/A" }}</dd>
-                <dt>Designation</dt>
-                <dd>{{ graduate_request.designation|default:"N/A" }}</dd>
-                <dt>Department</dt>
-                <dd>{{ graduate_request.department|default:"N/A" }}</dd>
-                <dt>Occupational Class</dt>
-                <dd>{{ graduate_request.occupationalClass|default:"N/A" }}</dd>
-                <dt>Place of Work</dt>
-                <dd>{{ graduate_request.placework|default:"N/A" }}</dd>
-                <dt>Years in Company</dt>
-                <dd>{{ graduate_request.yearscompany|default:"N/A" }}</dd>
-                <dt>Monthly Income</dt>
-                <dd>{{ graduate_request.monthlyincome|default:"N/A" }}</dd>
-                <dt>Job related to Scholarship</dt>
-                <dd>{{ graduate_request.gradscholrelated|default:"N/A" }}</dd>
-                <dt>Is this your first job?</dt>
-                <dd>{{ graduate_request.firstjobgraduate|default:"N/A" }}</dd>
-                <dt>Reason for Staying</dt>
-                <dd style="white-space: pre-wrap;">{{ graduate_request.reasonstayingjob|default:"N/A" }}</dd>
-                <dt>Work while working on degree?</dt>
-                <dd>{{ graduate_request.workwhileworking|default:"N/A" }}</dd>
-                <dt>Status (Legacy)</dt>
-                <dd>{{ graduate_request.status|default:"N/A" }}</dd>
-              </dl>
+              <div class="custom-modal-body">
+                <h4 class="modal-section-title">Personal Information</h4>
+                <dl class="modal-details">
+                  <dt>Student ID</dt> <dd>{{ graduate_request.student.studID|default:"N/A" }}</dd>
+                  <dt>Full Name</dt> <dd>{{ graduate_request.student.firstname }} {{ graduate_request.student.lastname }}</dd>
+                  <dt>Sex</dt> <dd>{{ graduate_request.student.sex|default:"N/A" }}</dd>
+                  <dt>Email</dt> <dd>{{ graduate_request.email_add|default:"N/A" }}</dd>
+                  <dt>Contact</dt> <dd>{{ graduate_request.contactnum|default:"N/A" }}</dd>
+                  <dt>Address</dt> <dd>{{ graduate_request.alumniaddress|default:"N/A" }}</dd>
+                </dl>
 
-              <h4 class="modal-section-title">Employment History</h4>
-              <dl class="modal-details">
-                <dt>Reason if not working</dt>
-                <dd>{{ graduate_request.ifnotworking|default:"N/A" }}</dd>
-                <dt>Reason for time gap</dt>
-                <dd style="white-space: pre-wrap;">{{ graduate_request.reasontimegap|default:"N/A" }}</dd>
-                <dt>Nature of previous job</dt>
-                <dd>{{ graduate_request.natureemployment|default:"N/A" }}</dd>
-                <dt>Years in previous job</dt>
-                <dd>{{ graduate_request.numberofyears|default:"N/A" }}</dd>
-                <dt>Income in previous job</dt>
-                <dd>{{ graduate_request.monthlyincome2|default:"N/A" }}</dd>
-              </dl>
+                <h4 class="modal-section-title">Education</h4>
+                <dl class="modal-details">
+                  <dt>Degree</dt> <dd>{{ graduate_request.student.degree|default:"N/A" }}</dd>
+                  <dt>Graduated</dt> <dd>{{ graduate_request.dategraduated|date:"F d, Y" }}</dd>
+                </dl>
+                
+                <h4 class="modal-section-title">Current Employment</h4>
+                <dl class="modal-details">
+                  <dt>Status</dt> <dd>{{ graduate_request.employmenttype|default:"N/A" }}</dd>
+                  <dt>Company</dt> <dd>{{ graduate_request.nameoforganization|default:"N/A" }}</dd>
+                  <dt>Designation</dt> <dd>{{ graduate_request.designation|default:"N/A" }}</dd>
+                  <dt>Place</dt> <dd>{{ graduate_request.placework|default:"N/A" }}</dd>
+                  <dt>Monthly Income</dt> <dd>{{ graduate_request.monthlyincome|default:"N/A" }}</dd>
+                </dl>
 
-              <h4 class="modal-section-title">Skill & Impact Ratings</h4>
-              <dl class="modal-details">
-                <dt>Academic Profession</dt>
-                <dd>{{ graduate_request.academicprofession }}</dd>
-                <dt>Research Capability</dt>
-                <dd>{{ graduate_request.researchcapability }}</dd>
-                <dt>Learning Efficiency</dt>
-                <dd>{{ graduate_request.learningefficiency }}</dd>
-                <dt>People Skills</dt>
-                <dd>{{ graduate_request.peopleskills }}</dd>
-                <dt>Problem Solving Skills</dt>
-                <dd>{{ graduate_request.problemsolvingskills }}</dd>
-                <dt>IT Skills</dt>
-                <dd>{{ graduate_request.informationtechnologyskills }}</dd>
-                <dt>Community Field</dt>
-                <dd>{{ graduate_request.communityfield }}</dd>
-                <dt>Global Field</dt>
-                <dd>{{ graduate_request.globalfield }}</dd>
-                <dt>Critical Skills</dt>
-                <dd>{{ graduate_request.criticalskills }}</dd>
-                <dt>Salary Improvement</dt>
-                <dd>{{ graduate_request.salaryimprovement }}</dd>
-                <dt>Opportunities Abroad</dt>
-                <dd>{{ graduate_request.opportunitiesabroad }}</dd>
-                <dt>Personality Development</dt>
-                <dd>{{ graduate_request.personalitydevelopment }}</dd>
-                <dt>Tech & Values Formation</dt>
-                <dd>{{ graduate_request.technologiesvaluesformation }}</dd>
-              </dl>
-
-              <h4 class="modal-section-title">Institution Evaluation</h4>
-              <dl class="modal-details">
-                <dt>Meeting Professional Needs</dt>
-                <dd>{{ graduate_request.meetingprofessionalneeds|default:"N/A" }}</dd>
-                <dt>Range of Courses</dt>
-                <dd>{{ graduate_request.rangeofcourses|default:"N/A" }}</dd>
-                <dt>Relevance to Profession</dt>
-                <dd>{{ graduate_request.relevanceprofession|default:"N/A" }}</dd>
-                <dt>Extracurricular</dt>
-                <dd>{{ graduate_request.extracurricular|default:"N/A" }}</dd>
-                <dt>Premium Research</dt>
-                <dd>{{ graduate_request.premiumresearch|default:"N/A" }}</dd>
-                <dt>Inter-learning</dt>
-                <dd>{{ graduate_request.interlearning|default:"N/A" }}</dd>
-                <dt>Teaching Environment</dt>
-                <dd>{{ graduate_request.teachingenvironment|default:"N/A" }}</dd>
-                <dt>Quality of Instruction</dt>
-                <dd>{{ graduate_request.qualityinstruction|default:"N/A" }}</dd>
-                <dt>Teacher-Student Relationship</dt>
-                <dd>{{ graduate_request.teachrelationship|default:"N/A" }}</dd>
-                <dt>Library Resources</dt>
-                <dd>{{ graduate_request.libraryresources|default:"N/A" }}</dd>
-                <dt>Laboratory Resources</dt>
-                <dd>{{ graduate_request.labresources|default:"N/A" }}</dd>
-                <dt>Class Size</dt>
-                <dd>{{ graduate_request.classize|default:"N/A" }}</dd>
-                <dt>Professor Expertise</dt>
-                <dd>{{ graduate_request.profexpertise|default:"N/A" }}</dd>
-                <dt>Professor Subject Matter</dt>
-                <dd>{{ graduate_request.profsubjectmatter|default:"N/A" }}</dd>
-              </dl>
-
-              <h4 class="modal-section-title">Further Studies</h4>
-              <dl class="modal-details">
-                <dt>Enrollment Date</dt>
-                <dd>{{ graduate_request.enrollmentdate|date:"F d, Y"|default:"N/A" }}</dd>
-                <dt>Degree Pursued</dt>
-                <dd>{{ graduate_request.studiesdegree|default:"N/A" }}</dd>
-                <dt>University/Institution</dt>
-                <dd>{{ graduate_request.universityinstitution|default:"N/A" }}</D_D>
-                <dt>University Address</dt>
-                <dd>{{ graduate_request.studiesAddress|default:"N/A" }}</dd>
-                <dt>Reason for Pursuing</dt>
-                <dd style="white-space: pre-wrap;">{{ graduate_request.pursuingstudies|default:"N/gA" }}</dd>
-              </dl>
+                <h4 class="modal-section-title">Ratings & Skills</h4>
+                <dl class="modal-details">
+                   <dt>Critical Skills</dt> <dd>{{ graduate_request.criticalskills }}</dd>
+                   <dt>Problem Solving</dt> <dd>{{ graduate_request.problemsolvingskills }}</dd>
+                   <dt>IT Skills</dt> <dd>{{ graduate_request.informationtechnologyskills }}</dd>
+                </dl>
+              </div>
               
-            </div>
-            
-            <div class="custom-modal-footer">
-              <span class="footer-status">
-                Current Status: 
-                <strong>{{ graduate_request.approval_status }}</strong>
-              </span>
+              <div class="custom-modal-footer">
+                <span class="footer-status">Current Status: <strong>{{ graduate_request.approval_status }}</strong></span>
 
-              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" style="display: inline-block;">
-                {% csrf_token %}
-                <input type="hidden" name="status" value="Accepted">
-                <button type="submit" class="btn-action btn-accept"
-                  {% if graduate_request.approval_status == 'Accepted' %}disabled{% endif %}>
-                  Accept
-                </button>
-              </form>
+                <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="status" value="Accepted">
+                  <button type="submit" class="btn-action btn-accept" {% if graduate_request.approval_status == 'Accepted' %}disabled{% endif %}>Accept</button>
+                </form>
 
-              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" style="display: inline-block;">
-                {% csrf_token %}
-                <input type="hidden" name="status" value="Declined">
-                <button type="submit" class="btn-action btn-decline"
-                  {% if graduate_request.approval_status == 'Declined' %}disabled{% endif %}>
-                  Decline
-                </button>
-              </form>
-              
-              <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST" style="display: inline-block;">
-                {% csrf_token %}
-                <input type="hidden" name="status" value="Pending">
-                <button type="submit" class="btn-action btn-pending"
-                  {% if graduate_request.approval_status == 'Pending' %}disabled{% endif %}>
-                  Set as Pending
-                </button>
-              </form>
+                <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="status" value="Declined">
+                  <button type="submit" class="btn-action btn-decline" {% if graduate_request.approval_status == 'Declined' %}disabled{% endif %}>Decline</button>
+                </form>
+                
+                <form action="{% url 'update_form_status' graduate_request.graduateID %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="status" value="Pending">
+                  <button type="submit" class="btn-action btn-pending" {% if graduate_request.approval_status == 'Pending' %}disabled{% endif %}>Reset to Pending</button>
+                </form>
 
-              <button type="button" class="btn-action btn-close-footer custom-modal-close">Close</button>
+                <button type="button" class="btn-action btn-close-footer custom-modal-close">Close</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      {% endfor %}
-    </tbody>
-  </table>
-  </div>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const searchInput = document.getElementById("searchInput");
-  const filterButtons = document.querySelectorAll(".filter-buttons .filter-btn"); // Changed selector
+  const filterButtons = document.querySelectorAll(".filter-buttons .filter-btn");
   const sortHeader = document.getElementById("sortDate");
   const tableBody = document.getElementById("trackerTable").getElementsByTagName("tbody")[0];
-  const rows = Array.from(tableBody.getElementsByTagName("tr"));
+  // Note: Since modals are inside the loop but outside the tr (technically invalid HTML structure but common in Django templates), 
+  // we select only TRs for sorting/filtering. The modals will stay in DOM but might need care if reordering.
+  // Best practice: Move modals outside table or use a single dynamic modal.
+  // For this fix, we will filter TRs.
+  const rows = Array.from(tableBody.querySelectorAll("tr.clickable-row"));
 
   let currentStatusFilter = "All";
   let currentSearchFilter = "";
 
-  // --- Main Filter Function ---
   function applyFilters() {
     rows.forEach(row => {
-      // 1. Check Status Filter
-      const statusCell = row.cells[5]; // 6th column is Status
+      const statusCell = row.cells[5];
       const statusText = statusCell.textContent.trim();
       let statusMatch = false;
 
-      if (currentStatusFilter === "All") {
-        statusMatch = true;
-      } else if (currentStatusFilter === "Processed" && statusText === "Accepted") {
-        statusMatch = true;
-      } else {
-        statusMatch = statusText === currentStatusFilter;
-      }
+      if (currentStatusFilter === "All") statusMatch = true;
+      else if (currentStatusFilter === "Processed" && statusText === "Accepted") statusMatch = true;
+      else statusMatch = statusText === currentStatusFilter;
 
-      // 2. Check Search Filter
-      const studentId = row.cells[0].textContent.toUpperCase();
-      const firstName = row.cells[1].textContent.toUpperCase();
-      const lastName = row.cells[2].textContent.toUpperCase();
-      const email = row.cells[4].textContent.toUpperCase();
+      const rowText = row.innerText.toUpperCase();
       const searchText = currentSearchFilter.toUpperCase();
+      const searchMatch = rowText.includes(searchText);
 
-      const searchMatch = studentId.includes(searchText) ||
-                          firstName.includes(searchText) ||
-                          lastName.includes(searchText) ||
-                          email.includes(searchText);
-
-      // 3. Show or Hide Row
-      if (statusMatch && searchMatch) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
+      row.style.display = (statusMatch && searchMatch) ? "" : "none";
     });
   }
 
-  // --- 1. Search Bar Event ---
   searchInput.addEventListener("keyup", function() {
-    currentSearchFilter = searchInput.value;
+    currentSearchFilter = this.value;
     applyFilters();
   });
 
-  // --- 2. Filter Buttons Event (SIMPLIFIED) ---
   filterButtons.forEach(button => {
     button.addEventListener("click", function() {
-      // Update active state
       filterButtons.forEach(btn => btn.classList.remove("active"));
       this.classList.add("active");
-
-      // Set filter and apply
       currentStatusFilter = this.dataset.filter;
       applyFilters();
     });
   });
 
-  // --- 3. Sort by Date Event ("latest or old") ---
-  sortHeader.addEventListener("click", function() {
-    const sortDir = this.dataset.sortDir === 'asc' ? 'desc' : 'asc';
-    this.dataset.sortDir = sortDir;
-    
-    // Update arrow indicator
-    this.querySelector("span").textContent = sortDir === 'asc' ? ' ▲' : ' ▼';
-
-    // Sort the rows array
-    const sortedRows = rows.sort((a, b) => {
-      const dateA = a.dataset.date;
-      const dateB = b.dataset.date;
-      
-      if (sortDir === 'asc') {
-        return dateA.localeCompare(dateB); // Oldest first
-      } else {
-        return dateB.localeCompare(dateA); // Latest first
-      }
-    });
-
-    // Re-append sorted rows to the table body
-    sortedRows.forEach(row => {
-      tableBody.appendChild(row);
-    });
-  });
-
-  // Initial sort on load (latest first)
-  sortHeader.click();
-
-  // --- NEW: Custom Modal JS ---
-
-  // Function to open a modal
+  // Modal Logic
   function openModal(modal) {
     if (modal) {
       modal.style.display = 'block';
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      document.body.style.overflow = 'hidden';
     }
   }
-
-  // Function to close a modal
   function closeModal(modal) {
     if (modal) {
       modal.style.display = 'none';
-      document.body.style.overflow = 'auto'; // Restore scrolling
+      document.body.style.overflow = 'auto';
     }
   }
 
-  // Add click listener to all clickable rows to OPEN the modal
   document.querySelectorAll('.clickable-row').forEach(row => {
     row.addEventListener('click', function() {
-      const modalTargetId = this.dataset.modalTarget;
-      const modal = document.querySelector(modalTargetId);
+      const targetId = this.dataset.modalTarget;
+      const modal = document.querySelector(targetId);
       openModal(modal);
     });
   });
 
-  // Add click listener to all close buttons to CLOSE the modal
-  document.querySelectorAll('.custom-modal-close').forEach(button => {
-    button.addEventListener('click', function() {
+  document.querySelectorAll('.custom-modal-close').forEach(btn => {
+    btn.addEventListener('click', function() {
       const modal = this.closest('.custom-modal-overlay');
       closeModal(modal);
     });
   });
 
-  // Add click listener to all modal overlays to CLOSE when clicking outside
-  document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', function(event) {
-      // Check if the click is on the overlay itself, not its children
-      if (event.target === overlay) {
-        closeModal(this);
-      }
-    });
+  window.addEventListener('click', function(e) {
+    if (e.target.classList.contains('custom-modal-overlay')) {
+      closeModal(e.target);
+    }
   });
-
 });
 </script>
 

@@ -32,12 +32,45 @@ def scholarship_status(request):
         return {'is_scholar': False}
     
 def theme_selection(request):
-  
-    template = 'adminmain.html'
+    # Default for unauthenticated or regular users (Students)
+    template = 'main.html' 
     
-    if request.user.is_authenticated and hasattr(request.user, 'role'):
-        # If it is the Clinic Admin, switch to the medical layout
-        if request.user.role == 'clinic_admin':
-            template = 'clinic_admin.html'
+    if request.user.is_authenticated:
+        
+        # 1. Check Specific Roles
+        if hasattr(request.user, 'role'):
+            role = request.user.role
+            
+            if role == 'clinic_admin':
+                template = 'clinic_admin.html'
+                
+            elif role == 'guidance':
+                template = 'guidance_admin.html'
+                
+            elif role == 'scholarship_admin':
+                template = 'scholarship_admin.html'
+                
+            elif role == 'placement_officer':
+                template = 'placement_admin.html'
+                
+            elif role == 'alumni_officer':
+                template = 'alumni_admin.html'
+                
+            elif role == 'community_admin':
+                template = 'community_admin.html'
+                
+            elif role == 'org_admin':
+                template = 'org_admin.html'
+                
+            elif role == 'discipline_officer':
+                template = 'discipline_admin.html'
+                
+            elif role == 'student_life_staff':
+                template = 'adminmain.html'
+
+        # 2. Fallback for Superusers/Staff who might not have a specific 'role' set
+        # If template is still 'main.html' but they are admin, give them the main admin dashboard
+        if template == 'main.html' and (request.user.is_staff or request.user.is_superuser):
+            template = 'adminmain.html'
             
     return {'base_template': template}

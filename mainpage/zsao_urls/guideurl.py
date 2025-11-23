@@ -7,7 +7,7 @@ urlpatterns = [
     # Individual Profile
     path('individual_profile', views.individualProfile, name="Individual Profile"),
     path('search_student_info_for_individual_profile/', views.search_student_info_for_individual, name='search_student_info_for_individual_profile'),
-
+path('dashboard/guidance/', views.guidance_dashboard, name='guidance_dashboard'),
     # Intake Interview
     path('intake_interview/', views.intake_interview_view, name="Intake Interview"),
     path('search_student_info_for_intake/', views.search_student_info_for_intake, name='search_student_info_for_intake'),

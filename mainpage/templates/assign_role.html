@@ -2,53 +2,58 @@
 {% load static %}
 
 {% block headcontent %}
-  <link rel="stylesheet" href="{% static 'styles/role.css' %}">
- 
+<link rel="stylesheet" href="{% static 'styles/role.css' %}">
+
+<style>
+   
+</style>
 {% endblock headcontent %}
 
 {% block bodycontent %}
 <div class="sub-title">
   <h4>OFFICE OF STUDENT LIFE</h4>
-  <p class="hometext"><a href="{% url 'homepage' %}"></a>Home</p>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
   <p class="certxt">&gt; Assign Role to Users</p>
 </div>
 <hr>
-<div class="container">
+
+<div class="body-content">
   
+  <div class="page-header-container">
+      <h2 class="page-title"><i class="fas fa-user-tag"></i> User Role Management</h2>
+      <p class="page-description">
+          Search for registered users and assign system roles. Use the dropdowns to update a user's permission level (e.g., Student, Staff, Admin). 
+          If assigning an "Organization Admin," you will be prompted to select the specific organization.
+      </p>
+  </div>
+
   <form method="GET">
     <div class="filter-controls">
+      
       <div class="search-bar">
         <input
           type="text"
           name="q"
           class="search-input"
-          placeholder="Search..."
+          placeholder="Search by Username or Email..."
           value="{{ query }}"
         />
         <button class="search-btn" aria-label="Search" type="submit">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
           </svg>
         </button>
       </div>
 
       <div class="role-filter-group">
-        <label for="role-filter" class="form-label mb-0">Role:</label>
+        <label for="role-filter">Filter Role:</label>
         <select
           name="role"
           id="role-filter"
           class="form-select"
           onchange="this.form.submit()"
         >
-          <option value="">All Roles</option>
+          <option value="">Show All Roles</option>
           {% for value, display_name in role_choices %}
           <option
             value="{{ value }}"
@@ -68,26 +73,23 @@
         <tr>
           <th>
             <a href="?sort=username&dir={% if sort_by == 'username' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}&role={{ role_filter }}">
-              Username
-              {% if sort_by == 'username' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+              Username <i class="fas fa-sort"></i>
             </a>
           </th>
           
           <th>
             <a href="?sort=email&dir={% if sort_by == 'email' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}&role={{ role_filter }}">
-              Email
-              {% if sort_by == 'email' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+              Email <i class="fas fa-sort"></i>
             </a>
           </th>
           
           <th>
             <a href="?sort=role&dir={% if sort_by == 'role' and direction == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}&role={{ role_filter }}">
-              Current Role
-              {% if sort_by == 'role' %}{% if direction == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+              Current Role <i class="fas fa-sort"></i>
             </a>
           </th>
           
-          <th>Assign Role</th>
+          <th style="width: 300px;">Assign New Role</th>
         </tr>
       </thead>
       <tbody>
@@ -95,14 +97,18 @@
         <tr>
           <form method="post">
             {% csrf_token %}
-            <td>{{ user.username }}</td>
+            <td style="font-weight: 600; color: #2e3a59;">{{ user.username }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.get_role_display }}</td>
+            <td>
+                <span style="padding: 4px 8px; background: #f8f9fc; border: 1px solid #d1d3e2; border-radius: 4px; font-size: 0.8rem;">
+                    {{ user.get_role_display }}
+                </span>
+            </td>
             <td>
               <input type="hidden" name="user_id" value="{{ user.id }}" />
 
               <div class="action-row">
-                <select name="role" class="form-select form-select-sm role-select" required onchange="toggleOrgDropdown(this)">
+                <select name="role" class="form-select role-select" required onchange="toggleOrgDropdown(this)">
                   {% for value, display_name in role_choices %}
                     <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>
                       {{ display_name }}
@@ -110,11 +116,12 @@
                   {% endfor %}
                 </select>
                 
-                <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                <button type="submit" class="btn-primary">Save</button>
               </div>
 
               <div class="org-dropdown" style="{% if user.role != 'org_admin' %}display:none;{% endif %}">
-                <select name="organization_id" class="form-select form-select-sm">
+                <label style="font-size: 0.75rem; font-weight: bold; color: #555;">Select Organization:</label>
+                <select name="organization_id" class="form-select form-select-sm" style="font-size: 0.85rem;">
                   <option value="">None</option>
                   {% for org in organizations %}
                     <option value="{{ org.org_id }}"
@@ -127,21 +134,26 @@
             </td>
           </form>
         </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" style="text-align: center; padding: 30px; color: #888; font-style: italic;">
+                No users found matching your search.
+            </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 
-{% with query_params="&sort="|add:sort_by|add:"&dir="|add:direction|add:"&q="|add:query|add:"&role="|add:role_filter %}
-
-  {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-
-{% endwith %}
+  <div class="pagination-wrapper">
+    {% with query_params="&sort="|add:sort_by|add:"&dir="|add:direction|add:"&q="|add:query|add:"&role="|add:role_filter %}
+      {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+    {% endwith %}
+  </div>
 
 </div>
 
 <script>
-// This function is still needed.
 function toggleOrgDropdown(roleSelect) {
   const orgDropdown = roleSelect.closest('td').querySelector('.org-dropdown');
   if (roleSelect.value === 'org_admin') {
@@ -152,8 +164,5 @@ function toggleOrgDropdown(roleSelect) {
     if (select) select.value = "";
   }
 }
-
-// The filterTable() JavaScript function is no longer needed
-// as searching and filtering are now done on the server.
 </script>
 {% endblock %}

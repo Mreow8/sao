@@ -1,0 +1,479 @@
+{% extends "guidance_admin.html" %} 
+{% load static %} 
+
+{% block title %}Guidance Dashboard{% endblock %} 
+
+{% block extra_css %}
+<style>
+  /* --- Layout & Structure (Matches Admin Dashboard) --- */
+  html, body, .admin-dashboard-container {
+    height: 100%;
+    min-height: 100vh;
+  }
+  
+  .dashboard-main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    flex: 1;
+    height: 100%;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 1024px) { 
+    .dashboard-main-grid {
+      grid-template-columns: 3fr 1fr; /* 75% Table, 25% List */
+    }
+  }
+
+  /* --- Cards --- */
+  .dashboard-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s;
+  }
+  .dashboard-card:hover {
+    box-shadow: 0 4px 16px 0 rgba(59, 130, 246, 0.1);
+  }
+
+  /* --- Tables --- */
+  .dashboard-table th {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #374151;
+    background: #fff;
+    letter-spacing: 0.04em;
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+  .dashboard-table td {
+    font-size: 0.95rem;
+    color: #222;
+    background: #fff;
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+  }
+  .dashboard-table tbody tr:hover {
+    background-color: #f9fafb;
+  }
+  
+  .requests-table-scroll {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* --- Compact Calendar Styles --- */
+  .calendar-admin {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.06);
+    padding: 0.75rem; 
+    border: 1px solid #e5e7eb;
+    height: 100%;
+    max-width: 320px; /* Small fixed width */
+    margin: 0 auto; 
+  }
+  .calendar-header-admin {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    margin-bottom: 0.25rem;
+  }
+  .calendar-header-cell-admin {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 0.1rem;
+  }
+  #calendarDaysAdmin {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 2px;
+  }
+  .calendar-day-admin {
+    height: 32px; 
+    width: 32px; 
+    font-size: 0.75rem; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #374151;
+    border-radius: 4px; 
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f9fafb;
+    margin: 0 auto;
+  }
+  .calendar-day-admin:hover:not(.empty-day) {
+    background: #e0e7ff;
+    color: #1d4ed8;
+  }
+  .calendar-day-admin.today {
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 700;
+  }
+  
+  /* --- Tabs --- */
+  .tab-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+  .tab-button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.2s;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+  .tab-button:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+  }
+  .tab-button.active {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  /* --- Badges --- */
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .status-badge.counseling { background-color: #fef3c7; color: #92400e; }
+  .status-badge.exit { background-color: #fee2e2; color: #991b1b; }
+  .status-badge.ojt { background-color: #d1fae5; color: #065f46; }
+  .status-badge.confirmed { background-color: #dbeafe; color: #1e40af; }
+
+  /* --- Sticky Header --- */
+  .requests-header-sticky-container {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #fff;
+    padding-bottom: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block bodycontent %}
+<div class="sub-title">
+  <h4>GUIDANCE OFFICE</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+  <p class="certxt">&gt; Admin Dashboard</p>
+</div>
+<hr />
+
+<div class="flex flex-col bg-white rounded-[14px] h-min w-full p-4">
+  <div class="flex flex-col gap-4 h-auto">
+    
+    <div class="flex flex-row gap-4 w-full items-stretch">
+      <div class="calendar-admin flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-bold text-gray-800 flex items-center gap-2">
+            <i class="fas fa-calendar-alt text-blue-400"></i> Calendar
+          </span>
+          <div class="flex items-center gap-2">
+            <button onclick="previousMonthAdmin()" class="text-gray-500 hover:text-blue-600 p-1">
+              <i class="fas fa-chevron-left text-xs"></i>
+            </button>
+            <span id="currentMonthAdmin" class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full font-semibold text-xs border border-blue-100" style="min-width: 100px; text-align: center"></span>
+            <button onclick="nextMonthAdmin()" class="text-gray-500 hover:text-blue-600 p-1">
+              <i class="fas fa-chevron-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+        <div class="calendar-header-admin">
+          <div class="calendar-header-cell-admin">S</div>
+          <div class="calendar-header-cell-admin">M</div>
+          <div class="calendar-header-cell-admin">T</div>
+          <div class="calendar-header-cell-admin">W</div>
+          <div class="calendar-header-cell-admin">T</div>
+          <div class="calendar-header-cell-admin">F</div>
+          <div class="calendar-header-cell-admin">S</div>
+        </div>
+        <div id="calendarDaysAdmin" class="flex-1"></div>
+      </div>
+
+      <div class="flex flex-col flex-1 h-full">
+        <div class="flex flex-col justify-center items-center bg-white rounded-xl shadow border border-blue-100 p-4 w-full text-center flex-1">
+          <span class="font-bold text-gray-700 mb-2">Current Time & Date:</span>
+          <div id="adminLiveTime" class="text-4xl font-extrabold text-blue-700 mb-1"></div>
+          <div id="adminLiveDate" class="text-base font-semibold text-gray-600"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-4 bg-gray-50 rounded-xl border border-gray-200 items-stretch p-2">
+      <div class="flex-1 dashboard-card flex flex-col items-center justify-center text-center shadow-none border-none bg-transparent">
+        <i class="fas fa-users text-blue-500 text-xl mb-1"></i>
+        <span class="text-xs text-gray-500 mb-1">Total Profiles</span>
+        <span class="text-2xl font-bold text-blue-600">{{ total_profiles|default:0 }}</span>
+      </div>
+
+      <a href="{% url 'Counseling App With Scheduler Admin View' %}?status_filter=Pending" class="flex-1 dashboard-card flex flex-col items-center justify-center text-center shadow-none border-none bg-transparent hover:bg-white hover:shadow-sm cursor-pointer">
+        <i class="fas fa-calendar-check text-yellow-500 text-xl mb-1"></i>
+        <span class="text-xs text-gray-500 mb-1">Pending Counseling</span>
+        <span class="text-2xl font-bold text-yellow-600">{{ pending_counseling|default:0 }}</span>
+      </a>
+
+      <a href="{% url 'Exit Interview Admin View' %}?status_filter=Pending" class="flex-1 dashboard-card flex flex-col items-center justify-center text-center shadow-none border-none bg-transparent hover:bg-white hover:shadow-sm cursor-pointer">
+        <i class="fas fa-door-open text-red-500 text-xl mb-1"></i>
+        <span class="text-xs text-gray-500 mb-1">Pending Exit</span>
+        <span class="text-2xl font-bold text-red-600">{{ pending_exit|default:0 }}</span>
+      </a>
+
+      <a href="{% url 'OJT Assessment Admin View' %}?status_filter=Pending" class="flex-1 dashboard-card flex flex-col items-center justify-center text-center shadow-none border-none bg-transparent hover:bg-white hover:shadow-sm cursor-pointer">
+        <i class="fas fa-clipboard-list text-green-500 text-xl mb-1"></i>
+        <span class="text-xs text-gray-500 mb-1">Pending OJT</span>
+        <span class="text-2xl font-bold text-green-600">{{ pending_ojt|default:0 }}</span>
+      </a>
+      
+       <div class="flex-1 dashboard-card flex flex-col items-center justify-center text-center shadow-none border-none bg-transparent">
+        <i class="fas fa-clock text-indigo-500 text-xl mb-1"></i>
+        <span class="text-xs text-gray-500 mb-1">Today's Sessions</span>
+        <span class="text-2xl font-bold text-indigo-600">{{ todays_counseling|length }}</span>
+      </div>
+    </div>
+
+    <div class="dashboard-main-grid">
+      
+      <div class="dashboard-card border border-gray-200 flex-1 flex flex-col mb-2 w-full">
+        <div class="requests-header-sticky-container">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">Recent Requests</h3>
+          
+          <div class="tab-buttons">
+            <button class="tab-button active" data-tab="all">All</button>
+            <button class="tab-button" data-tab="counseling">Counseling</button>
+            <button class="tab-button" data-tab="exit">Exit Interview</button>
+            <button class="tab-button" data-tab="ojt">OJT Assessment</button>
+          </div>
+
+          <input type="text" id="requestSearch" onkeyup="filterRequests()" placeholder="Search by Student ID or Name..." class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm" />
+        </div>
+
+        <div class="overflow-x-auto flex-1 requests-table-scroll">
+          <table class="min-w-full dashboard-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Request Type</th>
+                <th>Date Received</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for req in recent_counseling %}
+              <tr class="request-row" data-type="counseling">
+                <td class="font-medium text-gray-700">
+                  {{ req.studentID.firstname }} {{ req.studentID.lastname }}<br>
+                  <span class="text-xs text-gray-400">{{ req.studentID.studID }}</span>
+                </td>
+                <td>Counseling <span class="text-xs text-gray-500 block">({{ req.reason|truncatechars:20 }})</span></td>
+                <td>{{ req.dateRecieved|date:"M d, Y" }}</td>
+                <td><span class="status-badge counseling">Pending</span></td>
+              </tr>
+              {% endfor %}
+
+              {% for req in recent_exit %}
+              <tr class="request-row" data-type="exit">
+                <td class="font-medium text-gray-700">
+                  {{ req.studentID.firstname }} {{ req.studentID.lastname }}<br>
+                  <span class="text-xs text-gray-400">{{ req.studentID.studID }}</span>
+                </td>
+                <td>Exit Interview</td>
+                <td>{{ req.dateRecieved|date:"M d, Y" }}</td>
+                <td><span class="status-badge exit">Pending</span></td>
+              </tr>
+              {% endfor %}
+
+              {% for req in recent_ojt %}
+              <tr class="request-row" data-type="ojt">
+                <td class="font-medium text-gray-700">
+                    {{ req.studentID.firstname }} {{ req.studentID.lastname }}<br>
+                    <span class="text-xs text-gray-400">{{ req.studentID.studID }}</span>
+                </td>
+                <td>OJT Assessment <span class="text-xs text-gray-500 block">SY: {{ req.schoolYear }}</span></td>
+                <td>{{ req.dateRecieved|date:"M d, Y" }}</td>
+                <td><span class="status-badge ojt">Pending</span></td>
+              </tr>
+              {% endfor %}
+
+              {% if not recent_counseling and not recent_exit and not recent_ojt %}
+              <tr>
+                <td colspan="4" class="text-center py-8 text-gray-400">No recent pending requests.</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="dashboard-card border border-gray-200 p-4 w-full overflow-hidden">
+            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <i class="fas fa-clock text-blue-500"></i> Today's Sessions
+            </h3>
+            
+            <div class="overflow-y-auto max-h-[calc(100vh-450px)]"> 
+                {% if todays_counseling %}
+                    <ul class="space-y-3">
+                        {% for schedule in todays_counseling %}
+                        <li class="bg-gray-50 p-3 rounded-lg border-l-4 border-blue-500">
+                            <p class="text-sm font-semibold text-gray-700 truncate">
+                                {{ schedule.studentID.firstname }} {{ schedule.studentID.lastname }}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                <span class="font-bold text-blue-700">{{ schedule.scheduled_time }}</span>
+                                <span class="block truncate mt-1">Reason: {{ schedule.reason }}</span>
+                            </p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center p-4 text-gray-500">
+                        <i class="fas fa-check-circle text-2xl mb-2 text-gray-300"></i>
+                        <p class="text-sm font-medium">No sessions today.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- CLOCK ---
+  function updateGuidanceLiveTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const dateString = now.toLocaleDateString([], { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    
+    const timeEl = document.getElementById("adminLiveTime");
+    const dateEl = document.getElementById("adminLiveDate");
+    
+    if(timeEl) timeEl.textContent = timeString;
+    if(dateEl) dateEl.textContent = dateString;
+  }
+  setInterval(updateGuidanceLiveTime, 1000);
+  document.addEventListener("DOMContentLoaded", updateGuidanceLiveTime);
+
+  // --- CALENDAR ---
+  let currentDateAdmin = new Date();
+  const monthNamesAdmin = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  function updateCalendarAdmin() {
+    const calendar = document.getElementById("calendarDaysAdmin");
+    const monthLabel = document.getElementById("currentMonthAdmin");
+    if(!calendar || !monthLabel) return;
+
+    calendar.innerHTML = "";
+    monthLabel.textContent = `${monthNamesAdmin[currentDateAdmin.getMonth()]} ${currentDateAdmin.getFullYear()}`;
+
+    const firstDay = new Date(currentDateAdmin.getFullYear(), currentDateAdmin.getMonth(), 1);
+    const startingDay = firstDay.getDay();
+    const lastDay = new Date(currentDateAdmin.getFullYear(), currentDateAdmin.getMonth() + 1, 0);
+    const totalDays = lastDay.getDate();
+
+    for (let i = 0; i < startingDay; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.className = "calendar-day-admin empty-day";
+      calendar.appendChild(emptyCell);
+    }
+
+    const today = new Date();
+    for (let day = 1; day <= totalDays; day++) {
+      const cell = document.createElement("div");
+      cell.className = "calendar-day-admin";
+      cell.textContent = day;
+
+      if (day === today.getDate() && currentDateAdmin.getMonth() === today.getMonth() && currentDateAdmin.getFullYear() === today.getFullYear()) {
+        cell.className += " today";
+      }
+      calendar.appendChild(cell);
+    }
+  }
+
+  function previousMonthAdmin() {
+    currentDateAdmin.setMonth(currentDateAdmin.getMonth() - 1);
+    updateCalendarAdmin();
+  }
+  function nextMonthAdmin() {
+    currentDateAdmin.setMonth(currentDateAdmin.getMonth() + 1);
+    updateCalendarAdmin();
+  }
+  document.addEventListener("DOMContentLoaded", updateCalendarAdmin);
+
+  // --- TABS & FILTERING ---
+  document.addEventListener("DOMContentLoaded", function() {
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const requestRows = document.querySelectorAll(".request-row");
+
+    // Tab Switching
+    tabButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        // Remove active class from all
+        tabButtons.forEach(btn => btn.classList.remove("active"));
+        // Add active to clicked
+        button.classList.add("active");
+        
+        const type = button.dataset.tab;
+        requestRows.forEach(row => {
+          if (type === "all" || row.dataset.type === type) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+        // Re-apply search filter if text exists
+        filterRequests(); 
+      });
+    });
+  });
+
+  // Search Filter
+  function filterRequests() {
+    const input = document.getElementById("requestSearch");
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll(".request-row");
+    const activeTabBtn = document.querySelector(".tab-button.active");
+    const currentTab = activeTabBtn ? activeTabBtn.dataset.tab : "all";
+
+    rows.forEach(row => {
+      // First check if row belongs to current tab
+      if (currentTab !== "all" && row.dataset.type !== currentTab) {
+        row.style.display = "none";
+        return;
+      }
+
+      // Then check text content
+      const text = row.textContent.toLowerCase();
+      if (text.includes(filter)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+</script>
+{% endblock %}

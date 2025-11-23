@@ -1,153 +1,340 @@
-{% extends base_template %} {% load static %} 
+{% extends base_template %} 
+{% load static %} 
 
 {% block headcontent %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'styles/alumni/admin_id_request.css' %}"> 
+
 <style>
-    /* --- ICON BUTTON STYLES --- */
+    /* --- Modern Dashboard Styling --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #1cc88a;
+        --warning-color: #f6c23e;
+        --danger-color: #e74a3b;
+        --dark-text: #5a5c69;
+        --light-bg: #f8f9fc;
+    }
+
+    .body-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+    }
+
+    /* Header & Description */
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
+    }
+
+    /* Controls: Search */
+    .controls-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        background-color: #f8f9fc;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #e3e6f0;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        max-width: 500px;
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px 15px;
+        padding-left: 35px; /* Space for icon */
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        transition: border-color 0.2s;
+    }
+    .search-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+    }
+    
+    .search-icon-overlay {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #b0b3c5;
+        pointer-events: none;
+    }
+
+    .search-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .search-btn:hover {
+        background-color: #2e59d9;
+    }
+
+    /* Table Styling */
+    .gmc-table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+        border: 1px solid #e3e6f0;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    thead th {
+        background-color: #f8f9fc;
+        color: #2c5282;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        padding: 15px;
+        border-bottom: 2px solid #e3e6f0;
+        text-align: left;
+        white-space: nowrap;
+    }
+    
+    thead th a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    thead th a:hover {
+        color: #2e59d9;
+    }
+
+    tbody td {
+        padding: 15px;
+        border-bottom: 1px solid #e3e6f0;
+        color: #5a5c69;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    tbody tr:hover {
+        background-color: #fafbfc;
+    }
+    
+    /* Highlight ID Columns */
+    td[data-label="Alumni ID"], 
+    td[data-label="Student ID"] {
+        font-weight: 600;
+        color: var(--primary-color);
+        font-family: monospace;
+        font-size: 0.95rem;
+    }
+
+    /* --- ACTION BUTTON STYLES --- */
     .btn-icon {
         border: none;
         background: transparent;
         cursor: pointer;
-        font-size: 1.1rem;
-        padding: 8px;
+        font-size: 1rem;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        text-decoration: none;
     }
 
     /* Approve Button (Blue) */
     .btn-approve {
         color: #2c5282;
-        background-color: #ebf8ff;
+        background-color: #e6f0ff;
+        border: 1px solid #b3d1ff;
     }
     .btn-approve:hover {
         background-color: #2c5282;
         color: white;
-        transform: scale(1.1);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(78, 115, 223, 0.2);
     }
 
-    /* Claim Button (Green/Teal) */
+    /* Claim Button (Green) */
     .btn-claim {
-        color: #047857; /* Emerald 700 */
-        background-color: #d1fae5; /* Emerald 100 */
+        color: #1cc88a; 
+        background-color: #e3fdf3;
+        border: 1px solid #a3e8d3;
     }
     .btn-claim:hover {
-        background-color: #047857;
+        background-color: #1cc88a;
         color: white;
-        transform: scale(1.1);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(28, 200, 138, 0.2);
     }
 
-    /* Static Status: Claimed */
+    /* Status Icons */
     .status-badge-icon {
-        color: #059669;
+        color: #1cc88a;
         font-size: 1.2rem;
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 32px;
+        height: 32px;
+        background-color: #f0fdf4;
+        border-radius: 50%;
     }
 
-    /* Tooltip helper */
+    /* Tooltip */
     .btn-icon[title]:hover::after {
         content: attr(title);
         position: absolute;
         font-size: 0.75rem;
-        background: #333;
+        background: #2c3e50;
         color: #fff;
-        padding: 4px 8px;
+        padding: 5px 10px;
         border-radius: 4px;
-        margin-top: -40px;
+        margin-top: -45px;
         white-space: nowrap;
         pointer-events: none;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     
-    /* Align content in the Confirmation column */
-    td[data-label="Confirmation"] {
-        text-align: center; 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px; /* If you ever have multiple buttons */
-    }
-    
-    /* Remove default form margin to keep icons centered */
-    td[data-label="Confirmation"] form {
+    td[data-label="Action"] form {
         margin: 0;
+        display: inline-block;
     }
+    
+    .no-applicants {
+        text-align: center;
+        padding: 40px;
+        font-style: italic;
+        color: #858796;
+    }
+    
+    .no-applicants i {
+        display: block;
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #d1d3e2;
+    }
+
 </style>
 {% endblock %}
 
-{% block bodycontent %}
-<div class="sub-title">
-  <h4>Alumni(Admin)</h4>
-  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt; ID request</p>
-</div>
-<hr>
-
-<div class="container">
-  <div class="gmc-form">
-    <div class="search_id_container">
-    <form class="search-form" method="GET" action="">
-      <input
-        type="text"
-        name="search"
-        class="search-input"
-        placeholder="Search by Student ID or Name"
-        value="{{ request.GET.search }}"
-      >
-      <button type="submit" class="search-btn">Search</button>
-    </form>
+{% block bodycontent %} <div class="sub-title">
+            <h4>ALUMNI (Admin)</h4>
+            <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+            <p class="certxt">&gt; ID Request</p>
+        </div>
+        <hr>
+<div class="body-content">
+    
+    <div class="page-header-container">
+       
+        <h2 class="page-title"><i class="fas fa-id-card"></i> Alumni ID Requests</h2>
+        <p class="page-description">
+            Manage Alumni ID card applications. Verify student details, approve pending requests to initiate printing, 
+            and mark IDs as "Released" once claimed by the alumni. Use the search bar to quickly find specific records.
+        </p>
     </div>
+
+    <div class="controls-wrapper">
+        <form class="search-form" method="GET" action="">
+            <i class="fas fa-search search-icon-overlay"></i>
+            <input
+                type="text"
+                name="search"
+                class="search-input"
+                placeholder="Search by Student ID or Name..."
+                value="{{ request.GET.search|default:'' }}"
+            >
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+
     <div class="gmc-table-wrapper">
       <table>
         <thead>
           <tr>
             <th class="sortable">
               {% if current_sort == 'alumniID' %}
-                <a href="?sort=alumniID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Alumni ID</a>
+                <a href="?sort=alumniID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Alumni ID <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=alumniID&order=asc{{ search_params }}">Alumni ID</a>
+                <a href="?sort=alumniID&order=asc{{ search_params }}">Alumni ID <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
             <th class="sortable">
               {% if current_sort == 'student__studID' %}
-                <a href="?sort=student__studID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student ID</a>
+                <a href="?sort=student__studID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student ID <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=student__studID&order=asc{{ search_params }}">Student ID</a>
+                <a href="?sort=student__studID&order=asc{{ search_params }}">Student ID <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
             <th class="sortable">
               {% if current_sort == 'student__firstname' %}
-                <a href="?sort=student__firstname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">First Name</a>
+                <a href="?sort=student__firstname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">First Name <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=student__firstname&order=asc{{ search_params }}">First Name</a>
+                <a href="?sort=student__firstname&order=asc{{ search_params }}">First Name <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
             <th class="sortable">
               {% if current_sort == 'student__lastname' %}
-                <a href="?sort=student__lastname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Last Name</a>
+                <a href="?sort=student__lastname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Last Name <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=student__lastname&order=asc{{ search_params }}">Last Name</a>
+                <a href="?sort=student__lastname&order=asc{{ search_params }}">Last Name <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
             <th class="sortable">
               {% if current_sort == 'alumnidate' %}
-                <a href="?sort=alumnidate&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Requested</a>
+                <a href="?sort=alumnidate&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Requested <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=alumnidate&order=asc{{ search_params }}">Date Requested</a>
+                <a href="?sort=alumnidate&order=asc{{ search_params }}">Date Requested <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
             <th class="sortable">
               {% if current_sort == 'claimed_date' %}
-                <a href="?sort=claimed_date&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Released</a>
+                <a href="?sort=claimed_date&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ search_params }}" class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Released <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=claimed_date&order=asc{{ search_params }}">Date Released</a>
+                <a href="?sort=claimed_date&order=asc{{ search_params }}">Date Released <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
-            <th>Action</th> </tr>
+            <th style="text-align: center;">Action</th> 
+          </tr>
         </thead>
         <tbody>
           {% for alumni_request in page_obj %}
@@ -156,34 +343,36 @@
             <td data-label="Student ID">{{ alumni_request.student.studID }}</td>
             <td data-label="First Name">{{ alumni_request.student.firstname }}</td>
             <td data-label="Last Name">{{ alumni_request.student.lastname }}</td>
-            <td data-label="Date Requested">{{ alumni_request.alumnidate }}</td>
+            <td data-label="Date Requested">{{ alumni_request.alumnidate|date:"M d, Y" }}</td>
 
             <td data-label="Date Released">
               {% if alumni_request.claimed_date %}
-                {{ alumni_request.claimed_date|date:"Y-m-d" }}
+                <span style="font-weight: 600; color: #1cc88a;">{{ alumni_request.claimed_date|date:"M d, Y" }}</span>
               {% else %}
-                <span style="color: #aaa;">--</span>
+                <span style="color: #aaa; font-style: italic;">Pending Release</span>
               {% endif %}
             </td>
 
-            <td data-label="Confirmation">
+            <td data-label="Action" style="text-align: center;">
               {% if alumni_request.claimed_date %}
-                <span class="status-badge-icon" title="ID Claimed">
-                    <i class="fas fa-check-circle"></i>
-                </span>
+                <div style="display: flex; justify-content: center;">
+                    <span class="status-badge-icon" title="Successfully Claimed">
+                        <i class="fas fa-check-double"></i>
+                    </span>
+                </div>
               {% else %} 
                 {% if alumni_request.approved %}
                     <form action="{% url 'claim_alumni_id' alumni_request.alumniID %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn-icon btn-claim" title="Release ID / Mark as Claimed">
-                            <i class="fas fa-clipboard-check"></i>
+                        <button type="submit" class="btn-icon btn-claim" title="Mark as Released/Claimed">
+                            <i class="fas fa-hand-holding-heart"></i>
                         </button>
                     </form>
                 {% else %}
                     <form action="{% url 'approve_alumni_request' alumni_request.alumniID %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn-icon btn-approve" title="Approve Request">
-                            <i class="fas fa-check"></i>
+                            <i class="fas fa-thumbs-up"></i>
                         </button>
                     </form>
                 {% endif %} 
@@ -192,16 +381,18 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="7" class="no-applicants">No applicants found.</td>
+            <td colspan="7" class="no-applicants">
+                <i class="fas fa-folder-open"></i>
+                No ID requests found matching your criteria.
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
 
- {% include "_pagination.html" %}
+    {% include "_pagination.html" %}
 
-  </div>
 </div>
 
 {% endblock %}

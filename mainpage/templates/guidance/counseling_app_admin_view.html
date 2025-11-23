@@ -6,97 +6,271 @@
 
 {% block headcontent %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
     
     <link rel="stylesheet" type="text/css" href="{% static 'styles/guidance/counseling_app_admin.css'%}"/>
+
+    <style>
+        /* --- Modern Dashboard Styling --- */
+        :root {
+            --primary-color: #4e73df;
+            --success-color: #1cc88a;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-text: #5a5c69;
+            --light-bg: #f8f9fc;
+        }
+
+        .body-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin: 20px;
+        }
+
+        /* Header & Description */
+        .page-header-container {
+            margin-bottom: 2rem;
+        }
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2e3a59;
+            margin-bottom: 0.5rem;
+        }
+        .page-description {
+            color: #858796;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            max-width: 800px;
+        }
+
+        /* Controls: Search & Filter */
+        .controls-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            background-color: #f8f9fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e3e6f0;
+        }
+
+        .search-group {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        #studentIDBox {
+            padding: 10px 15px;
+            border: 1px solid #d1d3e2;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            font-size: 0.9rem;
+        }
+
+        .OrangeButton {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .OrangeButton:hover {
+            background-color: #2e59d9;
+        }
+
+        .filter-dropdown select {
+            padding: 10px 15px;
+            border: 1px solid #d1d3e2;
+            border-radius: 5px;
+            background-color: white;
+            color: var(--dark-text);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Table Styling */
+        .table-responsive-wrapper {
+            overflow-x: auto;
+        }
+        
+        #info_table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        #info_table thead th {
+            background-color: #f8f9fc;
+            color: #4e73df;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 15px;
+            border-bottom: 2px solid #e3e6f0;
+            text-align: left;
+        }
+        
+        #info_table tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #e3e6f0;
+            color: #5a5c69;
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        #info_table tbody tr:hover {
+            background-color: #fafbfc;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge.pending { background-color: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+        .status-badge.accepted { background-color: #d1fae5; color: #047857; border: 1px solid #6ee7b7; }
+        .status-badge.declined { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+        .status-badge.expired { background-color: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+
+        /* Action Buttons */
+        .horizontal {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .action-btn:hover { transform: scale(1.1); }
+        .action-btn.accept { background-color: #e6fffa; color: #047857; }
+        .action-btn.decline { background-color: #fff5f5; color: #c53030; }
+
+        .active-sort a {
+            color: #2e59d9;
+            text-decoration: underline;
+        }
+        .no-items-found {
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+            color: #858796;
+        }
+    </style>
 {% endblock %} 
 
 {% block bodycontent %}
 
-{% with current_sort_field=request.GET.sort|default:"dateRecieved" base_params_for_sort="&search="|add:current_search|default:""|add:"&status_filter="|add:current_status_filter|default:"" all_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|default:"dateRecieved"|add:"&status_filter="|add:current_status_filter|default:""%}
-
+{% with current_sort_field=request.GET.sort|default:"dateRecieved" base_params_for_sort="&search="|add:current_search|default:""|add:"&status_filter="|add:current_status_filter|default:"" %}
+  <div class="sub-title">
+            <h4>GUIDANCE (Admin)</h4>
+            <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+            <p class="certxt">> Counseling App with Schedule</p>
+        </div>
+        <hr>
 <div class="body-content">
-    <div class="sub-title">
-        <h4>GUIDANCE(Admin)</h4>
-        <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-        <p class="certxt">> Counseling App with Schedule</p>
+    
+    <div class="page-header-container">
+      
+        <h2 class="page-title"><i class="fas fa-calendar-alt"></i> Counseling Appointments Manager</h2>
+        <p class="page-description">
+            Welcome to the Counseling Schedule Management dashboard. Here you can review incoming student requests for counseling sessions. 
+            Use the tools below to <strong>Accept</strong> confirmed schedules or <strong>Decline</strong> conflicts. You can also filter by status to track Pending, Accepted, or Expired requests.
+        </p>
     </div>
-    <hr>
 
     <div class="gmc-form">
-        <div class="search_id_container">
-        {% csrf_token %}
         
-        <form id="search_id" method="GET" action="">
-            {# Include hidden fields for active filters so search button preserves them #}
-            <input type="hidden" name="status_filter" value="{{ current_status_filter|default:'' }}">
-            <input type="hidden" name="sort" value="{{ current_sort|default:'dateRecieved' }}">
+        <div class="controls-wrapper">
+            {% csrf_token %}
             
-            <input
-                type="text"
-                name="search"
-                placeholder="Enter ID number"
-                id="studentIDBox"
-                value="{{ current_search|default:"" }}"
-            />
-            <button class="OrangeButton" id="searchButton" type="submit">Search</button>
+            <form id="search_id" method="GET" action="" class="search-group">
+                <input type="hidden" name="status_filter" value="{{ current_status_filter|default:'' }}">
+                <input type="hidden" name="sort" value="{{ current_sort|default:'dateRecieved' }}">
+                
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search by Student ID or Name..."
+                    id="studentIDBox"
+                    value="{{ current_search|default:"" }}"
+                />
+                <button class="OrangeButton" id="searchButton" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
             
-        </form>
-        
-      <div class="filter-dropdown">
-    <label for="status_filter_select" class="sr-only">Filter by Status</label>
-    <select id="status_filter_select" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
-        
-        {# Use the combined parameters that include search and sort #}
-        {% with combined_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|default:"dateRecieved" %}
-        
-        <option value="?{{ combined_params }}" 
-                {% if not current_status_filter %}selected{% endif %}>
-            All Statuses
-        </option>
-        
-        <option value="?status_filter=Pending{{ combined_params }}" 
-                {% if current_status_filter == 'Pending' %}selected{% endif %}>
-            Pending
-        </option>
-        
-        <option value="?status_filter=Accepted{{ combined_params }}" 
-                {% if current_status_filter == 'Accepted' %}selected{% endif %}>
-            Accepted
-        </option>
-        
-        <option value="?status_filter=Declined{{ combined_params }}" 
-                {% if current_status_filter == 'Declined' %}selected{% endif %}>
-            Declined
-        </option>
-        
-        <option value="?status_filter=Expired{{ combined_params }}" 
-                {% if current_status_filter == 'Expired' %}selected{% endif %}>
-            Expired
-        </option>
-        
-        {% endwith %}
-    </select>
-</div>
+            <div class="filter-dropdown">
+                <label for="status_filter_select" class="sr-only">Filter by Status</label>
+                <select id="status_filter_select" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
+                    
+                    {% with combined_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|default:"dateRecieved" %}
+                    
+                    <option value="?{{ combined_params }}" 
+                            {% if not current_status_filter %}selected{% endif %}>
+                        Shows: All Statuses
+                    </option>
+                    
+                    <option value="?status_filter=Pending{{ combined_params }}" 
+                            {% if current_status_filter == 'Pending' %}selected{% endif %}>
+                        Filter: Pending
+                    </option>
+                    
+                    <option value="?status_filter=Accepted{{ combined_params }}" 
+                            {% if current_status_filter == 'Accepted' %}selected{% endif %}>
+                        Filter: Accepted
+                    </option>
+                    
+                    <option value="?status_filter=Declined{{ combined_params }}" 
+                            {% if current_status_filter == 'Declined' %}selected{% endif %}>
+                        Filter: Declined
+                    </option>
+                    
+                    <option value="?status_filter=Expired{{ combined_params }}" 
+                            {% if current_status_filter == 'Expired' %}selected{% endif %}>
+                        Filter: Expired
+                    </option>
+                    
+                    {% endwith %}
+                </select>
+            </div>
         </div>
+
         <div class="table-responsive-wrapper">
             <table id="info_table">
                 <thead>
                     <tr id="info_table_head">
-                        {# Use the pre-calculated base_params_for_sort which omits 'sort' #}
                         <th class="{% if current_sort_field == 'dateRecieved' %}active-sort{% endif %}">
-                            <a href="?sort=dateRecieved{{ base_params_for_sort }}">Date Received</a>
+                            <a href="?sort=dateRecieved{{ base_params_for_sort }}">Date Received <i class="fas fa-sort"></i></a>
                         </th>
                         <th class="{% if current_sort_field == 'studentID__lastname' %}active-sort{% endif %}">
-                            <a href="?sort=studentID__lastname{{ base_params_for_sort }}">Name</a>
+                            <a href="?sort=studentID__lastname{{ base_params_for_sort }}">Student Name <i class="fas fa-sort"></i></a>
                         </th>
                         <th>Program/Year</th>
                         <th>Contact No</th>
                         <th class="{% if current_sort_field == 'scheduled_date' %}active-sort{% endif %}">
-                            <a href="?sort=scheduled_date{{ base_params_for_sort }}">Meeting Date</a>
+                            <a href="?sort=scheduled_date{{ base_params_for_sort }}">Meeting Date <i class="fas fa-sort"></i></a>
                         </th>
                         <th>Reason</th>
                         <th>Status</th>
@@ -112,25 +286,27 @@
                             class="counselingID"
                             value="{{ item.item_pk }}" />
                         <td data-label="Date Received">
-                            {{ item.sort_date|date:"Y-m-d" }}
+                            {{ item.sort_date|date:"M d, Y" }}
                         </td>
-                        <td data-label="Name">
+                        <td data-label="Name" style="font-weight: 600; color: #2e3a59;">
                             {{ item.student_lastname }}, {{ item.student_firstname }}
                         </td>
                         <td data-label="Program/Year">
-                            {{ item.student_degree }} {{ item.student_yearlvl }}
+                            {{ item.student_degree }} - {{ item.student_yearlvl }}
                         </td>
                         <td data-label="Contact No">
-                            0{{ item.student_contact }}
+                            {{ item.student_contact }}
                         </td>
                         <td data-label="Meeting Date">
-                            {{ item.display_date|date:"Y-m-d" }}
+                            <div style="font-weight: bold;">{{ item.display_date|date:"M d, Y" }}</div>
                             {% if item.display_time %}
-                                {{ time|get_formatted_time:item.display_time }}
+                                <div style="font-size: 0.85rem; color: #858796;">
+                                    {{ time|get_formatted_time:item.display_time }}
+                                </div>
                             {% endif %}
                         </td>
                         <td data-label="Reason">
-                            {{ item.display_reason }}
+                            {{ item.display_reason|truncatechars:30 }}
                         </td>
                         <td data-label="Status">
                             {% if item.display_status == 'Accepted' or item.display_status == 'Resolved' %}
@@ -142,29 +318,32 @@
                             {% elif item.display_status == 'Expired' %}
                                 <span class="status-badge expired">{{ item.display_status }}</span>
                             {% else %} 
-                                {{ item.display_status }}
+                                <span class="status-badge">{{ item.display_status }}</span>
                             {% endif %}
                         </td>
                         <td data-label="Action">
-                                <div class="horizontal">
-                      {% if item.display_status != 'Expired' and item.display_status != 'Accepted' and item.display_status != 'Declined' %}
-                                        
-                                        <button class="accept action-btn" data-tooltip="Accept Request">
-                                            <i class="fas fa-check-circle"></i>
-                                        </button>
+                            <div class="horizontal">
+                                {% if item.display_status != 'Expired' and item.display_status != 'Accepted' and item.display_status != 'Declined' %}
+                                    
+                                    <button class="accept action-btn" data-tooltip="Accept Request" title="Accept Schedule">
+                                        <i class="fas fa-check"></i>
+                                    </button>
 
-                                        <button class="decline action-btn" data-tooltip="Decline Request">
-                                            <i class="fas fa-times-circle"></i>
-                                        </button>
+                                    <button class="decline action-btn" data-tooltip="Decline Request" title="Decline Schedule">
+                                        <i class="fas fa-times"></i>
+                                    </button>
 
-                                    {% endif %}
-                                </div>
-                            </td>
+                                {% else %}
+                                    <span style="color: #ccc;">--</span>
+                                {% endif %}
+                            </div>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
                         <td colspan="8" class="no-items-found">
-                            No meeting requests found.
+                            <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            No meeting requests found matching your criteria.
                         </td>
                     </tr>
                     {% endfor %}
@@ -172,11 +351,11 @@
             </table>
         </div>
 
-     {% if page_obj %}
-    {% with query_params="&sort="|add:current_sort %}
-        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    {% endwith %}
-{% endif %}
+        {% if page_obj %}
+            {% with query_params="&sort="|add:current_sort %}
+                {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+            {% endwith %}
+        {% endif %}
     </div>
 </div>
 {% endwith %}

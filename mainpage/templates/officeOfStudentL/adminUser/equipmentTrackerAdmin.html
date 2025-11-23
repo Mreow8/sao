@@ -9,39 +9,225 @@
   href="https://fonts.googleapis.com/css2?family=Freeman&family=Rubik:wght@300..900&display=swap"
   rel="stylesheet"
 />
+
 <style>
-  .student-details-box {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-top: 15px;
-    margin-bottom: 15px;
+  /* --- Modern Dashboard Styling --- */
+  :root {
+    --primary-color: #4e73df;
+    --success-color: #1cc88a;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --dark-text: #5a5c69;
+    --light-bg: #f8f9fc;
+    --border-color: #e3e6f0;
+  }
+
+  .container {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin: 20px;
+  }
+
+  /* --- Header & Description --- */
+  .page-header-container {
+    margin-bottom: 2rem;
+  }
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2e3a59;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .page-description {
+    color: #858796;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 900px;
+  }
+
+  /* --- Top Buttons --- */
+  .top-button-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  #addbtn,
+  .saveBtn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #addbtn {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  #addbtn:hover {
+    background-color: #2e59d9;
+  }
+
+  .saveBtn {
+    background-color: var(--success-color);
+    color: white;
+  }
+  .saveBtn:hover {
+    background-color: #17a673;
+  }
+  .saveBtn:disabled {
+    background-color: #858796;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  /* --- Search Section --- */
+  .equipmentContents {
+    max-width: 800px; /* Limit width for better form readability */
+  }
+
+  .title-txt p {
+    font-weight: 700;
+    color: var(--dark-text);
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .search input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #d1d3e2;
     border-radius: 6px;
-    background-color: #f9f9f9;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+  .search input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+  }
+
+  /* --- Student Details Box --- */
+  .student-details-box {
+    border: 1px solid #e3e6f0;
+    border-left: 4px solid var(--primary-color);
+    padding: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    background-color: #f8f9fc;
     transition: all 0.3s;
   }
   .student-details-box.hidden {
     display: none;
+  }
+  .student-details-box p {
+    margin: 5px 0;
+    color: var(--dark-text);
+  }
+
+  /* --- Form Grid --- */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .form-grid > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-grid label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--dark-text);
+    font-size: 0.9rem;
+  }
+
+  .form-grid input,
+  .form-grid select {
+    padding: 10px;
+    border: 1px solid #d1d3e2;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    color: #6e707e;
+  }
+
+  .form-grid input[readonly] {
+    background-color: #eaecf4;
+    cursor: not-allowed;
+  }
+
+  /* --- Button Container --- */
+  .button-container {
+    margin-top: 30px;
+  }
+
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    .top-button-group {
+      flex-direction: column;
+    }
+    #addbtn,
+    .saveBtn {
+      width: 100%;
+    }
   }
 </style>
 {% endblock headcontent %} {% block bodycontent %}
 <div class="sub-title">
   <h4>STUDENT LIFE (Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">> Equipment Tracker</p>
+  <p class="certxt">&gt; Equipment Tracker</p>
 </div>
 <hr />
+
 <div class="container">
-  <div class="top-button-group">
-    <a href="{% url 'addEquipment' %}" id="addbtn">ADD EQUIPMENT</a>
-    <div class="button-container">
-      <a href="{% url 'equipmentborrowed' %}" class="saveBtn">
-        Students that Borrowed
-      </a>
-    </div>
+  <div class="page-header-container">
+    <h2 class="page-title">
+      <i class="fas fa-tools"></i> Equipment Lending Tracker
+    </h2>
+    <p class="page-description">
+      Manage equipment lending transactions here. Search for a student by ID to
+      auto-fill their details, select an available item from the inventory, and
+      record the borrowing date. Use the buttons below to add new equipment to
+      the inventory or view the history of borrowed items.
+    </p>
   </div>
+
+  <div class="top-button-group">
+    <a href="{% url 'addEquipment' %}" id="addbtn"
+      ><i class="fas fa-plus-circle" style="margin-right: 8px"></i> ADD NEW
+      EQUIPMENT</a
+    >
+    <a
+      href="{% url 'equipmentborrowed' %}"
+      class="saveBtn"
+      style="background-color: #36b9cc"
+      ><i class="fas fa-list" style="margin-right: 8px"></i> VIEW BORROWED
+      LIST</a
+    >
+  </div>
+
   <div class="equipmentContents">
     <div class="title-txt">
-      <p>Enter Student ID:</p>
+      <p>Search Student to Borrow:</p>
     </div>
     <div class="search">
       <input
@@ -49,8 +235,8 @@
         name="student_id_search"
         id="studentIdSearch"
         list="student-options"
-        placeholder="Enter Student ID or Name"
-        value=""
+        placeholder="Type Student ID or Name..."
+        autocomplete="off"
       />
       <datalist id="student-options">
         {% for student in all_students %}
@@ -62,18 +248,21 @@
     </div>
 
     <div id="student_details" class="student-details-box hidden">
-      <p id="student_status_message" style="font-weight: bold"></p>
-      <p><strong>ID:</strong> <span id="student_id_display"></span></p>
-      <p><strong>Name:</strong> <span id="student_name_display"></span></p>
+      <p
+        id="student_status_message"
+        style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px"
+      ></p>
+      <p><strong>ID Number:</strong> <span id="student_id_display"></span></p>
+      <p><strong>Full Name:</strong> <span id="student_name_display"></span></p>
       <p>
-        <strong>Course/Program:</strong>
+        <strong>Program:</strong>
         <span id="student_course_display"></span>
       </p>
     </div>
 
     <div
       id="ajax_messages"
-      style="margin-top: 10px; padding: 5px; font-weight: bold"
+      style="margin-top: 10px; padding: 5px; font-weight: bold; color: #e74a3b"
     ></div>
 
     <form
@@ -86,42 +275,40 @@
 
       <div class="form-grid">
         <div>
-          <label for="borrowerName">Name of Borrower:</label>
+          <label for="borrowerName">Borrower Name (Auto-filled):</label>
           <input
             type="text"
             name="borrowername"
             id="borrowerName"
-            placeholder="Name of Borrower"
-            value=""
+            placeholder="Search student above first"
             readonly
           />
         </div>
         <div>
-          <label for="courseProgram">Course/Program of Borrower:</label>
+          <label for="courseProgram">Program (Auto-filled):</label>
           <input
             type="text"
             name="courseprogram"
             id="courseProgram"
-            placeholder="Course/Program of Borrower"
-            value=""
+            placeholder="Search student above first"
             readonly
           />
         </div>
         <div>
-          <label for="equipmentName">Equipment Name:</label>
+          <label for="equipmentName">Select Equipment:</label>
           <select id="equipmentName" name="equipmentname" required>
-            <option value="" disabled selected>
-              Select available equipment
-            </option>
+            <option value="" disabled selected>-- Select Item --</option>
             {% for equip in available_equipment %}
             <option value="{{ equip.itemId }}">
               {{ equip.equipmentName }} (SN: {{ equip.equipmentSN }})
             </option>
-            {% endfor %} {% if not available_equipment and all_equipment %}
+            {% endfor %} {% if not available_equipment %} {% if all_equipment %}
             <option value="" disabled>
-              -- All equipment is currently borrowed --
+              -- All items currently borrowed --
             </option>
-            {% endif %}
+            {% else %}
+            <option value="" disabled>-- No equipment in inventory --</option>
+            {% endif %} {% endif %}
           </select>
         </div>
         <div>
@@ -131,8 +318,14 @@
       </div>
 
       <div class="button-container">
-        <button class="saveBtn" type="submit" id="saveBtn" disabled>
-          SAVE RECORD
+        <button
+          class="saveBtn"
+          type="submit"
+          id="saveBtn"
+          disabled
+          style="width: 100%; padding: 15px; font-size: 1.1rem"
+        >
+          <i class="fas fa-save" style="margin-right: 8px"></i> SAVE TRANSACTION
         </button>
       </div>
     </form>
@@ -160,6 +353,12 @@
       "student_status_message"
     );
 
+    // Set default date to today
+    const dateInput = document.getElementById("dateBorrowed");
+    if (dateInput) {
+      dateInput.valueAsDate = new Date();
+    }
+
     // --- Helper Function ---
     function resetForm() {
       hiddenStudentId.value = "";
@@ -171,7 +370,7 @@
       studentIdDisplay.textContent = "";
       studentNameDisplay.textContent = "";
       studentCourseDisplay.textContent = "";
-      studentStatusMessage.textContent = "Searching...";
+      studentStatusMessage.textContent = "";
       studentDetailsBox.classList.add("hidden");
     }
 
@@ -182,10 +381,9 @@
         return;
       }
 
-      // Show loading state and the box
-      // studentDetailsBox.classList.remove("hidden");
-      studentStatusMessage.textContent = `Searching for Student ID: ${studentID}...`;
-      studentStatusMessage.style.color = "#2c5282";
+      studentDetailsBox.classList.remove("hidden");
+      studentStatusMessage.textContent = `Searching...`;
+      studentStatusMessage.style.color = "#4e73df"; // Primary blue
 
       // Note: The AJAX lookup relies on the text input being the Student ID (the value in the datalist).
       const url = `{% url 'get_student_details_ajax' %}?stud_id=${studentID}`;
@@ -198,8 +396,8 @@
             studentIdDisplay.textContent = data.studID;
             studentNameDisplay.textContent = data.fullname;
             studentCourseDisplay.textContent = data.degree;
-            studentStatusMessage.textContent = "Student Found.";
-            studentStatusMessage.style.color = "green";
+            studentStatusMessage.textContent = "✓ Student Found";
+            studentStatusMessage.style.color = "#1cc88a"; // Success green
 
             // 2. Populate the Hidden Form Fields
             hiddenStudentId.value = data.studID;
@@ -209,8 +407,8 @@
           } else {
             // Handle Error
             studentStatusMessage.textContent =
-              data.error_message || "Search failed.";
-            studentStatusMessage.style.color = "red";
+              data.error_message || "Student not found.";
+            studentStatusMessage.style.color = "#e74a3b"; // Danger red
 
             // Clear hidden form fields
             hiddenStudentId.value = "";
@@ -220,24 +418,33 @@
           }
         })
         .catch((error) => {
-          studentStatusMessage.textContent =
-            "Error: Could not connect to the server.";
-          studentStatusMessage.style.color = "red";
+          studentStatusMessage.textContent = "Connection Error.";
+          studentStatusMessage.style.color = "#e74a3b";
           console.error("Fetch error:", error);
           saveButton.disabled = true;
         });
     }
 
-    // --- Event Listeners (Triggers AJAX on input/change) ---
-
-    // This handles both typing and selecting from the Datalist
+    // --- Event Listeners ---
+    let debounceTimer;
     studentInput.addEventListener("input", function () {
-      // Note: Datalist suggestion values are often the student ID.
-      fetchStudentDetails(this.value.trim());
+      clearTimeout(debounceTimer);
+      const val = this.value.trim();
+
+      // If user clears input
+      if (!val) {
+        resetForm();
+        return;
+      }
+
+      // Debounce slightly to avoid spamming requests while typing
+      debounceTimer = setTimeout(() => {
+        fetchStudentDetails(val);
+      }, 300);
     });
 
+    // Also trigger on selection from datalist (change event)
     studentInput.addEventListener("change", function () {
-      // Ensure lookup happens if user selects a suggestion
       fetchStudentDetails(this.value.trim());
     });
   });

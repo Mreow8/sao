@@ -30,8 +30,47 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     {% block headcontent %}{% endblock %}
-    <style>.sub-title{
-    margin-top: -40px;}</style>
+    <style>
+      .sub-title {
+        margin-top: -40px;
+      }
+      
+      /* =========================================
+         SIDEBAR NAVIGATION DESIGN
+         ========================================= */
+      .side-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        padding-top: 1rem;
+      }
+
+      .side-nav ul li a {
+        display: block;
+        padding: 14px 24px;
+        color: #cbd5e0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .side-nav ul li a:hover {
+        background-color: #2a4365;
+        color: #fff;
+      }
+
+      /* ACTIVE LINK INDICATION */
+      .side-nav ul li a.active-link {
+        background-color: #3b82f6; 
+        color: #ffffff;
+        font-weight: 700;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #ffffff;
+        padding-left: 19px;
+      }
+    </style>
   </head>
   <body>
 
@@ -50,11 +89,11 @@
                 <span class="popup-username">{{ user.username }}</span>
             </div>
             {% if user.role == 'superadmin' or user.role == 'student_life_staff' %}
-<a href="{% url 'upload_files' %}" class="upload-button">
-    <i class="fas fa-upload"></i>
-    <span>Upload Files</span>
-</a>
-{% endif %}
+            <a href="{% url 'upload_files' %}" class="upload-button">
+                <i class="fas fa-upload"></i>
+                <span>Upload Files</span>
+            </a>
+            {% endif %}
             <div class="popup-divider"></div>
             <a href="{% url 'logout' %}" class="popup-logout-link">
                 <i class="fas fa-sign-out-alt"></i>
@@ -77,7 +116,7 @@
       {% with current_url=request.resolver_match.url_name %}
       <nav class="side-nav flex flex-col h-screen">
 
-      <ul >
+      <ul>
           {% if user.role == 'student_life_staff' or user.role == 'superadmin' %}
           {% with section_urls='assign_role,equipmentTrackerAdmin,adminRequestedGmc,monthlyCalendarAdmin,non_acad' %}
           <li>
@@ -96,7 +135,7 @@
           {% endwith %}
           {% endif %}
 
-          {% if user.role == 'scholarship_officer' or user.role == 'superadmin' %}
+          {% if user.role == 'superadmin' %}
           {% with section_urls='admin_req,adminapplication,profile,liquidation,ched' %}
           <li>
             <a href="#" class="scholar-btn {% if current_url in section_urls %}active{% endif %}">SCHOLARSHIP
@@ -104,7 +143,7 @@
             </a>
             <ul class="scholar-show {% if current_url in section_urls %}active{% endif %}">
               <li><a href="{% url 'admin_req'%}" class="{% if current_url == 'admin_req' %}active-link{% endif %}">Submission of Requirements Tracker</a></li>
-              <li><a href="{% url "requirement_history" %}" class="{% if current_url == 'requirement_history' %}active-link{% endif %}">Requirement History</a></li>
+              <li><a href="{% url 'requirement_history' %}" class="{% if current_url == 'requirement_history' %}active-link{% endif %}">Requirement History</a></li>
               <li><a href="{% url 'adminapplication' %}" class="{% if current_url == 'adminapplication' %}active-link{% endif %}">Application tracker</a></li>
               <li><a href="{% url 'profile'%}" class="{% if current_url == 'profile' %}active-link{% endif %}">Scholars Profile and Validation</a></li>
               <li><a href="{% url 'liquidation'%}" class="{% if current_url == 'liquidation' %}active-link{% endif %}">Admin Cost Liquidation Tracker</a></li>
@@ -115,7 +154,7 @@
           {% endwith %}
           {% endif %}
           
-          {% if user.role == 'placement_officer' or user.role == 'superadmin' %}
+          {% if user.role == 'superadmin' %}
           {% with section_urls='ojt_hiring,seminar_page,ojt_requirements_tracker' %}
           <li>
             <a href="#" class="jobplace-btn {% if current_url in section_urls %}active{% endif %}">JOB PLACEMENT
@@ -130,7 +169,7 @@
           {% endwith %}
           {% endif %}
 
-          {% if user.role == 'discipline_officer' or user.role == 'superadmin' %}
+          {% if user.role == 'superadmin' %}
           {% with section_urls='case_profile' %}
           <li>
             <a href="#" class="student_disc-btn {% if current_url in section_urls %}active{% endif %}">STUDENT DISCIPLINE
@@ -139,25 +178,13 @@
             <ul class="student_disc-show {% if current_url in section_urls %}active{% endif %}">
               <li><a href="{% url 'case_profile' %}" class="{% if current_url == 'case_profile' %}active-link{% endif %}">Case Profile</a></li>
               <li><a href="{% url 'case_list' %}" class="{% if current_url == 'case_list' %}active-link{% endif %}">Case List</a></li>
- 
             </ul>
           </li>
           {% endwith %}
           {% endif %}
 
-          {% if user.role == 'guidance' or user.role == 'superadmin' %}
+          {% if user.role == 'superadmin' %}
           {% with section_urls='Counseling App With Scheduler Admin View,Intake Interview,Exit Interview Admin View,OJT Assessment Admin View' %}
-            {% if user.role == 'guidance' %}
-            <li>
-              <a class="guide-btn active" style="pointer-events: none; cursor: default;">GUIDANCE</a>
-              <ul class="guide-show active">
-                <li><a href="{% url 'Counseling App With Scheduler Admin View' %}" class="{% if current_url == 'Counseling App With Scheduler Admin View' %}active-link{% endif %}">Counseling App with Scheduler</a></li>
-                <li><a href="{% url 'Intake Interview' %}" class="{% if current_url == 'Intake Interview' %}active-link{% endif %}">Intake Interview</a></li>
-                <li><a href="{% url 'Exit Interview Admin View' %}" class="{% if current_url == 'Exit Interview Admin View' %}active-link{% endif %}">Exit Interview</a></li>
-                <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
-              </ul>
-            </li>
-            {% else %}
             <li>
               <a href="#" class="guide-btn {% if current_url in section_urls %}active{% endif %}">GUIDANCE
                 <span class="fas fa-caret-down fifth {% if current_url in section_urls %}rotate{% endif %}"></span>
@@ -169,23 +196,11 @@
                 <li><a href="{% url 'OJT Assessment Admin View' %}" class="{% if current_url == 'OJT Assessment Admin View' %}active-link{% endif %}">OJT Assessments/Psychological Issuance</a></li>
               </ul>
             </li>
-            {% endif %}
           {% endwith %}
           {% endif %}
 
-          {% if user.role == 'alumni_officer' or user.role == 'superadmin' %}
+          {% if user.role == 'superadmin' %}
           {% with section_urls='admin_idRequest,admin_gradTracer,admin_events,admin_jobfairs' %}
-            {% if user.role == 'alumni_officer' %}
-            <li>
-              <a class="alumni-btn active" style="pointer-events: none; cursor: default;">ALUMNI</a>
-              <ul class="alumni-show active">
-                <li><a href="{% url 'admin_idRequest' %}" class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">Alumni ID Requests</a></li>
-                <li><a href="{% url 'admin_gradTracer' %}" class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">Graduate Tracer</a></li>
-                <li><a href="{% url 'admin_events' %}" class="{% if current_url == 'admin_events' %}active-link{% endif %}">Alumni Reunion and Events</a></li>
-                <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
-              </ul>
-            </li>
-            {% else %}
             <li>
               <a href="#" class="alumni-btn {% if current_url in section_urls %}active{% endif %}">ALUMNI
                 <span class="fas fa-caret-down sixth {% if current_url in section_urls %}rotate{% endif %}"></span>
@@ -197,7 +212,6 @@
                 <li><a href="{% url 'admin_jobfairs' %}" class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">Job Fairs</a></li>
               </ul>
             </li>
-            {% endif %}
           {% endwith %}
           {% endif %}
 
@@ -217,7 +231,7 @@
           {% endwith %}
           {% endif %}
 
-          {% if user.role == 'org_admin' or user.role == 'superadmin' %}
+          {% if user.role == 'superadmin' %}
           {% with section_urls='admin_manageofficer,Gen_Home' %}
           <li>
             <a href="#" class="student_org-btn {% if current_url in section_urls %}active{% endif %}">STUDENT ORGANIZATION
@@ -230,7 +244,9 @@
           </li>
           {% endwith %}
           {% endif %}
-{% with section_urls='admin_dashboard,viewrequest,medtracker,emergency_asst,pwdlist,dentalrequest,prescription,mental_health' %}
+
+          {% if user.role == 'superadmin' %}
+          {% with section_urls='admin_dashboard,viewrequest,medtracker,emergency_asst,pwdlist,dentalrequest,prescription,mental_health' %}
           <li>
             <a href="#" class="medical-btn {% if current_url in section_urls %}active{% endif %}">MEDICAL
               <span class="fas fa-caret-down ninth {% if current_url in section_urls %}rotate{% endif %}"></span>
@@ -248,13 +264,18 @@
             </ul>
           </li>
           {% endwith %}
+          {% endif %}
         </ul>
+        
+        {% if user.role == 'superadmin' %}
         <div class="mt-auto mb-4">
             <a href="{% url 'transaction_report_view' %}" class="btn btn-primary w-full text-center flex items-center justify-center gap-2">
                 <i class="fas fa-file-alt"></i>
                 <span>TRANSACTION REPORT</span>
             </a>
         </div>
+        {% endif %}
+        
       </nav>
       {% endwith %}
     </div>

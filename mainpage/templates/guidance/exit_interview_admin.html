@@ -1,11 +1,14 @@
-{% extends base_template %}{% load static %} 
-{% block title %}Exit Interview{% endblock %} 
+{% extends base_template %}
+{% load static %} 
+{% block title %}Exit Interview Management{% endblock %} 
 
 {% block headcontent %}
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
+<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+
 <link
   rel="stylesheet"
   type="text/css"
@@ -13,102 +16,310 @@
 />
 <script src="{% static 'scripts/guidance/html2pdf.js'%}"></script>
 
+<style>
+    /* --- Modern Dashboard Styling --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #1cc88a;
+        --warning-color: #f6c23e;
+        --danger-color: #e74a3b;
+        --dark-text: #5a5c69;
+        --light-bg: #f8f9fc;
+    }
+
+    .body-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+    }
+
+    /* Header & Description */
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
+    }
+
+    /* Controls: Search & Filter */
+    .controls-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        background-color: #f8f9fc;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #e3e6f0;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        max-width: 400px;
+    }
+
+    #studentIDBox {
+        padding: 10px 15px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 0.9rem;
+    }
+
+    .OrangeButton {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .OrangeButton:hover {
+        background-color: #2e59d9;
+    }
+
+    /* Filter Tabs */
+    .filter-buttons {
+        display: flex;
+        gap: 5px;
+        background: #fff;
+        padding: 5px;
+        border-radius: 6px;
+        border: 1px solid #d1d3e2;
+    }
+
+    .btn-status-filter {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        text-decoration: none;
+        color: var(--dark-text);
+        border-radius: 4px;
+        transition: all 0.2s;
+        font-weight: 600;
+    }
+
+    .btn-status-filter:hover {
+        background-color: #eaecf4;
+        color: #2e3a59;
+    }
+
+    .btn-status-filter.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    /* Table Styling */
+    .admin-table-wrapper {
+        overflow-x: auto;
+    }
+    
+    #info_table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    #info_table thead th {
+        background-color: #f8f9fc;
+        color: #2c5282;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        padding: 15px;
+        border-bottom: 2px solid #e3e6f0;
+        text-align: left;
+    }
+    
+    #info_table thead th a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    #info_table tbody td {
+        padding: 15px;
+        border-bottom: 1px solid #e3e6f0;
+        color: #5a5c69;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    #info_table tbody tr:hover {
+        background-color: #fafbfc;
+    }
+
+    /* Status Badges */
+    .accepted { background-color: #d1fae5; color: #047857; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; border: 1px solid #6ee7b7; display: inline-block;}
+    .declined { background-color: #fee2e2; color: #b91c1c; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; border: 1px solid #fca5a5; display: inline-block;}
+    .pending { background-color: #fef3c7; color: #b45309; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; border: 1px solid #fcd34d; display: inline-block;}
+    .expired { background-color: #f3f4f6; color: #4b5563; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; border: 1px solid #d1d5db; display: inline-block;}
+
+    /* Action Buttons */
+    .horizontal {
+        display: flex;
+        gap: 8px;
+    }
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .action-btn:hover { transform: scale(1.1); }
+    .action-btn.accept { background-color: #e6fffa; color: #047857; }
+    .action-btn.decline { background-color: #fff5f5; color: #c53030; }
+    .action-btn.delete { background-color: #edf2f7; color: #4a5568; }
+    .action-btn.delete:hover { background-color: #e53e3e; color: white; }
+
+    /* Show Form Link */
+    .showformButton {
+        color: #2c5282;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-decoration: none;
+        border: 1px solid #2c5282;
+        padding: 5px 10px;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+    .showformButton:hover {
+        background-color: #2c5282;
+        color: white;
+    }
+    .showformButton.hidden {
+        display: none;
+    }
+
+    .no-items-found {
+        text-align: center;
+        padding: 30px;
+        font-style: italic;
+        color: #858796;
+    }
+</style>
 {% endblock %} 
 
 {% block bodycontent %}
- <div class="sub-title">
-    <h4>GUIDANCE (Admin)</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt; Exit Interview</p>
-  </div>
-<div class="container">
-
-<hr>
-
-  <div class="form-container">
-    {% csrf_token %}
-
-    <div class="search-and-filter-toolbar">
-  
-      <form id="search_id" method="GET" action="" class="search-form">
-        
-        <input
-          type="text"
-          name="search"
-          placeholder="Search by Student Name or ID"
-          id="studentIDBox"
-          value="{{ current_search|default:"" }}"
-        />
-        <button class="OrangeButton" id="searchButton" type="submit">Search</button>
-      </form>
+  <div class="sub-title">
+            <h4>GUIDANCE (Admin)</h4>
+            <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+            <p class="certxt">&gt; Exit Interview</p>
+        </div>
+        <hr>
+<div class="body-content">
     
-      <div class="filter-buttons">
-        
-        {% with other_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|add:"&order="|add:current_order %}
-    
-        <a href="?{{ other_params|slice:"1:" }}" class="btn-status-filter {% if not current_status_filter %}active{% endif %}">
-          All
-        </a>
-    
-        <a href="?status_filter=Pending{{ other_params }}"
-          class="btn-status-filter {% if current_status_filter == 'Pending' %}active{% endif %}">
-          Pending
-        </a>
-    
-        <a href="?status_filter=Accepted{{ other_params }}"
-          class="btn-status-filter {% if current_status_filter == 'Accepted' %}active{% endif %}">
-          Accepted
-        </a>
-    
-        <a href="?status_filter=Declined{{ other_params }}"
-          class="btn-status-filter {% if current_status_filter == 'Declined' %}active{% endif %}">
-          Declined
-        </a>
-        
-        {% endwith %}
-      </div>
-    
+    <div class="page-header-container">
+      
+        <h2 class="page-title"><i class="fas fa-door-open"></i> Exit Interview Requests</h2>
+        <p class="page-description">
+            Manage student exit interview applications here. Review pending requests, approve those who have completed requirements, or decline invalid entries. 
+            Once approved, you can view and print the official Exit Interview Form for the student.
+        </p>
     </div>
+
+    <div class="controls-wrapper">
+        {% csrf_token %}
+
+        <form id="search_id" method="GET" action="" class="search-form">
+            <input
+                type="text"
+                name="search"
+                placeholder="Search by Student Name or ID..."
+                id="studentIDBox"
+                value="{{ current_search|default:"" }}"
+            />
+            <button class="OrangeButton" id="searchButton" type="submit">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
+    
+        <div class="filter-buttons">
+            {% with other_params="&search="|add:current_search|default:""|add:"&sort="|add:current_sort|add:"&order="|add:current_order %}
+        
+            <a href="?{{ other_params|slice:"1:" }}" class="btn-status-filter {% if not current_status_filter %}active{% endif %}">
+                All
+            </a>
+        
+            <a href="?status_filter=Pending{{ other_params }}"
+                class="btn-status-filter {% if current_status_filter == 'Pending' %}active{% endif %}">
+                Pending
+            </a>
+        
+            <a href="?status_filter=Accepted{{ other_params }}"
+                class="btn-status-filter {% if current_status_filter == 'Accepted' %}active{% endif %}">
+                Accepted
+            </a>
+        
+            <a href="?status_filter=Declined{{ other_params }}"
+                class="btn-status-filter {% if current_status_filter == 'Declined' %}active{% endif %}">
+                Declined
+            </a>
+            
+            {% endwith %}
+        </div>
+    </div>
+
     <div class="admin-table-wrapper">
       <table id="info_table">
         <thead>
           <tr id="info_table_head">
-            
             {% with other_params="&search="|add:current_search|default:""|add:"&status_filter="|add:current_status_filter|default:"" %}
             
             <th class="sortable">
               {% if current_sort == 'dateRecieved' %}
                 <a href="?sort=dateRecieved&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ other_params }}"
-                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Received</a>
+                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Date Received <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=dateRecieved&order=asc{{ other_params }}">Date Received</a>
+                <a href="?sort=dateRecieved&order=asc{{ other_params }}">Date Received <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
             
             <th class="sortable">
               {% if current_sort == 'studentID__studID' %}
                 <a href="?sort=studentID__studID&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ other_params }}"
-                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student ID</a>
+                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student ID <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=studentID__studID&order=asc{{ other_params }}">Student ID</a>
+                <a href="?sort=studentID__studID&order=asc{{ other_params }}">Student ID <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
             
             <th class="sortable">
               {% if current_sort == 'studentID__lastname' %}
                 <a href="?sort=studentID__lastname&order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}{{ other_params }}"
-                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Name</a>
+                  class="sorted {% if current_order == 'desc' %}desc{% endif %}">Student Name <i class="fas fa-sort"></i></a>
               {% else %}
-                <a href="?sort=studentID__lastname&order=asc{{ other_params }}">Name</a>
+                <a href="?sort=studentID__lastname&order=asc{{ other_params }}">Student Name <i class="fas fa-sort"></i></a>
               {% endif %}
             </th>
             
-            <th>
-              Status
-            </th>
-            
-            <th>ACTION</th>
-            <th>FORM</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Form</th>
 
             {% endwith %}
           </tr>
@@ -122,44 +333,45 @@
               class="exitinterviewId"
               value="{{ interview_request.exitinterviewId }}"
             />
-            <td data-label="Date Received">{{ interview_request.dateRecieved }}</td>
-            <td data-label="Student ID">{{ interview_request.studentID.studID }}</td>
+            <td data-label="Date Received">{{ interview_request.dateRecieved|date:"M d, Y" }}</td>
+            <td data-label="Student ID" style="font-weight: 600; color: #2c5282;">{{ interview_request.studentID.studID }}</td>
             <td data-label="Name">
-              {{ interview_request.studentID.lastname }},
-              {{interview_request.studentID.firstname }}
+              {{ interview_request.studentID.lastname }}, {{interview_request.studentID.firstname }}
             </td>
             <td data-label="Status">
               {% if interview_request.status == 'Accepted' %}
-              <span class="accepted">{{ interview_request.status }}</span>
+                <span class="accepted">Accepted</span>
               {% elif interview_request.status == 'Declined' %}
-              <span class="declined">{{ interview_request.status }}</span>
+                <span class="declined">Declined</span>
               {% elif interview_request.status == 'Pending' %}
-              <span class="pending">{{ interview_request.status }}</span>
+                <span class="pending">Pending</span>
               {% elif interview_request.status == 'Expired' %}
-              <span class="expired">{{ interview_request.status }}</span>
+                <span class="expired">Expired</span>
+              {% else %}
+                <span style="color: #888;">{{ interview_request.status }}</span>
               {% endif %}
             </td>
-           <td data-label="Action">
+            <td data-label="Action">
               <div class="horizontal">
                   {% if interview_request.status != 'Expired' %} 
                       {% if interview_request.status != 'Accepted' %} 
                           {% if interview_request.status != 'Declined' %}
-                              <button class="accept action-btn" data-tooltip="Accept">
-                                  <i class="fas fa-check-circle"></i>
+                              <button class="accept action-btn" data-tooltip="Accept Request" title="Accept">
+                                  <i class="fas fa-check"></i>
                               </button>
 
-                              <button class="decline action-btn" data-tooltip="Decline">
-                                  <i class="fas fa-times-circle"></i>
+                              <button class="decline action-btn" data-tooltip="Decline Request" title="Decline">
+                                  <i class="fas fa-times"></i>
                               </button>
                           {% endif %} 
                       {% endif %} 
                   {% endif %}
                   
-                  <button class="delete action-btn" data-tooltip="Delete Record">
+                  <button class="delete action-btn" data-tooltip="Delete Record" title="Delete">
                       <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
-</td>
+            </td>
             <td data-label="Form">
               {% if interview_request.status == 'Accepted' %}
                 <a 
@@ -167,30 +379,33 @@
                   class="showformButton" 
                   target="_blank"
                 >
-                  SHOW FORM
+                  <i class="fas fa-file-alt"></i> View Form
                 </a>
               {% else %}
-                <a href="#" class="showformButton hidden" aria-hidden="true">SHOW FORM</a>
+                <span style="color: #ccc; font-size: 0.8rem;">--</span>
               {% endif %}
             </td>
           </tr>
           {% empty %}
           <tr>
             <td colspan="6" class="no-items-found">
-              No exit interview requests found.
+                <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                No exit interview requests found matching your criteria.
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-  {% if page_obj %}
-    {% with query_params="&sort="|add:current_sort %}
-        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    {% endwith %}
-{% endif %}
-    </div>
+
+    {% if page_obj %}
+        {% with query_params="&sort="|add:current_sort %}
+            {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+        {% endwith %}
+    {% endif %}
+
 </div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="{% static 'scripts/guidance/exit_interview_admin.js'%}"></script>
 {% endblock %}

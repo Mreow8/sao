@@ -1,4 +1,7 @@
-{% extends base_template %} {% load static %} {% load tz %}
+{% extends base_template %} 
+{% load static %} 
+{% load tz %}
+
 {% block headcontent %}
 <link
   rel="stylesheet"
@@ -10,65 +13,221 @@
   href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
   rel="stylesheet"
 />
-<style>
-  .filter-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  .filter-controls .search {
-    flex-grow: 1;
-    margin-right: 20px;
-    display: flex;
-  }
-  .filter-controls .search input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
-  }
-  .filter-controls .search button {
-    padding: 8px 12px;
-    border: none;
-    background-color: #2c5282;
-    color: white;
-    cursor: pointer;
-    border-radius: 0 4px 4px 0;
-  }
-  .filter-controls .status-filters a {
-    padding: 8px 12px;
-    text-decoration: none;
-    color: #2c5282;
-    border: 1px solid #2c5282;
-    border-radius: 4px;
-    margin-left: 5px;
-  }
-  .filter-controls .status-filters a.active {
-    background-color: #2c5282;
-    color: white;
-  }
-  th a { text-decoration: none; color: inherit; }
 
-  /* --- Styles for Pill Pagination (Inside Form) --- */
-  
-  .body-content {
-    padding-bottom: 20px; 
-  }
-  
-  /* --- End Pagination Styles --- */
+<style>
+    /* --- Modern Dashboard Styling --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #2c5282;
+        --warning-color: #f6c23e;
+        --danger-color: #e74a3b;
+        --dark-text: #5a5c69;
+        --light-bg: #f8f9fc;
+        --border-color: #e3e6f0;
+    }
+
+    .body-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+        padding-bottom: 30px;
+    }
+
+    /* Header & Description */
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
+    }
+
+    /* Controls: Filter & Search */
+    .filter-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+        background-color: #f8f9fc;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e3e6f0;
+    }
+
+    .filter-controls .search {
+        flex-grow: 1;
+        display: flex;
+        max-width: 500px;
+    }
+
+    .filter-controls .search input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px 0 0 5px;
+        font-size: 0.9rem;
+        border-right: none;
+    }
+    .filter-controls .search input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+    }
+
+    .filter-controls .search button {
+        padding: 10px 20px;
+        border: 1px solid var(--primary-color);
+        background-color: var(--primary-color);
+        color: white;
+        cursor: pointer;
+        border-radius: 0 5px 5px 0;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+    .filter-controls .search button:hover {
+        background-color: #2e59d9;
+    }
+
+    .filter-controls .status-filters {
+        display: flex;
+        gap: 5px;
+    }
+
+    .filter-controls .status-filters a {
+        padding: 8px 16px;
+        text-decoration: none;
+        color: #5a5c69;
+        border: 1px solid #d1d3e2;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        background-color: #fff;
+    }
+
+    .filter-controls .status-filters a:hover {
+        background-color: #eaecf4;
+        color: #2e3a59;
+    }
+
+    .filter-controls .status-filters a.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    /* Table Styling */
+    .admin-table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+        border: 1px solid #e3e6f0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead th {
+        background-color: #f8f9fc;
+        color: #2c5282;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        padding: 15px;
+        border-bottom: 2px solid #e3e6f0;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    th a { 
+        text-decoration: none; 
+        color: inherit;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    th a:hover { color: #2e59d9; }
+
+    tbody td {
+        padding: 15px;
+        border-bottom: 1px solid #e3e6f0;
+        color: #5a5c69;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    tbody tr:hover {
+        background-color: #fafbfc;
+    }
+
+    /* Input for OR Number */
+    .ornum-input {
+        padding: 8px;
+        border: 1px solid #d1d3e2;
+        border-radius: 4px;
+        width: 100px;
+        font-size: 0.9rem;
+    }
+
+    /* Buttons */
+    .printBtn, .reprintBtn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .printBtn {
+        background-color: var(--success-color);
+        color: white;
+    }
+    .printBtn:hover { background-color: #17a673; }
+
+    .reprintBtn {
+        background-color: #f6c23e;
+        color: white;
+    }
+    .reprintBtn:hover { background-color: #dda20a; }
 
 </style>
 {% endblock headcontent %}
 
-{% block bodycontent %}
+{% block bodycontent %}  <div class="sub-title">
+        <h4>STUDENT LIFE (Admin)</h4>
+        <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+        <p class="certxt">&gt; Good Moral Certificate Issuance</p>
+      </div>
+      <hr>
 <div class="body-content">
-  <div class="sub-title">
-    <h4>STUDENT LIFE (Admin)</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">Good Moral Certificate Issuance</p>
+  
+  <div class="page-header-container">
+    
+      <h2 class="page-title"><i class="fas fa-certificate"></i> Good Moral Certificate Requests</h2>
+      <p class="page-description">
+          Manage and process student requests for Certificates of Good Moral Character. 
+          Enter the Official Receipt (OR) Number to generate and print the certificate. 
+          You can also reprint certificates for processed requests.
+      </p>
   </div>
-<hr>
 
   <div class="gmc-form">
     
@@ -81,7 +240,7 @@
             placeholder="Search by Student Name, ID, Reason, or OR#"
             value="{{ search_query }}"
           />
-          <button type="submit">Search</button>
+          <button type="submit"><i class="fas fa-search"></i> Search</button>
         </div>
         
         <div class="status-filters">
@@ -110,23 +269,20 @@
             {% with sort=current_sort order=current_order params=sort_params %}
             <th>
               <a href="?sort=stud_id&order={% if sort == 'stud_id' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                >Student ID
-                {% if sort == 'stud_id' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+                >Student ID <i class="fas fa-sort"></i>
               </a>
             </th>
             <th>
               <a href="?sort=stud_name&order={% if sort == 'stud_name' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                >Student Name
-                {% if sort == 'stud_name' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+                >Student Name <i class="fas fa-sort"></i>
               </a>
             </th>
-            <th>Course/Program</th>
+            <th>Program</th>
             <th>Year Level</th>
             <th>Reason</th>
             <th>
               <a href="?sort=request_date&order={% if sort == 'request_date' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                >Date Requested
-                {% if sort == 'request_date' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}
+                >Date Requested <i class="fas fa-sort"></i>
               </a>
             </th>
             <th>OR Number</th>
@@ -137,24 +293,25 @@
         <tbody>
           {% for request in page_obj %}
           <tr>
-            <td>{{ request.student.studID }}</td>
+            <td style="font-weight: 600; color: var(--primary-color);">{{ request.student.studID }}</td>
             <td>
               {{ request.student.firstname }} {{ request.student.lastname }}
             </td>
             <td>{{ request.student.degree }}</td>
             <td>{{ request.student.yearlvl }}</td>
-            <td>{{ request.reason }}</td>
-            <td>{{ request.request_date|date:"Y-m-d" }}</td>
+            <td>{{ request.reason|truncatechars:20 }}</td>
+            <td>{{ request.request_date|date:"M d, Y" }}</td>
             
             <td>
               {% if request.processed %}
-                {{ request.or_num }}
+                <span style="font-family: monospace; font-weight: bold;">{{ request.or_num }}</span>
               {% else %}
                 <input
                   type="text"
                   name="ornum"
                   class="ornum-input"
                   data-request-id="{{ request.id }}"
+                  placeholder="Enter OR#"
                   required
                 />
               {% endif %}
@@ -165,31 +322,39 @@
                   class="reprintBtn" 
                   data-request-id="{{ request.id }}" 
                   data-or-num="{{ request.or_num }}">
-                  Re-print
+                  <i class="fas fa-print"></i> Re-print
                 </button>
               {% else %}
                 <button class="printBtn" data-request-id="{{ request.id }}">
-                  Print
+                  <i class="fas fa-print"></i> Print
                 </button>
               {% endif %}
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="8" style="text-align: center;">No requests found.</td>
+            <td colspan="8" style="text-align: center; padding: 30px; color: #888; font-style: italic;">
+                <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 10px; display: block; color: #ddd;"></i>
+                No requests found.
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div> 
+
     {% if page_obj.has_other_pages %}
-    {% if page_obj %}
-    {% with query_params="&sort="|add:current_sort %}
-        {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
-    {% endwith %}
-{% endif %}
-{% endif %}
-  </div> </div> <script>
+        {% if page_obj %}
+            {% with query_params="&sort="|add:current_sort %}
+                {% include "_pagination.html" with page_obj=page_obj query_params=query_params %}
+            {% endwith %}
+        {% endif %}
+    {% endif %}
+    
+  </div> 
+</div> 
+
+<script>
   document.addEventListener("DOMContentLoaded", function () {
     
     function openPrintWindow(url) {

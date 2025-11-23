@@ -1,315 +1,199 @@
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
-
-.gmc-form,
-.sub-title,
-.requestBtn,
-#comboBox {
-  font-family: "Rubik", sans-serif !important;
+/* --- Modern Dashboard Styling --- */
+:root {
+  --primary-color: #2c5282;
+  --success-color: #2c5282;
+  --warning-color: #f6c23e;
+  --danger-color: #e74a3b;
+  --dark-text: #5a5c69;
+  --light-bg: #f8f9fc;
+  --border-color: #e3e6f0;
 }
-.filter-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 15px;
-  padding: 1.5rem;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+
+.body-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 20px;
+  padding-bottom: 30px;
+}
+
+/* Header & Description */
+.page-header-container {
   margin-bottom: 2rem;
 }
-/* --- Container --- */
-
-.admin-table-wrapper {
-  width: 100%;
-  overflow-x: auto; /* This adds the horizontal scrollbar */
-
-  overflow: hidden; /* Clips the table corners */
-}
-.admin-table-wrapper {
-  overflow-x: auto;
-}
-
-#trackerTable {
-  min-width: 800px; /* Ensures all columns have space */
-}
-/* --- Main Form Card --- */
-.gmc-form {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  min-height: 85vh;
-  border-radius: 0 0 12px 12px; /* <-- This is the change */
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle lift */
-}
-
-/* --- Student Request Form --- */
-.title-txt {
-  display: flex;
-  flex-direction: column; /* Mobile first */
-  gap: 1rem;
-}
-
-.title-txt p {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  margin: 0;
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2e3a59;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
+  gap: 10px;
+}
+.page-description {
+  color: #858796;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 900px;
 }
 
-#comboBox {
-  font-family: "Rubik", sans-serif;
-  font-size: 1rem;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
+/* Controls: Filter & Search */
+.filter-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+  background-color: #f8f9fc;
+  padding: 15px;
   border-radius: 8px;
-  flex-grow: 1; /* Takes available space on larger screens */
-  background-color: #f9f9f9;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  border: 1px solid #e3e6f0;
 }
 
-#comboBox:focus {
+.filter-controls .search {
+  flex-grow: 1;
+  display: flex;
+  max-width: 500px;
+}
+
+.filter-controls .search input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #d1d3e2;
+  border-radius: 5px 0 0 5px;
+  font-size: 0.9rem;
+  border-right: none;
+}
+.filter-controls .search input:focus {
   outline: none;
-  border-color: #2c5282; /* Primary Blue */
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+}
+
+.filter-controls .search button {
+  padding: 10px 20px;
+  border: 1px solid var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  border-radius: 0 5px 5px 0;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.filter-controls .search button:hover {
+  background-color: #2e59d9;
+}
+
+.filter-controls .status-filters {
+  display: flex;
+  gap: 5px;
+}
+
+.filter-controls .status-filters a {
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #5a5c69;
+  border: 1px solid #d1d3e2;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
   background-color: #fff;
 }
 
-.requestBtn {
-  font-family: "Rubik", sans-serif;
-  background-color: #2c5282; /* Primary Blue */
+.filter-controls .status-filters a:hover {
+  background-color: #eaecf4;
+  color: #2e3a59;
+}
+
+.filter-controls .status-filters a.active {
+  background-color: var(--primary-color);
   color: white;
-  font-size: 1rem;
+  border-color: var(--primary-color);
+}
 
-  padding: 10px 24px;
-  border: none;
+/* Table Styling */
+.admin-table-wrapper {
+  overflow-x: auto;
   border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: background-color 0.2s, transform 0.2s;
+  border: 1px solid #e3e6f0;
 }
 
-.requestBtn:hover {
-  background-color: #2a4365; /* Darker Blue */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.requestBtn:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-@media (min-width: 600px) {
-  .title-txt {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-/* --- Student Pending Request Box --- */
-.pending-request-box {
-  background-color: #ebf8ff; /* Light blue */
-  border: 1px solid #bee3f8; /* Lighter blue border */
-  border-left: 5px solid #2c5282; /* Accent border */
-  border-radius: 8px;
-  padding: 1.5rem;
-}
-
-.pending-request-box h4 {
-  font-size: 1.25rem;
-
-  color: #2b6cb0; /* Darker blue text */
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.pending-request-box p {
-  margin: 0.5rem 0;
-  color: #555;
-  font-size: 0.95rem;
-}
-
-.pending-request-box .alert-warning {
-  color: #2b6cb0; /* Darker blue text */
-  margin-top: 1rem;
-}
-
-/* --- Student History Table --- */
-.history-wrapper {
-  margin-top: 40px;
-}
-
-.history-wrapper h4 {
-  font-size: 1.5rem; /* 24px */
-
-  margin-bottom: 20px;
-  color: #333;
-  font-family: "Rubik", sans-serif;
-}
-
-/* Table Wrapper for border-radius (Used by Student Table) */
-.gmc-table-wrapper {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden; /* Clips the table corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* --- SHARED TABLE STYLES (Student & Admin) --- */
-#historyTable,
-#trackerTable {
+table {
   width: 100%;
   border-collapse: collapse;
-  border: none;
 }
 
-#historyTable th,
-#historyTable td,
-#trackerTable th,
-#trackerTable td {
-  border-bottom: 1px solid #ddd;
-  padding: 12px 15px;
+thead th {
+  background-color: #f8f9fc;
+  color: #2c5282;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  padding: 15px;
+  border-bottom: 2px solid #e3e6f0;
   text-align: left;
-  font-size: 14px;
-  vertical-align: middle; /* Align content vertically */
+  white-space: nowrap;
 }
 
-#historyTable th,
-#trackerTable th {
-  background-color: #f9f9f9;
-  color: #2c5282; /* Primary Blue */
-
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+th a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+th a:hover {
+  color: #2e59d9;
 }
 
-/* Remove bottom border from last row */
-#historyTable tbody tr:last-child td,
-#trackerTable tbody tr:last-child td {
-  border-bottom: none;
+tbody td {
+  padding: 15px;
+  border-bottom: 1px solid #e3e6f0;
+  color: #5a5c69;
+  vertical-align: middle;
+  font-size: 0.9rem;
 }
 
-/* --- Student Table Status Badges --- */
-.status-badge {
-  padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 12px;
-
-  color: white;
-  text-transform: uppercase;
+tbody tr:hover {
+  background-color: #fafbfc;
 }
-.status-pending {
-  color: #92400e;
-  background-color: #fef3c7;
-} /* Orange */
-.status-processed {
-  background-color: #8ccfa8;
-  color: #0b552a;
-} /* Green */
 
-/* --- ADMIN TABLE SPECIFIC STYLES --- */
+/* Input for OR Number */
 .ornum-input {
-  border: 1px solid #ccc;
-  width: 120px;
-  height: 35px;
-  border-radius: 8px;
-  padding: 5px 10px;
-  font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 8px;
+  border: 1px solid #d1d3e2;
+  border-radius: 4px;
+  width: 100px;
+  font-size: 0.9rem;
 }
 
-.ornum-input:focus {
-  outline: none;
-  border-color: #2c5282;
-  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3);
+/* Buttons */
+.printBtn,
+.reprintBtn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .printBtn {
-  font-family: "Rubik", sans-serif;
-  background-color: #2c5282; /* Green */
+  background-color: var(--success-color);
   color: white;
-  font-size: 0.875rem;
-
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
-
 .printBtn:hover {
-  background-color: #2a4365; /* Darker Green */
+  background-color: #17a673;
 }
 
-/* --- STUDENT Table Responsive Layout --- */
-/* These rules are now SPECIFIC to #historyTable */
-@media (max-width: 768px) {
-  /* Remove wrapper border on mobile, the cards will have them */
-  .gmc-table-wrapper {
-    border: none;
-    box-shadow: none;
-    overflow: visible; /* Override for card view */
-  }
-
-  #historyTable,
-  #historyTable thead,
-  #historyTable tbody,
-  #historyTable th,
-  #historyTable td,
-  #historyTable tr {
-    display: block;
-    width: 100%;
-  }
-
-  #historyTable thead {
-    display: none; /* hide table headers */
-  }
-
-  #historyTable tbody tr {
-    margin-bottom: 20px;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  /* Reset table borders for mobile cards */
-  #historyTable tbody td {
-    position: relative;
-    padding-left: 50%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
-    color: #2c2c2c;
-  }
-
-  #historyTable tbody td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 16px;
-    top: 12px;
-
-    color: #2c5282; /* Primary Blue */
-    white-space: nowrap;
-  }
-
-  #historyTable tbody td:last-child {
-    border-bottom: none;
-    word-wrap: break-word;
-  }
-
-  /* Adjust padding on main card for mobile */
-  .gmc-form {
-    padding: 1.5rem;
-  }
-
-  /* --- ADMIN Table Responsive --- */
-  /* On mobile, the admin table will just scroll horizontally */
-  /* We wrap it in its container */
+.reprintBtn {
+  background-color: #f6c23e;
+  color: white;
+}
+.reprintBtn:hover {
+  background-color: #dda20a;
 }

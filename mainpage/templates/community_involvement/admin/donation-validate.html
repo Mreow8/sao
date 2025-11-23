@@ -3,37 +3,308 @@
 
 {% block headcontent %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
     
     <link rel="stylesheet" href="{% static 'styles/community/donation.css' %}" />
+
+<style>
+    /* --- Modern Dashboard Styling --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #1cc88a;
+        --warning-color: #f6c23e;
+        --danger-color: #e74a3b;
+        --dark-text: #5a5c69;
+        --light-bg: #f8f9fc;
+    }
+
+    .body-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
+    }
+
+    /* Header & Description */
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
+    }
+
+    /* Controls: Filter Bar */
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #f8f9fc;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e3e6f0;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-bar select {
+        padding: 10px 15px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        background-color: white;
+        color: #5a5c69;
+        font-size: 0.9rem;
+        min-width: 200px;
+    }
+
+    .btn-filter-submit {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .btn-filter-submit:hover {
+        background-color: #2e59d9;
+    }
+
+    .btn-filter-clear {
+        color: #858796;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 10px 15px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        background-color: white;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .btn-filter-clear:hover {
+        background-color: #eaecf4;
+        color: #2e3a59;
+    }
+
+    /* Table Styling */
+    .donation-table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+        border: 1px solid #e3e6f0;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    thead th {
+        background-color: #f8f9fc;
+        color: #2c5282;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        padding: 15px;
+        border-bottom: 2px solid #e3e6f0;
+        text-align: left;
+        white-space: nowrap;
+    }
+    
+    tbody td {
+        padding: 15px;
+        border-bottom: 1px solid #e3e6f0;
+        color: #5a5c69;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    tbody tr:hover {
+        background-color: #fafbfc;
+    }
+
+    /* View Details Link Styling */
+    td.view-details-link {
+        font-weight: 600;
+        color: var(--primary-color);
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    td.view-details-link:hover {
+        color: #2e59d9;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    .status-accepted { background-color: #d1fae5; color: #047857; border: 1px solid #6ee7b7; }
+    .status-declined { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .status-pending { background-color: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+
+    /* Action Buttons */
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin: 0 2px;
+    }
+    .btn-icon:hover { transform: scale(1.1); }
+    
+    .btn-icon.accept { background-color: #e6fffa; color: #047857; }
+    .btn-icon.decline { background-color: #fff5f5; color: #c53030; }
+    .btn-icon.view { background-color: #eef2ff; color: #2c5282; } /* Light blue for view */
+
+    /* Modal Styling Adjustments */
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .modal-content {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 85vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #858796;
+    }
+    
+    .modal-hr { margin: 15px 0; border: 0; border-top: 1px solid #eee; }
+    
+    .modal-content h4 { color: var(--primary-color); margin-top: 0; }
+    .modal-content p { margin: 8px 0; color: #333; line-height: 1.5; }
+    .modal-content strong { color: #555; }
+
+    .modal-event-details {
+        margin-top: 20px;
+        background: #f8f9fc;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .modal-receipt-thumb {
+        max-width: 100px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .modal-receipt-thumb:hover { opacity: 0.8; }
+
+    .modal-content-image {
+        /* Styling for the large receipt modal */
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+        max-width: 90%;
+        max-height: 90%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+    
+    #receiptModalImage {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    #receiptModalCloseBtn {
+        position: absolute;
+        top: -40px;
+        right: 0;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+    }
+
+</style>
 {% endblock headcontent %}
 
-{% block bodycontent %}
- <div class="sub-title">
-        <h4>COMMUNITY INVOLVEMENT</h4>
-        <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-        <p class="certxt">Donation Validate</p>
-    </div>
-    <hr>
+{% block bodycontent %} <div class="sub-title">
+            <h4>COMMUNITY INVOLVEMENT</h4>
+            <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+            <p class="certxt">&gt; Donation Validate</p>
+        </div>
+        <hr>
 <div class="body-content"> 
    
+    <div class="page-header-container">
+       
+        <h2 class="page-title"><i class="fas fa-hand-holding-heart"></i> Donation Validation Dashboard</h2>
+        <p class="page-description">
+            Review and manage incoming donations for community projects. Verify transaction details, check payment receipts, 
+            and update the status of each contribution. Click on any Event/Project name to view full details.
+        </p>
+    </div>
 
     <div class="data">
             <form class="filter-bar" action="{% url 'donation-validate' %}" method="GET">
                 <select name="filterStatus">
-                    <option value="" {% if not selected_status %}selected{% endif %}>All Donations</option>
-                    <option value="Pending" {% if selected_status == 'Pending' %}selected{% endif %}>Pending</option>
-                    <option value="Accepted" {% if selected_status == 'Accepted' %}selected{% endif %}>Accepted</option>
-                    <option value="Declined" {% if selected_status == 'Declined' %}selected{% endif %}>Declined</option>
+                    <option value="" {% if not selected_status %}selected{% endif %}>Show All Donations</option>
+                    <option value="Pending" {% if selected_status == 'Pending' %}selected{% endif %}>Show Pending</option>
+                    <option value="Accepted" {% if selected_status == 'Accepted' %}selected{% endif %}>Show Accepted</option>
+                    <option value="Declined" {% if selected_status == 'Declined' %}selected{% endif %}>Show Declined</option>
                 </select>
                 <button type="submit" class="btn-filter-submit">
-                    <i class="fas fa-filter"></i> Filter
+                    <i class="fas fa-filter"></i> Apply Filter
                 </button>
                 <a href="{% url 'donation-validate' %}" class="btn-filter-clear">
-                    <i class="bx bxs-tag-x"></i> Clear
+                    <i class="fas fa-times"></i> Clear
                 </a>
             </form>
 
@@ -42,15 +313,15 @@
                     <thead>
                         <tr>
                             <th>Event / Project</th>
-                            <th>Name</th>
+                            <th>Donor Name</th>
                             <th>Mode</th>
                             <th>Amount</th>
                             <th>Date</th>
                             <th>Status</th>
                             <th>Processed By</th>
-                            <th style="text-align: center;"><i class="fas fa-image"></i></th> 
+                            <th style="text-align: center;">Receipt</th> 
                             {% if selected_status == "Pending" or not selected_status %}
-                            <th>Options</th>
+                            <th style="text-align: center;">Actions</th>
                             {% endif %}
                         </tr>
                     </thead>
@@ -77,19 +348,19 @@
                             data-project-desc="{{ donates.project_description|escapejs }}"
                             data-project-image-url="{{ donates.project_image_url }}"
                         >
-                            <td class="view-details-link">
-                                {{ donates.donated }}
+                            <td class="view-details-link" title="Click to view details">
+                                {{ donates.donated|truncatechars:30 }}
                             </td>
                             <td>{{ donates.name }}</td>
                             <td>{{ donates.donation_type }}</td>
-                            <td>
+                            <td style="font-family: monospace; font-weight: 600;">
                                 {% if donates.amount %}
-                                    {{ donates.amount|floatformat:2 }}
+                                    ₱{{ donates.amount|floatformat:2 }}
                                 {% else %}
-                                    N/A
+                                    -
                                 {% endif %}
                             </td>
-                            <td>{{ donates.date }}</td>
+                            <td>{{ donates.date|date:"M d, Y" }}</td>
                             
                             <td>
                                 {% if donates.status == None %}
@@ -101,7 +372,7 @@
                                 {% endif %}
                             </td>
                             
-                            <td>
+                            <td style="font-size: 0.85rem; color: #888;">
                                 {% if donates.processed_by %}
                                     {{ donates.processed_by.first_name|default:donates.processed_by.username }}
                                 {% else %}
@@ -112,7 +383,7 @@
                             <td style="text-align: center;">
                                 {% if donates.what_kind != "SERVICE" and donates.image_details %}
                                     <a href="#" class="btn-icon view view-receipt-btn" data-image-url="/media/{{ donates.image_details }}" title="View Receipt">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas fa-file-invoice"></i>
                                     </a>
                                 {% else %}
                                     <span style="color: #ccc;">-</span>
@@ -120,22 +391,26 @@
                             </td>
 
                             {% if selected_status == "Pending" or not selected_status %}
-                                <td class="options">
+                                <td class="options" style="text-align: center;">
                                     {% if donates.status == None %}
-                                        <a class="btn-icon accept" href="{% url 'donation_accept' donates.id %}" title="Accept">
+                                        <a class="btn-icon accept" href="{% url 'donation_accept' donates.id %}" title="Accept Donation">
                                             <i class="fas fa-check"></i>
                                         </a>
-                                        <a class="btn-icon decline" href="{% url 'donation_decline' donates.id %}" title="Decline">
+                                        <a class="btn-icon decline" href="{% url 'donation_decline' donates.id %}" title="Decline Donation">
                                             <i class="fas fa-times"></i>
                                         </a>
                                     {% else %}
-                                        {% endif %}
+                                        <span style="color: #ccc;">-</span>
+                                    {% endif %}
                                 </td>
                             {% endif %}
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="9" style="text-align: center; padding: 20px;">No donations found for this filter.</td>
+                            <td colspan="9" style="text-align: center; padding: 40px; color: #888;">
+                                <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 10px; display: block; color: #ddd;"></i>
+                                No donations found matching your filter.
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -177,7 +452,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function closeModal() {
             modal.style.display = 'none';
-            modal.classList.remove('modal-open');
         }
 
         closeModalBtn.addEventListener('click', closeModal);
@@ -198,9 +472,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 let html = `<h4>Donation for: ${data.event}</h4>`;
                 html += `<p><strong>Donor Name:</strong> ${data.name}</p>`;
                 html += `<p><strong>Donation Mode:</strong> ${data.mode}</p>`;
-                html += `<p><strong>Amount:</strong> ${data.amount}</p>`;
+                html += `<p><strong>Amount:</strong> ₱${data.amount}</p>`;
                 html += `<p><strong>Date:</strong> ${data.date}</p>`;
-                html += `<p><strong>Status:</strong> ${data.status}</p>`;
+                
+                let statusColor = '#555';
+                if(data.status === 'Accepted') statusColor = '#047857';
+                else if(data.status === 'Declined') statusColor = '#b91c1c';
+                else statusColor = '#b45309';
+                
+                html += `<p><strong>Status:</strong> <span style="font-weight: bold; color: ${statusColor}">${data.status}</span></p>`;
 
                 html += '<hr class="modal-hr">';
                 
@@ -228,14 +508,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
                if(data.receiptExists === 'true') {
                     html += `<p><strong>Receipt:</strong></p>`;
-                    html += `<img src="${data.receipt}" alt="Receipt Thumbnail" class="modal-receipt-thumb view-receipt-btn" data-image-url="${data.receipt}">`;
+                    html += `<div style="text-align:center; margin-top:10px;"><img src="${data.receipt}" alt="Receipt Thumbnail" class="modal-receipt-thumb view-receipt-btn" data-image-url="${data.receipt}" title="Click to Enlarge"></div>`;
                 }
 
                 html += `<div class="modal-event-details">`;
                 html += `<h4>Event Details</h4>`;
                 
                 if (data.projectImageUrl) {
-                    html += `<img src="${data.projectImageUrl}" alt="Event Image">`;
+                    html += `<img src="${data.projectImageUrl}" alt="Event Image" style="width:100%; border-radius:4px; margin-bottom:10px;">`;
                 }
                 
                 if (data.projectDesc) {
@@ -249,7 +529,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 modalBody.innerHTML = html;
                 modal.style.display = 'flex';
-                modal.classList.add('modal-open');
             }
         });
 

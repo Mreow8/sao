@@ -384,6 +384,7 @@ def signinuser(request):
             return render(request, 'login.html', context)
 
     return render(request, 'login.html')
+
 def get_base_template(user):
     if not user.is_authenticated:
         return 'main.html' 
@@ -743,8 +744,6 @@ def student_life_dashboard(request):
 def scholarship_dashboard(request):
     return render(request, 'scholarship_officer.html')
 
-def guidance_dashboard(request):
-    return render(request, 'guidance_admin.html')
 
 def clinic_dashboard(request):
     return render(request, 'clinic_admin.html')

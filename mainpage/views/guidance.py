@@ -780,30 +780,24 @@ def ojt_assessment(request):
     }
     return render(request, 'guidance/ojt_assessment.html', context)
 @guidance_admin_required
-
 def ojt_assessment_admin_view(request):
+    search_query = request.GET.get('search', '')
+    sort_by = request.GET.get('sort', 'dateRecieved')
+    order = request.GET.get('order', 'desc')
+    status_filter = request.GET.get('status_filter', '')
     
-    # --- GET Logic (To display the data) ---
-    
-    # 1. Get parameters from URL
-    search_query = request.GET.get('search', None)
-    sort_by = request.GET.get('sort', 'dateRecieved') # Default field to sort by
-    order = request.GET.get('order', 'desc') # Default order (descending)
-    
-    # 2. Start with base query
     ojt_list = OjtAssessment.objects.select_related('studentID').all()
 
-    # 3. Apply Search Filter
     if search_query:
-        # Searches Student ID, Last Name, or First Name
         ojt_list = ojt_list.filter(
             Q(studentID__studID__icontains=search_query) |
             Q(studentID__lastname__icontains=search_query) |
             Q(studentID__firstname__icontains=search_query)
         )
 
-    # 4. Apply Sorting
-    # Whitelist valid sort fields from your template
+    if status_filter:
+        ojt_list = ojt_list.filter(status=status_filter)
+
     valid_sort_map = {
         'dateRecieved': 'dateRecieved',
         'studentID__studID': 'studentID__studID',
@@ -812,43 +806,35 @@ def ojt_assessment_admin_view(request):
         'status': 'status',
     }
     
-    # Get the correct model field from the map, default to 'dateRecieved'
     sort_field = valid_sort_map.get(sort_by, 'dateRecieved')
     
-    # Add '-' prefix if order is descending
     if order == 'desc':
         sort_field = f"-{sort_field}"
         
     ojt_list = ojt_list.order_by(sort_field)
         
-    # 5. Apply Pagination
-    paginator = Paginator(ojt_list, 10) # Show 10 items per page
+    paginator = Paginator(ojt_list, 10)
     page_number = request.GET.get('page')
     
     try:
         page_obj = paginator.page(page_number)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
         page_obj = paginator.page(1)
     except EmptyPage:
-        # If page is out of range, deliver last page of results.
         page_obj = paginator.page(paginator.num_pages)
 
-    # 6. Build Context
     context = {
-        'page_obj': page_obj, # Pass this instead of 'ojt_assessment_request'
+        'page_obj': page_obj, 
         'user': request.user,
-        'page': 'ojt_admin', # For tagged messages
-        
-        # Pass sort/order info back to the template
+        'page': 'ojt_admin',
         'current_sort': sort_by,
         'current_order': order,
+        'current_search': search_query,
+        'current_status_filter': status_filter,
         'search_params': f"&search={search_query}" if search_query else ""
     }
     
     return render(request, 'guidance/ojt_assessment_admin.html', context)
-#Checker/Getter
-
 def check_date_time_validity(request):
     if request.method == 'POST':
         selected_date = request.POST.get('selected_date')
@@ -1145,7 +1131,42 @@ def delete_ojt_assessment(request):
         return JsonResponse({'message': 'Value updated successfully'})  
 
 #Filter
+def guidance_dashboard(request):
+    # 1. Get Counts for Summary Cards
+    pending_counseling = counseling_schedule.objects.filter(status='Pending').count()
+    pending_exit = exit_interview_db.objects.filter(status='Pending').count()
+    pending_ojt = OjtAssessment.objects.filter(status='Pending').count()
+    total_profiles = IndividualProfileBasicInfo.objects.count()
+    
+    # Total pending actions
+    total_pending = pending_counseling + pending_exit + pending_ojt
 
+    # 2. Get Today's Counseling Schedules (Accepted only)
+    today = timezone.now().date()
+    todays_counseling = counseling_schedule.objects.filter(
+        scheduled_date=today,
+        status='Accepted'
+    ).select_related('studentID').order_by('scheduled_time')
+
+    # 3. Get Recent Pending Requests (Combined list for a "Recent Activity" feed)
+    # Fetch last 3 of each type
+    recent_counseling = counseling_schedule.objects.filter(status='Pending').order_by('-dateRecieved')[:3]
+    recent_exit = exit_interview_db.objects.filter(status='Pending').order_by('-dateRecieved')[:3]
+    recent_ojt = OjtAssessment.objects.filter(status='Pending').order_by('-dateRecieved')[:3]
+
+    context = {
+        'pending_counseling': pending_counseling,
+        'pending_exit': pending_exit,
+        'pending_ojt': pending_ojt,
+        'total_profiles': total_profiles,
+        'total_pending': total_pending,
+        'todays_counseling': todays_counseling,
+        'recent_counseling': recent_counseling,
+        'recent_exit': recent_exit,
+        'recent_ojt': recent_ojt,
+        'user': request.user,
+    }
+    return render(request, 'guidance/guidance_dashboard.html', context)
 @register.filter
 def get_formatted_time(dictionary, key):
     return dictionary.get(key)

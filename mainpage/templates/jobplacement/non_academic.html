@@ -1,202 +1,344 @@
-{% extends base_template %} 
-
-{% block headcontent %}
-{% load static %}
-<link
-  rel="stylesheet"
-  href="{% static 'styles/job_placement/non_acad.css' %}?307"
-/>
+{% extends base_template %} {% block headcontent %} {% load static %}
+<script src="{% static 'scripts/job_placement/non_academic.js' %}?309"></script>
 
 <style>
+  /* --- Modern Dashboard Styling --- */
+  :root {
+    --primary-color: #4e73df;
+    --success-color: #2c5282;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --dark-text: #5a5c69;
+    --light-bg: #f8f9fc;
+    --border-color: #e3e6f0;
+  }
+
+  .container {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin: 20px;
+    font-family: "Rubik", sans-serif;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2e3a59;
+    margin-bottom: 0.5rem;
+  }
+  .page-description {
+    color: #858796;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 800px;
+  }
+
+  /* Form Layout */
+  .showbox {
+    max-width: 800px;
+    background-color: #fff;
+    padding: 0; /* Integrated into container */
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  label {
+    font-weight: 600;
+    color: #5a5c69;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d3e2;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #6e707e;
+    background-color: #fff;
+    transition: border-color 0.2s;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+  }
+
+  /* Student Details Box */
   #student_details {
-    padding: 10px;
+    padding: 15px;
     margin-top: 10px;
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    background-color: #f8f9fc;
+    border: 1px solid #e3e6f0;
+    border-left: 4px solid var(--primary-color);
+    border-radius: 6px;
+    transition: all 0.3s;
   }
   #student_details p {
     margin: 5px 0;
+    font-size: 0.9rem;
+    color: #5a5c69;
   }
   .hidden {
     display: none;
   }
+
+  /* Dynamic Field Groups */
+  .hidden_fields {
+    display: none; /* Hidden by default, shown by JS */
+    padding: 15px;
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    margin-top: 5px;
+  }
+
+  .hidden_fields label {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+  }
+
+  /* Submit Button */
+  input[type="submit"] {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 200px;
+    align-self: flex-start;
+  }
+  input[type="submit"]: 2c5282 {
+    background-color: #17a673;
+  }
+
+  hr {
+    margin: 1rem 0 2rem 0;
+    border: 0;
+    border-top: 1px solid #e3e6f0;
+  }
 </style>
-{% endblock headcontent %} 
+{% endblock headcontent %} {% block bodycontent %}
+<div class="sub-title">
+  <h4>STUDENT LIFE (Admin)</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+  <p class="certxt">&gt; Non-Academic Award Issuance</p>
+</div>
 
-{% block bodycontent %}
+<hr />
+
 <div class="container">
-  <div class="sub-title">
-    <h4>STUDENT LIFE (Admin)</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt;  Non-Academic Award Issuance</p>
-</p>
-
+  <div class="page-header">
+    <h2 class="page-title">Issue Non-Academic Award</h2>
+    <p class="page-description">
+      Record student achievements and non-academic awards. Search for a student
+      by ID, verify their details, select the award category, and fill in the
+      specific requirements for that award type.
+    </p>
   </div>
- 
-  <hr id="demo" />
+
   <div class="showbox">
     <form action="" method="POST">
       {% csrf_token %}
-      
+
       <input id="stud_id_holder" type="hidden" name="student_id" />
 
-      <label for="date">Date Issued: </label>
-      <input type="date" name="date_issued" required />
+      <div class="form-group">
+        <label for="date">Date Issued:</label>
+        <input type="date" name="date_issued" required />
+      </div>
 
-      <label for="student">Student: </label>
-      <div id="suggestions_container">
-        <div>
+      <div class="form-group">
+        <label for="student">Search Student:</label>
+        <div id="suggestions_container">
+          <div>
             <input
-                type="text"
-                name="student_search_box" id="id_student"
-                list="student-options"
-                placeholder="Enter Student ID"
-                required />
+              type="text"
+              name="student_search_box"
+              id="id_student"
+              list="student-options"
+              placeholder="Enter Student ID or Name"
+              autocomplete="off"
+              required
+            />
             <datalist id="student-options">
-                {% for student in students %}
-                <option value="{{ student.studID }}">
-                    {{ student.firstname }} {{ student.lastname }}
-                </option>
-                {% endfor %}
+              {% for student in students %}
+              <option value="{{ student.studID }}">
+                {{ student.firstname }} {{ student.lastname }}
+              </option>
+              {% endfor %}
             </datalist>
-        </div>
+          </div>
 
-        <div id="student_details" class="hidden">
+          <div id="student_details" class="hidden">
             <p><strong>Name:</strong> <span id="student_name"></span></p>
             <p><strong>Course:</strong> <span id="student_course"></span></p>
             <p><strong>Year:</strong> <span id="student_year"></span></p>
+          </div>
         </div>
-
       </div>
 
-      <label for="program">Program/Course:</label>
-      <select name="program" id="program_select">
-        <option value="None" selected>----------</option>
-        <option value="AGRICULTURE">Agriculture</option>
-        <option value="BIT">Bachelor of Industrial Technology</option>
-        <option value="BES">Bachelor of Environmental Science</option>
-        <option value="BSHM">
-          Bachelor of Science Hospitality and Management
-        </option>
-        <option value="BSIE">Bachelor of Industrial Engineering</option>
-        <option value="BSIT">
-          Bachelor of Science Information and Technology
-        </option>
-        <option value="CAS">Bachelor of Crafts Arts and Science</option>
-        <option value="COED">College of Education</option>
-        <option value="FORESTRY">Bachelor of Science and Forestry</option>
-      </select>
+      <div class="form-group">
+        <label for="program">Program/Course:</label>
+        <select name="program" id="program_select">
+          <option value="None" selected>-- Select Program --</option>
+          <option value="AGRICULTURE">Agriculture</option>
+          <option value="BIT">Bachelor of Industrial Technology</option>
+          <option value="BES">Bachelor of Environmental Science</option>
+          <option value="BSHM">
+            Bachelor of Science Hospitality and Management
+          </option>
+          <option value="BSIE">Bachelor of Industrial Engineering</option>
+          <option value="BSIT">
+            Bachelor of Science Information and Technology
+          </option>
+          <option value="CAS">Bachelor of Crafts Arts and Science</option>
+          <option value="COED">College of Education</option>
+          <option value="FORESTRY">Bachelor of Science and Forestry</option>
+        </select>
+      </div>
 
-      <label for="award">Non-Academic Award:</label>
-      <select name="award" id="award_select">
-        <option value="None">----------</option>
-      </select>
+      <div class="form-group">
+        <label for="award">Non-Academic Award Category:</label>
+        <select name="award" id="award_select">
+          <option value="None">-- Select Award Type --</option>
+        </select>
+      </div>
 
       <div class="hidden_fields" id="ojt_fields">
-        <label for="position">Position:</label>
-        <input type="text" name="position" />
-
-        <label for="company_name">Company Name:</label>
-        <input type="text" name="company_name" />
-
-        <label for="company_address">Company Address:</label>
-        <input type="text" name="company_address" />
+        <div class="form-group">
+          <label for="position">Position:</label>
+          <input type="text" name="position" />
+        </div>
+        <div class="form-group">
+          <label for="company_name">Company Name:</label>
+          <input type="text" name="company_name" />
+        </div>
+        <div class="form-group">
+          <label for="company_address">Company Address:</label>
+          <input type="text" name="company_address" />
+        </div>
       </div>
 
       <div class="hidden_fields" id="capstone_fields">
-        <label for="title">Capstone Title</label>
-        <input type="text" name="capstone_title" />
+        <div class="form-group">
+          <label for="title">Capstone Title:</label>
+          <input type="text" name="capstone_title" />
+        </div>
       </div>
 
       <div class="hidden_fields" id="leadership_fields">
-        <label for="acad_year">Academic Year:</label>
-        <input
-          type="text"
-          name="acad_year"
-          id="acad_year"
-          placeholder="YYYY-YYYY"
-          pattern="\d{4}-\d{4}"
-          title="Enter a year range in the format YYYY-YYYY"
-        />
+        <div class="form-group">
+          <label for="acad_year_leadership">Academic Year:</label>
+          <input
+            type="text"
+            name="acad_year"
+            id="acad_year_leadership"
+            placeholder="YYYY-YYYY"
+            pattern="\d{4}-\d{4}"
+            title="Enter a year range in the format YYYY-YYYY"
+          />
+        </div>
       </div>
 
       <div class="hidden_fields" id="research_fields">
-        <label for="research_title">Research Title:</label>
-        <input type="text" name="research_title" />
+        <div class="form-group">
+          <label for="research_title">Research Title:</label>
+          <input type="text" name="research_title" />
+        </div>
       </div>
 
       <div class="hidden_fields" id="Others">
-        <label for="achievement">Achievement Title:</label>
-        <input
-          type="text"
-          name="achievement"
-          placeholder="New achievement Title"
-        />
-
-        <label for="acad_year">Academic Year:</label>
-        <input
-          type="text"
-          name="acad_year"
-          id="acad_year"
-          placeholder="YYYY-YYYY"
-          pattern="\d{4}-\d{4}"
-          title="Enter a year range in the format YYYY-YYYY"
-        />
+        <div class="form-group">
+          <label for="achievement">Achievement Title:</label>
+          <input
+            type="text"
+            name="achievement"
+            placeholder="New achievement Title"
+          />
+        </div>
+        <div class="form-group">
+          <label for="acad_year_others">Academic Year:</label>
+          <input
+            type="text"
+            name="acad_year"
+            id="acad_year_others"
+            placeholder="YYYY-YYYY"
+            pattern="\d{4}-\d{4}"
+            title="Enter a year range in the format YYYY-YYYY"
+          />
+        </div>
       </div>
 
-
-      <input type="submit" value="Submit" />
+      <input type="submit" value="Save Award" />
     </form>
   </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Student Search AJAX
-        const studentInput = document.getElementById("id_student");
-        const studentDetails = document.getElementById("student_details");
-        const studentHiddenInput = document.getElementById("stud_id_holder");
+  document.addEventListener("DOMContentLoaded", function () {
+    // Student Search AJAX Logic
+    const studentInput = document.getElementById("id_student");
+    const studentDetails = document.getElementById("student_details");
+    const studentHiddenInput = document.getElementById("stud_id_holder");
 
-        function fetchStudentDetails(studentID) {
-            if (!studentID) {
-                studentDetails.classList.add("hidden");
-                studentHiddenInput.value = ""; // Clear hidden input
-                return;
-            }
-            
-            // This URL is copied from case_profile.html
-            // Make sure it's the correct endpoint for your project!
-            fetch(`/discipline/get-student/${studentID}/`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.found) {
-                        // Populate display fields
-                        document.getElementById("student_name").textContent = data.name;
-                        document.getElementById("student_course").textContent = data.course;
-                        document.getElementById("student_year").textContent = data.year;
-                        studentDetails.classList.remove("hidden");
+    function fetchStudentDetails(studentID) {
+      if (!studentID) {
+        studentDetails.classList.add("hidden");
+        studentHiddenInput.value = "";
+        return;
+      }
 
-                        // *** IMPORTANT MODIFICATION ***
-                        // Set the value of the real hidden input for the form
-                        studentHiddenInput.value = studentID;
+      // Assuming this endpoint exists from previous context
+      fetch(`/discipline/get-student/${studentID}/`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.found) {
+            // Populate display fields
+            document.getElementById("student_name").textContent = data.name;
+            document.getElementById("student_course").textContent = data.course;
+            document.getElementById("student_year").textContent = data.year;
+            studentDetails.classList.remove("hidden");
 
-                    } else {
-                        studentDetails.classList.add("hidden");
-                        studentHiddenInput.value = ""; // Clear hidden input
-                    }
-                });
-        }
+            // Set hidden input for backend
+            studentHiddenInput.value = studentID;
+          } else {
+            studentDetails.classList.add("hidden");
+            studentHiddenInput.value = "";
+          }
+        })
+        .catch((err) => console.log("Search error or empty input"));
+    }
 
-        studentInput.addEventListener("input", function () {
-            fetchStudentDetails(this.value.trim());
-        });
-        studentInput.addEventListener("change", function () {
-            fetchStudentDetails(this.value.trim());
-        });
-        
+    let debounceTimer;
+    studentInput.addEventListener("input", function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        fetchStudentDetails(this.value.trim());
+      }, 300);
     });
-</script>
 
-<script src="{% static 'scripts/job_placement/non_academic.js' %}?309"></script>
+    studentInput.addEventListener("change", function () {
+      fetchStudentDetails(this.value.trim());
+    });
+  });
+</script>
 {% endblock bodycontent %}

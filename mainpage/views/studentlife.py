@@ -319,6 +319,59 @@ def print_gmc(request):
     response = HttpResponse(buffer, content_type="application/pdf")
     response["Content-Disposition"] = "inline; filename=gmc.pdf"
     return response
+
+# --- ADD THESE TO studentlife.py ---
+
+def delete_borrow_record(request, record_id):
+    # 1. Get the record or show 404 if not found
+    record = get_object_or_404(BorrowingRecord, id=record_id)
+    
+    # 2. Delete the record
+    record.delete()
+    
+    # 3. Show success message and return to the list
+    messages.success(request, "Borrowing record deleted successfully.")
+    return redirect('equipmentborrowed') # Ensure this matches your URL name for the list
+
+def edit_borrow_record(request, record_id):
+    record = get_object_or_404(BorrowingRecord, id=record_id)
+    
+    if request.method == "POST":
+        # Update fields based on form submission
+        student_id = request.POST.get("student_id")
+        equipment_id = request.POST.get("equipmentname") # Ensure input names match your HTML form
+        date_borrowed = request.POST.get("dateborrowed")
+        
+        if student_id and equipment_id and date_borrowed:
+            try:
+                # Update the Student
+                record.student = studentInfo.objects.get(studID=student_id)
+                
+                # Update the Equipment
+                # Note: You might want to check if the new equipment is available first
+                record.equipment = Equipment.objects.get(itemId=equipment_id)
+                
+                # Update Date
+                record.date_borrowed = date_borrowed
+                
+                record.save()
+                messages.success(request, "Record updated successfully.")
+                return redirect('equipmentborrowed')
+                
+            except (studentInfo.DoesNotExist, Equipment.DoesNotExist):
+                messages.error(request, "Invalid Student ID or Equipment ID.")
+    
+    # Render an edit form (you will need to create this HTML template)
+    # We can reuse the logic from equipmentTrackerAdmin to get lists
+    all_students = studentInfo.objects.all().order_by('lastname')
+    all_equipment = Equipment.objects.all()
+    
+    context = {
+        'record': record,
+        'all_students': all_students,
+        'all_equipment': all_equipment
+    }
+    return render(request, 'officeOfStudentL/adminUser/edit_borrow_record.html', context)
 @sao_admin_required
 def gmcform(request):
     return render(request, "adminUser/gmcform.html")

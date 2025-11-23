@@ -7,129 +7,188 @@
 <link rel="stylesheet" href="{% static 'styles/discipline/case_list.css' %}" />
 
 <style>
-    /* --- General Buttons --- */
-    .editBtn {
-        text-decoration: none;
-        color: #2a4365;
-        font-size: 1.3rem;
-        transition: transform 0.2s, color 0.2s;
-        display: inline-block;
+    /* --- Modern Dashboard Styling --- */
+    :root {
+        --primary-color: #2a4365;
+        --secondary-color: #4e73df;
+        --success-color: #1cc88a;
+        --warning-color: #f6c23e;
+        --danger-color: #e74a3b;
+        --dark-text: #5a5c69;
+        --light-bg: #f8f9fc;
+        --border-color: #e3e6f0;
     }
 
-    .editBtn:hover {
-        color: #1e3048;
-        transform: scale(1.1);
-    }
-
-    /* --- SweetAlert2 Custom Styling --- */
-    .swal2-popup {
+    .container {
+        background-color: #fff;
+        padding: 2rem;
         border-radius: 12px;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
     }
 
-    .swal2-title {
-        color: #2a4365;
-        font-weight: 600;
-        font-size: 1.6em;
+    /* Header & Description */
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
     }
 
-    /* Merged .swal2-select styles */
-    .swal2-select {
-        display: block !important;
-        width: 80% !important;
-        margin: 20px auto !important;
-        padding: 12px;
-        font-size: 1em;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        text-align: center !important;
-        text-align-last: center !important;
-    }
-
-    .swal2-confirm {
-        background-color: #2a4365 !important;
-        border-radius: 5px;
-        font-weight: 600;
-        transition: background-color 0.2s;
-        padding: 10px 24px;
-    }
-
-    .swal2-confirm:hover {
-        background-color: #1e3048 !important;
-    }
-
-    .swal2-cancel {
-        background-color: #6c757d !important;
-        border-radius: 5px;
-        font-weight: 600;
-        transition: background-color 0.2s;
-        padding: 10px 24px;
-    }
-
-    .swal2-cancel:hover {
-        background-color: #5a6268 !important;
-    }
-
-    /* --- Sorting --- */
-    th.sortable a {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-    }
-    th.sortable a:hover {
-        text-decoration: underline;
-        color: #2a4365;
-    }
-    th.sortable a.sorted::after {
-        content: ' ▲';
-        font-size: 0.8em;
-        padding-left: 5px;
-    }
-    th.sortable a.sorted.desc::after {
-        content: ' ▼';
-    }
-
-    /* --- Search & Filter Controls --- */
+    /* --- Filters & Search --- */
     .filter-controls {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 15px;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
+        background-color: var(--light-bg);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
     }
+
     .filter-controls .search {
-        flex-grow: 1;
+        flex-grow: 2;
         display: flex;
         min-width: 250px;
     }
+
     .filter-controls .search input {
         width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px 0 0 4px;
+        padding: 10px 15px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px 0 0 5px;
+        font-size: 0.9rem;
     }
+    
     .filter-controls .search button {
-        padding: 8px 12px;
+        padding: 10px 20px;
         border: none;
-        background-color: #2a4365;
+        background-color: var(--primary-color);
         color: white;
         cursor: pointer;
-        border-radius: 0 4px 4px 0;
+        border-radius: 0 5px 5px 0;
+        font-weight: 600;
+        transition: background 0.2s;
     }
-    .filter-controls .filter-select {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: #fff;
-        height: 38px;
-        flex-basis: 180px;
-        flex-grow: 1;
+    .filter-controls .search button:hover {
+        background-color: #1e3048;
     }
 
-    /* --- Edit Modal Styles --- */
+    .filter-controls .filter-select {
+        padding: 10px 15px;
+        border: 1px solid #d1d3e2;
+        border-radius: 5px;
+        background-color: #fff;
+        color: var(--dark-text);
+        flex-basis: 200px;
+        flex-grow: 1;
+        cursor: pointer;
+    }
+
+    /* --- Table Styling --- */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    thead th {
+        background-color: var(--light-bg);
+        color: var(--primary-color);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        padding: 15px;
+        border-bottom: 2px solid var(--border-color);
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    th.sortable a {
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    th.sortable a:hover {
+        color: var(--secondary-color);
+    }
+
+    tbody td {
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--dark-text);
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    tbody tr:hover {
+        background-color: #fafbfc;
+    }
+
+    /* --- Status Badges --- */
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+        letter-spacing: 0.5px;
+    }
+    .status-pending { background-color: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+    .status-investigating { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .status-resolved { background-color: #d1fae5; color: #047857; border: 1px solid #6ee7b7; }
+    .status-default { background-color: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+
+    /* --- Action Links --- */
+    .suspensionBtn, a[href*="counseling_form"], a[href*="student_hours"] {
+        color: var(--secondary-color);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .suspensionBtn:hover, a:hover {
+        color: #2e59d9;
+        text-decoration: underline;
+    }
+
+    /* --- Edit Button --- */
+    .editBtn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #edf2f7;
+        color: var(--primary-color);
+        transition: all 0.2s;
+    }
+    .editBtn:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* --- Modal Styles --- */
     #editModal {
         display: none;
         position: fixed;
@@ -138,90 +197,72 @@
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba(0, 0, 0, 0.5);
         justify-content: center;
         align-items: center;
+        backdrop-filter: blur(2px);
     }
     .modal-content {
-        background-color: #fefefe;
-        margin: auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
         max-width: 700px;
-        border-radius: 8px;
         position: relative;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
     #editModal h4 {
         margin-top: 0;
-        padding-bottom: 10px;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin-bottom: 20px;
         border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
     }
-    #editFormFields {
-        max-height: 65vh;
-        overflow-y: auto;
-        padding: 10px;
-    }
+    
+    /* Form Grid inside Modal */
     #editFormFields .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 15px 20px;
+        gap: 20px;
     }
-    #editFormFields .form-grid .full-width {
+    #editFormFields .full-width {
         grid-column: 1 / -1;
     }
     #editFormFields label {
-        font-weight: bold;
-        margin-bottom: 5px;
+        font-weight: 600;
+        margin-bottom: 8px;
         display: block;
-        font-size: 0.9em;
+        color: var(--dark-text);
     }
-    #editFormFields input[type="text"],
-    #editFormFields input[type="number"],
-    #editFormFields input[type="file"],
-    #editFormFields input[type="date"],
+    #editFormFields input,
     #editFormFields select,
     #editFormFields textarea {
         width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-    #editFormFields textarea {
-        min-height: 80px;
-        resize: vertical;
-    }
-    .dynamic-field {
-        display: none;
-        margin-top: 10px;
-    }
-    .error-list {
-        color: #cc0000;
-        font-size: 0.85em;
-        font-weight: bold;
-        margin-top: 5px;
-        list-style: none;
-        padding-left: 0;
-    }
-    #editFormFields .submit-container {
-        text-align: right;
-        margin-top: 20px;
-        grid-column: 1 / -1;
+        padding: 10px;
+        border: 1px solid #d1d3e2;
+        border-radius: 6px;
+        font-size: 0.95rem;
     }
     #editFormFields .submit-btn {
-        background-color: #2c5282;
+        background-color: var(--success-color);
         color: white;
-        padding: 10px 15px;
+        padding: 12px 24px;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
-        font-size: 16px;
+        font-weight: 600;
+        float: right;
+        margin-top: 20px;
+        transition: background 0.2s;
     }
     #editFormFields .submit-btn:hover {
-        background-color: #4178bd;
+        background-color: #17a673;
     }
+
+    /* SweetAlert Overrides */
+    .swal2-confirm { background-color: var(--primary-color) !important; }
+    .swal2-cancel { background-color: #858796 !important; }
 </style>
 
 <div class="sub-title">
@@ -233,17 +274,25 @@
 <hr>
 
 <div class="container">
+    
+    <div class="page-header-container">
+        <h2 class="page-title"><i class="fas fa-gavel"></i> Student Discipline Cases</h2>
+        <p class="page-description">
+            View and manage student disciplinary records. Use the filters below to sort by offense type or case status. 
+            Click on a status badge to update it, or use the action buttons to modify case details.
+        </p>
+    </div>
 
     <form method="GET" action="{% url 'case_list' %}">
         <div class="filter-controls">
             <div class="search">
-                <input type="text" name="search" placeholder="Search by Student Name, ID, or Offense..."
+                <input type="text" name="search" placeholder="Search by Name, ID, or Offense..."
                     value="{{ search_query }}" />
-                <button type="submit">Search</button>
+                <button type="submit"><i class="fas fa-search"></i> Search</button>
             </div>
 
             <select name="status_filter" class="filter-select" onchange="this.form.submit()">
-                <option value="">All Statuses</option>
+                <option value="">Filter by Status</option>
                 {% for status in status_choices %}
                 <option value="{{ status }}" {% if status == current_status_filter %}selected{% endif %}>
                     {{ status }}
@@ -252,7 +301,7 @@
             </select>
 
             <select name="offense_filter" class="filter-select" onchange="this.form.submit()">
-                <option value="">All Offenses</option>
+                <option value="">Filter by Offense</option>
                 {% for offense in offense_choices %}
                 <option value="{{ offense }}" {% if offense == current_offense_filter %}selected{% endif %}>
                     {{ offense }}
@@ -270,49 +319,47 @@
                 <tr>
                     {% with sort=current_sort order=current_order params=sort_params %}
                     <th class="sortable">
-                        <a href="?sort=student&order={% if sort == 'student' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                           class="{% if sort == 'student' %}sorted {{ order }}{% endif %}">
-                            Student
+                        <a href="?sort=student&order={% if sort == 'student' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}">
+                            Student <i class="fas fa-sort"></i>
                         </a>
                     </th>
                     <th class="sortable">
-                        <a href="?sort=offense&order={% if sort == 'offense' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                           class="{% if sort == 'offense' %}sorted {{ order }}{% endif %}">
-                            Offense
+                        <a href="?sort=offense&order={% if sort == 'offense' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}">
+                            Offense <i class="fas fa-sort"></i>
                         </a>
                     </th>
                     <th class="sortable">
-                        <a href="?sort=date&order={% if sort == 'date' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                           class="{% if sort == 'date' %}sorted {{ order }}{% endif %}">
-                            Date
+                        <a href="?sort=date&order={% if sort == 'date' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}">
+                            Date <i class="fas fa-sort"></i>
                         </a>
                     </th>
                     <th class="sortable">
-                        <a href="?sort=status&order={% if sort == 'status' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}"
-                           class="{% if sort == 'status' %}sorted {{ order }}{% endif %}">
-                            Status
+                        <a href="?sort=status&order={% if sort == 'status' and order == 'asc' %}desc{% else %}asc{% endif %}{{ params|safe }}">
+                            Status <i class="fas fa-sort"></i>
                         </a>
                     </th>
                     <th>Action Taken</th>
-                    <th>Actions</th>
+                    <th style="text-align: center;">Edit</th>
                     {% endwith %}
                 </tr>
             </thead>
             <tbody>
                 {% for case in page_obj %}
                 <tr>
-                    <td>{{ case.student.firstname }} {{ case.student.lastname }}</td>
+                    <td style="font-weight: 600; color: var(--primary-color);">
+                        {{ case.student.firstname }} {{ case.student.lastname }}
+                    </td>
                     <td>
                         {% if case.offense_type == 'Others' %}
-                            {{ case.custom_offense|default:"-" }}
+                            <span style="font-style: italic;">{{ case.custom_offense|default:"-" }}</span>
                         {% else %}
                             {{ case.offense_type }}
                         {% endif %}
                     </td>
-                    <td>{{ case.date_reported|date:"Y-m-d" }}</td>
+                    <td>{{ case.date_reported|date:"M d, Y" }}</td>
                     
                     <td class="status-clickable" data-id="{{ case.id }}" data-status="{{ case.status }}"
-                        style="cursor: pointer; min-width: 160px;">
+                        style="cursor: pointer; min-width: 160px;" title="Click to Update Status">
                         {% if case.status == 'Pending' %}
                             <span class="status-badge status-pending">Pending Review</span>
                         {% elif case.status == 'Under Investigation' %}
@@ -328,14 +375,14 @@
                         {% if user.is_authenticated %}
                             {% if user.role == 'superadmin' or user.role == 'guard' %}
                                 {% if case.action_taken == 'Counseling' %}
-                                    <a href="{% url 'counseling_form' case.id %}">{{ case.action_taken }}</a>
+                                    <a href="{% url 'counseling_form' case.id %}"><i class="fas fa-file-alt"></i> {{ case.action_taken }}</a>
                                 {% elif case.action_taken == 'Suspension' %}
                                     <a href="#" class="suspensionBtn" data-id="{{ case.id }}"
                                         data-duration="{{ case.suspension_duration|default:'' }}">
-                                        Suspension
+                                        <i class="fas fa-clock"></i> Suspension
                                     </a>
                                 {% elif case.action_taken == 'Community Service' %}
-                                    <a href="{% url 'student_hours' case.id %}">{{ case.action_taken }}</a>
+                                    <a href="{% url 'student_hours' case.id %}"><i class="fas fa-hands-helping"></i> {{ case.action_taken }}</a>
                                 {% else %}
                                     {{ case.action_taken }}
                                 {% endif %}
@@ -344,17 +391,22 @@
                             {% endif %}
                         {% endif %}
                     </td>
-                    <td>
+                    <td style="text-align: center;">
                         {% if user.is_authenticated and user.role == 'superadmin' or user.is_authenticated and user.role == 'guard' %}
-                            <a href="#" class="editBtn" data-id="{{ case.id }}" title="Edit Case">
-                                <i class="fas fa-edit"></i>
+                            <a href="#" class="editBtn" data-id="{{ case.id }}" title="Edit Case Details">
+                                <i class="fas fa-pen"></i>
                             </a>
+                        {% else %}
+                            <span style="color: #ccc;">-</span>
                         {% endif %}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" style="text-align: center;">No cases found.</td>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #888;">
+                        <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 10px; display: block; color: #ddd;"></i>
+                        No discipline cases found matching your criteria.
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -371,12 +423,15 @@
 
 <div id="editModal">
     <div class="modal-content">
-        <span id="closeEdit" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-
+        <span id="closeEdit" style="color:#888; float:right; font-size:24px; font-weight:bold; cursor:pointer; transition: color 0.2s;">&times;</span>
         <form id="editForm" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <h4>Edit Case</h4>
-            <div id="editFormFields">Loading...</div>
+            <h4><i class="fas fa-edit"></i> Edit Case Details</h4>
+            <div id="editFormFields">
+                <div style="text-align: center; padding: 20px; color: #666;">
+                    <i class="fas fa-spinner fa-spin"></i> Loading form...
+                </div>
+            </div>
         </form>
     </div>
 </div>
@@ -448,8 +503,7 @@
                     .then((html) => {
                         editFormFields.innerHTML = html;
                         editForm.action = `/discipline/cases/edit/${caseId}/`;
-                        editModal.style.display = "flex"; // Changed from flex to match CSS, but flex centers it
-                        
+                        editModal.style.display = "flex"; 
                         initializeDynamicFields(editModal);
                     })
                     .catch((err) => console.error("Error loading edit form:", err));
@@ -470,11 +524,9 @@
         // --- Suspension Button Logic ---
         document.querySelectorAll(".suspensionBtn").forEach((btn) => {
             btn.addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default anchor behavior
+                e.preventDefault(); 
                 const caseId = this.dataset.id;
                 const currentDurationString = this.dataset.duration || "";
-                
-                // Extract number from "5 days" or use empty string
                 const currentDurationValue = currentDurationString.split(' ')[0] || '';
 
                 Swal.fire({
@@ -556,15 +608,13 @@
                     },
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const newStatusValue = result.value;
-
                         fetch(`/discipline/update-status/${caseId}/`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
                                 "X-CSRFToken": "{{ csrf_token }}",
                             },
-                            body: JSON.stringify({ status: newStatusValue }),
+                            body: JSON.stringify({ status: result.value }),
                         })
                             .then((res) => res.json())
                             .then((data) => {

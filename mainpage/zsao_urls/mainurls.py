@@ -29,7 +29,6 @@ urlpatterns = [
     path('equipmenttracker', views.equipmentTracker, name="equipmentTracker"),
     path('requestgmc', views.requestedgmc, name="requestgmc"),
     path("save_equipment_borrowing/", views.save_equipment_borrowing, name="save_equipment_borrowing"),
-    path("update_return_status/", views.update_return_status, name="update_return_status"),
     path("generate-gmc/<int:request_id>/", views.generateGmc, name="generateGmc"),
     path("monthlyCalendar", views.monthlyCalendar, name="monthlyCalendar"),
     path('admin/equipment/get-student-details/', views.get_student_details_ajax, name='get_student_details_ajax'),

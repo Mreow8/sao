@@ -12,7 +12,9 @@ urlpatterns = [
     path("save_equipment_borrowing/", views.save_equipment_borrowing, name="save_equipment_borrowing"),
     path("update_return_status/", views.update_return_status, name="update_return_status"),
     path('save_schedule/', views.save_schedule, name='save_schedule'),
-    
+    # In urls.py
+path('borrowing/delete/<int:record_id>/', views.delete_borrow_record, name='delete_borrow_record'),
+path('borrowing/edit/<int:record_id>/', views.edit_borrow_record, name='edit_borrow_record'),
     # Path for UPDATING an existing schedule
 
     
