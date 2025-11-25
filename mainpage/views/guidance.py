@@ -542,7 +542,7 @@ def exit_interview(request):
         student = studentInfo.objects.get(user=request.user)
     except studentInfo.DoesNotExist:
         messages.error(request, "Could not find a student profile for your account.")
-        return redirect('some_other_page') # Change to your dashboard or home URL
+        return redirect('homepage') # Change to your dashboard or home URL
 
     # 2. Check for an ongoing request for the GET request
     ongoing_request = exit_interview_db.objects.filter(

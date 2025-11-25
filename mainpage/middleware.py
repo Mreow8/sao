@@ -41,13 +41,7 @@ class RoleRestrictionMiddleware:
                     ] 
                 },
 
-                # --- STUDENT ---
-                'student': {
-                    'dashboard_name': 'student_dashboard', 
-                    'allowed_prefixes': ['/main/', '/fe/', '/student/'] 
-                },
-
-                # --- MEDICAL / CLINIC ---
+           
                 'clinic_admin': { 
                     'dashboard_name': 'admin_dashboard', 
                     'allowed_prefixes': ['/med/', '/medical/', '/clinic/'] 
@@ -149,6 +143,7 @@ class RoleRestrictionMiddleware:
 
         response = self.get_response(request)
         return response
+
 class AlumniStatusMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
