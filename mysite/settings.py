@@ -79,6 +79,7 @@ TEMPLATES = [
                 'mainpage.context_processors.alumni_status_context',
                 'mainpage.context_processors.scholarship_status',
                     'mainpage.context_processors.theme_selection',
+                        'mainpage.context_processors.role_context',
 
             ],
         },

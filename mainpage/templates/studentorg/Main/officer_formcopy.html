@@ -14,18 +14,64 @@
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
 
 <style>
-  /* === Custom Form Styling for Django {{ form.as_p }} === */
-  /* This forces the Django-rendered inputs to match Tailwind styles */
+  /* === 1. GLOBAL COLOR VARIABLES (Change color here!) === */
+  :root {
+    --primary-color: #2c5282; /* The Blue you requested */
+    --primary-dark: #1a365d; /* Darker blue for hover states */
+    --focus-ring: rgba(44, 82, 130, 0.2);
+  }
 
+  /* === 2. AUTOCOMPLETE FIX === */
+  .ui-autocomplete {
+    z-index: 9999 !important;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: white;
+    border: 1px solid #cbd5e0;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* === 3. CUSTOM THEME CLASSES === */
+  /* Text Color */
+  .text-theme {
+    color: var(--primary-color) !important;
+  }
+
+  /* Hover Text */
+  .hover-text-theme:hover {
+    color: var(--primary-color) !important;
+  }
+
+  /* Backgrounds (Buttons) */
+  .bg-theme {
+    background-color: var(--primary-color);
+    color: white;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .bg-theme:hover {
+    background-color: var(--primary-dark);
+  }
+
+  /* Side Menu Hover Effects (Replaces Group Hover) */
+  .menu-link:hover .menu-text,
+  .menu-link:hover .menu-icon,
+  .menu-link:hover .menu-arrow {
+    color: var(--primary-color);
+    transition: color 0.2s;
+  }
+
+  /* === 4. FORM STYLING === */
   #officer-main-form p {
     margin-bottom: 1rem;
   }
 
   #officer-main-form label {
     display: block;
-    font-size: 0.875rem; /* text-sm */
+    font-size: 0.875rem;
     font-weight: 600;
-    color: #374151; /* text-gray-700 */
+    color: #374151;
     margin-bottom: 0.25rem;
   }
 
@@ -39,19 +85,20 @@
     width: 100%;
     padding: 0.5rem 1rem;
     background-color: #fff;
-    border: 1px solid #d1d5db; /* border-gray-300 */
-    border-radius: 0.5rem; /* rounded-lg */
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
     font-size: 0.875rem;
     color: #1f2937;
     transition: all 0.2s;
   }
 
+  /* Focus States using Variable */
   #officer-main-form input:focus,
   #officer-main-form select:focus,
   #officer-main-form textarea:focus {
     outline: none;
-    border-color: #3b82f6; /* blue-500 */
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--focus-ring);
   }
 
   #officer-main-form input[type="checkbox"] {
@@ -59,9 +106,8 @@
     margin-right: 0.5rem;
   }
 
-  /* Error List Styling */
   .errorlist {
-    color: #dc2626; /* red-600 */
+    color: #dc2626;
     font-size: 0.75rem;
     font-weight: 600;
     list-style: none;
@@ -69,7 +115,6 @@
     margin-top: 0.25rem;
   }
 
-  /* Custom Scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
@@ -86,15 +131,15 @@
 <div class="sub-title mb-6">
   <h4 class="text-xl font-bold text-gray-800">STUDENT ORGANIZATION</h4>
   <div class="flex items-center gap-2 text-sm text-gray-500">
-    <a href="{% url 'homepage' %}" class="hover:text-blue-600">Home</a>
+    <a href="{% url 'homepage' %}" class="hover-text-theme">Home</a>
     <span>&gt;</span>
     <a
       href="{% url 'org_profile' slug=organization.slug %}"
-      class="hover:text-blue-600"
+      class="hover-text-theme"
       >{{ organization.name }}</a
     >
     <span>&gt;</span>
-    <span class="text-blue-600 font-medium">Register Officer</span>
+    <span class="text-theme font-medium">Register Officer</span>
   </div>
 </div>
 <hr class="mb-6 border-gray-200" />
@@ -130,7 +175,7 @@
         {% csrf_token %}
 
         <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
-          <h3 class="text-blue-800 font-bold mb-4 flex items-center gap-2">
+          <h3 class="text-theme font-bold mb-4 flex items-center gap-2">
             <i class="fas fa-user-shield"></i> Officer Info
           </h3>
           <div class="grid grid-cols-1 gap-2">{{ officer_form.as_p }}</div>
@@ -144,7 +189,7 @@
             <button
               type="button"
               id="add-membership"
-              class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition"
+              class="bg-theme text-xs px-3 py-1.5 rounded-lg transition"
             >
               <i class="fas fa-plus"></i> Add Row
             </button>
@@ -168,7 +213,7 @@
             <button
               type="button"
               id="add-seminar"
-              class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition"
+              class="bg-theme text-xs px-3 py-1.5 rounded-lg transition"
             >
               <i class="fas fa-plus"></i> Add Row
             </button>
@@ -186,7 +231,7 @@
         <div class="pt-4">
           <button
             type="submit"
-            class="w-full py-3 px-6 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg transition transform hover:-translate-y-0.5"
+            class="bg-theme w-full py-3 px-6 font-bold rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
           >
             Save Officer Profile
           </button>
@@ -204,49 +249,45 @@
         <div class="space-y-2">
           <a
             href="{% url 'org_profile' slug=organization.slug %}"
-            class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group"
+            class="menu-link flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition"
           >
-            <span class="text-gray-700 font-medium group-hover:text-blue-700"
-              ><i class="fas fa-info-circle w-6 text-center"></i> About</span
+            <span class="menu-text text-gray-700 font-medium"
+              ><i class="menu-icon fas fa-info-circle w-6 text-center"></i>
+              About</span
             >
-            <i
-              class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"
-            ></i>
+            <i class="menu-arrow fas fa-chevron-right text-gray-400"></i>
           </a>
           <a
             href="{% url 'view_project_by_slug' slug=organization.slug %}"
-            class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group"
+            class="menu-link flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition"
           >
-            <span class="text-gray-700 font-medium group-hover:text-blue-700"
-              ><i class="fas fa-project-diagram w-6 text-center"></i>
+            <span class="menu-text text-gray-700 font-medium"
+              ><i class="menu-icon fas fa-project-diagram w-6 text-center"></i>
               Projects</span
             >
-            <i
-              class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"
-            ></i>
+            <i class="menu-arrow fas fa-chevron-right text-gray-400"></i>
           </a>
           <a
             href="{% url 'view_financial_by_slug' slug=organization.slug %}"
-            class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group"
+            class="menu-link flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition"
           >
-            <span class="text-gray-700 font-medium group-hover:text-blue-700"
-              ><i class="fas fa-file-invoice-dollar w-6 text-center"></i>
+            <span class="menu-text text-gray-700 font-medium"
+              ><i
+                class="menu-icon fas fa-file-invoice-dollar w-6 text-center"
+              ></i>
               Financials</span
             >
-            <i
-              class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"
-            ></i>
+            <i class="menu-arrow fas fa-chevron-right text-gray-400"></i>
           </a>
           <a
             href="{% url 'view_officers' slug=organization.slug %}"
-            class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition group"
+            class="menu-link flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-50 transition"
           >
-            <span class="text-gray-700 font-medium group-hover:text-blue-700"
-              ><i class="fas fa-user-tie w-6 text-center"></i> Officers</span
+            <span class="menu-text text-gray-700 font-medium"
+              ><i class="menu-icon fas fa-user-tie w-6 text-center"></i>
+              Officers</span
             >
-            <i
-              class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500"
-            ></i>
+            <i class="menu-arrow fas fa-chevron-right text-gray-400"></i>
           </a>
         </div>
       </div>
@@ -276,34 +317,46 @@
 
 <script>
   // --- 1. Dynamic Form Fields (Membership & Seminars) ---
-  // Logic adapted to work with Tailwind containers
+  // FIXED: Logic adapted to create UNIQUE IDs to prevent DOM errors
+  function addRow(containerId, rowClass) {
+    let container = document.getElementById(containerId);
+    let firstRow = container.querySelector("." + rowClass);
+
+    if (firstRow) {
+      let newRow = firstRow.cloneNode(true);
+      let uniqueSuffix = Date.now(); // Generate unique timestamp
+
+      // Find all inputs/selects in the new row
+      newRow.querySelectorAll("input, select, textarea").forEach((el) => {
+        // 1. Clear the value
+        el.value = "";
+
+        // 2. Update ID to be unique
+        if (el.id) {
+          let oldId = el.id;
+          let newId = oldId + "_" + uniqueSuffix;
+          el.id = newId;
+
+          // 3. Update the corresponding label's 'for' attribute
+          let label = newRow.querySelector(`label[for='${oldId}']`);
+          if (label) {
+            label.setAttribute("for", newId);
+          }
+        }
+      });
+
+      container.appendChild(newRow);
+    }
+  }
 
   document
     .getElementById("add-membership")
     .addEventListener("click", function () {
-      let container = document.getElementById("membership-container");
-      // Clone the first row
-      let firstRow = container.querySelector(".membership-row");
-      if (firstRow) {
-        let newRow = firstRow.cloneNode(true);
-        // Clear inputs
-        newRow.querySelectorAll("input, select").forEach((el) => {
-          el.value = "";
-        });
-        container.appendChild(newRow);
-      }
+      addRow("membership-container", "membership-row");
     });
 
   document.getElementById("add-seminar").addEventListener("click", function () {
-    let container = document.getElementById("seminar-container");
-    let firstRow = container.querySelector(".seminar-row");
-    if (firstRow) {
-      let newRow = firstRow.cloneNode(true);
-      newRow.querySelectorAll("input, select").forEach((el) => {
-        el.value = "";
-      });
-      container.appendChild(newRow);
-    }
+    addRow("seminar-container", "seminar-row");
   });
 
   // --- 2. Age Calculation ---

@@ -231,7 +231,7 @@
           {% endwith %}
           {% endif %}
 
-          {% if user.role == 'superadmin' %}
+         {% if user.role == 'superadmin' or is_org_admin %}
           {% with section_urls='admin_manageofficer,Gen_Home' %}
           <li>
             <a href="#" class="student_org-btn {% if current_url in section_urls %}active{% endif %}">STUDENT ORGANIZATION

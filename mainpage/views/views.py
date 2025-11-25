@@ -390,46 +390,46 @@ def signinuser(request):
 
     return render(request, 'login.html')
 
-def get_base_template(user):
-    if not user.is_authenticated:
-        return 'main.html' 
-        
-    if hasattr(user, 'role'):
-        # --- 1. Specific Role Checks ---
-        
-        if user.role == 'clinic_admin':
-            return 'roles/clinic_admin.html'
-            
-        elif user.role == 'guidance':
-            return 'roles/guidance_admin.html' # Make sure this file exists
-            
-        elif user.role == 'scholarship_admin':
-            return 'roles/scholarship_admin.html' # Make sure this file exists
-            
-        elif user.role == 'placement_officer':
-            return 'roles/placement_admin.html' # Make sure this file exists
-            
-        elif user.role == 'alumni_officer':
-            return 'roles/alumni_admin.html' # Make sure this file exists
-            
-        elif user.role == 'community_admin':
-            return 'roles/community_admin.html' # Make sure this file exists
-            
-        elif user.role == 'org_admin':
-            return 'roles/org_admin.html' # Make sure this file exists
-            
-        elif user.role == 'discipline_officer':
-            return 'roles/discipline_admin.html' # Make sure this file exists
-            
-        elif user.role == 'student_life_admin':
-            return 'adminmain.html' # Main admin usually gets the default
+# ...existing code...
+ROLE_TEMPLATE_MAP = {
+    "clinic_admin": "roles/clinic_admin.html",
+    "guidance": "roles/guidance_admin.html",
+    "scholarship_admin": "roles/scholarship_admin.html",
+    "placement_officer": "roles/placement_admin.html",
+    "alumni_officer": "roles/alumni_admin.html",
+    "community_admin": "roles/community_admin.html",
+    "org_admin": "roles/org_admin.html",
+    "discipline_officer": "roles/discipline_admin.html",
+    "student_life_admin": "adminmain.html",
+    "staff": "roles/staff_med.html",
+}
 
-    # --- 2. Fallback for Superusers/Staff without specific role ---
-    if user.is_staff or user.is_superuser:
-        return 'adminmain.html'
-        
- 
-    return 'main.html'
+def get_base_template(user):
+    """
+    Return base template name for the given user with precedence:
+      - unauthenticated -> 'main.html'
+      - superuser         -> 'adminmain.html'
+      - role mapping      -> ROLE_TEMPLATE_MAP
+      - staff fallback    -> 'adminmain.html'
+      - default           -> 'main.html'
+    """
+    if not getattr(user, "is_authenticated", False):
+        return "main.html"
+
+    if getattr(user, "is_superuser", False):
+        return "adminmain.html"
+
+    role = getattr(user, "role", None)
+    if role:
+        template = ROLE_TEMPLATE_MAP.get(role)
+        if template:
+            return template
+
+    if getattr(user, "is_staff", False):
+        return "adminmain.html"
+
+    return "main.html"
+# ...existing code...
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from itertools import chain

@@ -1,3 +1,6 @@
+from django.conf import settings
+from .models import studentInfo, scholars
+
 def alumni_status_context(request):
     """
     Passes the alumni status variables from the middleware
@@ -7,7 +10,14 @@ def alumni_status_context(request):
         'is_alumni_approved': getattr(request, 'is_alumni_approved', False),
         'has_filled_tracer': getattr(request, 'has_filled_tracer', False)
     }
-from .models import studentInfo, scholars  # Make sure to import your models
+
+def role_context(request):
+    user = getattr(request, 'user', None)
+    role = getattr(user, 'role', None) if user and getattr(user, 'is_authenticated', False) else None
+    return {
+        'user_role': role,
+        'is_org_admin': role == 'org_admin'
+    }
 
 def scholarship_status(request):
     if not request.user.is_authenticated:
@@ -43,7 +53,8 @@ def theme_selection(request):
             
             if role == 'clinic_admin':
                 template = 'roles/clinic_admin.html'
-                
+            elif role == 'staff':
+                template = 'roles/staff_med.html'
             elif role == 'guidance':
                 template = 'roles/guidance_admin.html'
                 
@@ -57,7 +68,8 @@ def theme_selection(request):
                 template = 'alumni_admin.html'
                 
             elif role == 'community_admin':
-                template = 'roles/roles/community_admin.html'
+                # Fixed typo: was 'roles/roles/community_admin.html'
+                template = 'roles/community_admin.html'
                 
             elif role == 'org_admin':
                 template = 'roles/org_admin.html'
@@ -68,8 +80,7 @@ def theme_selection(request):
             elif role == 'student_life_staff':
                 template = 'adminmain.html'
 
-        # 2. Fallback for Superusers/Staff who might not have a specific 'role' set
-        # If template is still 'main.html' but they are admin, give them the main admin dashboard
+
         if template == 'main.html' and (request.user.is_staff or request.user.is_superuser):
             template = 'adminmain.html'
             

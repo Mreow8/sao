@@ -6,7 +6,6 @@ from django.urls import reverse, NoReverseMatch
 from django.contrib import messages
 
 logger = logging.getLogger(__name__)
-
 class RoleRestrictionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -18,72 +17,94 @@ class RoleRestrictionMiddleware:
             if request.user.is_superuser:
                 return self.get_response(request)
 
+            # Common paths allowed for ALL users
+            global_allowed = [
+                '/sao/logout/', 
+                'main/login/', 
+                '/change-password/', 
+                '/media/', 
+                '/static/',
+                '/admin/' 
+            ]
+
             ROLE_CONFIG = {
+                # --- STAFF (Restricted to Medical Sidebar Links) ---
+                'staff': { 
+                    'dashboard_name': 'student_dashboard', 
+                    # specific prefixes based on your sidebar links
+                    'allowed_prefixes': [
+                        '/med/', 
+                        '/medical/', 
+                        '/dental/', 
+                        '/requests/', 
+                        '/requirements/'
+                    ] 
+                },
+
+                # --- STUDENT ---
+                'student': {
+                    'dashboard_name': 'student_dashboard', 
+                    'allowed_prefixes': ['/main/', '/fe/', '/student/'] 
+                },
+
                 # --- MEDICAL / CLINIC ---
                 'clinic_admin': { 
                     'dashboard_name': 'admin_dashboard', 
-                    'allowed_prefixes': ['/med/', '/medical/', '/clinic/', '/media/', '/static/', '/'] 
+                    'allowed_prefixes': ['/med/', '/medical/', '/clinic/'] 
                 },
 
                 # --- GUIDANCE ---
                 'guidance': { 
                     'dashboard_name': 'guidance_dashboard', 
-                    'allowed_prefixes': ['/guidance/', '/media/', '/static/', '/sao/', '/', '/logout/'] 
+                    'allowed_prefixes': ['/guidance/', '/sao/'] 
                 },
 
                 # --- SCHOLARSHIP ---
                 'scholarship_admin': { 
                     'dashboard_name': 'scholarship_dashboard', 
-                    'allowed_prefixes': ['/scholarship/', '/media/', '/static/', '/'] 
+                    'allowed_prefixes': ['/scholarship/'] 
                 },
 
                 # --- JOB PLACEMENT ---
                 'placement_officer': { 
                     'dashboard_name': 'placement_dashboard', 
-                    'allowed_prefixes': ['/jobplacement/', '/media/', '/static/'] 
+                    'allowed_prefixes': ['/jobplacement/'] 
                 },
 
                 # --- ALUMNI ---
                 'alumni_officer': { 
                     'dashboard_name': 'alumni_dashboard', 
-                    'allowed_prefixes': [
-                        '/alumni/',       
-                        '/alum/',         
-                        '/media/', 
-                        '/static/', 
-                        '/' 
-                    ] 
+                    'allowed_prefixes': ['/alumni/', '/alum/'] 
                 },
 
                 # --- COMMUNITY INVOLVEMENT ---
                 'community_admin': { 
                     'dashboard_name': 'community_dashboard', 
-                    'allowed_prefixes': ['/community/', '/media/', '/static/'] 
+                    'allowed_prefixes': ['/community/'] 
                 },
 
                 # --- ORGANIZATION ---
                 'org_admin': { 
                     'dashboard_name': 'org_dashboard', 
-                    'allowed_prefixes': ['/org/', '/organizations/', '/media/', '/static/' , '/'] 
+                    'allowed_prefixes': ['/org/', '/organizations/'] 
                 },
 
                 # --- DISCIPLINE ---
                 'discipline_officer': { 
                     'dashboard_name': 'discipline_dashboard', 
-                    'allowed_prefixes': ['/discipline/', '/media/', '/static/', '/'] 
+                    'allowed_prefixes': ['/discipline/'] 
                 },
 
                 # --- STUDENT LIFE (MAIN) ---
                 'student_life_admin': {
                     'dashboard_name': 'student_life_dashboard',
-                    'allowed_prefixes': ['/main/', '/fe/', '/media/', '/static/', '/']
+                    'allowed_prefixes': ['/main/', '/fe/']
                 },
 
-                # --- SECURITY GUARD (ADDED THIS) ---
+                # --- SECURITY GUARD ---
                 'guard': {
                     'dashboard_name': 'guard_homepage', 
-                    # Only allow discipline URLs (for reports), static files, and logout
-                    'allowed_prefixes': ['/discipline/', '/media/', '/static/', '/logout/', '/login/'] 
+                    'allowed_prefixes': ['/discipline/'] 
                 }
             }
 
@@ -97,7 +118,6 @@ class RoleRestrictionMiddleware:
                 try:
                     dashboard_url = reverse(config['dashboard_name'])
                 except (NoReverseMatch, Exception):
-                    # Fallback to root if dashboard URL fails
                     dashboard_url = '/' 
 
                 # ALLOW: If user is already at their dashboard
@@ -107,15 +127,13 @@ class RoleRestrictionMiddleware:
                 current_path = request.path
                 is_allowed = False
 
-                # ALLOW: Global whitelist (Logout, Home, etc.)
-                # Add any shared pages here that ALL admins need access to
-                global_allowed = ['/logout/', '/login/', '/admin/', '/change-password/']
+                # A. Check Global Whitelist
                 for path in global_allowed:
                     if current_path.startswith(path):
                         is_allowed = True
                         break
 
-                # ALLOW: Role-specific prefixes
+                # B. Check Role-Specific Prefixes
                 if not is_allowed:
                     for prefix in config['allowed_prefixes']:
                         if current_path.startswith(prefix):
@@ -124,16 +142,13 @@ class RoleRestrictionMiddleware:
 
                 # BLOCK: If path is not allowed, redirect to dashboard
                 if not is_allowed:
-                    # Don't spam messages on AJAX requests
                     if not request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                        messages.error(request, f"Access Denied: You are not authorized to access this area.")
+                        messages.error(request, "Access Denied: You are restricted to your department area.")
                     
                     return redirect(dashboard_url)
 
         response = self.get_response(request)
         return response
-
-
 class AlumniStatusMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

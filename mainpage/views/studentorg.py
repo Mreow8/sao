@@ -126,7 +126,7 @@ from django.db.models import Q
 def view_adviser(request, org_slug):                             
     # 1. Get base objects
     organization = get_object_or_404(Organization, slug=org_slug)
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+    
 
     # 2. Get parameters from URL
     search_query = request.GET.get('search', None)
@@ -183,7 +183,6 @@ def view_adviser(request, org_slug):
     context = {
         'page_obj': page_obj,  # Use page_obj instead of 'advisers'
         'organization': organization,
-        'base_template': base_template,
         'current_sort': sort_by,
         'current_order': order,
         'search_params': search_params
@@ -191,8 +190,7 @@ def view_adviser(request, org_slug):
     
     return render(request, 'studentorg/VIEW/view_advisers.html', context)
 def view_adviser(request, org_slug):
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
-
+  
     # Get the organization by slug
     organization = get_object_or_404(Organization, slug=org_slug)
 
@@ -201,7 +199,6 @@ def view_adviser(request, org_slug):
 
     return render(request, 'studentorg/main/view_adviser.html', {
         'advisers': approved_advisers,
-        'base_template': base_template,
 
         'organization': organization
     })
@@ -226,7 +223,7 @@ def upload_accreditation(request, slug):
 # 2. Show details of a single accreditation
 def accreditation_detail(request, accreditation_id):
     accreditation = get_object_or_404(Accreditation, pk=accreditation_id)
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+  
 
 
     return render(request, "main/accreditation_detail.html", {
@@ -234,7 +231,7 @@ def accreditation_detail(request, accreditation_id):
     })
 def view_financial(request, slug):
     print("🔍 view_financial called with slug:", slug)
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+   
 
     try:
         org_obj = Organization.objects.get(slug=slug)
@@ -276,7 +273,6 @@ def view_financial(request, slug):
         'statements': approved_statements,
         'org': org_obj,
         'slug': slug,
-        'base_template': base_template,
     })
 
 
@@ -294,7 +290,7 @@ from ..forms import (
 
 def register_adviser(request, slug):
     organization = get_object_or_404(Organization, slug=slug)
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+    
 
     # --- Create the Formsets ---
     # We tell each formset how many "extra" (blank) forms to create
@@ -362,7 +358,6 @@ def register_adviser(request, slug):
 
     context = {
         'organization': organization,
-        'base_template': base_template,
         'slug': slug,
         'adviser_form': adviser_form,
         'education_formset': education_formset,
@@ -394,14 +389,19 @@ from django.shortcuts import render, redirect
 from ..forms import OfficerForm, OfficerMembershipForm, OfficerSeminarForm
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect
+from django.contrib import messages
+# Make sure to import your forms correctly above
 
 def officer_create(request):
     if request.method == "POST":
-        officer_form = OfficerForm(request.POST)
-        membership_form = OfficerMembershipForm(request.POST)
-        seminar_form = OfficerSeminarForm(request.POST)
+        # 1. Add prefixes to POST data so Django knows which data belongs to which form
+        # Note: Added request.FILES to officer_form in case you have image uploads
+        officer_form = OfficerForm(request.POST, request.FILES, prefix='officer')
+        membership_form = OfficerMembershipForm(request.POST, prefix='membership')
+        seminar_form = OfficerSeminarForm(request.POST, prefix='seminar')
 
-        if (officer_form.is_valid() and membership_form.is_valid() and seminar_form.is_valid()):
+        if officer_form.is_valid() and membership_form.is_valid() and seminar_form.is_valid():
             officer = officer_form.save()  # Save Officer first
 
             # Link related models
@@ -415,6 +415,7 @@ def officer_create(request):
 
             # ✅ Success popup
             messages.success(request, "Officer record was successfully created 🎉")
+            # Ensure 'officer_list' matches your urls.py name
             return redirect("officer_list")
 
         else:
@@ -422,9 +423,10 @@ def officer_create(request):
             messages.error(request, "There was an error saving the officer. Please check the form.")
 
     else:
-        officer_form = OfficerForm()
-        membership_form = OfficerMembershipForm()
-        seminar_form = OfficerSeminarForm()
+        # 2. Add prefixes here too so the HTML renders with IDs like 'id_officer-position'
+        officer_form = OfficerForm(prefix='officer')
+        membership_form = OfficerMembershipForm(prefix='membership')
+        seminar_form = OfficerSeminarForm(prefix='seminar')
 
     return render(request, "studentorg/Main/officer_formcopy.html", {
         "officer_form": officer_form,
@@ -478,11 +480,7 @@ def search_students(request):
 # THIS IS YOUR MAIN VIEW, UPDATED
 #
 def officer_form(request, slug=None):
-    base_template = (
-        "adminmain.html"
-        if request.user.is_staff or request.user.is_superuser
-        else "main.html"
-    )
+ 
 
     organization = None
     if slug:
@@ -561,7 +559,6 @@ def officer_form(request, slug=None):
             "membership_form": membership_form,
             "seminar_form": seminar_form,
             "organization": organization,
-            "base_template": base_template,
         },
     )
 # def officer_forms(request):
@@ -608,7 +605,6 @@ from collections import defaultdict
 # Replace your old view_officers function with this one
 def view_officers(request, slug):
     org = get_object_or_404(Organization, slug=slug)
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
 
     # 1. Get the selected year from the URL query
     selected_year = request.GET.get('year', None)
@@ -648,7 +644,6 @@ def view_officers(request, slug):
     context = {
         'org': org,
         'grouped_officer_lists': officers_grouped.values(),
-        'base_template': base_template,
         'distinct_years': distinct_years,    # The list of years for the menu
         'selected_year': selected_year,   # The currently active filter
     }
@@ -666,7 +661,7 @@ def edit_org(request, slug):
         form = OrganizationForm(instance=org)
     return render(request, 'studentorg/Main/OrgMain.html', {'form': form})
 def view_project_by_slug(request, slug):
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+ 
     org = get_object_or_404(Organization, slug=slug)
 
     # --- START OF NEW CODE ---
@@ -704,13 +699,12 @@ def view_project_by_slug(request, slug):
     return render(request, 'studentorg/Main/view_projects.html', {
         'org': org,
         'projects': projects,
-        'base_template': base_template,
     })
 # Add this function to scholarship.py
 from django.db.models import Q # Make sure Q is imported at the top of the file
 @login_required
 def org_profile(request, slug):
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+  
     org = get_object_or_404(Organization, slug=slug)
 
     # Check if user can edit this org
@@ -753,7 +747,6 @@ def org_profile(request, slug):
         'org': org,
         'form': form,
         'is_edit': is_edit,
-        'base_template': base_template, 
         'key_elements': org.key_elements or [],
         
         # --- ADD THESE 3 LINES TO YOUR CONTEXT ---
@@ -798,10 +791,10 @@ def org_profile_view(request, org_id, mode='view'):
         })
 
 def Gen_Home(request):
-    base_template = "adminmain.html" if request.user.is_staff or request.user.is_superuser else "main.html"
+   
     orgs = Organization.objects.all()
     return render(request, "studentorg/VIEW/OrgMain.html", {"orgs": orgs,
-        'base_template': base_template,  # pass base template to HTML
+       # pass base template to HTML
     })
 # def home(request):
 #     return render (request, "studentorg/VIEW/OrgMain.html")
@@ -956,6 +949,8 @@ def admin_transactionreport(request):
 def admin_manageofficer(request):
     # 1. Determine Base Template and Context Context
     base_template = "main.html" # Default
+
+
     org_context = None
 
     # Logic to choose template and get Org data
