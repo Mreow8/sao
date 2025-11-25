@@ -56,6 +56,13 @@ from ..models import (
     studentInfo, RequestedGMC, BorrowingRecord, Schedule, Equipment
 )
 
+# In views/studentlife.py
+
+from ..models import (
+    studentInfo, Equipment, BorrowingRecord, RequestedGMC, Schedule,
+    ProcurementItem, Storage, ExcelData, Organization, CaseProfile # <--- Added CaseProfile
+)
+
 @sao_admin_required
 def admin_dashboard(request):
     # 1. Calculate Top Stats
@@ -64,64 +71,101 @@ def admin_dashboard(request):
     
     pending_gmc = RequestedGMC.objects.filter(processed=False).count()
     pending_equipment = BorrowingRecord.objects.filter(is_returned=False).count()
-    total_pending = pending_gmc + pending_equipment
+    pending_cases = CaseProfile.objects.filter(status='Pending').count() # Added pending cases
+    
+    total_pending = pending_gmc + pending_equipment + pending_cases
 
     # 2. Prepare Calendar Events
-    # Converting Schedule objects to the JSON format required by the JS calendar
     schedules = Schedule.objects.all()
     events_data = []
     for sched in schedules:
         events_data.append({
             'date': sched.start_date.strftime("%Y-%m-%d"),
-            'status': 'approved', # You can add logic here to vary colors
+            'status': 'approved',
             'title': sched.title
         })
 
-    # 3. Prepare Request List (Combining GMC and Equipment)
+    # 3. NOTIFICATIONS / RECENT ACTIVITY FEED
+    # We collect recent items from different models to show "What's happening"
+    notifications = []
+
+    # A. Discipline Cases (Guard Reports)
+    recent_cases = CaseProfile.objects.order_by('-date_reported', '-id')[:5]
+    for case in recent_cases:
+        # Check if reported by a Guard to add specific styling/text
+        is_guard = 'Guard' in (case.reported_by or '')
+        notifications.append({
+            'type': 'discipline',
+            'icon': 'fa-shield-alt' if is_guard else 'fa-gavel',
+            'color': 'red',
+            'title': f"Incident Reported: {case.offense_type}",
+            'user': f"{case.student.firstname} {case.student.lastname}",
+            'meta': f"Reported by: {case.reported_by}",
+            'date': case.date_reported, 
+            'is_new': case.status == 'Pending'
+        })
+
+    # B. GMC Requests
+    recent_gmc = RequestedGMC.objects.order_by('-request_date')[:5]
+    for req in recent_gmc:
+        notifications.append({
+            'type': 'gmc',
+            'icon': 'fa-file-alt',
+            'color': 'blue',
+            'title': "Good Moral Request",
+            'user': f"{req.student.firstname} {req.student.lastname}",
+            'meta': req.reason,
+            'date': req.request_date.date(), # Convert to date for consistent sorting
+            'is_new': not req.processed
+        })
+
+    # C. Equipment Borrowing
+    recent_borrow = BorrowingRecord.objects.order_by('-date_borrowed')[:5]
+    for borrow in recent_borrow:
+        notifications.append({
+            'type': 'equipment',
+            'icon': 'fa-tools',
+            'color': 'yellow',
+            'title': "Equipment Borrowed",
+            'user': f"{borrow.student.firstname} {borrow.student.lastname}",
+            'meta': borrow.equipment.equipmentName,
+            'date': borrow.date_borrowed,
+            'is_new': not borrow.is_returned
+        })
+
+    # Sort combined notifications by date (newest first)
+    # Note: Python sort is stable; relies on 'date' field being comparable
+    notifications.sort(key=lambda x: x['date'], reverse=True)
+
+
+    # 4. Prepare Request List (For the Table)
     all_upcoming_requests = []
 
-    # A. Process GMC Requests (Mapped to 'documentary')
+    # (Existing logic for table...)
     gmc_requests = RequestedGMC.objects.filter(processed=False).select_related('student')
     for req in gmc_requests:
         all_upcoming_requests.append({
             'type': 'documentary',
-            'user_info': {
-                'id': req.student.studID,
-                'name': f"{req.student.firstname} {req.student.lastname}",
-            },
-            'request': {
-                'request_type': 'Good Moral Certificate',
-                'date_requested': req.request_date,
-                'status': 'pending'
-            }
+            'user_info': {'id': req.student.studID, 'name': f"{req.student.firstname} {req.student.lastname}"},
+            'request': {'request_type': 'Good Moral Certificate', 'date_requested': req.request_date, 'status': 'pending'}
         })
 
-    # B. Process Equipment Borrowing (Mapped to 'equipment')
     borrow_requests = BorrowingRecord.objects.filter(is_returned=False).select_related('student', 'equipment')
     for req in borrow_requests:
         all_upcoming_requests.append({
             'type': 'equipment',
-            'user_info': {
-                'id': req.student.studID,
-                'name': f"{req.student.firstname} {req.student.lastname}",
-            },
-            'request': {
-                'request_type': f"Borrowed: {req.equipment.equipmentName}",
-                'date_requested': req.date_borrowed,
-                'status': 'active' # Using 'active' effectively acts as pending return
-            }
+            'user_info': {'id': req.student.studID, 'name': f"{req.student.firstname} {req.student.lastname}"},
+            'request': {'request_type': f"Borrowed: {req.equipment.equipmentName}", 'date_requested': req.date_borrowed, 'status': 'active'}
         })
 
-    # Sort requests by date (newest first)
-    # Note: handling different date field names in sorting might be complex, 
-    # so we append them first then sort if needed, or just display as is.
-
     context = {
-        'total_patients': total_students, # Labelled as Students in UI
-        'total_records': total_equipment, # Labelled as Inventory/Equipment
+        'total_students': total_students,
+        'total_equipment': total_equipment,
         'pending_requests': total_pending,
-        'events': events_data, # Passed as raw list, template will json_script it
+        'pending_cases': pending_cases, # Added specific stat
+        'events': events_data,
         'all_upcoming_requests': all_upcoming_requests,
+        'notifications': notifications[:8], # Limit to top 8 recent items
         'active_tab': 'all',
         'base_template': 'adminmain.html'
     }

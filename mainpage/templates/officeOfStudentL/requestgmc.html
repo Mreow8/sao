@@ -1,53 +1,229 @@
 {% extends 'main.html' %} {% load static %} {% block bodycontent %}
 
-<!-- Include External CSS -->
 <link
   rel="stylesheet"
   href="{% static 'styles/studentlife/requestgmc.css' %}"
 />
 <link rel="stylesheet" href="{% static 'header.css' %}" />
 
-<!-- External Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
-  href="https://fonts.googleapis.com/css2?family=Freeman&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
   rel="stylesheet"
 />
 
-<!-- Page Content -->
-<div class="container">
-  <div class="sub-title">
-    <h4>STUDENT LIFE</h4>
-    <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-    <p class="certxt">&gt; Good Moral Certificate Issuance</p>
-  </div>
-  <hr />
+<style>
+  /* --- Modern Dashboard Styling --- */
+  :root {
+    --primary-color: #2c5282;
+    --success-color: #2c5282;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --dark-text: #5a5c69;
+    --light-bg: #f8f9fc;
+    --border-color: #e3e6f0;
+  }
 
+  body {
+    font-family: "Rubik", sans-serif;
+    background-color: #f8f9fa;
+  }
+
+  /* Container */
+  .container {
+    max-width: 1000px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Pending Box */
+  .pending-request-box {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .pending-request-box h4 {
+    margin-top: 0;
+    color: #856404;
+    font-weight: 700;
+  }
+  .alert-warning {
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* Request Form */
+  #requestForm {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .title-txt p {
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  input#comboBox {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #d1d3e2;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #6e707e;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  input#comboBox:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+  }
+
+  .requestBtn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .requestBtn:hover {
+    background-color: #2e59d9;
+  }
+
+  /* --- History Section --- */
+  .history-wrapper h4 {
+    color: var(--dark-text);
+    font-weight: 700;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--primary-color);
+    padding-left: 10px;
+  }
+
+  .gmc-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+  }
+
+  thead th {
+    background-color: var(--light-bg);
+    color: var(--primary-color);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    padding: 15px;
+    border-bottom: 2px solid var(--border-color);
+    text-align: left;
+  }
+
+  tbody td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--dark-text);
+    vertical-align: middle;
+    font-size: 0.95rem;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+  tbody tr:hover {
+    background-color: #fafbfc;
+  }
+
+  /* Status Badges */
+  .status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-pending {
+    background-color: rgba(246, 194, 62, 0.15);
+    color: #f6c23e;
+  }
+
+  .status-processed {
+    background-color: rgba(28, 200, 138, 0.15);
+    color: #2c5282;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1.5rem;
+      margin: 20px;
+    }
+  }
+</style>
+<div class="sub-title">
+  <h4>STUDENT LIFE</h4>
+  <p class="hometext">
+    <a href="{% url 'homepage' %}">Home</a>
+    <span class="certxt">&gt; Good Moral Certificate</span>
+  </p>
+</div>
+<hr />
+<div class="container">
   <div class="gmc-form">
     <div class="gmc-wrapper">
       {% if existing_request %}
       <div class="pending-request-box">
-        <h4>Pending Request</h4>
-        <p><strong>Reason:</strong> {{ existing_request.reason }}</p>
-        <p>
-          <!-- prettier-ignore -->
-          <strong>Date Requested:</strong>
-
-          {{ existing_request.request_date }}
-        </p>
+        <h4><i class="fas fa-clock"></i> Pending Request</h4>
+        <div style="margin: 15px 0">
+          <p><strong>Reason:</strong> {{ existing_request.reason }}</p>
+          <p>
+            <strong>Date Requested:</strong> {{ existing_request.request_date }}
+          </p>
+        </div>
         <p class="alert-warning">
           You already have a pending Good Moral Certificate request. Please wait
-          until it is processed.
+          until it is processed by the admin.
         </p>
       </div>
       {% else %}
       <form id="requestForm" action="{% url 'requestgmc' %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="student_id" value="{{ student.studID }}" />
+
         <div class="title-txt">
-          <p>Reason for Request:</p>
-          <input list="options" id="comboBox" name="comboBox" />
+          <p>Select Reason for Request:</p>
+          <input
+            list="options"
+            id="comboBox"
+            name="comboBox"
+            placeholder="Type or select a reason..."
+            required
+          />
           <datalist id="options" class="menu">
             <option value="Transfer"></option>
             <option value="Scholarship"></option>
@@ -57,20 +233,19 @@
             <option value="Visa Applications"></option>
             <option value="SPES application"></option>
           </datalist>
+
           <input type="hidden" name="reason" id="reason" />
+
           <button type="submit" class="requestBtn" name="requestBtn">
-            REQUEST
+            Submit Request
           </button>
         </div>
       </form>
       {% endif %}
     </div>
 
-    <hr style="margin: 40px 0; border-top: 1px solid #eee" />
-
-    <!-- History Table -->
-    <div class="history-wrapper">
-      <h4>Your Request History</h4>
+    <div class="history-wrapper" style="margin-top: 40px">
+      <h4>Request History</h4>
       <div class="gmc-table-wrapper">
         <table id="historyTable">
           <thead>
@@ -83,15 +258,20 @@
           <tbody>
             {% for req in request_history %}
             <tr>
-              <td data-label="Date">{{ req.request_date|date:"F d, Y, P" }}</td>
-              <td data-label="Reason">{{ req.reason }}</td>
+              <td data-label="Date">
+                {{ req.request_date|date:"M d, Y" }}
+                <small style="color: #aaa"
+                  >{{ req.request_date|time:"g:i A" }}</small
+                >
+              </td>
+              <td data-label="Reason" style="font-weight: 500">
+                {{ req.reason }}
+              </td>
               <td data-label="Status">
                 {% if not req.processed %}
                 <span class="status-badge status-pending">Pending</span>
                 {% else %}
-                <span class="status-badge status-processed"
-                  >Processed / Ready</span
-                >
+                <span class="status-badge status-processed">Processed</span>
                 {% endif %}
               </td>
             </tr>
@@ -99,8 +279,22 @@
             <tr>
               <td
                 colspan="3"
-                style="text-align: center; padding: 20px; color: #777"
+                style="
+                  text-align: center;
+                  padding: 30px;
+                  color: #858796;
+                  font-style: italic;
+                "
               >
+                <i
+                  class="fas fa-folder-open"
+                  style="
+                    font-size: 2rem;
+                    margin-bottom: 10px;
+                    display: block;
+                    color: #e3e6f0;
+                  "
+                ></i>
                 You have no request history.
               </td>
             </tr>

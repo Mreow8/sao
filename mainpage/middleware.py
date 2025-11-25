@@ -22,19 +22,19 @@ class RoleRestrictionMiddleware:
                 # --- MEDICAL / CLINIC ---
                 'clinic_admin': { 
                     'dashboard_name': 'admin_dashboard', 
-                    'allowed_prefixes': ['/med/', '/medical/', '/clinic/', '/media/', '/static/'] 
+                    'allowed_prefixes': ['/med/', '/medical/', '/clinic/', '/media/', '/static/', '/'] 
                 },
 
                 # --- GUIDANCE ---
                 'guidance': { 
                     'dashboard_name': 'guidance_dashboard', 
-                    'allowed_prefixes': ['/guidance/', '/media/', '/static/'] 
+                    'allowed_prefixes': ['/guidance/', '/media/', '/static/', '/sao/', '/', '/logout/'] 
                 },
 
                 # --- SCHOLARSHIP ---
                 'scholarship_admin': { 
                     'dashboard_name': 'scholarship_dashboard', 
-                    'allowed_prefixes': ['/scholarship/', '/media/', '/static/'] 
+                    'allowed_prefixes': ['/scholarship/', '/media/', '/static/', '/'] 
                 },
 
                 # --- JOB PLACEMENT ---
@@ -45,32 +45,45 @@ class RoleRestrictionMiddleware:
 
                 # --- ALUMNI ---
                 'alumni_officer': { 
-                    'dashboard_name': 'alumni_dashboard', # Check if this URL name exists in alum_url
-                    'allowed_prefixes': ['/alum/', '/media/', '/static/'] 
+                    'dashboard_name': 'alumni_dashboard', 
+                    'allowed_prefixes': [
+                        '/alumni/',       
+                        '/alum/',         
+                        '/media/', 
+                        '/static/', 
+                        '/' 
+                    ] 
                 },
 
                 # --- COMMUNITY INVOLVEMENT ---
                 'community_admin': { 
-                    'dashboard_name': 'community_dashboard', # Check URL name in com_url
+                    'dashboard_name': 'community_dashboard', 
                     'allowed_prefixes': ['/community/', '/media/', '/static/'] 
                 },
 
                 # --- ORGANIZATION ---
                 'org_admin': { 
                     'dashboard_name': 'org_dashboard', 
-                    'allowed_prefixes': ['/org/', '/organizations/', '/media/', '/static/'] 
+                    'allowed_prefixes': ['/org/', '/organizations/', '/media/', '/static/' , '/'] 
                 },
 
                 # --- DISCIPLINE ---
                 'discipline_officer': { 
-                    'dashboard_name': 'discipline_dashboard', # Check URL name in disc_url
-                    'allowed_prefixes': ['/discipline/', '/media/', '/static/'] 
+                    'dashboard_name': 'discipline_dashboard', 
+                    'allowed_prefixes': ['/discipline/', '/media/', '/static/', '/'] 
                 },
 
                 # --- STUDENT LIFE (MAIN) ---
                 'student_life_admin': {
                     'dashboard_name': 'student_life_dashboard',
-                    'allowed_prefixes': ['/main/', '/student-life/', '/media/', '/static/']
+                    'allowed_prefixes': ['/main/', '/fe/', '/media/', '/static/', '/']
+                },
+
+                # --- SECURITY GUARD (ADDED THIS) ---
+                'guard': {
+                    'dashboard_name': 'guard_homepage', 
+                    # Only allow discipline URLs (for reports), static files, and logout
+                    'allowed_prefixes': ['/discipline/', '/media/', '/static/', '/logout/', '/login/'] 
                 }
             }
 
@@ -85,7 +98,6 @@ class RoleRestrictionMiddleware:
                     dashboard_url = reverse(config['dashboard_name'])
                 except (NoReverseMatch, Exception):
                     # Fallback to root if dashboard URL fails
-                    # logger.warning(f"Dashboard '{config['dashboard_name']}' not found for {user_role}")
                     dashboard_url = '/' 
 
                 # ALLOW: If user is already at their dashboard

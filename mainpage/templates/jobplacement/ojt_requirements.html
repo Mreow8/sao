@@ -129,6 +129,9 @@
             transition: opacity 0.2s;
             text-transform: uppercase;
         }
+        .showcontainer.active {
+    display: flex; /* This overrides display: none to show the modal */
+}
         .view-pdf:hover { opacity: 0.8; }
 
         /* --- STUDENT VIEW STYLES --- */
@@ -619,45 +622,128 @@
 
 </section>
 
+
 <script>
-$(document).ready(function() {
-    // --- Modal Logic for Admin ---
-    const modal = $('.showcontainer');
-    const iframe = $('#pdf-iframe');
-    const reqIdInputs = $('.modal-req-id'); // Class for hidden inputs
-    const attrNameInputs = $('.modal-attr-name'); // Class for hidden inputs
+/* ojt_requirements.js - IFRAME VERSION (Fixed) */
 
-    // Open Modal
-    $('.view-pdf').on('click', function() {
-        const url = $(this).data('url');
-        const reqId = $(this).val();
-        const attrName = $(this).attr('name');
+// Helper function to get the CSRF token from cookies
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+const csrftoken = getCookie("csrftoken");
 
-        // Set Iframe Source
-        iframe.attr('src', url);
-        
-        // Set Hidden Inputs for Acceptance/Decline forms
-        reqIdInputs.val(reqId);
-        attrNameInputs.val(attrName);
+$(document).ready(function () {
+  // --- MODAL LOGIC ---
+  const popup = document.querySelector(".showcontainer");
+  const iframe = document.getElementById("pdf-iframe");
+  const closeButtons = document.querySelectorAll(".closeform, .close-button");
 
-        // Show Modal
-        modal.css('display', 'flex');
-    });
+  // The hidden inputs in the Accept/Decline forms
+  const hiddenReqIdInputs = document.querySelectorAll('input[name="req_id"]');
+  const hiddenAttrNameInputs = document.querySelectorAll('input[name="attr_name"]');
 
-    // Close Modal
-    $('.closeform, .close-button').on('click', function(e) {
-        e.preventDefault(); // Prevent form submission if inside form
-        modal.css('display', 'none');
-        iframe.attr('src', ''); // Clear src to stop loading
-    });
+  // Handler for opening the modal
+  $(".view-pdf").click(function () {
+    const button = $(this);
+    const reqId = button.val();
+    const attrName = button.attr("name");
+    const viewUrl = button.data("url"); 
 
-    // Close on Overlay Click
-    $(window).on('click', function(event) {
-        if ($(event.target).is(modal)) {
-            modal.css('display', 'none');
-            iframe.attr('src', '');
+    if (!viewUrl) {
+      alert("Error: Missing data-url attribute. Cannot load file.");
+      return;
+    }
+
+    // Clear iframe while loading
+    if (iframe) iframe.src = "";
+
+    $.ajax({
+      type: "POST",
+      url: viewUrl,
+      headers: { "X-CSRFToken": csrftoken },
+      data: { attr_name: attrName },
+      success: function (response) {
+        if (response.url && iframe) {
+          // 1. Set iframe source
+          iframe.src = response.url;
+
+          // 2. Populate hidden fields for form submission
+          hiddenReqIdInputs.forEach((input) => (input.value = reqId));
+          hiddenAttrNameInputs.forEach((input) => (input.value = attrName));
+
+          // 3. Show the modal (using inline style to ensure it works without extra CSS)
+          if (popup) {
+            popup.style.display = "flex";
+          }
+        } else {
+          alert(response.error || "Could not get file URL.");
         }
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        console.error("AJAX Error:", errorThrown);
+        alert("AJAX Error: Could not contact server.");
+      },
     });
-});
+  });
+
+  // Handler for closing the modal
+  closeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (popup) {
+        popup.style.display = "none"; // Hide modal
+        if (iframe) iframe.src = "";  // Stop video/pdf playback
+      }
+    });
+  });
+
+  // --- SEARCH BAR LOGIC ---
+  $("#search_bar").on("input", function () {
+    let query = $(this).val();
+    if (query.length > 0) {
+      $.ajax({
+        url: "/jobplacement/suggestions/", 
+        data: { query: query },
+        success: function (data) {
+          const suggestionBox = $("#search_suggestions");
+          suggestionBox.html(""); // Clear old suggestions
+
+          if (data.length > 0) {
+             // Append new suggestions
+             for (let i = 0; i < data.length; i++) {
+                let text = `${data[i][0]} - ${data[i][1]}, ${data[i][2]}`;
+                suggestionBox.append(
+                  '<li data-stud="' + data[i][0] + '" onclick="assign_stud_id(this)">' + text + "</li>"
+                );
+             }
+             suggestionBox.show(); // FIX: Explicitly show the list
+          } else {
+             suggestionBox.hide(); // Hide if no results found
+          }
+        },
+      });
+    } else {
+      $("#search_suggestions").html("").hide(); // FIX: Hide if input is empty
+    }
+  });
+}); 
+
+// Helper to click a suggestion
+function assign_stud_id(e) {
+  let element = $(e);
+  const stud = element.data("stud") || element.text().split("-")[0].trim();
+  $("#search_bar").val(stud);
+  $("#search_suggestions").html("").hide(); // FIX: Hide list after selection
+}
 </script>
 {% endblock bodycontent %}

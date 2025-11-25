@@ -2,6 +2,7 @@ mainpage/templates/medical/students/medupload.html
 mainpage/templates/studentorg/Main/OrgMain.html
 mainpage/templates/officeOfStudentL/adminUser/equipmentborrowed.html
 mainpage/templates/discipline/case_profile.html
+mainpage/templates/discipline/guard_access.html
 mainpage/templates/discipline/student_case_view.html
 mainpage/templates/discipline/edit_case.html
 mainpage/templates/discipline/student_hours_rendered.html
@@ -33,6 +34,7 @@ mainpage/templates/studentorg/Main/view_projects.html
 mainpage/templates/studentorg/Main/view_financial.html
 mainpage/templates/studentorg/Main/accreditation_form.html
 mainpage/templates/officeOfStudentL/adminUser/monthlyCalendarAdmin.html
+mainpage/templates/officeOfStudentL/adminUser/admin_dashboard.html
 mainpage/templates/scholarship/studentrequirements.html
 mainpage/templates/scholarship/adminrequirements.html
 mainpage/templates/scholarship/scholarsprofilestudent.html
@@ -48,4 +50,6 @@ mainpage/templates/community_involvement/admin/volunteer-dashboard.html
 mainpage/templates/community_involvement/admin/gcash-dashboard.html
 mainpage/templates/community_involvement/admin/donation.html
 mainpage/templates/_pagination.html
+mainpage/templates/alumni_admin.html
+mainpage/templates/roles/org_admin.html
 mainpage/templates/medical/admin/mental_health.html

@@ -34,6 +34,51 @@ from ..forms import (
     CommunityServiceForm,
     CounselingSchedulerForm,
 )
+@login_required
+def guard_homepage(request):
+    if not (getattr(request.user, 'role', '') == 'guard' or request.user.is_superuser):
+        return redirect('homepage')
+
+    students = studentInfo.objects.all()
+
+    if request.method == 'POST':
+        post_data = request.POST.copy()
+        post_data['action_taken'] = 'Pending Review'
+        post_data['status'] = 'Pending'
+        post_data['reported_by'] = f"{request.user.first_name} {request.user.last_name} (Guard)"
+        
+        form = CaseProfileForm(post_data, request.FILES)
+        student_id = request.POST.get('student')
+
+        if form.is_valid():
+            if not student_id:
+                messages.error(request, "Student ID is required.")
+            else:
+                try:
+                    student = studentInfo.objects.get(studID=student_id)
+                    case = form.save(commit=False)
+                    case.student = student
+                    case.reported_by = post_data['reported_by']
+                    case.save()
+                    messages.success(request, "Incident Report submitted successfully.")
+                    return redirect('guard_homepage')
+
+                except studentInfo.DoesNotExist:
+                    messages.error(request, f"Student with ID {student_id} not found.")
+                except Exception as e:
+                    logger.error(f"Error saving guard report: {e}")
+                    messages.error(request, "An error occurred while saving the report.")
+        else:
+            messages.error(request, "Please correct the errors in the form.")
+    else:
+        form = CaseProfileForm()
+
+    context = {
+        'form': form,
+        'students': students,
+        'base_template': 'main.html' 
+    }
+    return render(request, 'roles/guard_access.html', context)
 
 logger = logging.getLogger(__name__)
 def _format_decimal_hours(decimal_hours):

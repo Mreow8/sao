@@ -11,6 +11,60 @@ from ..decorators import sao_admin_required, tracer_gatekeeper_required, alumni_
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+@login_required
+def delete_event(request, id):
+    # Use eventID because that is the name of the field in your model
+    event = get_object_or_404(Event, eventID=id) 
+    
+    if request.method == "POST":
+        event.delete()
+        messages.success(request, "Event deleted successfully!")
+        return redirect('alumni_events_admin') # Ensure this matches your URL name for the list
+    
+    return redirect('alumni_events_admin')
+
+@login_required
+def alumni_dashboard(request):
+    """
+    Dashboard view for Alumni users.
+    Aggregates data for ID status, Tracer status, and recent events/jobs.
+    """
+    user = request.user
+    student = None
+    alumni_acct = None
+    tracer_entry = None
+
+    # 1. Fetch Student & Alumni Profile Data
+    if user.is_authenticated:
+        try:
+            student = studentInfo.objects.get(studID=user.username)
+            
+            # Check for existing Alumni ID Request
+            alumni_acct = Alumni.objects.filter(student=student).first()
+            
+            # Check for existing Graduate Tracer submission
+            tracer_entry = graduateForm.objects.filter(student=student).first()
+            
+        except studentInfo.DoesNotExist:
+            # Handle case where user exists but isn't linked to studentInfo (e.g., pure admin)
+            student = None
+
+    # 2. Fetch Recent Content for the "Latest Updates" widget
+    # Fetch top 3 most recent events
+    recent_events = Event.objects.all().order_by('-eventID')[:3] 
+    
+    # Fetch top 3 most recent job postings
+    recent_jobs = JobFair.objects.order_by('-posted_date')[:3]
+
+    context = {
+        'student': student,
+        'alumni': alumni_acct,       # To show ID status (Pending/Approved)
+        'tracer': tracer_entry,      # To show if they need to update tracer
+        'recent_events': recent_events,
+        'recent_jobs': recent_jobs,
+    }
+    
+    return render(request, 'alumni/alumni_dashboard.html', context)
 @alumni_admin_required
 @login_required
 def admin_id_request(request):

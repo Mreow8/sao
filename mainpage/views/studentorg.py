@@ -19,7 +19,65 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, get_object_or_404
 # views.py
 from django.views.decorators.http import require_POST
+from django.db.models import Sum, Q
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
+from ..forms import AccreditationForm, OrganizationCBLForm
+@login_required
+def org_admin_dashboard(request, slug):
+    # 1. Fetch the Organization
+    org = get_object_or_404(Organization, slug=slug)
 
+    # 2. Security Check
+    is_superadmin = request.user.role == 'superadmin'
+    is_assigned_admin = (
+        request.user.role == 'org_admin' and 
+        getattr(request.user, 'organization', None) == org
+    )
+
+    if not (is_superadmin or is_assigned_admin):
+        messages.error(request, "Access Denied.")
+        return redirect('homepage')
+
+    # 3. Stats & Data
+    total_projects = Project.objects.filter(org=org).count()
+    pending_projects = Project.objects.filter(org=org, status='pending').count()
+    approved_projects = Project.objects.filter(org=org, status='approved').count()
+    budget_used = Project.objects.filter(org=org, status='approved').aggregate(Sum('p_budget'))['p_budget__sum'] or 0
+
+    pending_financials = FinancialStatement.objects.filter(org=org, status='pending').count()
+    funds_raised = FinancialStatement.objects.filter(org=org, status='approved').aggregate(Sum('amount'))['amount__sum'] or 0
+
+    officer_count = Officer.objects.filter(organization=org, status='approved').count()
+    has_adviser = Adviser.objects.filter(organization=org, status='approved').exists()
+
+    recent_projects = Project.objects.filter(org=org).order_by('-project_id')[:3]
+    recent_financials = FinancialStatement.objects.filter(org=org).order_by('-financial_id')[:3]
+
+    # 4. PREPARE FORMS (Crucial: This fixes the template errors)
+    accreditation_form = AccreditationForm()
+    cbl_form = OrganizationCBLForm()
+    active_cbl = org.cbl_documents.filter(is_active=True).first()
+
+    context = {
+        'org': org,
+        'base_template': "adminmain.html",
+        'stats': {
+            'projects': {'total': total_projects, 'pending': pending_projects, 'approved': approved_projects, 'budget': budget_used},
+            'financials': {'pending': pending_financials, 'raised': funds_raised},
+            'hr': {'officers': officer_count, 'has_adviser': has_adviser}
+        },
+        'recent_activity': {
+            'projects': recent_projects,
+            'financials': recent_financials
+        },
+        # Pass the required forms to the template
+        'accreditation_form': accreditation_form,
+        'cbl_form': cbl_form,
+        'active_cbl': active_cbl,
+    }
+
+    return render(request, 'roles/org_admin.html', context)
 @require_POST  # Ensures this view only accepts POST requests
 def upload_org_cbl(request, org_slug):
     org = get_object_or_404(Organization, slug=org_slug)
@@ -150,25 +208,20 @@ def view_adviser(request, org_slug):
 def upload_accreditation(request, slug):
     org = get_object_or_404(Organization, slug=slug)
 
-    # Get the latest uploaded accreditation (if any) for showing links
-    uploaded_files = Accreditation.objects.filter(organization=org).last()
-
     if request.method == "POST":
         form = AccreditationForm(request.POST, request.FILES)
         if form.is_valid():
             accreditation = form.save(commit=False)
             accreditation.organization = org
             accreditation.save()
-            return redirect("organization_accreditations", slug=org.slug)
-    else:
-        form = AccreditationForm()
-
-    return render(request, "studentorg/main/accreditation_form.html", {
-        "form": form,
-        "organization": org,
-        "uploaded_files": uploaded_files,
-    })
-
+            messages.success(request, "Accreditation documents uploaded successfully.")
+            # Redirect back to the DASHBOARD
+            return redirect("org_admin_dashboard", slug=org.slug)
+        else:
+            messages.error(request, "Error uploading documents. Please check the form.")
+            
+    # If invalid or not POST, go back to dashboard
+    return redirect("org_admin_dashboard", slug=org.slug)
 
 # 2. Show details of a single accreditation
 def accreditation_detail(request, accreditation_id):
@@ -900,9 +953,21 @@ def admin_transactionreport(request):
 #     else:
 #         form = LoginForm()
 #     return render(request, 'studentorg/ADMIN/officer_login.html', {'form': form})
-
 def admin_manageofficer(request):
+    # 1. Determine Base Template and Context Context
+    base_template = "main.html" # Default
+    org_context = None
 
+    # Logic to choose template and get Org data
+    if request.user.is_staff or request.user.is_superuser:
+        base_template = "adminmain.html"
+    elif hasattr(request.user, 'role') and request.user.role == 'org_admin':
+        base_template = "roles/org_admin.html"
+        # [CRITICAL FIX] Pass the user's organization so the sidebar works
+        if hasattr(request.user, 'organization'):
+            org_context = request.user.organization
+
+    # 2. Handle POST actions (Approve/Decline)
     if request.method == 'POST':
         officer_pk = request.POST.get('officer_id')
         action = request.POST.get('action')
@@ -918,6 +983,7 @@ def admin_manageofficer(request):
         return redirect(request.get_full_path())
 
     
+    # 3. GET Logic (Filter/Sort)
     search_query = request.GET.get('search', None)
     org_filter = request.GET.get('org', None)
     sort_by = request.GET.get('sort', 'officer_id')
@@ -925,6 +991,12 @@ def admin_manageofficer(request):
 
     officer_list = Officer.objects.select_related('organization').all()
 
+    # If the user is an Org Admin, strictly show only their own officers
+    if hasattr(request.user, 'role') and request.user.role == 'org_admin':
+        if hasattr(request.user, 'organization') and request.user.organization:
+             officer_list = officer_list.filter(organization=request.user.organization)
+
+    # Apply Search filters
     if search_query:
         officer_list = officer_list.filter(
             Q(officer_id__icontains=search_query) |
@@ -935,6 +1007,7 @@ def admin_manageofficer(request):
             Q(organization__name__icontains=search_query)
         )
     
+    # Apply Dropdown Filter (Only relevant for superadmins who see all orgs)
     if org_filter:
         officer_list = officer_list.filter(organization__slug=org_filter)
 
@@ -981,6 +1054,8 @@ def admin_manageofficer(request):
         'current_order': order,
         'search_params': search_params,
         'all_organizations': all_orgs, 
+        'base_template': base_template,
+        'org': org_context, # [CRITICAL FIX] This populates {{ org.slug }} in the template
     }
     
     return render(request, 'studentorg/ADMIN/admin_manageofficer.html', context)

@@ -204,7 +204,6 @@ def staff_role(user):
 from django.contrib import messages
 from django.shortcuts import redirect
 from functools import wraps
-
 def alumni_admin_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
@@ -214,11 +213,11 @@ def alumni_admin_required(view_func):
         if not user.is_authenticated:
             return redirect('login')
         
-        # 2. Check Permissions: Superuser OR 'alumni' role
-        # Note: Ensure 'role' matches your User model field
+        # 2. Check Permissions: Superuser OR 'alumni_officer' role
         user_role = getattr(user, 'role', '').lower()
         
-        if user.is_superuser or user_role == 'alumni':
+        # --- FIX: Changed 'alumni' to 'alumni_officer' ---
+        if user.is_superuser or user_role == 'alumni_officer':
             # Permission Granted: Run the view
             return view_func(request, *args, **kwargs)
         

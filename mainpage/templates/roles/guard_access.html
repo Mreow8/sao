@@ -1,0 +1,456 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Unit Incident Report</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* --- Guard Dashboard Styling --- */
+        :root {
+            --primary-color: #2a4365;
+            --secondary-color: #4e73df;
+            --success-color: #1cc88a;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-text: #2d3748;
+            --light-bg: #f7fafc;
+            --border-color: #e2e8f0;
+            --white: #ffffff;
+            --input-border: #cbd5e0;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 0;
+            color: var(--dark-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation Bar */
+        .guard-navbar {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Logo Styling */
+        .brand img {
+            height: 40px;
+            width: auto;
+        }
+
+        .user-info {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-logout {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-logout:hover {
+            background-color: #c53030;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            width: 90%;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-description {
+            color: #718096;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* --- Uniform Form Styling --- */
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+
+        /* Consistent Input Styles */
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #4a5568;
+            background-color: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit; /* Ensure font matches */
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+            height: 48px; /* Fixed height for single-line inputs */
+        }
+
+        /* Exception for textarea height */
+        textarea {
+            height: auto;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Exception for file input height */
+        input[type="file"] {
+            padding: 10px;
+            height: auto;
+        }
+
+        /* Focus State */
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.15);
+        }
+
+        /* Readonly State */
+        input[readonly] {
+            background-color: #edf2f7;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+        }
+
+        /* Student Details Box */
+        #student_details {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: -10px;
+            transition: all 0.3s ease;
+        }
+        #student_details.hidden { display: none; }
+        
+        #student_details p {
+            margin: 5px 0;
+            color: #2c5282;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            height: 50px; /* Match input height roughly */
+        }
+        .submit-btn:hover {
+            background-color: #1a365d;
+        }
+
+        /* Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .alert-success { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    </style>
+</head>
+<body>
+
+    <nav class="guard-navbar">
+        <div class="brand">
+            <img src="{% static 'imgs/CTU_logo.png' %}" alt="CTU Logo">
+            <span>SECURITY UNIT</span>
+        </div>
+        <div class="user-info">
+            <span><i class="fas fa-user-circle"></i> {{ user.first_name }} {{ user.last_name }}</span>
+            <a href="{% url 'logout' %}" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="page-header">
+            <h2 class="page-title">New Incident Report</h2>
+            <p class="page-description">
+                Please fill out the details of the incident below. Ensure the Student ID is correct before submitting.
+            </p>
+        </div>
+
+        {% if user.is_authenticated and user.role == 'guard' or user.is_superuser %}
+
+        <form method="post" enctype="multipart/form-data" class="form-grid">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_student">Student ID / Name</label>
+                <input
+                    type="text"
+                    name="student"
+                    id="id_student"
+                    list="student-options"
+                    placeholder="Type Student ID or Name..."
+                    required
+                    autocomplete="off"
+                />
+                <datalist id="student-options">
+                    {% for student in students %}
+                    <option value="{{ student.studID }}">
+                        {{ student.firstname }} {{ student.lastname }}
+                    </option>
+                    {% endfor %}
+                </datalist>
+            </div>
+
+            <div id="student_details" class="hidden">
+                <p><strong><i class="fas fa-user"></i> Name:</strong> <span id="student_name"></span></p>
+                <p><strong><i class="fas fa-graduation-cap"></i> Course:</strong> <span id="student_course"></span></p>
+                <p><strong><i class="fas fa-calendar"></i> Year:</strong> <span id="student_year"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Date of Incident</label>
+                {{ form.date_reported }}
+            </div>
+
+            <div class="form-group">
+                <label>Offense Count</label>
+                <select id="id_offense_number" name="offense_number">
+                    <option value="1st">1st Offense</option>
+                    <option value="2nd">2nd Offense</option>
+                    <option value="3rd">3rd Offense</option>
+                    <option value="Subsequent">Subsequent Offense</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Type of Offense</label>
+                <select id="id_offense_type" name="offense_type" required>
+                    <option value="">-- Select Offense Type --</option>
+                    {% for value, label in form.offense_type.field.choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+                
+                <input
+                    type="text"
+                    id="custom_offense"
+                    name="custom_offense"
+                    placeholder="Please specify the offense..."
+                    style="display: none; margin-top: 10px;"
+                />
+            </div>
+
+            <div class="form-group">
+                <label>Description of Incident</label>
+                <textarea id="id_description" name="description" rows="4" placeholder="Describe what happened..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Reported By</label>
+                <input
+                    type="text"
+                    id="id_reported_by"
+                    name="reported_by"
+                   
+                />
+            </div>
+
+            <input type="hidden" name="action_taken" value="Pending Review">
+            <input type="hidden" name="status" value="Pending">
+
+            <div class="form-group">
+                <label>Evidence / Attachment (Optional)</label>
+                <input type="file" name="evidence" />
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> Submit Report
+            </button>
+        </form>
+
+        {% else %}
+            <div style="text-align: center; padding: 50px; color: var(--danger-color);">
+                <i class="fas fa-exclamation-triangle fa-3x" style="margin-bottom: 15px;"></i>
+                <h3 style="font-size: 1.5rem; font-weight: 700;">Access Denied</h3>
+                <p>You do not have permission to view this page.</p>
+                <a href="{% url 'logout' %}" class="btn-logout" style="margin-top: 20px; display: inline-block;">Go to Login</a>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            // 1. Dynamic Fields (Offense Type)
+            const offenseTypeSelect = document.getElementById("id_offense_type");
+            const customOffenseInput = document.getElementById("custom_offense");
+
+            function toggleCustomOffense() {
+                if (offenseTypeSelect && customOffenseInput) {
+                    if (offenseTypeSelect.value === "Others") {
+                        customOffenseInput.style.display = "block";
+                        customOffenseInput.required = true;
+                    } else {
+                        customOffenseInput.style.display = "none";
+                        customOffenseInput.required = false;
+                        customOffenseInput.value = ""; 
+                    }
+                }
+            }
+
+            if (offenseTypeSelect) {
+                offenseTypeSelect.addEventListener("change", toggleCustomOffense);
+                toggleCustomOffense(); 
+            }
+
+            // 2. Student Search AJAX
+            const studentInput = document.getElementById("id_student");
+            const studentDetails = document.getElementById("student_details");
+            let debounceTimer;
+
+            function fetchStudentDetails(studentID) {
+                if (!studentID) {
+                    studentDetails.classList.add("hidden");
+                    return;
+                }
+                
+                fetch(`/discipline/get-student/${studentID}/`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.found) {
+                            document.getElementById("student_name").textContent = data.name;
+                            document.getElementById("student_course").textContent = data.course;
+                            document.getElementById("student_year").textContent = data.year;
+                            studentDetails.classList.remove("hidden");
+                        } else {
+                            studentDetails.classList.add("hidden");
+                        }
+                    })
+                    .catch(err => console.error("Search error:", err));
+            }
+
+            if (studentInput) {
+                studentInput.addEventListener("input", function () {
+                    clearTimeout(debounceTimer);
+                    const val = this.value.trim();
+                    debounceTimer = setTimeout(() => {
+                        fetchStudentDetails(val);
+                    }, 300);
+                });
+
+                studentInput.addEventListener("change", function () {
+                    fetchStudentDetails(this.value.trim());
+                });
+            }
+            
+            // Set default date to today
+            const dateField = document.getElementById("id_date_reported"); 
+            if (dateField && !dateField.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateField.value = today;
+            }
+        });
+    </script>
+</body>
+</html>

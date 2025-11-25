@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.humanize',
     'django.contrib.staticfiles',
 ]
 RECAPTCHA_PUBLIC_KEY = '6LfhQOcrAAAAANIW45UKBoxv_N6yLJfCCNpyx-j3'

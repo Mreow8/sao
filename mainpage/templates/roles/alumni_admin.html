@@ -1,0 +1,305 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}Alumni Admin | SLIS{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'styles/guidance/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/sub-title.css' %}" />
+    <link
+      rel="shortcut icon"
+      href="{% static 'studentlife/images/CTU_logo.png' %}"
+      type="image/x-icon"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      /* --- Sidebar & Layout Styles --- */
+      .sub-title { margin-top: -40px; }
+      
+      .side-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        padding-top: 1rem;
+      }
+
+      .side-nav ul li a {
+        display: block;
+        padding: 14px 24px;
+        color: #cbd5e0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .side-nav ul li a:hover {
+        background-color: #2a4365;
+        color: #fff;
+      }
+
+      .side-nav ul li a.active-link {
+        background-color: #3b82f6; 
+        color: #ffffff;
+        font-weight: 700;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #ffffff;
+        padding-left: 19px;
+      }
+
+      /* --- Dashboard Specific Styles --- */
+      .stat-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+      .action-btn {
+        transition: all 0.2s;
+      }
+      {% block extra_css %}{% endblock %}
+    </style>
+  </head>
+  <body>
+
+    <button id="sidebar-toggle" class="sidebar-toggle glass-button" aria-label="Toggle sidebar">
+      <i class="fas fa-bars" id="toggle-icon"></i>
+    </button>
+    
+    <div class="account-info-wrapper fixed-profile">
+        <div id="profile-trigger" class="profile-summary">
+          <i class="fas fa-user-circle profile-icon"></i>
+        </div>
+
+        <div id="profile-dropdown" class="profile-popup">
+            <div class="popup-header">
+                <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                <span class="popup-username">{{ user.username }}</span>
+            </div>
+            {% if user.role == 'superadmin' or user.role == 'student_life_staff' %}
+            <a href="{% url 'upload_files' %}" class="upload-button">
+                <i class="fas fa-upload"></i>
+                <span>Upload Files</span>
+            </a>
+            {% endif %}
+            <div class="popup-divider"></div>
+            <a href="{% url 'logout' %}" class="popup-logout-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="left-side">
+      <div class="sidebar-brand">
+         <a href="{% url 'homepage' %}">
+            <img src="{% static 'scholar/CTU_Logo.png' %}" class="logo" alt="CTU Logo" />
+         </a>
+        <div class="brand-text">
+          <span class="brand-title">Cebu Technological</span>
+          <span class="brand-subtitle">University</span>
+        </div>
+      </div>
+
+     {% with current_url=request.resolver_match.url_name %}
+<nav class="side-nav flex flex-col h-screen">
+  
+  <ul class="alumni-show active" style="display: block;">
+    
+    <li>
+      <a href="{% url 'alumni_dashboard' %}" 
+         class="{% if current_url == 'alumni_admin_dashboard' or current_url == 'alumni_dashboard' %}active-link{% endif %}">
+         Dashboard
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'admin_idRequest' %}" 
+         class="{% if current_url == 'admin_idRequest' %}active-link{% endif %}">
+         Alumni ID Requests
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'admin_gradTracer' %}" 
+         class="{% if current_url == 'admin_gradTracer' %}active-link{% endif %}">
+         Graduate Tracer
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'admin_events' %}" 
+         class="{% if current_url == 'admin_events' %}active-link{% endif %}">
+         Alumni Reunion/Events
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'admin_jobfairs' %}" 
+         class="{% if current_url == 'admin_jobfairs' %}active-link{% endif %}">
+         Job Fairs
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'jobfairs' %}" 
+         class="{% if current_url == 'idRequest' %}active-link{% endif %}">
+         (View) Job Fairs
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'alumni_events_admin' %}" 
+         class="{% if current_url == 'alumni_events' %}active-link{% endif %}">
+         (View) Events List
+      </a>
+    </li>
+
+  </ul>
+
+</nav>
+{% endwith %}
+    </div>
+
+    <div class="right-side">
+        <div class="custom-search-wrapper">
+            <div class="search-container">
+                </div>
+        </div>
+            {% block headcontent %}{% endblock %}
+
+        <main class="main_content">
+            {% block bodycontent %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="{% static 'scripts/main.js' %}"></script>
+    
+    <script>
+      // Sidebar and Layout Scripts
+      document.addEventListener('DOMContentLoaded', function() {
+          const sidebarToggle = document.getElementById('sidebar-toggle');
+          const leftSide = document.querySelector('.left-side');
+          const toggleIcon = document.getElementById('toggle-icon');
+          const profileWrapper = document.querySelector('.account-info-wrapper');
+          const profileTrigger = document.getElementById('profile-trigger');
+          const profileDropdown = document.getElementById('profile-dropdown');
+
+          function closeProfile() {
+              if (profileDropdown && profileDropdown.classList.contains('active')) {
+                  profileDropdown.classList.remove('active');
+                  if(profileTrigger) profileTrigger.classList.remove('active');
+              }
+          }
+
+          function closeSidebar() {
+              if (leftSide && leftSide.classList.contains('active')) {
+                  leftSide.classList.remove('active');
+                  if(sidebarToggle) sidebarToggle.classList.toggle('active'); 
+                  if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                  if(toggleIcon) {
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+              }
+          }
+
+          if (sidebarToggle && leftSide) {
+              sidebarToggle.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  closeProfile();
+                  leftSide.classList.toggle('active');
+                  sidebarToggle.classList.toggle('active');
+                  if (leftSide.classList.contains('active')) {
+                      if(profileWrapper) profileWrapper.classList.add('hidden-profile');
+                      toggleIcon.classList.remove('fa-bars');
+                      toggleIcon.classList.add('fa-times');
+                  } else {
+                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+              });
+          }
+
+          if (profileTrigger && profileDropdown) {
+              profileTrigger.addEventListener('click', function(event) {
+                  event.stopPropagation(); 
+                  profileDropdown.classList.toggle('active');
+                  profileTrigger.classList.toggle('active');
+              });
+              profileDropdown.addEventListener('click', function(event) { event.stopPropagation(); });
+          }
+
+          document.addEventListener('click', function(e) {
+              if (window.innerWidth <= 900 && leftSide.classList.contains('active') && !leftSide.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                  closeSidebar();
+              }
+              if (profileDropdown && profileDropdown.classList.contains('active')) {
+                  closeProfile();
+              }
+          });
+
+          window.addEventListener('resize', function() {
+              if (window.innerWidth > 900) {
+                  if (leftSide.classList.contains('active')) {
+                      leftSide.classList.remove('active');
+                      sidebarToggle.classList.remove('active');
+                      if(profileWrapper) profileWrapper.classList.remove('hidden-profile');
+                      toggleIcon.classList.remove('fa-times');
+                      toggleIcon.classList.add('fa-bars');
+                  }
+                  leftSide.style.transform = '';
+              }
+          });
+      });
+    </script>
+
+    {% if messages %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
+        });
+        {% for message in messages %}
+          Toast.fire({ icon: '{{ message.tags }}', title: '{{ message|escapejs }}' });
+        {% endfor %}
+      });
+    </script>
+    {% endif %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

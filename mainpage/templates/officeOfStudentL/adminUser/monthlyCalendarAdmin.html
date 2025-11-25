@@ -10,16 +10,34 @@
   <link rel="stylesheet" href="{% static 'styles/calendarOfEvents.css' %}" />
 
   <style>
-  
-    .container {
-      width: 95%;
-      max-width: 1200px; /* You can adjust this */
-      margin: 0 auto;
-      padding: 24px;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  .page-header-container {
+        margin-bottom: 2rem;
     }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        max-width: 900px;
+    }
+    .container {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px auto;
+        max-width: 1400px;
+        font-family: 'Rubik', sans-serif;
+    }
+
     .fc-event {
   /* This is the key! It removes the solid color. */
   background-image: linear-gradient(
@@ -141,6 +159,13 @@
   </div>
 
   <div class="container">
+<div class="page-header-container">
+        <h2 class="page-title"><i class="fas fa-calendar-alt"></i> Calendar of Activities</h2>
+        <p class="page-description">
+            Manage and schedule university events and activities. Click on any date to add a new event, or click an existing event to update details or delete it.
+        </p>
+    </div>
+    
     <div id="calendar"></div>
   </div>
 

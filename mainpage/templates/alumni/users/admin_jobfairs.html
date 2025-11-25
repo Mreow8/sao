@@ -1,219 +1,185 @@
-{%extends "adminmain.html" %} {% block bodycontent %} {% load static %}
+{% extends base_template %} {% block bodycontent %} {% load static %}
+
 <style>
-  /* --- Global, Fonts & Body --- */
-  /* Ensure fonts are applied */
-  .page-title,
-  .sub-title, /* Added sub-title */
-  button,
-  input,
-  label,
-  textarea,
-  select {
-    font-family: "Rubik", sans-serif;
-  }
-  /* --- Message Box --- */
-  .form-message {
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    font-size: 1rem;
-    font-weight: 500;
-    border: 1px solid #e0e0e0;
+  /* --- Modern Dashboard Styling --- */
+  :root {
+    --primary-color: #2c5282;
+    --success-color: #2c5282;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --dark-text: #5a5c69;
+    --light-bg: #f8f9fc;
+    --border-color: #e3e6f0;
   }
 
-  /* Style for 'success' messages */
-  .form-message.success {
-    background-color: #e6f7ec; /* Light green */
-    border-color: #b7e1c7;
-    border-left: 5px solid #28a745; /* Green accent */
-    color: #1e663c; /* Dark green text */
-  }
-
-  /* Style for 'error' messages */
-  .form-message.error {
-    background-color: #fdecea; /* Light red */
-    border-color: #f5c6cb;
-    border-left: 5px solid #dc3545; /* Red accent */
-    color: #721c24; /* Dark red text */
-  }
-  /* Use body-content for consistent padding (from requestgmc.css) */
-  .body-content {
-    padding: 1rem 1.5rem;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  /* --- Main Form Card (from requestgmc.css .gmc-form) --- */
-  .form-wrapper {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-top: 1rem;
-  }
-
-  /* --- Form Elements --- */
-  .form-wrapper form > div {
-    margin-bottom: 1.5rem; /* Space out each form group */
-  }
-
-  .form-wrapper label {
-    display: block;
-    font-size: 0.95rem;
-
-    color: #2c5282; /* Primary Blue */
-    margin-bottom: 8px;
-  }
-
-  /* Shared styles for inputs, textareas, and selects (from requestgmc.css #comboBox) */
-  .form-wrapper input[type="text"],
-  .form-wrapper input[type="date"],
-  .form-wrapper select,
-  .form-wrapper textarea {
-    width: 100%;
-    font-family: "Rubik", sans-serif;
-    font-size: 1rem;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-sizing: border-box; /* Ensures padding doesn't break layout */
-    /* Ensures select looks similar */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-  }
-
-  /* Add a background arrow for the <select> */
-  .form-wrapper select {
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232c5282%22%20d%3D%22M287%2069.4a17.6%2017.6%0%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 10px 10px;
-    padding-right: 30px; /* Make space for arrow */
-  }
-
-  /* Focus styles for all elements */
-  .form-wrapper input[type="text"]:focus,
-  .form-wrapper input[type="date"]:focus,
-  .form-wrapper select:focus,
-  .form-wrapper textarea:focus {
-    outline: none;
-    border-color: #2c5282; /* Primary Blue */
-    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.3); /* Blue focus ring */
+  /* Main Container */
+  .container {
     background-color: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin: 20px;
   }
 
-  .form-wrapper textarea {
-    min-height: 120px;
-    resize: vertical;
+  .page-header-container {
+    margin-bottom: 2rem;
+  }
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2e3a59;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .page-description {
+    color: #858796;
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 
-  /* --- Form Grid Layout --- */
+  /* --- Form Styling --- */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Grid for inputs */
   .form-grid {
     display: grid;
-    /* This will create 1-3 columns depending on screen width */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
   }
 
-  /* --- Submit Button (from requestgmc.css .requestBtn) --- */
-  .submit-container {
-    margin-top: 2rem;
+  .form-group {
     display: flex;
-    justify-content: flex-end; /* Aligns button to the right */
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .submit-container button[type="submit"] {
-    font-family: "Rubik", sans-serif;
-    background-color: #2c5282; /* Primary Blue */
+  label {
+    font-weight: 600;
+    color: var(--dark-text);
+    font-size: 0.9rem;
+  }
+
+  /* Input Styling */
+  input[type="text"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #d1d3e2;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #6e707e;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+  }
+
+  textarea {
+    min-height: 150px;
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  /* Buttons */
+  .submit-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  button[type="submit"] {
+    background-color: var(--success-color);
     color: white;
-    font-size: 1rem;
-
-    padding: 12px 28px;
     border: none;
-    border-radius: 8px;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-
-  .submit-container button[type="submit"]:hover {
-    background-color: #2a4365; /* Darker Blue */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .submit-container button[type="submit"]:active {
-    transform: translateY(0);
-    box-shadow: none;
-  }
-
-  /* --- Responsive Design --- */
-  @media (max-width: 768px) {
-    /* Stack the grid items on mobile */
-    .form-grid {
-      grid-template-columns: 1fr;
-      gap: 0; /* Gaps will be handled by the div margin-bottom */
-    }
-
-    /* Adjust padding on main card for mobile */
-    .form-wrapper {
-      padding: 1.5rem;
-    }
-
-    .page-title {
-      font-size: 1.5rem;
-    }
-
-    /* Adjust breadcrumb padding */
-    .sub-title {
-      padding: 0 1.5rem;
-      margin: 1rem auto 0 auto;
-    }
-
-    .body-content {
-      padding: 1rem 1.5rem;
-    }
+  button[type="submit"]:hover {
+    background-color: #17a673;
   }
 </style>
 
 <div class="sub-title">
-  <h4>Alumni</h4>
+  <h4>ALUMNI (Admin)</h4>
   <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-  <p class="certxt">&gt; Admin Jobfairs</p>
+  <p class="certxt">&gt; Admin Job Fairs</p>
 </div>
 <hr />
 
 <div class="body-content">
-  <div>
+  <div class="container">
+    <div class="page-header-container">
+      <h2 class="page-title">
+        <i class="fas fa-briefcase"></i> Create Job Posting
+      </h2>
+      <p class="page-description">
+        Post new job opportunities for alumni. Fill out the details below to add
+        a listing to the Job Fair board.
+      </p>
+    </div>
+
     <div class="form-wrapper">
       <form method="post" action="{% url 'admin_jobfairs' %}">
         {% csrf_token %}
 
         <div class="form-grid">
-          <div>
+          <div class="form-group">
             <label>Job Title</label>
-            <input type="text" name="jobtitle" required />
+            <input
+              type="text"
+              name="jobtitle"
+              placeholder="e.g. Software Engineer"
+              required
+            />
           </div>
 
-          <div>
+          <div class="form-group">
             <label>Company Name</label>
-            <input type="text" name="companyname" required />
+            <input
+              type="text"
+              name="companyname"
+              placeholder="e.g. Tech Solutions Inc."
+              required
+            />
           </div>
 
-          <div>
+          <div class="form-group">
             <label>Location</label>
-            <input type="text" name="joblocation" required />
+            <input
+              type="text"
+              name="joblocation"
+              placeholder="e.g. Cebu City, Remote"
+              required
+            />
           </div>
 
-          <div>
+          <div class="form-group">
             <label>Employment Type</label>
             <select name="employmenttype" required>
-              <option value="" disabled selected>Select</option>
+              <option value="" disabled selected>-- Select Type --</option>
               <option value="Full-Time">Full-Time</option>
               <option value="Contract">Contract</option>
               <option value="Part-Time">Part-Time</option>
@@ -221,17 +187,22 @@
             </select>
           </div>
 
-          <div>
-            <label>Job Salary</label>
-            <input type="text" name="jobsalary" required />
+          <div class="form-group">
+            <label>Salary Range</label>
+            <input
+              type="text"
+              name="jobsalary"
+              placeholder="e.g. ₱25,000 - ₱35,000"
+              required
+            />
           </div>
 
-          <div>
+          <div class="form-group">
             <label>Application Deadline</label>
             <input type="date" name="applicationdeadline" required />
           </div>
 
-          <div>
+          <div class="form-group">
             <label>Date Posted</label>
             <input
               type="date"
@@ -241,13 +212,20 @@
             />
           </div>
         </div>
-        <div>
-          <label>Job Description</label>
-          <textarea name="jobdescription" required></textarea>
+
+        <div class="form-group">
+          <label>Job Description & Requirements</label>
+          <textarea
+            name="jobdescription"
+            placeholder="Enter detailed job description here..."
+            required
+          ></textarea>
         </div>
 
         <div class="submit-container">
-          <button type="submit">Submit</button>
+          <button type="submit">
+            <i class="fas fa-paper-plane"></i> Post Job Listing
+          </button>
         </div>
       </form>
     </div>

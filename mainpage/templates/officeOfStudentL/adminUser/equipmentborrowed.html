@@ -48,15 +48,6 @@
         max-width: 900px;
     }
 
-    /* --- Search Control --- */
-    .search-container {
-        margin-bottom: 20px;
-        background-color: var(--light-bg);
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-    }
-
     .search-form {
         display: flex;
         width: 100%;
@@ -257,7 +248,6 @@
                         </a>
                     </th>
                     <th>Date Returned</th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -277,12 +267,7 @@
                         {% endif %}
                     </td>
                     <td>{{ record.date_returned|default:"-" }}</td>
-                    <td>
-                        <div class="action-btn-wrapper">
-                            <a href="{% url 'edit_borrow_record' record.id %}" class="action-btn btn-edit">Edit</a>
-                            <a href="{% url 'delete_borrow_record' record.id %}" class="action-btn btn-delete" onclick="return confirm('Are you sure?');">Delete</a>
-                        </div>
-                    </td>
+                 
                 </tr>
                 {% empty %}
                 <tr>

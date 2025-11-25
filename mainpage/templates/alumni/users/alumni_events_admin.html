@@ -1,154 +1,409 @@
-{% extends base_template %} {% block bodycontent %}{%load static%}
+{% extends base_template %} 
+{% block bodycontent %} 
+{% load static %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-  /* --- Global & Fonts --- */
-  /* Ensures all text in this block uses the Rubik font */
+    /* --- Modern Dashboard Styling --- */
+    :root {
+        --primary-color: #2c5282;
+        --success-color: #2c5282;
+        --warning-color: #f6c23e;
+        --danger-color: #e74a3b;
+        --dark-text: #5a5c69;
+        --light-bg: #f8f9fc;
+        --border-color: #e3e6f0;
+    }
 
-  /* --- Layout --- */
-  .container {
-    padding: 1rem 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  /* --- Event Grid --- */
-  .event-grid {
-    display: grid;
-    /* This creates a responsive grid. 
-     It will fit as many 280px cards as it can, 
-     then grow them to fill the space.
-     On mobile, it becomes a single column. */
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem; /* 24px */
-  }
-
-  /* --- Event Card --- */
-  .event-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle lift */
-    overflow: hidden; /* Clips the image to the card's rounded corners */
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  }
-
-  .event-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-  }
-
-  /* --- Card Image --- */
-  .event-img {
-    width: 100%;
-    height: 200px; /* Fixed height for a uniform grid */
-    object-fit: cover; /* Prevents image from stretching or squishing */
-    display: block;
-  }
-
-  /* --- Card Details --- */
-  .event-details {
-    padding: 1.5rem;
-    flex-grow: 1; /* Ensures all cards match height in a row */
-  }
-
-  .event-details h2 {
-    font-size: 1.5rem;
-
-    color: #2c5282; /* Primary Blue */
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-
-  .event-details p {
-    font-size: 0.95rem;
-    color: #555;
-    margin: 0.5rem 0;
-    line-height: 1.6;
-  }
-
-  /* Date styling */
-  .event-details p:nth-of-type(1) {
-    color: #333;
-    font-size: 1rem;
-  }
-
-  /* Location styling */
-  .event-details p:nth-of-type(2) {
-    color: #444;
-    font-weight: 500;
-  }
-
-  /* Description styling */
-  .event-details p:nth-of-type(3) {
-    margin-top: 1rem; /* Adds space before the description */
-  }
-
-  /* --- No Events Fallback --- */
-  .no-events {
-    font-size: 1.2rem;
-    color: #777;
-    text-align: center;
-    padding: 4rem 1rem;
-    background-color: #ffffff;
-    border: 2px dashed #e0e0e0;
-    border-radius: 12px;
-    margin-top: 2rem;
-  }
-
-  /* --- Responsive --- */
-  @media (max-width: 768px) {
+    /* Main Container */
     .container {
-      padding: 1rem 1rem; /* Tighter padding on mobile */
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 20px;
     }
 
-    .sub-title h3 {
-      font-size: 1.5rem;
+    .page-header-container {
+        margin-bottom: 2rem;
+    }
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .page-description {
+        color: #858796;
+        font-size: 0.95rem;
+        line-height: 1.5;
     }
 
+    /* --- Controls Row --- */
+    .controls-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    /* Sort Dropdown */
+    .sort-wrapper select {
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--dark-text);
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    /* Add Button */
+    .add-event-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+    }
+    .add-event-btn:hover {
+        background-color: #2e59d9;
+    }
+
+    /* --- Event Grid --- */
+    .event-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+    }
+
+    /* --- Event Card --- */
+    .event-card {
+        background-color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-color: var(--primary-color);
+    }
+
+    /* Image */
+    .event-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background-color: var(--light-bg);
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer; /* Indicates clickability */
+        transition: opacity 0.2s;
+    }
+    .event-img:hover { opacity: 0.9; }
+
+    /* Details */
     .event-details {
-      padding: 1.25rem;
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
     }
 
     .event-details h2 {
-      font-size: 1.25rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2e3a59;
+        margin: 0 0 10px 0;
     }
-  }
+
+    .event-meta {
+        font-size: 0.85rem;
+        color: #858796;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .event-meta i {
+        color: var(--primary-color);
+        width: 16px;
+    }
+
+    .event-desc {
+        margin-top: 15px;
+        font-size: 0.9rem;
+        color: var(--dark-text);
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Limit description lines */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 15px;
+    }
+
+    /* --- Action Section (Remove Button) --- */
+    .card-actions {
+        margin-top: auto; /* Pushes to bottom */
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .remove-btn {
+        background-color: #fff;
+        color: var(--danger-color);
+        border: 1px solid var(--danger-color);
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+    }
+    
+    .remove-btn:hover {
+        background-color: var(--danger-color);
+        color: white;
+    }
+
+    /* Empty State */
+    .no-events {
+        text-align: center;
+        padding: 50px;
+        color: #858796;
+        font-style: italic;
+        background-color: var(--light-bg);
+        border-radius: 8px;
+        border: 1px dashed var(--border-color);
+    }
+
+    /* --- Modal Styles --- */
+    .image-modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(4px);
+    }
+
+    .image-modal-content {
+        max-width: 90%;
+        max-height: 90vh;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        object-fit: contain;
+    }
+
+    .image-modal-close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.2s;
+        line-height: 1;
+    }
+    .image-modal-close:hover { color: var(--danger-color); }
 </style>
+
+<div class="sub-title">
+  <h4>ALUMNI (Admin)</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+  <p class="certxt">&gt; Events List</p>
+</div>
+<hr />
+
 <section>
   <div class="container">
-    <div class="sub-title">
-      <h4>Alumni</h4>
-      <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
-      <p class="certxt">&gt; Alumni Reunion and Events</p>
+    
+    <div class="page-header-container">
+        <div class="controls-row">
+            <div>
+                <h2 class="page-title"><i class="fas fa-calendar-alt"></i> Alumni Reunion & Events</h2>
+                <p class="page-description">
+                    View and manage upcoming alumni gatherings.
+                </p>
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <form method="GET" id="sortForm" class="sort-wrapper">
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="newest" {% if request.GET.sort == 'newest' or not request.GET.sort %}selected{% endif %}>Newest First</option>
+                        <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                    </select>
+                </form>
+
+                <a href="{% url 'admin_events' %}" class="add-event-btn">
+                    <i class="fas fa-plus"></i> Add New Event
+                </a>
+            </div>
+        </div>
     </div>
+
     {% if events %}
     <div class="event-grid">
-      {% for event in events %}
-      <div class="event-card">
-        {% if event.eventsImage %}
-        <img
-          src="{{ event.eventsImage.url }}"
-          alt="{{ event.eventsName }}"
-          class="event-img"
-        />
-        {% else %}
-        <div class="event-img"></div>
-        {% endif %}
-        <div class="event-details">
-          <h2>{{ event.eventsName }}</h2>
-          <p>{{ event.eventsDate }}</p>
-          <p>{{ event.eventsLocation }}</p>
-          <p>{{ event.eventsDescription }}</p>
-        </div>
-      </div>
-      {% endfor %}
+      
+      {% if request.GET.sort == 'oldest' %}
+          {% for event in events|dictsort:"eventsDate" %}
+              <div class="event-card">
+                {% if event.eventsImage %}
+                <img src="{{ event.eventsImage.url }}" alt="{{ event.eventsName }}" class="event-img clickable-image"/>
+                {% else %}
+                <div class="event-img" style="display: flex; align-items: center; justify-content: center; color: #ccc;">
+                    <i class="fas fa-image fa-3x"></i>
+                </div>
+                {% endif %}
+                <div class="event-details">
+                  <h2>{{ event.eventsName }}</h2>
+                  <div class="event-meta"><i class="far fa-calendar"></i> <span>{{ event.eventsDate }}</span></div>
+                  <div class="event-meta"><i class="fas fa-map-marker-alt"></i> <span>{{ event.eventsLocation }}</span></div>
+                  <p class="event-desc">{{ event.eventsDescription }}</p>
+                  
+                  <div class="card-actions">
+                      <form method="POST" action="{% url 'delete_event' event.pk %}" class="delete-event-form">
+                          {% csrf_token %}
+                          <button type="button" class="remove-btn delete-btn-swal">
+                              <i class="fas fa-trash-alt"></i> Remove
+                          </button>
+                      </form>
+                  </div>
+                </div>
+              </div>
+          {% endfor %}
+
+      {% else %}
+          {% for event in events|dictsortreversed:"eventsDate" %}
+              <div class="event-card">
+                {% if event.eventsImage %}
+                <img src="{{ event.eventsImage.url }}" alt="{{ event.eventsName }}" class="event-img clickable-image"/>
+                {% else %}
+                <div class="event-img" style="display: flex; align-items: center; justify-content: center; color: #ccc;">
+                    <i class="fas fa-image fa-3x"></i>
+                </div>
+                {% endif %}
+                <div class="event-details">
+                  <h2>{{ event.eventsName }}</h2>
+                  <div class="event-meta"><i class="far fa-calendar"></i> <span>{{ event.eventsDate }}</span></div>
+                  <div class="event-meta"><i class="fas fa-map-marker-alt"></i> <span>{{ event.eventsLocation }}</span></div>
+                  <p class="event-desc">{{ event.eventsDescription }}</p>
+
+                  <div class="card-actions">
+                      <form method="POST" action="{% url 'delete_event' event.pk %}" class="delete-event-form">
+                          {% csrf_token %}
+                          <button type="button" class="remove-btn delete-btn-swal">
+                              <i class="fas fa-trash-alt"></i> Remove
+                          </button>
+                      </form>
+                  </div>
+                </div>
+              </div>
+          {% endfor %}
+      {% endif %}
+
     </div>
     {% else %}
-    <p class="no-events">No events available</p>
+    <div class="no-events">
+        <i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 15px; display: block; opacity: 0.5;"></i>
+        No events currently scheduled.
+    </div>
     {% endif %}
   </div>
 </section>
+
+<div id="imgModal" class="image-modal-overlay">
+    <span class="image-modal-close">&times;</span>
+    <img class="image-modal-content" id="modalImage" alt="Event View">
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. Image Modal Logic ---
+        const modal = document.getElementById('imgModal');
+        const modalImg = document.getElementById('modalImage');
+        const closeBtn = document.querySelector('.image-modal-close');
+
+        // Open Modal
+        document.querySelectorAll('.clickable-image').forEach(img => {
+            img.addEventListener('click', function() {
+                modal.style.display = "flex";
+                modalImg.src = this.src;
+            });
+        });
+
+        // Close Function
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        if(closeBtn) closeBtn.addEventListener('click', closeModal);
+        
+        // Close on outside click
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                closeModal();
+            }
+        });
+
+        // --- 2. SweetAlert Delete Logic ---
+        const deleteButtons = document.querySelectorAll('.delete-btn-swal');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Find the specific form for this button
+                const form = this.closest('.delete-event-form');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74a3b', // Matches CSS danger-color
+                    cancelButtonColor: '#858796',  // Matches CSS secondary color
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 {% endblock %}

@@ -16,6 +16,7 @@ urlpatterns = [
     path('main/', include('mainpage.zsao_urls.mainurls')),
     path('med/', include('mainpage.zsao_urls.med_urls')),
     path('community/', include('mainpage.zsao_urls.com_url')),
+    path('sao/', include('mainpage.zsao_urls.logout')),
     path('guidance/', include('mainpage.zsao_urls.guideurl')),
     path('org/', include('mainpage.zsao_urls.org_url')),
 

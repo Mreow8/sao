@@ -15,6 +15,8 @@ from datetime import date
 
 # Assuming studentInfo is imported/defined elsewhere, e.g.:
 # from .models import studentInfo 
+from django.db import models
+from datetime import date
 
 class CaseProfile(models.Model):
     # Link to the student record
@@ -36,8 +38,9 @@ class CaseProfile(models.Model):
         ('Others', 'Other Offense'),
     ]
 
-    # --- ACTION CHOICES (Based on CTU Manual Penalties) ---
+    # --- ACTION CHOICES (Updated) ---
     ACTION_CHOICES = [
+        ('Pending Review', 'Pending Review'),  # <--- Added this option
         ('Oral Reprimand', 'Oral Reprimand'),
         ('Written Reprimand', 'Written Reprimand'),
         ('Community Service', 'Community Service'),
@@ -79,14 +82,17 @@ class CaseProfile(models.Model):
     description = models.TextField(
         verbose_name='Description of Incident',
         blank=True,
-        null=True,   # <-- allow NULL so migration can add column safely
+        null=True,
     )
+
     # Action/Penalty Details
     action_taken = models.CharField(
         max_length=50, 
         choices=ACTION_CHOICES,
+        default='Pending Review', # <--- Set default value here
         verbose_name='Action Taken'
     )
+    
     community_service_hours = models.IntegerField(
         blank=True, 
         null=True,
@@ -105,14 +111,15 @@ class CaseProfile(models.Model):
         verbose_name='Specify Custom Action'
     )
 
-    # Reporting and Status Fields (Added for completeness)
+    # Reporting and Status Fields
     date_reported = models.DateField(
         default=date.today,
         verbose_name='Date Reported'
     )
     reported_by = models.CharField(
         max_length=100, 
-        verbose_name='Reported By (User ID/Name)', blank=True,
+        verbose_name='Reported By (User ID/Name)', 
+        blank=True,
         null=True,
     )
     
@@ -143,7 +150,6 @@ class CaseProfile(models.Model):
 
     def __str__(self):
         return f"{self.student.firstname} {self.student.lastname} - {self.offense_number} {self.get_offense_type_display()}"
-# ...existing code...
 # from ..models import studentInfo  # Add this import at the top
 
 class CommunityService(models.Model):

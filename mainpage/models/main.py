@@ -80,6 +80,20 @@ class SystemSettings(models.Model):
     def __str__(self):
         return "System Settings"
 class TemporaryUser(models.Model):
+    # --- Role Choices (Mirroring CustomUser for temporary storage) ---
+    ROLE_CHOICES = [
+        ('superadmin', 'Superadmin'),
+        ('clinic_admin', 'Clinic Admin'),
+        ('guidance', 'Guidance'),
+        ('org_admin', 'Org Admin'),
+        ('guard', 'Guard'),
+        ('student', 'Student'),
+        ('staff', 'Staff'),
+        ('discipline_officer', 'Discipline Officer'),
+        ('alumni_officer', 'Alumni Officer'),
+        ('student_life_staff', 'Student Life Staff'),
+    ]
+
     # Store the unique identifier (studID or staffID)
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
@@ -87,9 +101,18 @@ class TemporaryUser(models.Model):
     # Store the HASHED password
     password = models.CharField(max_length=128) 
     
+    # === FIX: ADDED ROLE FIELD ===
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
+    # ==============================
+    
     # OTP details
     otp_code = models.CharField(max_length=6)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now) # Changed to default=timezone.now for explicit tracking
     
     def __str__(self):
         return self.email
+
+    # Helper method for checking expiration (as used in verify_otp)
+    def is_expired(self):
+        from datetime import timedelta
+        return self.created_at < timezone.now() - timedelta(minutes=10)

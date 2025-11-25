@@ -1,0 +1,301 @@
+{% extends base_template %} {% load static %} {% block title %}Alumni Admin
+Dashboard | SLIS{% endblock %} {% block bodycontent %}
+<div class="sub-title">
+  <h4>ALUMNI AFFAIRS MANAGEMENT</h4>
+  <p class="hometext"><a href="{% url 'homepage' %}">Home</a></p>
+  <p class="certxt">&gt; Alumni Dashboard</p>
+</div>
+
+<div class="container mx-auto px-4 py-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <a href="{% url 'admin_idRequest' %}" class="block">
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500 stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p
+              class="text-gray-500 text-sm font-semibold uppercase tracking-wider"
+            >
+              Pending ID Requests
+            </p>
+            <h2 class="text-3xl font-bold text-gray-800 mt-2">
+              {{ pending_id_count|default:"0" }}
+            </h2>
+          </div>
+          <div class="bg-blue-100 p-3 rounded-full text-blue-600">
+            <i class="fas fa-id-card fa-2x"></i>
+          </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-600">
+          <span class="text-blue-600 font-medium"
+            ><i class="fas fa-arrow-right"></i> Review Requests</span
+          >
+        </div>
+      </div>
+    </a>
+
+    <a href="{% url 'admin_gradTracer' %}" class="block">
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500 stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p
+              class="text-gray-500 text-sm font-semibold uppercase tracking-wider"
+            >
+              Tracer Responses
+            </p>
+            <h2 class="text-3xl font-bold text-gray-800 mt-2">
+              {{ tracer_count|default:"0" }}
+            </h2>
+          </div>
+          <div class="bg-green-100 p-3 rounded-full text-green-600">
+            <i class="fas fa-poll fa-2x"></i>
+          </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-600">
+          <span class="text-green-600 font-medium"
+            ><i class="fas fa-chart-line"></i> View Analytics</span
+          >
+        </div>
+      </div>
+    </a>
+
+    <a href="{% url 'admin_jobfairs' %}" class="block">
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500 stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p
+              class="text-gray-500 text-sm font-semibold uppercase tracking-wider"
+            >
+              Active Job Fairs
+            </p>
+            <h2 class="text-3xl font-bold text-gray-800 mt-2">
+              {{ active_jobs_count|default:"0" }}
+            </h2>
+          </div>
+          <div class="bg-purple-100 p-3 rounded-full text-purple-600">
+            <i class="fas fa-briefcase fa-2x"></i>
+          </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-600">
+          <span class="text-purple-600 font-medium"
+            ><i class="fas fa-plus-circle"></i> Post New Job</span
+          >
+        </div>
+      </div>
+    </a>
+
+    <a href="{% url 'admin_events' %}" class="block">
+      <div
+        class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-yellow-500 stat-card"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p
+              class="text-gray-500 text-sm font-semibold uppercase tracking-wider"
+            >
+              Upcoming Events
+            </p>
+            <h2 class="text-3xl font-bold text-gray-800 mt-2">
+              {{ upcoming_events_count|default:"0" }}
+            </h2>
+          </div>
+          <div class="bg-yellow-100 p-3 rounded-full text-yellow-600">
+            <i class="fas fa-calendar-alt fa-2x"></i>
+          </div>
+        </div>
+        <div class="mt-4 text-sm text-gray-600">
+          <span class="text-yellow-600 font-medium"
+            ><i class="fas fa-clock"></i> Manage Schedule</span
+          >
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <div
+          class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50"
+        >
+          <h5 class="font-bold text-gray-700">Recent Alumni ID Requests</h5>
+          <a
+            href="{% url 'admin_idRequest' %}"
+            class="text-sm text-blue-600 hover:text-blue-800 font-medium"
+            >View All</a
+          >
+        </div>
+        <div class="table-container">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Name
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Date Applied
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Degree
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% for req in recent_id_requests %}
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div
+                      class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500"
+                    >
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        {{ req.firstname }} {{ req.lastname }}
+                      </div>
+                      <div class="text-xs text-gray-500">
+                        {{ req.student_id }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ req.date_request|date:"M d, Y" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ req.degree }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800"
+                  >
+                    Pending
+                  </span>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="px-6 py-10 text-center text-gray-500">
+                  <i
+                    class="fas fa-check-circle mb-2 text-2xl text-green-400 block"
+                  ></i>
+                  No pending requests at the moment.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-1 space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h5 class="font-bold text-gray-700 mb-4">Quick Actions</h5>
+        <div class="space-y-3">
+          <a
+            href="{% url 'admin_jobfairs' %}"
+            class="w-full flex items-center p-3 bg-gray-50 hover:bg-blue-50 text-gray-700 hover:text-blue-700 rounded-lg transition-colors border border-gray-200"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3"
+            >
+              <i class="fas fa-plus"></i>
+            </div>
+            <span class="font-medium">Post New Job Fair</span>
+          </a>
+          <a
+            href="{% url 'admin_events' %}"
+            class="w-full flex items-center p-3 bg-gray-50 hover:bg-yellow-50 text-gray-700 hover:text-yellow-700 rounded-lg transition-colors border border-gray-200"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center mr-3"
+            >
+              <i class="fas fa-calendar-plus"></i>
+            </div>
+            <span class="font-medium">Create New Event</span>
+          </a>
+          <a
+            href="{% url 'transaction' %}"
+            class="w-full flex items-center p-3 bg-gray-50 hover:bg-green-50 text-gray-700 hover:text-green-700 rounded-lg transition-colors border border-gray-200"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3"
+            >
+              <i class="fas fa-file-export"></i>
+            </div>
+            <span class="font-medium">Generate Reports</span>
+          </a>
+        </div>
+      </div>
+
+      <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+          <h5 class="font-bold text-gray-700">Upcoming Events</h5>
+        </div>
+        <div class="divide-y divide-gray-100">
+          {% for event in upcoming_events %}
+          <div class="p-4 hover:bg-gray-50 transition-colors">
+            <div class="flex items-start">
+              <div
+                class="flex-shrink-0 bg-blue-50 rounded-lg p-2 text-center min-w-[50px]"
+              >
+                <span class="block text-xs font-bold text-blue-600 uppercase"
+                  >{{ event.date|date:"M" }}</span
+                >
+                <span class="block text-xl font-bold text-gray-800"
+                  >{{ event.date|date:"d" }}</span
+                >
+              </div>
+              <div class="ml-3">
+                <h6 class="text-sm font-semibold text-gray-800">
+                  {{ event.title }}
+                </h6>
+                <p class="text-xs text-gray-500 mt-1">
+                  <i class="fas fa-map-marker-alt mr-1"></i> {{ event.location
+                  }}
+                </p>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="p-6 text-center text-gray-500 text-sm">
+            No upcoming events scheduled.
+          </div>
+          {% endfor %}
+        </div>
+        {% if upcoming_events %}
+        <div class="p-3 bg-gray-50 text-center border-t border-gray-100">
+          <a
+            href="{% url 'admin_events' %}"
+            class="text-xs font-bold text-blue-600 hover:text-blue-800"
+            >VIEW CALENDAR</a
+          >
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

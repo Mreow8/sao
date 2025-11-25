@@ -6,7 +6,7 @@ urlpatterns = [
     path('dashboard/', views.org_dashboard, name='org_dashboard'),
     path('orgmain/', views.orgmain, name='orgmain'),
     path('add-organization/', views.add_organization, name='add_organization'),
-    
+    path('org/<slug:slug>/admin/dashboard/', views.org_admin_dashboard, name='org_admin_dashboard'),
     # Org Specific
     path('org/<slug:slug>/', views.org_profile, name='org_profile'),
     path('organization/<slug:org_slug>/advisers/', views.view_adviser, name='view_adviser_list'),

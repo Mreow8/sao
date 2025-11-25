@@ -13,7 +13,7 @@
 <style>
   /* --- Modern Dashboard Styling --- */
   :root {
-    --primary-color: #4e73df;
+    --primary-color: #2c5282;
     --success-color: #1cc88a;
     --warning-color: #f6c23e;
     --danger-color: #e74a3b;
@@ -383,7 +383,7 @@
 
       studentDetailsBox.classList.remove("hidden");
       studentStatusMessage.textContent = `Searching...`;
-      studentStatusMessage.style.color = "#4e73df"; // Primary blue
+      studentStatusMessage.style.color = "#2c5282"; // Primary blue
 
       // Note: The AJAX lookup relies on the text input being the Student ID (the value in the datalist).
       const url = `{% url 'get_student_details_ajax' %}?stud_id=${studentID}`;

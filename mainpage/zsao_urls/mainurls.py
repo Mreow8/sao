@@ -50,7 +50,7 @@ urlpatterns = [
     path("search/students/", views.search_students, name="search_students"),
     path('Gen_Home', views.Gen_Home, name="Gen_Home"),
     path('post', views.post , name='post'),
-    path('alumniIdRequests/', views.alumni_main, name='alumni_main'),
+    # path('alumniIdRequests/', views.alumni_main, name='alumni_main'),
     path('history/transaction_report/', views.view_transaction_history, name='transaction_report_view'),
 
 ]

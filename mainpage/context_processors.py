@@ -42,28 +42,28 @@ def theme_selection(request):
             role = request.user.role
             
             if role == 'clinic_admin':
-                template = 'clinic_admin.html'
+                template = 'roles/clinic_admin.html'
                 
             elif role == 'guidance':
-                template = 'guidance_admin.html'
+                template = 'roles/guidance_admin.html'
                 
             elif role == 'scholarship_admin':
-                template = 'scholarship_admin.html'
+                template = 'roles/scholarship_admin.html'
                 
             elif role == 'placement_officer':
-                template = 'placement_admin.html'
+                template = 'roles/placement_admin.html'
                 
             elif role == 'alumni_officer':
                 template = 'alumni_admin.html'
                 
             elif role == 'community_admin':
-                template = 'community_admin.html'
+                template = 'roles/roles/community_admin.html'
                 
             elif role == 'org_admin':
-                template = 'org_admin.html'
+                template = 'roles/org_admin.html'
                 
             elif role == 'discipline_officer':
-                template = 'discipline_admin.html'
+                template = 'roles/discipline_admin.html'
                 
             elif role == 'student_life_staff':
                 template = 'adminmain.html'

@@ -1,263 +1,245 @@
-/* --- Import Font (from requestgmc.css) --- */
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap");
-
-/* --- Global, Container, & Font --- */
-body,
-.gmc-form,
-input,
-select,
-button,
-table {
-  font-family: "Rubik", sans-serif;
+:root {
+  --primary-color: #2c5282;
+  --success-color: #1cc88a;
+  --warning-color: #f6c23e;
+  --danger-color: #e74a3b;
+  --dark-text: #5a5c69;
+  --light-bg: #f8f9fc;
 }
 
-body {
-  background-color: #f8f9fa; /* Light grey background */
-}
-
-/* --- Main Card (from requestgmc.css) --- */
-.gmc-form {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 0 0 12px 12px;
-  padding: 2.5rem;
-  min-height: 82vh;
+.body-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 20px;
 }
-.search_id_container {
-  display: flex;
-  flex-wrap: wrap; /* Stack on mobile */
-  align-items: center;
-  gap: 15px;
-  padding: 1.5rem;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+
+/* Header & Description */
+.page-header-container {
   margin-bottom: 2rem;
+}
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2e3a59;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-description {
+  color: #858796;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 900px;
+}
+
+/* Controls: Search */
+.controls-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  background-color: #f8f9fc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e3e6f0;
 }
 
 .search-form {
   display: flex;
-  width: 100%;
-  max-width: 500px; /* Or whatever width you prefer */
+  gap: 10px;
+  flex: 1;
+  max-width: 500px;
+  position: relative;
 }
 
-/* 2. The text input field */
 .search-input {
-  flex-grow: 1; /* Allows the input to take up available space */
+  width: 100%;
   padding: 10px 15px;
-  font-size: 0.95rem;
-  border: 1px solid #ccc;
-  border-radius: 6px 0 0 6px; /* Rounded left corners */
-  border-right: none; /* Button border will handle this */
-  outline: none;
+  padding-left: 35px; /* Space for icon */
+  border: 1px solid #d1d3e2;
+  border-radius: 5px;
+  font-size: 0.9rem;
   transition: border-color 0.2s;
 }
-
-/* 3. Highlight on focus (using a blue color) */
 .search-input:focus {
-  border-color: #2c5282;
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
 }
 
-/* 4. The search button */
+.search-icon-overlay {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #b0b3c5;
+  pointer-events: none;
+}
+
 .search-btn {
-  /* Colors (Blue) */
-  background-color: #2c5282;
-  border: 1px solid #2c5282;
+  background-color: var(--primary-color);
   color: white;
-
-  /* Sizing and Layout */
+  border: none;
   padding: 10px 20px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  border-radius: 5px;
   cursor: pointer;
-  border-radius: 0 6px 6px 0; /* Rounded right corners */
-  transition: background-color 0.2s;
+  transition: background 0.2s;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.search-btn:hover {
+  background-color: #2e59d9;
 }
 
-/* 5. Hover effect for the button */
-.search-btn:hover {
-  background-color: #2c5282; /* Darker blue */
-  border-color: #2c5282;
-}
-/* --- Table (Responsive Style from #historyTable) --- */
+/* Table Styling */
 .gmc-table-wrapper {
-  border-radius: 8px;
   overflow-x: auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  border: 1px solid #e3e6f0;
 }
-/* Resets the .desc styles so they don't affect your layout */
-.desc {
-  font-size: inherit !important; /* Uses the parent font size */
-  color: inherit !important; /* Uses the parent color */
-  margin-bottom: 0 !important; /* Removes the 2rem margin */
-  line-height: normal !important; /* Resets line height */
-}
+
 table {
   width: 100%;
   border-collapse: collapse;
+  margin: 0;
 }
 
-table th,
-table td {
-  border-bottom: 1px solid #ddd;
-  padding: 12px 15px;
-  text-align: left;
-  font-size: 14px;
-  vertical-align: middle;
-}
-
-table th {
-  font-weight: 600;
-  margin-bottom: 1.5rem; /* Space below the search bar */
+thead th {
+  background-color: #f8f9fc;
   color: #2c5282;
+  font-weight: 700;
   text-transform: uppercase;
-  font-size: 12px;
+  font-size: 0.8rem;
+  padding: 15px;
+  border-bottom: 2px solid #e3e6f0;
+  text-align: left;
+  white-space: nowrap;
 }
 
-table tr:last-child td {
-  border-bottom: none;
-}
-
-/* Sortable Headers */
-table th a {
+thead th a {
   color: inherit;
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-table th a:hover {
-  text-decoration: underline;
-}
-table th a::after {
-  font-family: "Font Awesome 5 Free";
-  content: "\f0dc"; /* fa-sort */
-  font-weight: 900;
-  opacity: 0.5;
-}
-table th a.sorted::after {
-  opacity: 1;
-  content: "\f0d8"; /* fa-sort-up (ascending) */
-}
-table th a.sorted.desc::after {
-  opacity: 1;
-  content: "\f0d7"; /* fa-sort-down (descending) */
+  gap: 5px;
 }
 
-/* Table Button (smaller .requestBtn) */
-.requestBtn {
-  font-family: "Rubik", sans-serif;
+thead th a:hover {
+  color: #2e59d9;
+}
+
+tbody td {
+  padding: 15px;
+  border-bottom: 1px solid #e3e6f0;
+  color: #5a5c69;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+tbody tr:hover {
+  background-color: #fafbfc;
+}
+
+/* Highlight ID Columns */
+td[data-label="Alumni ID"],
+td[data-label="Student ID"] {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-family: monospace;
+  font-size: 0.95rem;
+}
+
+/* --- ACTION BUTTON STYLES --- */
+.btn-icon {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+/* Approve Button (Blue) */
+.btn-approve {
+  color: #2c5282;
+  background-color: #e6f0ff;
+  border: 1px solid #b3d1ff;
+}
+.btn-approve:hover {
   background-color: #2c5282;
   color: white;
-  font-size: 0.875rem;
-
-  padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: background-color 0.2s;
-}
-.requestBtn:hover {
-  background-color: #2a4365;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(78, 115, 223, 0.2);
 }
 
-/* "Claimed" Badge (like .status-processed) */
-.success-message {
-  padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 12px;
-
+/* Claim Button (Green) */
+.btn-claim {
+  color: #1cc88a;
+  background-color: #e3fdf3;
+  border: 1px solid #a3e8d3;
+}
+.btn-claim:hover {
+  background-color: #1cc88a;
   color: white;
-  text-transform: uppercase;
-  background-color: #2ecc71; /* Green */
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(28, 200, 138, 0.2);
+}
+
+/* Status Icons */
+.status-badge-icon {
+  color: #1cc88a;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #f0fdf4;
+  border-radius: 50%;
+}
+
+/* Tooltip */
+.btn-icon[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  font-size: 0.75rem;
+  background: #2c3e50;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin-top: -45px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+td[data-label="Action"] form {
+  margin: 0;
   display: inline-block;
 }
 
-/* "No applicants" message */
 .no-applicants {
   text-align: center;
-  color: #777;
+  padding: 40px;
   font-style: italic;
-  padding: 2rem;
+  color: #858796;
 }
 
-/* --- Pagination --- */
-.pagination {
-  margin: 2rem 0 1rem;
-  text-align: center;
-}
-.step-links a,
-.step-links .current {
-  display: inline-block;
-  padding: 8px 14px;
-  margin: 0 4px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-}
-.step-links a {
-  background-color: #f0f0f0;
-  color: #333;
-}
-.step-links a:hover {
-  background-color: #e0e0e0;
-}
-.step-links .current {
-  background-color: #2c5282;
-  color: white;
-  border-color: #2c5282;
-}
-
-/* --- Responsive Table (from #historyTable) --- */
-@media (max-width: 900px) {
-  .gmc-table-wrapper {
-    border: none;
-    box-shadow: none;
-    overflow: visible;
-  }
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
-    display: block;
-    width: 100%;
-  }
-  thead {
-    display: none;
-  }
-  tr {
-    margin-bottom: 20px;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  td {
-    position: relative;
-    padding-left: 50% !important;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-    min-height: 40px;
-  }
-  td:last-child {
-    border-bottom: none;
-  }
-  td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 16px;
-    top: 12px;
-
-    color: #2c5282;
-    white-space: nowrap;
-  }
+.no-applicants i {
+  display: block;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #d1d3e2;
 }

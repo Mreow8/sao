@@ -33,7 +33,6 @@ def send_otp_email(email, otp):
         args=(subject, message, settings.EMAIL_HOST_USER, [email]),
         kwargs={'fail_silently': False}
     ).start()
-
 def signupuser(request):
     context = {}
 
@@ -42,8 +41,9 @@ def signupuser(request):
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password')
         cpassword = request.POST.get('cpassword')
+        determined_role = None # Initialize role variable
 
-        # Validate passwords
+        # Validate passwords (Omitted for brevity, but keep in your code)
         if cpassword != password:
             context['error_message'] = "Passwords do not match."
             context['studID_value'] = user_id
@@ -56,32 +56,38 @@ def signupuser(request):
             context['email_value'] = email
             return render(request, 'scholarship/register.html', context)
 
-        # Check if student or staff
+        # Check if student or staff AND determine role
         is_student = studentInfo.objects.filter(studID=user_id).exists()
         is_staff = staffInfo.objects.filter(staffID=user_id).exists()
 
-        if not (is_student or is_staff):
+        if is_student and not is_staff:
+            determined_role = 'student'
+        elif is_staff and not is_student:
+            # IMPORTANT: If 'staff' is not the precise role, you must 
+            # fetch the actual role from the staffInfo object here.
+            determined_role = 'staff'
+        else:
             context['error_message'] = "Invalid ID. No matching student or staff found."
             context['studID_value'] = user_id
             context['email_value'] = email
             return render(request, 'scholarship/register.html', context)
 
         try:
-            # Check 1: Does the user_id (username) already exist?
+            # Check 1: Does the user_id (username) already exist? (Omitted for brevity)
             if User.objects.filter(username=user_id).exists():
                 context['error_message'] = "This Student/Staff ID is already registered."
                 context['studID_value'] = user_id
                 context['email_value'] = email
                 return render(request, 'scholarship/register.html', context)
 
-            # Check 2: Does the email already exist?
+            # Check 2: Does the email already exist? (Omitted for brevity)
             if User.objects.filter(email=email).exists():
                 context['error_message'] = "This Email is already registered."
                 context['studID_value'] = user_id
                 context['email_value'] = email
                 return render(request, 'scholarship/register.html', context)
 
-            # Generate OTP and hash password
+            # Generate OTP and hash password (Omitted for brevity)
             otp = str(random.randint(100000, 999999))
             hashed_password = make_password(password)
 
@@ -92,12 +98,12 @@ def signupuser(request):
                     'email': email,
                     'password': hashed_password,
                     'otp_code': otp,
-                    'created_at': timezone.now()
+                    'created_at': timezone.now(),
+                    'role': determined_role, # <--- 🔑 The new crucial line
                 }
             )
 
-            # Send OTP to email
-            # Send OTP to email
+            # Send OTP to email (Omitted for brevity)
             send_otp_email(email, otp)
 
             messages.info(request, f"A 6-digit verification code has been sent to {email}.")
@@ -108,7 +114,6 @@ def signupuser(request):
             print(f"Error during signup: {e}")
 
     return render(request, 'scholarship/register.html', context)
-
 
     
 def verify_otp(request, user_id):
@@ -166,26 +171,26 @@ def verify_otp(request, user_id):
             context['error_message'] = "Invalid verification code. Please try again."
 
     return render(request, 'scholarship/verify_otp.html', context)
-@login_required
 def homepage(request):
-    # Use the helper to get the right file
     base_template = get_base_template(request.user)
+    context = {'base_template': base_template}
     
-    if request.user.is_authenticated:
-        messages.success(request, f'Welcome back, {request.user.username}!')
-    else:
-        messages.info(request, 'Welcome to the homepage!')
+    # Add this logic to prevent the crash
+    if request.user.is_authenticated and request.user.role == 'org_admin':
+        if hasattr(request.user, 'organization'):
+            context['org'] = request.user.organization
+            # Also pass empty forms so the template tags don't crash
+            from ..forms import AccreditationForm # Import if needed or pass None and handle in template
+            context['accreditation_form'] = None 
 
-    return render(request, 'homepage.html', {
-        'base_template': base_template 
-    })
+    return render(request, 'homepage.html', context)
+
+
 @login_required 
 @user_passes_test(is_org_admin_or_super)
 def orgmain(request):
     return render(request, 'orgadmin.html')
 
-def alumni_main(request):
-    return render(request, 'alumni/id_requests.html')
 
 def calendar(request):
     return render(request, 'officeOfStudentL/calendarOfEvents.html')
@@ -393,28 +398,28 @@ def get_base_template(user):
         # --- 1. Specific Role Checks ---
         
         if user.role == 'clinic_admin':
-            return 'clinic_admin.html'
+            return 'roles/clinic_admin.html'
             
         elif user.role == 'guidance':
-            return 'guidance_admin.html' # Make sure this file exists
+            return 'roles/guidance_admin.html' # Make sure this file exists
             
         elif user.role == 'scholarship_admin':
-            return 'scholarship_admin.html' # Make sure this file exists
+            return 'roles/scholarship_admin.html' # Make sure this file exists
             
         elif user.role == 'placement_officer':
-            return 'placement_admin.html' # Make sure this file exists
+            return 'roles/placement_admin.html' # Make sure this file exists
             
         elif user.role == 'alumni_officer':
-            return 'alumni_admin.html' # Make sure this file exists
+            return 'roles/alumni_admin.html' # Make sure this file exists
             
         elif user.role == 'community_admin':
-            return 'community_admin.html' # Make sure this file exists
+            return 'roles/community_admin.html' # Make sure this file exists
             
         elif user.role == 'org_admin':
-            return 'org_admin.html' # Make sure this file exists
+            return 'roles/org_admin.html' # Make sure this file exists
             
         elif user.role == 'discipline_officer':
-            return 'discipline_admin.html' # Make sure this file exists
+            return 'roles/discipline_admin.html' # Make sure this file exists
             
         elif user.role == 'student_life_admin':
             return 'adminmain.html' # Main admin usually gets the default
@@ -423,7 +428,7 @@ def get_base_template(user):
     if user.is_staff or user.is_superuser:
         return 'adminmain.html'
         
-    # --- 3. Default for Students/Faculty ---
+ 
     return 'main.html'
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -746,7 +751,7 @@ def scholarship_dashboard(request):
 
 
 def clinic_dashboard(request):
-    return render(request, 'clinic_admin.html')
+    return render(request, 'roles/clinic_admin.html')
 
 def placement_dashboard(request):
     return render(request, 'placement_officer.html')
@@ -754,11 +759,9 @@ def placement_dashboard(request):
 def discipline_dashboard(request):
     return render(request, 'discipline_officer.html')
 
-def alumni_dashboard(request):
-    return render(request, 'alumni_admin.html')
 
 def org_dashboard(request):
-    return render(request, 'org_admin.html')
+    return render(request, 'roles/org_admin.html')
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
