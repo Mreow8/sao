@@ -171,6 +171,7 @@ def verify_otp(request, user_id):
             context['error_message'] = "Invalid verification code. Please try again."
 
     return render(request, 'scholarship/verify_otp.html', context)
+@login_required
 def homepage(request):
     base_template = get_base_template(request.user)
     context = {'base_template': base_template}
