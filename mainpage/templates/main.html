@@ -371,15 +371,17 @@
                   class="fas fa-caret-down fourth {% if current_url in section_urls %}rotate{% endif %}"
                 ></span>
               </a>
-              <ul class="student_disc-show {% if current_url in section_urls %}active{% endif %}">
-                <li>
-                  <a
-                    href="{% url 'student_case_view' user.username %}"
-                    class="{% if current_url == 'case_list' %}active-link{% endif %}"
-                    >Case Profile</a
-                  >
-                </li>
-              </ul>
+            <ul class="student_disc-show {% if current_url in section_urls %}active{% endif %}">
+                {% if user.is_authenticated %}
+                    <li>
+                        <a
+                        href="{% url 'student_case_view' user.username %}"
+                        class="{% if current_url == 'case_list' %}active-link{% endif %}"
+                        >Case Profile</a
+                        >
+                    </li>
+                {% endif %}
+            </ul>
             </li>
             {% endwith %} 
             

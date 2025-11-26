@@ -354,7 +354,7 @@ def signinuser(request):
 
                 # --- Guidance ---
                 elif user.role == 'guidance':
-                    return redirect('guidance_dashboard')
+                    return redirect('roles/guidance_dashboard.html')
 
                 # --- Medical / Clinic ---
                 elif user.role == 'clinic_admin':
@@ -744,7 +744,7 @@ def view_transaction_history(request):
     return render(request, 'reports/transaction_report.html', context)
 
 def student_life_dashboard(request):
-    return render(request, 'student_life_staff.html')
+    return render(request, 'roles/student_life_staff.html')
 
 def scholarship_dashboard(request):
     return render(request, 'scholarship_officer.html')
